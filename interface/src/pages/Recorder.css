@@ -1,0 +1,170 @@
+video {
+  display: inline;
+  position: relative;
+}
+.layout {
+  position: absolute;
+  left: 5%;
+  top: 6%;
+}
+.record-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+/*Icons*/
+.icon {
+  display: block;
+  position: absolute;
+  left: 6%;
+  top: 62%;
+  width: 48px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0;
+}
+.check {
+  display: block;
+  position: absolute;
+  left: 87%;
+  top: 62%;
+  width: 100px;
+  font-size: 40px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0;
+  color: var(--check-green);
+}
+.close_icon {
+  background-color: transparent;
+  height: 30px;
+  left: 95%;
+  top: 1.5%;
+  width: 30px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.menu_icon {
+  background-color: transparent;
+  height: 20px;
+  left: 3%;
+  top: 1.5%;
+  width: 20px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/*Questions and text field*/
+.gen-q {
+  background-color: var(--mist-gray);
+  border: 0;
+  border-radius: 7px;
+  height: 104px;
+  padding: 5px;
+  position: absolute;
+  text-align: center;
+  top: 73%;
+  width: 300px;
+}
+.x1 {
+  left: 5%;
+}
+.x2 {
+  left: 39%;
+}
+.x3 {
+  left: 74%;
+}
+
+.speech{
+  color: #000000;
+  background-color: rgba(255, 255, 255, .6);
+  z-index: 1;
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 10%;
+  width:77%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: center;
+  top: 62%;
+  
+}
+
+.type-q {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 5%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 91%;
+  width: 1290px;
+}
+.menu-item,
+.menu-item1,
+.menu-item2,
+.menu-item3,
+.menu-item4 {
+  color: #707070;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 400;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+.menu-header {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 600;
+  height: 30px;
+  text-align: center;
+}
+
+/*Animations*/
+.gen-q:hover {
+  background-color: var(--robins-blue);
+}
+
+.gen-q:active {
+  background-color: var(--robins-blue);
+}
+.menu-item:hover {
+  color: rgb(34, 214, 214);
+}
+.menu-item1:hover {
+  color: rgb(34, 214, 214);
+}
+.menu-item2:hover {
+  color: rgb(34, 214, 214);
+}
+.menu-item3:hover {
+  color: rgb(34, 214, 214);
+}
+.menu-item4:hover {
+  color: rgb(34, 214, 214);
+}
+
+:root {
+  --black: rgba(0, 0, 0, 0.75);
+  --robins-egg-blue: rgba(34, 214, 214, 0.1);
+  --robins-blue: rgba(34, 214, 214, 1);
+  --mist-gray: rgba(196, 196, 196, 1);
+  --check-green: rgba(106, 226, 62, 1);
+}

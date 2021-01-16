@@ -1,0 +1,160 @@
+.home-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+/*animation*/
+.home-animate-enter {
+  animation: home-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+}
+@keyframes home-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+.home-signup:hover {
+  transform: scale(1.1);
+}
+.home-login:hover {
+  transform: scale(1.1);
+}
+
+/*button and icons*/
+.home-signup {
+  background-color: transparent;
+  height: 70px;
+  left: 0px;
+  pointer-events: auto;
+  position: absolute;
+  top: 350px;
+  transition: all 0.2s ease-out;
+  width: 203px;
+}
+.home-login {
+  background-color: transparent;
+  height: 70px;
+  left: 230px;
+  pointer-events: auto;
+  position: absolute;
+  top: 350px;
+  transition: all 0.2s ease-out;
+  width: 203px;
+}
+.home-sample-videos {
+  background-color: transparent;
+  height: 568px;
+  left: 80px;
+  position: absolute;
+  top: 15%;
+  width: 493px;
+  opacity: 0;
+}
+
+/*text and font*/
+.home-toia_icon {
+  background-color: transparent;
+  flex-shrink: 0;
+  height: 21px;
+  letter-spacing: -0.43px;
+  line-height: normal;
+  min-height: 21px;
+  text-align: center;
+  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.05);
+  width: 105px;
+  font-size: 28px;
+  color: var(--desert-storm);
+}
+.home-welcome-text {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: -0.54px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: 232px;
+  font-size: 36px;
+  font-weight: 600;
+}
+.home-toia {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 6px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 30px;
+  width: 316px;
+  font-size: 120px;
+}
+.home-des {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: -0.38px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 180px;
+  width: 404px;
+  font-size: 25px;
+  font-weight: 500;
+}
+.home-montserrat-black {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+}
+.home-opensans-normal {
+  font-family: "Open Sans", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/*layout and elements*/
+.home-heading-bar {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: row;
+  height: 40px;
+  justify-content: flex-start;
+  left: 0px;
+  padding: 9px;
+  position: absolute;
+  top: 0px;
+  width: 100%x;
+}
+.home-rectangle {
+  background-color: #22d6d6;
+  height: 100vh;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30%;
+}
+.home-overlap-group {
+  background-color: transparent;
+  height: 162px;
+  left: 50%;
+  position: absolute;
+  top: 20%;
+  width: 316px;
+}
+
+/*colors*/
+:root {
+  --desert-storm: rgba(248, 248, 248, 1);
+}

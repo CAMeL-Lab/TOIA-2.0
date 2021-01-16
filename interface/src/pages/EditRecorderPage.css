@@ -1,0 +1,125 @@
+video {
+  display: inline;
+  position: relative;
+}
+.edit-layout {
+  position: absolute;
+  left: 5%;
+  top: 6%;
+}
+.edit-record-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+/*Icons*/
+.edit-icon {
+  display: block;
+  position: absolute;
+  left: 6%;
+  top: 62%;
+  width: 48px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0;
+}
+.edit-check {
+  display: block;
+  position: absolute;
+  left: 87%;
+  top: 62%;
+  width: 100px;
+  font-size: 40px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0;
+  color: var(--check-green);
+}
+.edit-close_icon {
+  background-color: transparent;
+  height: 30px;
+  left: 95%;
+  top: 1.5%;
+  width: 30px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.edit-menu_icon {
+  background-color: transparent;
+  height: 20px;
+  left: 3%;
+  top: 1.5%;
+  width: 20px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/*Questions and text field*/
+.edit-type-q {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 5%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 85%;
+  width: 1290px;
+}
+.edit-menu-item,
+.edit-menu-item1,
+.edit-menu-item2,
+.edit-menu-item3,
+.edit-menu-item4 {
+  color: #707070;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 400;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+.edit-menu-header {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 600;
+  height: 30px;
+  text-align: center;
+}
+
+/*Animations*/
+.edit-menu-item:hover {
+  color: rgb(34, 214, 214);
+}
+.edit-menu-item1:hover {
+  color: rgb(34, 214, 214);
+}
+.edit-menu-item2:hover {
+  color: rgb(34, 214, 214);
+}
+.edit-menu-item3:hover {
+  color: rgb(34, 214, 214);
+}
+.edit-menu-item4:hover {
+  color: rgb(34, 214, 214);
+}
+
+:root {
+  --black: rgba(0, 0, 0, 0.75);
+  --robins-egg-blue: rgba(34, 214, 214, 0.1);
+  --robins-blue: rgba(34, 214, 214, 1);
+  --mist-gray: rgba(196, 196, 196, 1);
+  --check-green: rgba(106, 226, 62, 1);
+}

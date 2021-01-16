@@ -1,0 +1,21 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+@import url("https://fonts.googleapis.com/css?family=Montserrat:500,600|Open+Sans:700,400");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css?family=Montserrat:600,500|Open+Sans:400");
+* {
+  box-sizing: border-box;
+}
+
+/*ScrollBar*/
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(34, 214, 214, 0.1);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 5px;
+  height: 12px;
+}

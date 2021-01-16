@@ -1,0 +1,152 @@
+.signup-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+.signup-button:hover {
+  transform: scale(1.1);
+}
+
+/*button and elements*/
+.signup-button {
+  background-color: transparent;
+  position: absolute;
+  height: 70px;
+  top: 530px;
+  left: 42%;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+  width: 203px;
+}
+.signup-group {
+  background-color: transparent;
+  height: 380px;
+  left: 30%;
+  position: absolute;
+  top: 17%;
+  width: 570px;
+}
+.signup-back_icon {
+  background-color: transparent;
+  height: 30px;
+  left: 2%;
+  top: 2%;
+  width: 30px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/*text and textboxes*/
+.signup-title {
+  background-color: transparent;
+  height: auto;
+  left: 24%;
+  position: absolute;
+  text-align: center;
+  top: 0px;
+  width: 300px;
+}
+.signup-fname {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 90px;
+  width: 245px;
+}
+.signup-lname {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 322px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 90px;
+  width: 245px;
+}
+.signup-email {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 151px;
+  width: 570px;
+}
+.signup-pass {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 212px;
+  width: 570px;
+}
+.signup-pass1 {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 273px;
+  width: 570px;
+}
+
+/*Alignment and Fonts*/
+.signup-font-class-1 {
+  color: var(--black);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.21px;
+}
+.signup-font-class-2 {
+  color: var(--black);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.18px;
+}
+.signup-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
+}
+
+/*Colours*/
+:root {
+  --black: rgba(0, 0, 0, 0.75);
+  --robins-egg-blue: rgba(34, 214, 214, 0.1);
+  --robins-blue: rgba(34, 214, 214, 1);
+}

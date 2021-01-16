@@ -1,0 +1,167 @@
+.garden-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+.garden-add:hover {
+  transform: scale(1.1);
+}
+.garden-popup:hover {
+  opacity: 1;
+}
+
+/*elements*/
+.garden-menu_icon {
+  background-color: transparent;
+  height: 15px;
+  left: 94%;
+  top: 2%;
+  width: 15px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.garden-add {
+  background-color: transparent;
+  height: 98px;
+  left: 90%;
+  top: 80%;
+  width: 98px;
+  position: absolute;
+  pointer-events: auto;
+  transition: all 0.2s ease-out;
+}
+
+/*buttons*/
+.garden-edit {
+  background-color: #22d6d6;
+  color: white;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 5px;
+  border-color: transparent;
+  margin-right: 5px;
+}
+.garden-delete {
+  background-color: #d21a1a;
+  color: white;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 5px;
+  border-color: transparent;
+  margin-right: 5px;
+  width: 90px;
+}
+.garden-settings {
+  width: 23px;
+  height: 23px;
+  cursor: pointer;
+}
+.garden-popup {
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+.garden-menu-item {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 600;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+.red {
+  color: red;
+}
+
+/*grid*/
+.garden-box {
+  margin: 20px;
+  align-items: center;
+}
+.garden-grid {
+  padding: 10px;
+  overflow-y: scroll;
+  height: 65vh;
+  width: 80vw;
+  left: 10%;
+  top: 15%;
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.garden-grid > div {
+  flex-basis: calc(25% - 40px);
+}
+.garden-name {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+}
+.garden-still {
+  width: 200px;
+  height: 200px;
+}
+
+/*searchbar*/
+.garden-search {
+  background-color: #f8f8f8;
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 10%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 7%;
+  width: 80vw;
+  padding: 2px;
+  font-size: 15px;
+  margin: 5px 0;
+}
+.garden-search::-webkit-input-placeholder {
+  font-family: FontAwesome;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: black;
+}
+.garden-search::-moz-placeholder {
+  font-family: FontAwesome;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: black;
+}
+.garden-search:-ms-input-placeholder {
+  font-family: FontAwesome;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: black;
+}

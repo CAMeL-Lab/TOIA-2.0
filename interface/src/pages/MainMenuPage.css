@@ -1,0 +1,86 @@
+.menu-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+/*animations*/
+.menu-garden:hover {
+  transform: scale(1.1);
+}
+.menu-library:hover {
+  transform: scale(1.1);
+}
+
+/*buttons and elements*/
+.menu-group {
+  background-color: transparent;
+  height: 400px;
+  left: 22%;
+  position: absolute;
+  top: 25%;
+  width: 804px;
+}
+
+.menu-library {
+  background-color: transparent;
+  height: 300px;
+  width: 300px;
+  left: 0px;
+  pointer-events: auto;
+  position: absolute;
+  top: 0px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+}
+.menu-garden {
+  background-color: transparent;
+  height: 300px;
+  width: 300px;
+  left: 500px;
+  pointer-events: auto;
+  position: absolute;
+  top: 0px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+}
+.menu-close_icon {
+  background-color: transparent;
+  height: 30px;
+  left: 95%;
+  top: 2%;
+  width: 30px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/*font and text*/
+.menu-opensans-normal {
+  font-family: "Open Sans", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: xx-large;
+}
+.menu-text {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  position: absolute;
+  text-align: center;
+  top: 324px;
+  width: 300px;
+}
+.menu-text1 {
+  background-color: transparent;
+  height: auto;
+  left: 500px;
+  position: absolute;
+  text-align: center;
+  top: 324px;
+  width: 300px;
+}

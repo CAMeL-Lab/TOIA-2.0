@@ -1,0 +1,194 @@
+.avatar-settings-page-1 {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+.settings-group {
+  background-color: transparent;
+  height: 435px;
+  left: 32%;
+  position: absolute;
+  top: 20%;
+  width: 570px;
+}
+
+/*In Page Text*/
+.settings-edit {
+  background-color: transparent;
+  display: block;
+  height: 29px;
+  left: 35%;
+  position: absolute;
+  text-align: center;
+  top: 50px;
+  width: auto;
+  opacity: 0;
+  transform: translate(0, 25px);
+}
+.settings-language {
+  background-color: transparent;
+  height: 17px;
+  left: 0px;
+  position: absolute;
+  text-align: left;
+  top: 259px;
+  width: 78px;
+}
+.settings-privacy {
+  background-color: transparent;
+  height: 17px;
+  left: 0px;
+  position: absolute;
+  text-align: left;
+  top: 198px;
+  width: 117px;
+}
+.settings-settings {
+  background-color: transparent;
+  height: auto;
+  left: 20%;
+  position: absolute;
+  text-align: center;
+  top: 0px;
+  width: 350px;
+}
+
+/*Text Boxes and their placeholders*/
+.settings-name {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 130px;
+  width: 570px;
+}
+.settings-priv {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 117px;
+  position: absolute;
+  padding: 5px;
+  resize: none;
+  text-align: left;
+  top: 191px;
+  width: 453px;
+}
+.settings-lang {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 78px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 252px;
+  width: 492px;
+}
+.settings-bio {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 5px;
+  height: 108px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 313px;
+  width: 570px;
+}
+.settings-name,
+.settings-lang,
+.settings-priv,
+.settings-bio::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/*Buttons*/
+.settings-submit-button {
+  background-color: transparent;
+  height: 90px;
+  left: 80%;
+  pointer-events: auto;
+  position: absolute;
+  top: 80%;
+  transition: all 0.2s ease;
+  width: 183px;
+}
+.settings-back_icon {
+  background-color: transparent;
+  height: 30px;
+  left: 2%;
+  top: 2%;
+  width: 30px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/*Alignment and Fonts*/
+.settings-font-class-1 {
+  color: var(--black);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.21px;
+}
+.settings-font-class-2 {
+  color: var(--black);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.18px;
+}
+.settings-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
+}
+
+/*Colours*/
+:root {
+  --black: rgba(0, 0, 0, 0.75);
+  --robins-egg-blue: rgba(34, 214, 214, 0.1);
+  --robins-blue: rgba(34, 214, 214, 1);
+}
+
+/*Animations*/
+.settings-animate-enter {
+  animation: settings-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+  display: block;
+  opacity: 0;
+  transform: translate(0, 25px);
+}
+.settings-submit-button:hover {
+  transform: scale(1.1);
+}
+@keyframes settings-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translate(0, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
