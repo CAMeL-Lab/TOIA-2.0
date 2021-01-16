@@ -137,19 +137,23 @@ var upload = multer({storage:storage});
 
 
 app.get('/getAllAvatars',(req,res)=>{
-	console.log('yehee');
-	let getAvatarQuery=`SELECT name FROM avatar;`;
+
+	let getAvatarQuery=`SELECT name,id_avatar FROM avatar;`;
 	connection.query(getAvatarQuery, (err,entry,fields)=>{
 		if (err){
 			throw err;
 		}
 		else{
-			console.log(entry.map(avatar=>avatar.name));
-			res.send(entry.map(avatar=>avatar.name));
+			console.log(entry.map(avatar=>[avatar.name,avatar.id_avatar]));
+			res.send(entry.map(avatar=>[avatar.name,avatar.id_avatar]));
 		}
 
 	});
 			
+});
+
+app.get('/getAvatarInfo',(req,res)=>{
+	console.log(req.params);
 });
 
 app.get('/player/:avatar/:language/:question',(req,res)=>{

@@ -22,27 +22,31 @@ function AvatarLibraryPage() {
         });
     });
 
-    const renderCard = (avatar, index) => {
+    const renderCard = (avatar) => {
         return(
-            <Card onClick={view} key={index} className="library-box border-0">
+            <Card onClick={()=>view(avatar)} key={avatar} className="library-box border-0">
                 <Card.Img className="library-still"variant="top" src={sampleVideo}/>
                 <Card.Body>
-                    <Card.Title className="library-name">{avatar}</Card.Title>
+                    <Card.Title className="library-name">{avatar[0]}</Card.Title>
                 </Card.Body>
             </Card>
         )
     }
     //A delete function, that deletes the specific avatar in aws (Wahib)
 
-    function view(){
+    function view(avatar){
         history.push({
           pathname: '/view',
+          state: {
+              id_avatar: avatar[1],
+              name: avatar[0]
+          }
         });
     }
 
-    function mainmenu() {
+    function menu() {
         history.push({
-           pathname: '/mainmenu',
+           pathname: '/menu',
          }); 
      }
  
@@ -67,7 +71,7 @@ function AvatarLibraryPage() {
                     width='wide'
                 >
                     <Menu.Item>
-                        <div onClick={mainmenu} className="library-menu-item">Exit to Main Menu</div>
+                        <div onClick={menu} className="library-menu-item">Exit to Main Menu</div>
                     </Menu.Item>
                     <Menu.Item >
                     <div onClick={logout} className="library-menu-item red">Logout</div>

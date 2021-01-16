@@ -9,6 +9,14 @@ import history from '../services/history';
 
 function AvatarViewPage() {
     
+    React.useEffect(() => {
+        axios.get('http://localhost:3000/getAvatarInfo',{
+            avatarID: history.location.state.id_avatar
+        }).then((res)=>{
+            console.log(res.data);
+        });
+    });
+
     var input1, input2, input3, input4, input5; //will hold the settings data of avatars  and become default value
     //will need a backend function to get data from database, input5 holds the language the user will be speaking in 
     //to the dialogue manager (Wahib)
