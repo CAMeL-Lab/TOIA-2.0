@@ -5,42 +5,45 @@ import submitButton from "../icons/submit-button.svg";
 import backButton from "../icons/back-button.svg";
 import video from "../icons/sample-video.svg"
 import history from '../services/history';
+import axios from 'axios';
 
 
 function AvatarViewPage() {
     
+    const [name, setName] = React.useState(null);
+    const [language, setLanguage] = React.useState(null);
+    const [bio, setBio] = React.useState(null);
+    const [avatarID,setAvatarID] = React.useState(null);
+
+    const [interactionLanguage, setInteractionLanguage] = React.useState(null);
+    
     React.useEffect(() => {
-        axios.get('http://localhost:3000/getAvatarInfo',{
+    
+        axios.get('http://localhost:3000/getAvatarInfo',{params:{
             avatarID: history.location.state.id_avatar
-        }).then((res)=>{
-            console.log(res.data);
+        }}).then((res)=>{
+            setName(res.data.name);
+            setLanguage(res.data.language);
+            setBio(res.data.bio);
+            setAvatarID(history.location.state.id_avatar);
         });
     });
-
-    var input1, input2, input3, input4, input5; //will hold the settings data of avatars  and become default value
-    //will need a backend function to get data from database, input5 holds the language the user will be speaking in 
-    //to the dialogue manager (Wahib)
-    
-    var inputName= "language";
-
-    input1 = "Jane Doe";
-    input2 = "John Smith"
-    input3 = "English"
-    input4 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tellus felis, viverra in leo id, suscipit egestas lorem. Integer posuere pretium aliquam. Vestibulum tincidunt viverra augue, quis iaculis risus cursus ac."
     
     function goBack(){
         history.goBack();
     }
     
-    function myChangeHandler(event){
-        event.preventDefault();
-        var name = event.target.name;
-    
-        switch(name) {
-          case inputName:
-            input5 = event.target.value;
-            break;
-        }
+
+    function submitHandler(event){
+        history.push({
+            pathname: '/player',
+            state: {
+                name,
+                language,
+                avatarID,
+                interactionLanguage
+            }
+        });
     }
      
     //a function will be needed to send input5 to database (wahib)
@@ -48,33 +51,33 @@ function AvatarViewPage() {
     return (
         <div className="view-page">
             <img className="view-still" src={video}/>
-            <input  /*onClick={}*/ className="view-submit-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
+            <input  onClick={submitHandler} className="view-submit-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
             <div className="view-group">
                 <div className="view-name view-font-class-1 ">Name: </div>
                 <input
                     className="view-name_box view-font-class-1"
-                    defaultValue = {input1}
+                    defaultValue = {name}
                     type={"text"}
                 />
                 <div className="view-creator view-font-class-1 ">Creator: </div>
                 <input
                     className="view-creator_box view-font-class-1"
-                    defaultValue = {input2}
+                    defaultValue = {name}
                     type={"text"}
                 />
                 <div className="view-lang view-font-class-1 ">Language: </div>
                 <input
                     className="view-lang_box view-font-class-1"
-                    defaultValue = {input3}
+                    defaultValue = {language}
                     type={"text"}
                 />
                 <div className="view-bio view-font-class-1 ">Bio: </div>
                 <textarea
                     className="view-bio_box view-font-class-1"
-                    defaultValue = {input4}
+                    defaultValue = {bio}
                     type={"text"}
                 />
-                <select className="view-lang2_box view-font-class-1" name={inputName} onChange={myChangeHandler}>
+                <select className="view-lang2_box view-font-class-1" onChange={()=>{setInteractionLanguage(event.target.value);}}>
                     <option value="" disabled selected hidden>What language would you like to speak in..</option>
                     <option value="AF">Afrikaans</option>
                     <option value="SQ">Albanian</option>

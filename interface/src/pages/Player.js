@@ -1,15 +1,26 @@
 import React, {Component} from 'react';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
+import history from '../services/history';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 function Player(){
   const { transcript, resetTranscript } = useSpeechRecognition({command: '*',callback:fetchData});
+  
+  const [avatarName, setAvatarName] = React.useState(null);
+  const [language, setLanguage] = React.useState(null);
+  const [interactionLanguage,setInteractionLanguage] = useState(null);
+  const [avatarID,setAvatarID] = React.useState(null);
+  const [video,setVideo] = useState(null);
+  const [caption,setCaption] = useState(null);
 
-  const [language,setLanguage] = useState('English');
-  const [avatar,setAvatar] = useState('Margarita');
-  const [video,setVideo] = useState('');
-  const [caption,setCaption] = useState('');
+  React.useEffect(() => {
+    setAvatarName(history.location.state.name);
+    setLanguage(history.location.state.language);
+    setInteractionLanguage(history.location.state.interactionLanguage);
+    setAvatarID(history.location.state.avatarID);
+  });
+
 
   function fetchData(event){
 
@@ -19,9 +30,7 @@ function Player(){
 
     let question = transcript[0].toUpperCase()+transcript.slice(1);
 
-    let videoElem= <video width='320' height='240' key={question} autoPlay><source src={`http://localhost:3000/player/${avatar}/${language}/${question}`} type='video/mp4'></source></video>;
-
-    console.log(videoElem);
+    let videoElem= <video width='320' height='240' key={question} autoPlay><source src={`http://localhost:3000/player/${avatarID}/${avatarName}/${language}/${question}`} type='video/mp4'></source></video>;
 
     setVideo(videoElem);
 
@@ -29,7 +38,7 @@ function Player(){
 
   return (
     <div>
-      <div>{avatar}</div>
+      <div>{avatarName}</div>
       <div>{language}</div>
 
       <div>{video}</div>

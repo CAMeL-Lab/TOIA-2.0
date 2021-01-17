@@ -153,39 +153,56 @@ app.get('/getAllAvatars',(req,res)=>{
 });
 
 app.get('/getAvatarInfo',(req,res)=>{
-	console.log(req.params);
-});
-
-app.get('/player/:avatar/:language/:question',(req,res)=>{
-	
-	const question=req.params.question+'?';
-	const avatar=req.params.avatar;
-	const language=req.params.language;
-
-	console.log(question,avatar,language)
-
-	let query_avatar_id=`SELECT id_avatar FROM avatar WHERE name="${avatar}" AND language="en-US"`;
-
-	let query = `SELECT id_video,idx,answer FROM video WHERE avatar_id_avatar in (${query_avatar_id}) AND question="${question}";`;
-
-	connection.query(query, (err,entry,fields)=>{
+	console.log('hihihi');
+	let query_avatar_info=`SELECT name,language,description FROM avatar WHERE id_avatar="${req.query.avatarID}";`
+	connection.query(query_avatar_info, (err,entry,fields)=>{
 		if (err){
 			throw err;
 		}
 		else{
-			let video_id=entry[0].id_video;
-			let index=entry[0].idx;
-			let answer=entry[0].answer;
-			
-			let video_file=avatar.toLowerCase()+'2019_'+index+'_'+video_id+'.mp4';
-			let video_path='./public/static/avatar_garden/margarita2019/videos/'+video_file;
-		
-			res.sendFile(video_path, { root: __dirname });
-		}
+			let avatarInfo={
+				name: entry[0].name,
+				language: entry[0].language,
+				bio: entry[0].description
+			}
+
+			res.send(avatarInfo);
+		}		
 	});
+
 });
 
+app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
+	
+	let question=req.params.question+'?';
+	let avatarID=req.params.avatarID;
+	let avatarName=req.params.avatarName;
+	let language=req.params.language;
 
+	axios.post('http://localhost:5000/dialogue_manager',{
+		query: question,
+		avatar_name: avatarName,
+		KB_version: "1.0",
+		language: "US-en",
+		boolean_test: true 
+	}).then((videoDetails)=>{
+		let answerToQuestion=videoDetails.data.answer;
+		let query_avatar_idx=`SELECT idx FROM video WHERE avatar_id_avatar=${avatarID} AND id_video="${videoDetails.data.id_video}";`
+		connection.query(query_avatar_idx,(err,entry,fields)=>{
+			if (err){
+				throw err;
+			}
+			else{
+				let index=entry[0].idx;
+				let video_file=avatarName.toLowerCase()+'2019_'+index+'_'+videoDetails.data.id_video+'.mp4';
+				let video_path='./public/static/avatar_garden/margarita2019/videos/'+video_file;
+				
+				res.sendFile(video_path, { root: __dirname });
+			}
+		});
+
+	});
+});
 
 app.post('/createAvatar',(req,res)=>{
 	
