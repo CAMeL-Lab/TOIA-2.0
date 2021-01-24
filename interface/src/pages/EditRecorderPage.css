@@ -16,6 +16,13 @@ video {
   position: relative;
   width: 100%;
 }
+.edit-font-class-1 {
+  color: #707070;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+}
 
 /*Icons*/
 .edit-icon {
@@ -32,7 +39,7 @@ video {
   display: block;
   position: absolute;
   left: 87%;
-  top: 62%;
+  top: 60%;
   width: 100px;
   font-size: 40px;
   z-index: 3;
@@ -97,6 +104,36 @@ video {
   font-weight: 600;
   height: 30px;
   text-align: center;
+}
+
+/*modal elements*/
+.edit-modal-header {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 25px;
+  font-weight: 700;
+  height: auto;
+  text-align: center;
+}
+.edit-modal-text {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+  height: auto;
+  text-align: center;
+}
+.edit-modal-ans {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 200px;
+  padding: 5px;
+  resize: none;
+  text-align: left;
+  width: 750px;
 }
 
 /*Animations*/

@@ -10,7 +10,7 @@ import menuButton from "../icons/menu2-button.svg";
 import axios from 'axios';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import history from '../services/history';
-import {Menu, Sidebar, Segment } from 'semantic-ui-react';
+import {Menu, Sidebar, Segment, Modal, Header, Button } from 'semantic-ui-react';
 
 const videoConstraints = {
   width: 1400,
@@ -26,6 +26,15 @@ function Recorder () {
 
     });
   },[]);
+
+  function exampleReducer( state, action ) {
+    switch (action.type) {
+      case 'close':
+        return { open: false };
+      case 'open':
+        return { open: true }; 
+    }
+  }
   
   const { transcript, resetTranscript } = useSpeechRecognition({command: '*'});
 
@@ -39,7 +48,9 @@ function Recorder () {
   const [questionSelected,setQuestionSelected]=useState(null);
   const [answerProvided,setAnswerProvided]=useState(null);
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = React.useState(false)
+  const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
+  const { open } = state
 
   const handleStartCaptureClick = React.useCallback((e) => {
 
@@ -118,16 +129,52 @@ function Recorder () {
     setQuestionSelected(event.target.value);
   }
 
+  function openModal(e){
+    dispatch({ type: 'open' });
+    e.preventDefault();
+  }
+
   function close(){
     history.push({
       pathname: '/garden',
     });
   }
 
+
+  const inlineStyle = {
+    modal : {
+        // marginTop: '10%',
+        // marginLeft: '20%',
+        height: '400px',
+        width: '800px',
+    }
+  };
+
   return (
     <form className="record-page" name="form1" action="form1" >
-
         <>
+
+         <Modal //this is the new pop up menu
+            closeIcon={true}
+            size='large'
+            style={inlineStyle.modal}
+            open={open} 
+            onClose={() => dispatch({ type: 'close' })}
+            >
+                <Modal.Header className="modal-header">Feel free to correct your answer!</Modal.Header>
+                <Modal.Content>
+
+                <div contentEditable="true" className="modal-ans font-class-1" onChange={e=>setAnswerProvided(e.target.value)}>{transcript}
+                </div>
+                </Modal.Content>
+                <Modal.Actions>
+                <Button color='green' inverted onClick={handleDownload}>
+                    <i class="fa fa-check"></i>
+                </Button>
+                </Modal.Actions>
+            </Modal>
+
+
             <Sidebar.Pushable as={Segment}>
                 <Sidebar
                     as={Menu}
@@ -169,7 +216,7 @@ function Recorder () {
                       <button className="icon" onClick={handleStartCaptureClick}><img src={recordIcon}/></button>
                     )}
                     {recordedChunks.length > 0 && (
-                      <button className="check" onClick={handleDownload}><i class="fa fa-check"></i></button>
+                      <button className="check" onClick={openModal}><i class="fa fa-check"></i></button>
                     )}
                     <p className="speech">{transcript}</p>
                     <button className="gen-q x1" value={questionList[0]} onClick={buttonClick}>{questionList[0]}</button>

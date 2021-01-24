@@ -77,7 +77,7 @@ function AvatarViewPage() {
                     defaultValue = {bio}
                     type={"text"}
                 />
-                <select className="view-lang2_box view-font-class-1" onChange={()=>{setInteractionLanguage(event.target.value);}}>
+                <select className="view-lang2_box view-font-class-1" >
                     <option value="" disabled selected hidden>What language would you like to speak in..</option>
                     <option value="AF">Afrikaans</option>
                     <option value="SQ">Albanian</option>

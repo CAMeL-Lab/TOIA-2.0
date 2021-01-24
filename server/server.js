@@ -172,6 +172,7 @@ app.get('/getAvatarInfo',(req,res)=>{
 
 });
 
+
 app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
 	
 	let question=req.params.question+'?';

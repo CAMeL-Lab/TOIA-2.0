@@ -1,3 +1,4 @@
+
 import './App.css';
 import './EditRecorderPage.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -8,7 +9,7 @@ import stopIcon from "../icons/stop_button.svg";
 import closeButton from "../icons/close-button.svg";
 import menuButton from "../icons/menu2-button.svg";
 import history from '../services/history';
-import {Menu, Sidebar, Segment } from 'semantic-ui-react';
+import {Menu, Sidebar, Segment, Modal, Header, Button } from 'semantic-ui-react';
 
 const videoConstraints = {
   width: 1400,
@@ -16,14 +17,26 @@ const videoConstraints = {
   facingMode: "user"
 };
 
-var inputName = "own-q";
+var videotype, newquestion, answer; //videotype holds the type of video, newquestion the question if chnaged, and answer,the answer to corresponding video (wahib)
+var question = "Your Question"; // question of the video that the person is editing, will need to be retrieved from database (wahib)
+newquestion = question;
 
 function EditRecorder () {
+
+    function exampleReducer( state, action ) {
+        switch (action.type) {
+          case 'close':
+            return { open: false };
+          case 'open':
+            return { open: true }; 
+        }
+    }
+
+    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const [visible, setVisible] = React.useState(false)
+    const { open } = state
 
-    var videotype; //the variable that holds the video type whether filler, reeting etc (wahib)
 
-    var question = "Your Question"; // question of the video that the person is editing, will need to be retrieved from database (wahib)
 
     const webcamRef = React.useRef(null);
     const mediaRecorderRef = React.useRef(null);
@@ -58,9 +71,6 @@ function EditRecorder () {
     }, [mediaRecorderRef, webcamRef, setCapturing]);
 
     const handleDownload = React.useCallback(() => {
-        if (inputName == "own-q"){
-        alert("Cannot submit until a question is chosen or written, ensure that text field is not highlight when submitting");
-        } else {
         if (recordedChunks.length) {
             const blob = new Blob(recordedChunks, {
             type: "video/webm"
@@ -69,21 +79,11 @@ function EditRecorder () {
             const a = document.createElement("a");
             a.style = "display: none";
             a.href = url;
-            a.download = inputName+".mp4";
+            a.download = ((newquestion === question) ? question+".mp4" : newquestion+".mp4");
             a.click();
             setRecordedChunks([]);
         }
-        }
     }, [recordedChunks]);
-
-    function myChangeHandler(event){
-        inputName = event.target.value;
-    }
-    
-    function chooseQuestion(event){
-        event.preventDefault();
-        question = inputName;
-    }
 
     function close(){
         history.goBack();
@@ -109,13 +109,56 @@ function EditRecorder () {
             case 'edit-menu-item4':
                 videotype = 'y/n';
                 break;
+            case 'edit-type-q edit-font-class-1':
+                newquestion = event.target.value;
+                break;
+            case 'edit-modal-ans edit-font-class-1':
+                answer = event.target.value;
+                break;
         }
     }
 
-    // function needed to send new question and videotype back to database (wahib)
+    function submitHandler(event){
+        event.preventDefault();
+        // function needed to send new question and videotype back to database (wahib)
+    }
+    
+    const inlineStyle = {
+        modal : {
+            marginTop: '10%',
+            marginLeft: '20%',
+            height: '400px',
+            width: '800px',
+        }
+    };
+
     return (
-        <form className="edit-record-page"  onSubmit={chooseQuestion}>
+        <form className="edit-record-page"  onSubmit={submitHandler}>
             <>
+            <Modal //this is the new pop up menu
+            closeIcon={true}
+            size='large'
+            style={inlineStyle.modal}
+            open={open} 
+            onClose={() => dispatch({ type: 'close' })}
+            >
+                <Modal.Header className="edit-modal-header">Write your answer</Modal.Header>
+                <Modal.Content>
+                <textarea
+                    className="edit-modal-ans edit-font-class-1"
+                    placeholder= "Type something...."//delete this whe finished
+                    //defaultValue={} the variable containing the speech to text should show up here, so they can edit it
+                    type={"text"}
+                    onChange={changehandler}
+                > 
+                </textarea>
+                </Modal.Content>
+                <Modal.Actions>
+                <Button color='green' inverted onClick={handleDownload}>
+                    <i class="fa fa-check"></i>
+                </Button>
+                </Modal.Actions>
+            </Modal>
             <Sidebar.Pushable as={Segment}>
                 <Sidebar
                     as={Menu}
@@ -154,14 +197,13 @@ function EditRecorder () {
                         <button className="edit-icon" onClick={handleStartCaptureClick}><img src={recordIcon}/></button>
                     )}
                     {recordedChunks.length > 0 && (
-                        <button className="edit-check" onClick={handleDownload}><i class="fa fa-check"></i></button>
+                        <button className="edit-check" onClick={() => dispatch({ type: 'open' })}><i class="fa fa-check"></i></button>
                     )}
-
                     <input
                         className="edit-type-q edit-font-class-1"
                         defaultValue={question}
                         type={"text"}
-                        onChange={myChangeHandler}
+                        onChange={changehandler}
                     />
                     <div onClick={close}><img className="edit-close_icon" src={closeButton} /></div>
                     <div onClick={() => setVisible(true)}><img className="edit-menu_icon" src={menuButton} /></div>
