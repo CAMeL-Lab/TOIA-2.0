@@ -20,12 +20,6 @@ const videoConstraints = {
 
 function Recorder () {
   // const history = useHistory();
-  useEffect(() => {
-    axios.get('http://localhost:3000/getQuestions').then((res)=>{
-      setQuestionList(res.data);
-
-    });
-  },[]);
 
   function exampleReducer( state, action ) {
     switch (action.type) {
@@ -43,6 +37,10 @@ function Recorder () {
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
 
+  const [avatarName, setName] = useState(null);
+  const [avatarLanguage, setLanguage] = useState(null);
+  const [avatarID, setAvatarID] = useState(null);
+
   const [questionList,setQuestionList]=useState([]);
   const [videoType,setVideoType]=useState(null);
   const [questionSelected,setQuestionSelected]=useState(null);
@@ -52,8 +50,22 @@ function Recorder () {
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
   const { open } = state
 
-  const handleStartCaptureClick = React.useCallback((e) => {
 
+  useEffect(() => {
+    axios.get('http://localhost:3000/getQuestions').then((res)=>{
+      setQuestionList(res.data);
+    });
+    setName(history.location.state.name);
+    setLanguage(history.location.state.language);
+    setAvatarID(history.location.state.new_avatar_ID);
+  });
+
+  // setName(history.location.state.name);
+  // setLanguage(history.location.state.language);
+
+
+  const handleStartCaptureClick = React.useCallback((e) => {
+    console.log(avatarName,avatarLanguage,avatarID);
     SpeechRecognition.startListening({ continuous: true });
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
@@ -96,6 +108,8 @@ function Recorder () {
 
         let form = new FormData();
         form.append('blob', blob);
+        form.append('name',avatarName);
+        form.append('language',avatarLanguage);
         form.append('question', questionSelected);
         form.append('answer', transcript);
 

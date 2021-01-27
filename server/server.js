@@ -9,8 +9,9 @@ require('dotenv').config();
 
 const Buffer = require('buffer');
 const multer  = require('multer');
-const crypto=require('crypto');
+const crypto = require('crypto');
 const mime = require('mime');
+const path = require('path');
 
 const cors = require('cors');
 
@@ -26,6 +27,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use(express.json())
 
+app.use(express.static('./public'));
 
 //Connect to MySQL database
 
@@ -38,9 +40,6 @@ const connection = mysql.createConnection({
 
 connection.connect()
 
-
-let avatarName='';
-let video_id='';
 let count=9000;
 
 //Check if entry exists in database, otherwise create one
@@ -70,17 +69,19 @@ let count=9000;
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null,`./public/static/avatar_garden/${avatarName}/videos`);
+		cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
 	},
 	filename: function (req, file, cb) {
 		crypto.pseudoRandomBytes(16, function (err, raw) {
-			video_id=(raw.toString('hex') + Date.now()).slice(0,32);
-			cb(null, avatarName+'_'+video_id + '.' + mime.getExtension(file.mimetype));
+			let video_id=(raw.toString('hex') + Date.now()).slice(0,32);
+			cb(null, req.body.name+'_'+video_id + '.' + mime.getExtension(file.mimetype));
 		});
   }
 });
 
-var upload = multer({storage:storage});
+let upload = multer({
+	storage:storage
+});
 // var type = upload.single('blob');
 
 //Migrating the Margarita2019 Knowledge Base
@@ -226,11 +227,13 @@ app.post('/createAvatar',(req,res)=>{
 	connection.query(queryCreateAvatar, (err,entry,fields)=>{
 		if (err){
 			throw err;
+		}else{
+			console.log(entry.insertId);
+			res.send({new_avatar_ID: entry.insertId});
 		}
 	});
 	mkdirp(`./public/static/avatar_garden/${req.body.name}`);
 	mkdirp(`./public/static/avatar_garden/${req.body.name}/videos`);
-	avatarName=req.body.name;
 
 });
 
@@ -242,15 +245,21 @@ app.get('/getQuestions',(req,res)=>{
 	})
 });
 
-app.post('/recorder',upload.any(),(req,res)=>{
+app.post('/recorder',(req,res)=>{
 
-
+	upload(req,res,(err)=>{
+		if(err){
+			console.log('oops');
+		}else{
+			console.log(req.file);
+		}
+	});
 	console.log('Save successful');
 
 	let question = req.body.question;
 	let answer = req.body.answer;
 	let idAvatar;
-	let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${avatarName}";`;
+	let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${req.body.name}";`;
 	connection.query(getAvatarIdQuery,(err,entry,fields)=>{
 		if (err){
 			throw err;

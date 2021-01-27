@@ -14,22 +14,23 @@ function AvatarSettings() {
   const [bio, setBio] = useState('');
 
   function submitHandler(event){
-
+    event.preventDefault();
     axios.post('http://localhost:3000/createAvatar',
       {
         name,
         language,
         privacySetting,
         bio
+      }).then((res)=>{
+        history.push({
+          pathname: '/recorder',
+          state: {
+            name:name,
+            language:language,
+            new_avatar_ID: res.data.new_avatar_ID
+          }
+        });
       });
-
-    history.push({
-      pathname: '/recorder',
-      state: {
-        name:name,
-        language:language
-      }
-    });
   }
 
   function goBack(){

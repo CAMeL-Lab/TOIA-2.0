@@ -9,7 +9,8 @@ function LoginPage() {
   var inputName= "email";
   var inputName2= "pass";
 
-  function submitHandler(){
+  function submitHandler(event){
+    event.preventDefault();
     history.push({
       pathname: '/menu',
     });
