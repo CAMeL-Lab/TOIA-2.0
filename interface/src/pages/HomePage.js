@@ -11,7 +11,7 @@ function HomePage() {
   let welcome_text= "Welcome to";
   let toia_text= "TOIA";
   let toia_icon= "TOIA";
-  let blurb = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean diam metus, efficitur et nunc ut";
+  let blurb = "Placeholder for blurb or short description of TOIA";
 
   function login(){
     history.push({
@@ -32,7 +32,6 @@ function HomePage() {
           {toia_icon}
         </div>
       </div>
-      <div className="home-rectangle"></div>
       <img className="home-sample-videos home-animate-enter" src={sample} />
       
       <div className="home-overlap-group">

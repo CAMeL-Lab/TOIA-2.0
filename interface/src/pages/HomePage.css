@@ -107,7 +107,7 @@
   line-height: normal;
   position: absolute;
   text-align: left;
-  top: 180px;
+  top: 200px;
   width: 404px;
   font-size: 25px;
   font-weight: 500;
@@ -136,14 +136,6 @@
   position: absolute;
   top: 0px;
   width: 100%x;
-}
-.home-rectangle {
-  background-color: #22d6d6;
-  height: 100vh;
-  left: 0px;
-  position: absolute;
-  top: 0px;
-  width: 30%;
 }
 .home-overlap-group {
   background-color: transparent;

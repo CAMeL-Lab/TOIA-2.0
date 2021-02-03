@@ -39,7 +39,7 @@
 /*grid*/
 .library-box {
   margin: 20px;
-  align-items: center;
+  text-align: center;
   transition: all 0.2s ease-out;
 }
 .library-grid {

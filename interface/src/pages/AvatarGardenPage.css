@@ -48,6 +48,7 @@
   border-radius: 5px;
   border-color: transparent;
   margin-right: 5px;
+  cursor: pointer;
 }
 .garden-delete {
   background-color: #d21a1a;
@@ -61,14 +62,19 @@
   border-color: transparent;
   margin-right: 5px;
   width: 90px;
+  cursor: pointer;
 }
 .garden-settings {
-  width: 23px;
-  height: 23px;
+  width: 21px;
+  height: 21px;
   cursor: pointer;
+  vertical-align: middle;
 }
 .garden-popup {
   opacity: 0;
+  width: 236px;
+  margin-top: 10px;
+  text-align: center;
   transition: all 0.2s ease-out;
 }
 .garden-menu-item {
@@ -88,7 +94,7 @@
 /*grid*/
 .garden-box {
   margin: 20px;
-  align-items: center;
+  text-align: center;
 }
 .garden-grid {
   padding: 10px;

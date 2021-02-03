@@ -2,6 +2,7 @@ import './App.css';
 import './AvatarLibraryPage.css';
 import 'semantic-ui-css/semantic.min.css';
 import React from 'react';
+import Fuse from "fuse.js";
 import { Card } from "react-bootstrap";
 import menuButton from "../icons/menu-button.svg";
 import sampleVideo from "../icons/sample-video.svg";
