@@ -30,7 +30,7 @@ function LoginPage() {
         <input
             className="login-pass login-font-class-1"
             name={inputName2}
-            placeholder={"New Password"}
+            placeholder={"Password"}
             type={"password"}
             //required={true}
         />
