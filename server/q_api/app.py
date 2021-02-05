@@ -27,7 +27,7 @@ def show_page():
 def hello(): 
     return "Successful getTrial"
 
-@app.route('/PostTrial', methods = ['POST'])
+@app.route('/postTrial', methods = ['POST'])
 def test():
     data = request.data
     return ("Success you sent me: ", data)
@@ -42,7 +42,7 @@ def return3Questions():
 def generateNextQ():
 
     
-    //text = "How are you? What would you like to talk about? Do you like watching soccer games? "
+    #text = "How are you? What would you like to talk about? Do you like watching soccer games? "
 
     # UNCOMMENT AFTER INTEGRATION WITH BACKEND
     text = request.data
