@@ -266,8 +266,7 @@ app.post('/recorder',upload.any(),(req,res)=>{
 		qa_pair
 	}).then((nextQuestions)=>{
 		console.log('yehee');
-		console.log(nextQuestions.data.q[0]);
-		//res.send(nextQuestions);
+		res.send(nextQuestions.data.q[0]);
 	});
 
 	// let idAvatar;

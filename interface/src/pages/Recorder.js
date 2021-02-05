@@ -113,7 +113,12 @@ function Recorder () {
         form.append('question', questionSelected);
         form.append('answer', transcript);
         console.log(form);
-        axios.post('http://localhost:3000/recorder',form);
+        axios.post('http://localhost:3000/recorder',form).then((nextQuestion)=>{
+          const findQuestion = (element)=>element==questionSelected;
+          let qIndex=questionList.findIndex(findQuestion);
+          questionList[qIndex]=nextQuestion.data;
+          
+        });
 
         // axios({
         //   method: 'post',
