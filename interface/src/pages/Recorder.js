@@ -58,7 +58,7 @@ function Recorder () {
     setName(history.location.state.name);
     setLanguage(history.location.state.language);
     setAvatarID(history.location.state.new_avatar_ID);
-  });
+  },[]);
 
   // setName(history.location.state.name);
   // setLanguage(history.location.state.language);
@@ -112,7 +112,7 @@ function Recorder () {
         form.append('language',avatarLanguage);
         form.append('question', questionSelected);
         form.append('answer', transcript);
-
+        console.log(form);
         axios.post('http://localhost:3000/recorder',form);
 
         // axios({

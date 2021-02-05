@@ -14,30 +14,18 @@ import axios from 'axios';
 
 function AvatarGardenPage() {
 
-    React.useEffect(() => {
-        console.log('wohoo');
-        axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
-            console.log(res);
-        });
+    // React.useEffect(() => {
+    //     console.log('wohoo');
+    //     axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
+    //         console.log(res);
+    //     });
        
-    });
+    // });
 
     var avatars = [ //This is a list that will hold the still image and name of avatar the user has created, needs to come from backend (Wahib)
-        { still: sampleVideo, name: "John Doe" },
-        { still: sampleVideo, name: "Jane Doe" },
-        { still: sampleVideo, name: "Mary Doe" },
-        { still: sampleVideo, name: "John Doe" },
-        { still: sampleVideo, name: "Matthew Doe" },
-        { still: sampleVideo, name: "Joseph Doe" },
-        { still: sampleVideo, name: "Peter Doe" },
-        { still: sampleVideo, name: "Paul Doe" },
-        { still: sampleVideo, name: "Nizar Doe" },
-        { still: sampleVideo, name: "Tyeece Doe" },
-        { still: sampleVideo, name: "Daniel Doe" },
-        { still: sampleVideo, name: "Goliath Doe" },
-        { still: sampleVideo, name: "John Doe" },
-        { still: sampleVideo, name: "John Doe" },
-        { still: sampleVideo, name: "John Doe" },
+        { still: sampleVideo, name: "Work - John Doe" },
+        { still: sampleVideo, name: "Personal - Jane Doe" },
+        { still: sampleVideo, name: "Education - Mary Doe" },
         ];
 
     const [visible, setVisible] = React.useState(false);

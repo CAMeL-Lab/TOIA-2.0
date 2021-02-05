@@ -9,7 +9,16 @@ import linecache
 from transformers import pipeline, set_seed
 import nltk 
 from nltk import tokenize
-#nltk.download('punkt')
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+nltk.download('punkt')
 
 # To run this, type in terminal: `export FLASK_APP=main-app.py` (or whatever name of file is)
 # Then type flask run
@@ -45,7 +54,14 @@ def generateNextQ():
     #text = "How are you? What would you like to talk about? Do you like watching soccer games? "
 
     # UNCOMMENT AFTER INTEGRATION WITH BACKEND
-    text = request.data
+
+    body_unicode = request.data.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    print('yay')
+    print(body)
+    text=body['qa_pair']
+
 
     q = generator(text, num_return_sequences=3,max_length=50+len(text))
 
