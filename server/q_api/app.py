@@ -7,9 +7,19 @@ import re
 import json 
 import linecache
 from transformers import pipeline, set_seed
+from transformers import BertTokenizer, BertForNextSentencePrediction
 import nltk 
 from nltk import tokenize
 import ssl
+import torch
+
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
+
+#Local storage of the conversation data - will be deprecated once the database is in place
+storage = []
+
+starters = ["What topics would you like to talk about?", "What are your hobbies?", "Where did you study?"]
 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -50,37 +60,55 @@ def return3Questions():
 @app.route('/generateNextQ',  methods = ['POST'])
 def generateNextQ():
 
-    
-    #text = "How are you? What would you like to talk about? Do you like watching soccer games? "
-
     # UNCOMMENT AFTER INTEGRATION WITH BACKEND
 
     body_unicode = request.data.decode('utf-8')
     body = json.loads(body_unicode)
 
-    print('yay')
-    print(body)
+    print("Received body", body)
     text=body['qa_pair']
 
+    storage.append(text)
 
-    q = generator(text, num_return_sequences=3,max_length=50+len(text))
+    if len(starters) > 0: 
+        print("SENDING STARTER")
+        return {"q":starters.pop()}
 
-    #all generated examples 
-    allGenerations = ""
-    for i in range(3):
-        allGenerations = allGenerations +" "+ q[i]['generated_text'][len(text)-4:]
-    
-    #Separating all the sentences... 
-    sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
+    else: 
 
-    #Filter out questions 
-    questionsList = []
-    for sentence in sentenceList :
-        if "?" in sentence: 
-            questionsList.append(sentence)
+        text = " ".join(storage[-2:])
+        q = generator(text, num_return_sequences=3,max_length=50+len(text))
+
+        #all generated examples 
+        allGenerations = ""
+        for i in range(3):
+            allGenerations = allGenerations +" "+ q[i]['generated_text'][len(text)-4:]
+        
+        #Separating all the sentences... 
+        sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
+
+        #Filter out questions 
+        questionsList = []
+        for sentence in sentenceList :
+            if "?" in sentence:
+                questionsList.append(sentence.strip("\n").strip("\\").strip('"'))
+
+        #Bert evaluation
+        bert_filtered_qs = []
+        for sentence in questionsList:
+            encoding = tokenizer(" ".join(storage[-3:]), sentence, return_tensors='pt')
+            outputs = model(**encoding)
+            logits = outputs.logits
+            bert_filtered_qs.append((logits[0,0].item(), sentence))
 
 
-    return {"q":questionsList}
+        bert_filtered_qs.sort(key=lambda tup: tup[0])
+
+
+        print (bert_filtered_qs)
+
+        return {"q":bert_filtered_qs[-1][1]}
+
 
 
 
