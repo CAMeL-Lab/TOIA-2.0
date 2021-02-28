@@ -51,14 +51,14 @@ function Recorder () {
   const { open } = state
 
 
-  useEffect(() => {
+  /*useEffect(() => {
     axios.get('http://localhost:3000/getQuestions').then((res)=>{
       setQuestionList(res.data);
     });
     setName(history.location.state.name);
     setLanguage(history.location.state.language);
     setAvatarID(history.location.state.new_avatar_ID);
-  });
+  });*/
 
   // setName(history.location.state.name);
   // setLanguage(history.location.state.language);

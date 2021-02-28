@@ -11,46 +11,58 @@
 .signup-button:hover {
   transform: scale(1.1);
 }
-
+.signup-animate-enter {
+  animation: signup-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+  display: block;
+  opacity: 0;
+  transform: translate(0, 25px);
+}
+@keyframes signup-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translate(0, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
 /*button and elements*/
 .signup-button {
   background-color: transparent;
   position: absolute;
   height: 70px;
-  top: 530px;
-  left: 42%;
+  top: 85%;
+  left: 31%;
   pointer-events: auto;
   transition: all 0.2s ease;
   width: 203px;
 }
 .signup-group {
   background-color: transparent;
-  height: 380px;
+  height: 70vh;
   left: 30%;
   position: absolute;
-  top: 17%;
-  width: 570px;
-}
-.signup-back_icon {
-  background-color: transparent;
-  height: 30px;
-  left: 2%;
-  top: 2%;
-  width: 30px;
-  position: absolute;
-  pointer-events: auto;
-  cursor: pointer;
+  top: 10%;
+  width: 40vw;
 }
 
 /*text and textboxes*/
 .signup-title {
   background-color: transparent;
   height: auto;
-  left: 24%;
+  left: 31%;
+  position: absolute;
+  top: 0%;
+}
+.signup_text {
+  background-color: transparent;
+  height: auto;
+  left: 22%;
   position: absolute;
   text-align: center;
-  top: 0px;
-  width: 300px;
+  top: 13%;
+  opacity: 0.75;
 }
 .signup-fname {
   background-color: var(--robins-egg-blue);
@@ -62,7 +74,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 90px;
+  top: 27%;
   width: 245px;
 }
 .signup-lname {
@@ -70,12 +82,12 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 322px;
+  left: 57%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 90px;
+  top: 27%;
   width: 245px;
 }
 .signup-email {
@@ -88,8 +100,30 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 151px;
+  top: 38%;
   width: 570px;
+}
+.signup-language {
+  background-color: transparent;
+  height: 17px;
+  left: 0px;
+  position: absolute;
+  text-align: left;
+  top: 50%;
+  width: 78px;
+}
+.signup-lang {
+  background-color: var(--robins-egg-blue);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 78px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 49%;
+  width: 492px;
 }
 .signup-pass {
   background-color: var(--robins-egg-blue);
@@ -101,7 +135,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 212px;
+  top: 60%;
   width: 570px;
 }
 .signup-pass1 {
@@ -114,7 +148,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 273px;
+  top: 71%;
   width: 570px;
 }
 
@@ -133,15 +167,15 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  letter-spacing: -0.18px;
+  letter-spacing: -0.015em;
 }
 .signup-font-class-3 {
   color: black;
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-size: 40px;
+  font-size: 36px;
   font-style: normal;
   font-weight: 700;
-  letter-spacing: -0.54px;
+  letter-spacing: -0.015em;
 }
 
 /*Colours*/

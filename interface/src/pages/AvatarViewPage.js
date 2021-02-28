@@ -1,19 +1,31 @@
 import './App.css';
 import './AvatarViewPage.css';
+import 'semantic-ui-css/semantic.min.css';
 import React from "react";
 import submitButton from "../icons/submit-button.svg";
-import backButton from "../icons/back-button.svg";
 import video from "../icons/sample-video.svg"
 import history from '../services/history';
+import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
 
 
 function AvatarViewPage() {
     
+    function exampleReducer( state, action ) {
+        switch (action.type) {
+          case 'close':
+            return { open: false };
+          case 'open':
+            return { open: true }; 
+        }
+    }
+
     const [name, setName] = React.useState(null);
     const [language, setLanguage] = React.useState(null);
     const [bio, setBio] = React.useState(null);
     const [avatarID,setAvatarID] = React.useState(null);
+    let isLogin = false;
+    var input1, input2;
 
     const [interactionLanguage, setInteractionLanguage] = React.useState(null);
     
@@ -29,8 +41,32 @@ function AvatarViewPage() {
         });
     });
     
-    function goBack(){
-        history.goBack();
+    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
+    const { open } = state
+
+    function openModal(e){
+        dispatch({ type: 'open' });
+        e.preventDefault();
+    }
+
+    function myChangeHandler(event){
+        event.preventDefault();
+        var name = event.target.name;
+    
+        switch(name) {
+          case "email":
+            input1 = event.target.value;
+            break;
+          case "pass":
+            input2 = event.target.value;
+            break;
+        }
+    }
+
+    function submitHandler1(){
+        history.push({
+            pathname: '/garden',
+        });
     }
     
 
@@ -45,11 +81,105 @@ function AvatarViewPage() {
             }
         });
     }
+
+    function home() {
+        history.push({
+          pathname: '/',
+        });
+      }
+    
+      function library() {
+        history.push({
+          pathname: '/library',
+        });
+      }
+    
+      function garden(e) {
+        if (isLogin) {
+          history.push({
+            pathname: '/garden',
+          });
+        }else{
+          openModal(e);
+        }
+      }
+
+     function logout(){
+         //logout function needs to be implemented (wahib)
+         history.push({
+             pathname: '/',
+           });
+     }
+     
+     function signup(){
+        history.push({
+          pathname: '/signup',
+        });
+      }
+
+     const inlineStyle = {
+        modal : {
+            height: '560px',
+            width: '600px',
+        }
+      };
      
     //a function will be needed to send input5 to database (wahib)
     
     return (
         <div className="view-page">
+            <Modal //this is the new pop up menu
+                size='large'
+                style={inlineStyle.modal}
+                open={open} 
+                onClose={() => dispatch({ type: 'close' })}
+            >
+                    <Modal.Header className="login_header">
+                    <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
+                    <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
+                    </Modal.Header>
+
+                    <Modal.Content>
+                    <form className="login_popup" onSubmit={submitHandler1}>
+                        <input
+                        className="login_email login-font-class-1"
+                        placeholder={"Email"}
+                        type={"email"}
+                        required={true}
+                        onChange={myChangeHandler}
+                        name={"email"}
+                        />
+                        <input
+                        className="login_pass login-font-class-1"
+                        placeholder={"Password"}
+                        type={"password"}
+                        required={true}
+                        onChange={myChangeHandler}
+                        name={"pass"}
+                        />
+                        <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
+                        <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
+                    </form>
+                    </Modal.Content>
+            </Modal>
+            <div className="nav-heading-bar">
+                <div onClick={home} className="nav-toia_icon app-opensans-normal">
+                    TOIA
+                </div>
+                <div className="nav-about_icon app-monsterrat-black ">
+                    About Us
+                </div>
+                <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
+                    Talk To TOIA
+                </div>
+                <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
+                    My TOIA
+                </div>
+                <div onClick={isLogin ? logout : openModal}className="nav-login_icon app-monsterrat-black">
+                   {isLogin ? 'Logout' : 'Login'}
+                </div>
+            </div>
+            <h1 className="view-title view-font-class-1 ">Here is infromation on the TOIA selected</h1>
             <img className="view-still" src={video}/>
             <input  onClick={submitHandler} className="view-submit-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
             <div className="view-group">
@@ -59,7 +189,7 @@ function AvatarViewPage() {
                     defaultValue = {name}
                     type={"text"}
                 />
-                <div className="view-creator view-font-class-1 ">Creator: </div>
+                <div className="view-creator view-font-class-1 ">Album: </div>
                 <input
                     className="view-creator_box view-font-class-1"
                     defaultValue = {name}
@@ -153,7 +283,6 @@ function AvatarViewPage() {
                     <option value="XH">Xhosa</option>
                 </select>
             </div>
-            <div onClick={goBack}><img className="view-back_icon" src={backButton} /></div>
         </div>
     );
 }

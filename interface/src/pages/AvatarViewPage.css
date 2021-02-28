@@ -17,18 +17,8 @@
   height: 435px;
   left: 40%;
   position: absolute;
-  top: 15%;
+  top: 20%;
   width: 665px;
-}
-.view-back_icon {
-  background-color: transparent;
-  height: 30px;
-  left: 2%;
-  top: 2%;
-  width: 30px;
-  position: absolute;
-  pointer-events: auto;
-  cursor: pointer;
 }
 .view-submit-button {
   background-color: transparent;
@@ -43,7 +33,7 @@
 .view-still {
   height: 400px;
   width: 400px;
-  top: 17%;
+  top: 19%;
   left: 8%;
   position: absolute;
 }
@@ -92,6 +82,12 @@
   text-align: left;
   top: 173px;
   width: 78px;
+}
+.view-title {
+  position: absolute;
+  top: 7%;
+  left: 39%;
+  font-size: 20px;
 }
 
 /*text boxes*/

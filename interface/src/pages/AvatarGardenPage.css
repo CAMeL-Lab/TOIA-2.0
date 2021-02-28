@@ -10,21 +10,8 @@
 .garden-add:hover {
   transform: scale(1.1);
 }
-.garden-popup:hover {
-  opacity: 1;
-}
 
 /*elements*/
-.garden-menu_icon {
-  background-color: transparent;
-  height: 15px;
-  left: 94%;
-  top: 2%;
-  width: 15px;
-  position: absolute;
-  pointer-events: auto;
-  cursor: pointer;
-}
 .garden-add {
   background-color: transparent;
   height: 98px;
@@ -47,7 +34,7 @@
   text-align: center;
   border-radius: 5px;
   border-color: transparent;
-  margin-right: 5px;
+  margin-right: 20px;
   cursor: pointer;
 }
 .garden-delete {
@@ -60,41 +47,19 @@
   text-align: center;
   border-radius: 5px;
   border-color: transparent;
-  margin-right: 5px;
   width: 90px;
   cursor: pointer;
-}
-.garden-settings {
-  width: 21px;
-  height: 21px;
-  cursor: pointer;
-  vertical-align: middle;
-}
-.garden-popup {
-  opacity: 0;
-  width: 236px;
-  margin-top: 10px;
-  text-align: center;
-  transition: all 0.2s ease-out;
-}
-.garden-menu-item {
-  color: black;
-  font-family: "Montserrat", Helvetica, Arial, serif;
-  font-style: normal;
-  font-size: 18px;
-  font-weight: 600;
-  height: 30px;
-  text-align: center;
-  cursor: pointer;
-}
-.red {
-  color: red;
 }
 
 /*grid*/
 .garden-box {
   margin: 20px;
   text-align: center;
+  border-radius: 15px;
+  height: 250px;
+  width: 250px;
+  background-position: center;
+  background-size: 250px 250px;
 }
 .garden-grid {
   padding: 10px;
@@ -118,25 +83,44 @@
   font-size: 15px;
   font-weight: 500;
   text-align: center;
+  top: 15%;
+  position: relative;
+  padding: 10px;
 }
-.garden-still {
-  width: 200px;
-  height: 200px;
+.garden-popup {
+  top: 60%;
+  left: 3%;
+  position: relative;
 }
-
 /*searchbar*/
 .garden-search {
   background-color: #f8f8f8;
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 10%;
+  left: 13%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
   top: 7%;
-  width: 80vw;
+  width: 45vw;
+  padding: 2px;
+  font-size: 15px;
+  margin: 5px 0;
+}
+.garden-sort {
+  background-color: #f8f8f8;
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 60%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 7%;
+  width: 30vw;
   padding: 2px;
   font-size: 15px;
   margin: 5px 0;

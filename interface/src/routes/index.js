@@ -3,8 +3,6 @@ import { Route, Switch } from "react-router-dom";
 
 import Home from "../pages/HomePage";
 import SignUp from "../pages/SignUpPage";
-import Login from "../pages/LoginPage";
-import MainMenu from "../pages/MainMenuPage";
 import AvatarGarden from "../pages/AvatarGardenPage";
 import AvatarLibrary from "../pages/AvatarLibraryPage";
 import Settings from "../pages/AvatarSettings";
@@ -18,8 +16,6 @@ export default function Routes() {
     <Switch>
 		<Route path="/" exact component={Home} />
         <Route path="/signup" component={SignUp} />
-		<Route path="/login" component={Login} />
-		<Route path="/menu" component={MainMenu} />
 		<Route path="/garden" component={AvatarGarden} />
 		<Route path="/library" component={AvatarLibrary} />
 		<Route path="/settings" component={Settings} />
