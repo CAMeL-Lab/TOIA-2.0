@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Webpage Title</title>
+    <!-- NOTE below the formats for using static files like css or a script(js) file -->
+	<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<script src="{{url_for('static', filename='script.js')}}"></script>
+</body>
+</html>

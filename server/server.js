@@ -69,12 +69,13 @@ let count=9000;
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
+		//cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
+		cb(null,`./public/static/avatar_garden/Wahib/videos`);
 	},
 	filename: function (req, file, cb) {
 		crypto.pseudoRandomBytes(16, function (err, raw) {
 			let video_id=(raw.toString('hex') + Date.now()).slice(0,32);
-			cb(null, req.body.name+'_'+video_id + '.' + mime.getExtension(file.mimetype));
+			cb(null, 'WAHIB_'+video_id + '.' + mime.getExtension(file.mimetype));
 		});
   }
 });
@@ -239,45 +240,64 @@ app.post('/createAvatar',(req,res)=>{
 
 
 app.get('/getQuestions',(req,res)=>{
-	axios.get('https://toia-question-generator.herokuapp.com/getMandataoryQuestions').then((questionArr)=>{
+	axios.get('http://localhost:4000/getMandatoryQuestions').then((questionArr)=>{
 		console.log('yehee');
 		res.send(questionArr.data.mandatoryQuestions);
 	})
 });
 
-app.post('/recorder',(req,res)=>{
+app.post('/recorder',upload.any(),(req,res)=>{
 
-	upload(req,res,(err)=>{
-		if(err){
-			console.log('oops');
-		}else{
-			console.log(req.file);
-		}
-	});
-	console.log('Save successful');
+	// upload(req,res,(err)=>{
+	// 	if(err){
+	// 		console.log('oops');
+	// 	}else{
+	// 		console.log(req.file);
+	// 	}
+	// });
+	// console.log('Save successful');
 
 	let question = req.body.question;
 	let answer = req.body.answer;
-	let idAvatar;
-	let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${req.body.name}";`;
-	connection.query(getAvatarIdQuery,(err,entry,fields)=>{
-		if (err){
-			throw err;
-		}
-		else{
-			console.log(entry);
-			idAvatar=entry[0].id_avatar;
-			let querySaveVideo = `INSERT INTO video(id_video,question,answer,type,avatar_id_avatar,idx) VALUES("${video_id}","${question}","${answer}","answer",${idAvatar},${count});`;
+	console.log(req.body);
+	let qa_pair=question+' '+answer;
+	console.log(qa_pair);
+	axios.post('http://localhost:4000/generateNextQ',{
+		qa_pair
+	}).then((nextQuestions)=>{
+		console.log('yehee');
+		res.send(nextQuestions.data.q[0]);
+	});
+
+	// let idAvatar;
+	// let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${req.body.name}";`;
+	// connection.query(getAvatarIdQuery,(err,entry,fields)=>{
+	// 	if (err){
+	// 		throw err;
+	// 	}
+	// 	else{
+	// 		console.log(entry);
+	// 		idAvatar=entry[0].id_avatar;
+	// 		let querySaveVideo = `INSERT INTO video(id_video,question,answer,type,avatar_id_avatar,idx) VALUES("${video_id}","${question}","${answer}","answer",${idAvatar},${count});`;
 
 		
-			connection.query(querySaveVideo, (err,entry,fields)=>{
-				if (err){
-					throw err;
-				}
-			});
-		}
-	});
-	count=count+20;
+	// 		connection.query(querySaveVideo, (err,entry,fields)=>{
+	// 			if (err){
+	// 				throw err;
+	// 			}
+	// 		});
+	// 	}
+	// });
+	// count=count+20;
+
+
+
+
+
+
+
+
+
 
 			
 	// 		let video_file=avatar.toLowerCase()+'2019_'+index+'_'+video_id+'.mp4';

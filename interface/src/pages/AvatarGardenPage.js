@@ -10,13 +10,13 @@ import axios from 'axios';
 
 function AvatarGardenPage() {
 
-    React.useEffect(() => {
-        console.log('wohoo');
-        axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
-            console.log(res);
-        });
+    // React.useEffect(() => {
+    //     console.log('wohoo');
+    //     axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
+    //         console.log(res);
+    //     });
        
-    });
+    // });
 
     var avatars = [ //This is a list that will hold the still image and name of avatar the user has created, needs to come from backend (Wahib)
         { still: sampleVideo, question: "John Doe", album: "default business"},

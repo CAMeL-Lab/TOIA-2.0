@@ -58,7 +58,11 @@ function Recorder () {
     setName(history.location.state.name);
     setLanguage(history.location.state.language);
     setAvatarID(history.location.state.new_avatar_ID);
+<<<<<<< HEAD
   });*/
+=======
+  },[]);
+>>>>>>> 826b8e8a169a0d104528278c109e0aa73bf79e17
 
   // setName(history.location.state.name);
   // setLanguage(history.location.state.language);
@@ -112,8 +116,13 @@ function Recorder () {
         form.append('language',avatarLanguage);
         form.append('question', questionSelected);
         form.append('answer', transcript);
-
-        axios.post('http://localhost:3000/recorder',form);
+        console.log(form);
+        axios.post('http://localhost:3000/recorder',form).then((nextQuestion)=>{
+          const findQuestion = (element)=>element==questionSelected;
+          let qIndex=questionList.findIndex(findQuestion);
+          questionList[qIndex]=nextQuestion.data;
+          
+        });
 
         // axios({
         //   method: 'post',
