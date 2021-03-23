@@ -10,17 +10,174 @@
 .garden-add:hover {
   transform: scale(1.1);
 }
+.garden-trash:hover {
+  transform: scale(1.07);
+}
+.garden-move_icon:hover {
+  transform: scale(1.07);
+}
+.elem-2:hover {
+  transform: scale(1.1);
+}
+.garden-animate-enter {
+  animation: garden-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+  display: block;
+  opacity: 0;
+  transform: translate(0, 25px);
+}
+@keyframes garden-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translate(0, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+.bounce {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
 
 /*elements*/
-.garden-add {
+.garden-title {
   background-color: transparent;
-  height: 98px;
-  left: 90%;
-  top: 80%;
-  width: 98px;
+  height: auto;
+  left: 45%;
   position: absolute;
-  pointer-events: auto;
+  top: 3%;
+  font-size: 36px;
+}
+.garden-text {
+  background-color: transparent;
+  color: gray;
+  height: auto;
+  left: 38%;
+  position: absolute;
+  text-align: center;
+  top: 10%;
+  opacity: 0.5;
+  font-size: 14px;
+}
+.elem-1 {
+  background-color: #22d6d6;
+  border-radius: 10px;
+  height: 25vh;
+  left: 10%;
+  top: 30%;
+  width: 26vw;
+  position: absolute;
+}
+.elem-text-1 {
+  color: white;
+  width: 60%;
+  left: 0%;
+  top: 7%;
+  position: absolute;
+  font-size: 125px;
+}
+.elem-text-2 {
+  color: white;
+  width: 60%;
+  left: 45%;
+  top: 10%;
+  position: absolute;
+  font-size: 36px;
+}
+.elem-2 {
+  background-color: transparent;
+  height: 25vh;
+  left: 60%;
+  top: 30%;
+  width: 26vw;
+  position: absolute;
+  cursor: pointer;
   transition: all 0.2s ease-out;
+}
+.elem-img1 {
+  height: 70%;
+  left: 26%;
+  top: 10%;
+  position: absolute;
+  opacity: 0.75;
+}
+.elem-text-3 {
+  color: #22d6d6;
+  width: 60%;
+  left: 30%;
+  top: 80%;
+  position: absolute;
+  font-size: 36px;
+}
+.elem-3 {
+  background-color: transparent;
+  height: 8vh;
+  left: 33%;
+  top: 80%;
+  width: 40vw;
+  position: absolute;
+}
+.elem-text-4 {
+  color: #22d6d6;
+  width: 60%;
+  left: 2%;
+  top: -10%;
+  position: absolute;
+  font-size: 56px;
+}
+.elem-text-5 {
+  color: #22d6d6;
+  width: 60%;
+  left: 20%;
+  position: absolute;
+  font-size: 46px;
+}
+.elem-img2 {
+  background-color: transparent;
+  left: 80%;
+  top: 20%;
+  height: 40px;
+  position: absolute;
+  cursor: pointer;
+}
+.section1 {
+  background-color: transparent;
+  position: absolute;
+  left: 2.5%;
+  top: 10%;
+  height: 87vh;
+  width: 95vw;
+}
+.section2 {
+  background-color: transparent;
+  position: absolute;
+  left: 2.5%;
+  top: 100%;
+  height: 87vh;
+  width: 95vw;
+}
+.garden-checkbox {
+  position: absolute;
+  left: 92%;
+  top: 60%;
+  height: 15vh;
+  width: 3vw;
 }
 
 /*buttons*/
@@ -34,7 +191,7 @@
   text-align: center;
   border-radius: 5px;
   border-color: transparent;
-  margin-right: 20px;
+  margin-right: 5px;
   cursor: pointer;
 }
 .garden-delete {
@@ -46,9 +203,44 @@
   font-weight: 500;
   text-align: center;
   border-radius: 5px;
+  margin-right: 5px;
   border-color: transparent;
   width: 90px;
   cursor: pointer;
+}
+.garden-trash {
+  background-color: transparent;
+  height: 35px;
+  top: 60%;
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.garden-move {
+  background-color: transparent;
+  border: transparent;
+  height: 0px;
+  width: 0px;
+  position: absolute;
+  top: 30px;
+  left: 5px;
+}
+.garden-move_icon {
+  background-color: transparent;
+  height: 27px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.garden-add {
+  background-color: transparent;
+  height: 98px;
+  left: 90%;
+  top: 80%;
+  width: 98px;
+  position: absolute;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease-out;
 }
 
 /*grid*/
@@ -66,8 +258,8 @@
   overflow-y: scroll;
   height: 65vh;
   width: 80vw;
-  left: 10%;
-  top: 15%;
+  left: 2%;
+  top: 10%;
   position: absolute;
   display: flex;
   flex-wrap: wrap;
@@ -81,29 +273,34 @@
   font-family: "Montserrat", Helvetica, Arial, serif;
   font-style: normal;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   text-align: center;
   top: 15%;
+  left: 20%;
+  height: 50%;
+  width: 70%;
   position: relative;
+  overflow: auto;
   padding: 10px;
 }
 .garden-popup {
-  top: 60%;
+  top: 20%;
   left: 3%;
   position: relative;
 }
+
 /*searchbar*/
 .garden-search {
   background-color: #f8f8f8;
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 13%;
+  left: 6%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 7%;
+  top: 0%;
   width: 45vw;
   padding: 2px;
   font-size: 15px;
@@ -114,12 +311,12 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 60%;
+  left: 54%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 7%;
+  top: 0%;
   width: 30vw;
   padding: 2px;
   font-size: 15px;
@@ -154,4 +351,18 @@
   padding-left: 5px;
   padding-top: 2px;
   color: black;
+}
+
+/*fonts*/
+.garden-font-class-2 {
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.garden-font-class-3 {
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }

@@ -4,8 +4,9 @@ video {
 }
 .edit-layout {
   position: absolute;
-  left: 5%;
-  top: 6%;
+  left: 41%;
+  top: 12%;
+  border-radius: 10px;
 }
 .edit-record-page {
   background-color: white;
@@ -17,19 +18,35 @@ video {
   width: 100%;
 }
 .edit-font-class-1 {
-  color: #707070;
   font-family: "Montserrat", Helvetica, Arial, serif;
   font-style: normal;
   font-size: 14px;
   font-weight: 500;
+}
+.edit-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
+}
+.edit-title {
+  background-color: transparent;
+  height: auto;
+  left: 37%;
+  position: absolute;
+  text-align: center;
+  top: 3%;
+  width: 350px;
 }
 
 /*Icons*/
 .edit-icon {
   display: block;
   position: absolute;
-  left: 6%;
-  top: 62%;
+  left: 42%;
+  top: 61.5%;
   width: 48px;
   z-index: 3;
   background-color: transparent;
@@ -38,34 +55,98 @@ video {
 .edit-check {
   display: block;
   position: absolute;
-  left: 87%;
-  top: 60%;
-  width: 100px;
+  left: 92%;
+  top: 61%;
+  width: 80px;
   font-size: 40px;
   z-index: 3;
   background-color: transparent;
   border: 0;
   color: var(--check-green);
 }
-.edit-close_icon {
-  background-color: transparent;
-  height: 30px;
-  left: 95%;
-  top: 1.5%;
-  width: 30px;
-  position: absolute;
-  pointer-events: auto;
-  cursor: pointer;
-}
-.edit-menu_icon {
-  background-color: transparent;
-  height: 20px;
+
+/*Side Buttons*/
+.side-bar {
+  height: 80vh;
+  width: 30vw;
+  top: 12%;
   left: 3%;
-  top: 1.5%;
-  width: 20px;
   position: absolute;
-  pointer-events: auto;
+}
+.side-button {
+  height: 6vh;
+  width: 12vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 15px;
   cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.b1 {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+}
+.b2 {
+  position: absolute;
+  top: 0%;
+  left: 59%;
+}
+.b3 {
+  position: absolute;
+  top: 10%;
+  left: 0%;
+}
+.b4 {
+  position: absolute;
+  top: 10%;
+  left: 59%;
+}
+.b5 {
+  position: absolute;
+  top: 20%;
+  left: 0%;
+}
+.public {
+  height: 6vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  position: absolute;
+  padding-left: 15%;
+  top: 40%;
+  left: 0%;
+}
+.switch {
+  position: absolute;
+  left: 47%;
+}
+.select {
+  position: absolute;
+  top: 60%;
+  left: 0%;
+  width: 100%;
+}
+.divider1 {
+  position: absolute;
+  top: 33%;
+  left: 5%;
+  width: 90%;
+  border: 4px solid rgba(194, 195, 196, 0.16);
+  border-radius: 5px;
+}
+.divider2 {
+  position: absolute;
+  top: 52%;
+  left: 5%;
+  width: 90%;
+  border: 4px solid rgba(194, 195, 196, 0.16);
+  border-radius: 5px;
 }
 
 /*Questions and text field*/
@@ -74,36 +155,30 @@ video {
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 5%;
+  left: 41%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 85%;
-  width: 1290px;
-}
-.edit-menu-item,
-.edit-menu-item1,
-.edit-menu-item2,
-.edit-menu-item3,
-.edit-menu-item4 {
+  top: 78%;
+  width: 55vw;
   color: #707070;
-  font-family: "Montserrat", Helvetica, Arial, serif;
-  font-style: normal;
-  font-size: 14px;
-  font-weight: 400;
-  height: 30px;
-  text-align: center;
-  cursor: pointer;
 }
-.edit-menu-header {
-  color: black;
-  font-family: "Montserrat", Helvetica, Arial, serif;
-  font-style: normal;
-  font-size: 16px;
-  font-weight: 600;
-  height: 30px;
+.speech {
+  color: #000000;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 46%;
+  width: 47%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
   text-align: center;
+  top: 62%;
+  overflow: auto;
 }
 
 /*modal elements*/
@@ -137,21 +212,6 @@ video {
 }
 
 /*Animations*/
-.edit-menu-item:hover {
-  color: rgb(34, 214, 214);
-}
-.edit-menu-item1:hover {
-  color: rgb(34, 214, 214);
-}
-.edit-menu-item2:hover {
-  color: rgb(34, 214, 214);
-}
-.edit-menu-item3:hover {
-  color: rgb(34, 214, 214);
-}
-.edit-menu-item4:hover {
-  color: rgb(34, 214, 214);
-}
 
 :root {
   --black: rgba(0, 0, 0, 0.75);

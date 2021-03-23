@@ -24,7 +24,7 @@ function AvatarLibraryPage() {
     
     const [avatarList, setAvatarList] = React.useState([]);
     const [avatarCards, setAvatarCards] = React.useState(''); 
-    let isLogin = false;
+    let isLogin = true;
     var input1, input2;
 
     React.useEffect(() => {
@@ -61,6 +61,7 @@ function AvatarLibraryPage() {
             pathname: '/garden',
         });
     }
+    
     const renderCard = (avatar) => {
         return(
             <Card onClick={()=>view(avatar)} key={avatar} className="library-box border-0">

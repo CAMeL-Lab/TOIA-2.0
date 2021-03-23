@@ -23,13 +23,14 @@ function AvatarViewPage() {
     const [name, setName] = React.useState(null);
     const [language, setLanguage] = React.useState(null);
     const [bio, setBio] = React.useState(null);
+    var toia = {still: video, name: 'Jane Doe', album: 'Business', lang: 'English', bio: 'This has all the business videos'}
     const [avatarID,setAvatarID] = React.useState(null);
     let isLogin = false;
     var input1, input2;
 
     const [interactionLanguage, setInteractionLanguage] = React.useState(null);
     
-    React.useEffect(() => {
+    /*React.useEffect(() => {
     
         axios.get('http://localhost:3000/getAvatarInfo',{params:{
             avatarID: history.location.state.id_avatar
@@ -39,7 +40,7 @@ function AvatarViewPage() {
             setBio(res.data.bio);
             setAvatarID(history.location.state.id_avatar);
         });
-    });
+    });*/
     
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const { open } = state
@@ -179,35 +180,36 @@ function AvatarViewPage() {
                    {isLogin ? 'Logout' : 'Login'}
                 </div>
             </div>
-            <h1 className="view-title view-font-class-1 ">Here is infromation on the TOIA selected</h1>
+            <h1 className="view-title view-font-class-3 ">TOIA Settings</h1>
+            <p className="view-edit view-font-class-1 view-animate-enter">Here are a few extra information about TOIA chosen</p>
             <img className="view-still" src={video}/>
             <input  onClick={submitHandler} className="view-submit-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
             <div className="view-group">
                 <div className="view-name view-font-class-1 ">Name: </div>
                 <input
                     className="view-name_box view-font-class-1"
-                    defaultValue = {name}
+                    value={toia.name}
                     type={"text"}
                 />
                 <div className="view-creator view-font-class-1 ">Album: </div>
                 <input
                     className="view-creator_box view-font-class-1"
-                    defaultValue = {name}
+                    value={toia.album}
                     type={"text"}
                 />
                 <div className="view-lang view-font-class-1 ">Language: </div>
                 <input
                     className="view-lang_box view-font-class-1"
-                    defaultValue = {language}
+                    value={toia.lang}
                     type={"text"}
                 />
                 <div className="view-bio view-font-class-1 ">Bio: </div>
                 <textarea
                     className="view-bio_box view-font-class-1"
-                    defaultValue = {bio}
+                    value={toia.bio}
                     type={"text"}
                 />
-                <select className="view-lang2_box view-font-class-1" >
+                <select className="view-lang2_box view-font-class-1" onChange={e=>setInteractionLanguage(e.target.value)}>
                     <option value="" disabled selected hidden>What language would you like to speak in..</option>
                     <option value="AF">Afrikaans</option>
                     <option value="SQ">Albanian</option>

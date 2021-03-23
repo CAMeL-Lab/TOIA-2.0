@@ -2,11 +2,12 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:500,600|Open+Sans:700,400");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 @import url("https://fonts.googleapis.com/css?family=Montserrat:600,500|Open+Sans:400");
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
 * {
   box-sizing: border-box;
 }
 
-/*ScrollBar*/
+/*ScrollBar
 ::-webkit-scrollbar {
   width: 9px;
 }
@@ -18,7 +19,7 @@
   background: black;
   border-radius: 5px;
   height: 12px;
-}
+}*/
 
 /*navbar*/
 .nav-heading-bar {
@@ -30,9 +31,10 @@
   justify-content: flex-start;
   left: 0px;
   padding: 9px;
-  position: absolute;
+  position: fixed;
   top: 0px;
   width: 100%;
+  z-index: 100;
 }
 .nav-toia_icon {
   top: 0%;

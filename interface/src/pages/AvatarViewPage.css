@@ -10,7 +10,22 @@
 .view-submit-button:hover {
   transform: scale(1.1);
 }
-
+.view-animate-enter {
+  animation: view-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+  display: block;
+  opacity: 0;
+  transform: translate(0, 25px);
+}
+@keyframes view-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translate(0, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
 /*elements*/
 .view-group {
   background-color: transparent;
@@ -46,6 +61,14 @@
   font-style: normal;
   font-weight: 500;
   letter-spacing: -0.21px;
+}
+.view-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
 }
 .view-name {
   background-color: transparent;
@@ -84,10 +107,26 @@
   width: 78px;
 }
 .view-title {
+  background-color: transparent;
+  height: auto;
+  left: 40%;
   position: absolute;
-  top: 7%;
-  left: 39%;
-  font-size: 20px;
+  text-align: center;
+  top: 4%;
+  width: 350px;
+}
+.view-edit {
+  background-color: transparent;
+  display: block;
+  height: 29px;
+  left: 43%;
+  position: absolute;
+  text-align: center;
+  top: 13%;
+  width: auto;
+  opacity: 0;
+  transform: translate(0, 25px);
+  font-size: 12px;
 }
 
 /*text boxes*/
