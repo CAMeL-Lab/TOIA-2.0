@@ -4,7 +4,7 @@ video {
 }
 .layout {
   position: absolute;
-  left: 41%;
+  left: 39%;
   top: 12%;
   border-radius: 10px;
 }
@@ -47,18 +47,19 @@ video {
 .icon {
   display: block;
   position: absolute;
-  left: 42%;
+  left: 40%;
   top: 61.5%;
   width: 48px;
   z-index: 3;
   background-color: transparent;
   border: 0;
+  color: white;
 }
 .check {
   display: block;
   position: absolute;
-  left: 92%;
-  top: 61%;
+  left: 84%;
+  top: 60%;
   width: 80px;
   font-size: 40px;
   z-index: 3;
@@ -150,35 +151,36 @@ video {
   border: 4px solid rgba(194, 195, 196, 0.16);
   border-radius: 5px;
 }
+
 /*Questions and text field*/
-.speech {
+.recorder-speech{
   color: #000000;
   background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  height: 31px;
   z-index: 1;
   border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 46%;
-  width: 47%;
   padding: 5px;
-  position: absolute;
   resize: none;
-  text-align: center;
-  top: 62%;
   overflow: auto;
+  text-align: center;
+  position: absolute;
+  width: 40vw;
+  top: 62%;
+  left: 45%
 }
 .type-q {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 41%;
+  left: 39%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 78%;
-  width: 55vw;
+  top: 75%;
+  width: 53vw;
   color: #707070;
 }
 
@@ -193,7 +195,7 @@ video {
   text-align: center;
 }
 .modal-ans {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 200px;

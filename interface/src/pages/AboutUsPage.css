@@ -1,0 +1,65 @@
+.about-page {
+  background-color: white;
+  height: 99vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+/*page text*/
+.about-heading{
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 36px;
+  text-align: center;
+  letter-spacing: -0.015em;
+  position: absolute;
+  left: 40%;
+  top: 4%;
+}
+.about-text{
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  text-align: center;
+  letter-spacing: -0.015em;
+  width: 70vw;
+  position: absolute;
+  left: 14%;
+  top: 13%;
+  color: #707070;
+}
+
+/*grid*/
+.about-box {
+  margin: 5px;
+  text-align: center;
+}
+.about-grid {
+  padding: 5px;
+  overflow-y: auto;
+  height: 70vh;
+  width: 84vw;
+  left: 8%;
+  top: 25%;
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.about-grid > div {
+  flex-basis: calc(18%);
+}
+.about-name {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 0px;
+}

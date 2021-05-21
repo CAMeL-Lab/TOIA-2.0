@@ -24,7 +24,7 @@
 /*navbar*/
 .nav-heading-bar {
   align-items: flex-start;
-  background-color: #22d6d6;
+  background-color:  #7e7c7c;
   display: inline-flex;
   flex-direction: row;
   height: 40px;
@@ -48,7 +48,7 @@
   letter-spacing: -0.015em;
   height: 40px;
   cursor: pointer;
-  color: var(--desert-storm);
+  color: white;
 }
 .nav-about_icon {
   top: 0%;
@@ -65,7 +65,8 @@
   width: 120px;
   border-radius: 3px;
   cursor: pointer;
-  color: var(--desert-storm);
+  color: white;
+  opacity: 0.8;
 }
 .nav-talk_icon {
   top: 0%;
@@ -82,7 +83,8 @@
   width: 120px;
   border-radius: 3px;
   cursor: pointer;
-  color: var(--desert-storm);
+  color: white;
+  opacity: 0.8;
 }
 .nav-my_icon {
   top: 0%;
@@ -99,7 +101,8 @@
   width: 120px;
   border-radius: 3px;
   cursor: pointer;
-  color: var(--desert-storm);
+  color: white;
+  opacity: 0.8;
 }
 .nav-login_icon {
   top: 0%;
@@ -117,28 +120,25 @@
   border-radius: 3px;
   cursor: pointer;
   color: var(--desert-storm);
+  opacity: 0.8;
 }
 .nav-selected {
-  background-color: rgba(11, 160, 160, 0.64);
+  opacity: 1;
 }
 .nav-deselect {
   opacity: 0.8;
 }
 
 .nav-about_icon:hover {
-  background-color: rgba(11, 160, 160, 0.64);
   opacity: 1;
 }
 .nav-talk_icon:hover {
-  background-color: rgba(11, 160, 160, 0.64);
   opacity: 1;
 }
 .nav-my_icon:hover {
-  background-color: rgba(11, 160, 160, 0.64);
   opacity: 1;
 }
 .nav-login_icon:hover {
-  background-color: rgba(11, 160, 160, 0.64);
   opacity: 1;
 }
 
@@ -161,7 +161,7 @@
   color: rgba(0, 0, 0, 0.75);
 }
 .login_email {
-  background-color: rgba(34, 214, 214, 0.1);
+  background-color: rgba(126, 124, 124, 0.1);
   border-radius: 3px;
   border: none;
   height: 31px;
@@ -174,7 +174,7 @@
   width: 370px;
 }
 .login_pass {
-  background-color: rgba(34, 214, 214, 0.1);
+  background-color: rgba(126, 124, 124, 0.1);
   border-radius: 3px;
   border: none;
   height: 31px;

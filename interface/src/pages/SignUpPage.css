@@ -65,7 +65,7 @@
   opacity: 0.75;
 }
 .signup-fname {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
@@ -78,7 +78,7 @@
   width: 245px;
 }
 .signup-lname {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
@@ -91,7 +91,7 @@
   width: 245px;
 }
 .signup-email {
-  background-color: var(--robins-egg-blue);
+  background-color:rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
@@ -113,7 +113,7 @@
   width: 78px;
 }
 .signup-lang {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
@@ -126,7 +126,7 @@
   width: 492px;
 }
 .signup-pass {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
@@ -139,7 +139,7 @@
   width: 570px;
 }
 .signup-pass1 {
-  background-color: var(--robins-egg-blue);
+  background-color:rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
@@ -181,6 +181,4 @@
 /*Colours*/
 :root {
   --black: rgba(0, 0, 0, 0.75);
-  --robins-egg-blue: rgba(34, 214, 214, 0.1);
-  --robins-blue: rgba(34, 214, 214, 1);
 }

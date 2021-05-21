@@ -5,8 +5,6 @@ import 'semantic-ui-css/semantic.min.css';
 import React,  {useState, useEffect, useRef} from "react";
 import Webcam from "react-webcam";
 import CreatableSelect from 'react-select/creatable';
-import recordIcon from "../icons/record_button.svg";
-import stopIcon from "../icons/stop_button.svg";
 import axios from 'axios';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import history from '../services/history';
@@ -15,8 +13,8 @@ import Switch from "react-switch";
 
 
 const videoConstraints = {
-    width: 800,
-    height: 450,
+    width: 750,
+    height: 405,
     facingMode: "user"
   };
   
@@ -44,12 +42,12 @@ function EditRecorder () {
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const { open } = state
 
-    const [bgColor1, setColor1] = useState(vtype.includes('filler') ? '#22D6D6': '#e5e5e5');
-    const [bgColor2, setColor2] = useState(vtype.includes('regular') ? '#22D6D6': '#e5e5e5');
-    const [bgColor3, setColor3] = useState(vtype.includes('y/n') ? '#22D6D6': '#e5e5e5');
-    const [bgColor4, setColor4] = useState(vtype.includes('greeting') ? '#22D6D6': '#e5e5e5');
-    const [bgColor5, setColor5] = useState(vtype.includes('exit') ? '#22D6D6': '#e5e5e5');
-    const [bgSwitch, setSwitch] = useState(privateSet ? '#22D6D6' : '#e5e5e5');
+    const [bgColor1, setColor1] = useState(vtype.includes('filler') ? '#7E7C7C': '#e5e5e5');
+    const [bgColor2, setColor2] = useState(vtype.includes('regular') ? '#7E7C7C': '#e5e5e5');
+    const [bgColor3, setColor3] = useState(vtype.includes('y/n') ? '#7E7C7C': '#e5e5e5');
+    const [bgColor4, setColor4] = useState(vtype.includes('greeting') ? '#7E7C7C': '#e5e5e5');
+    const [bgColor5, setColor5] = useState(vtype.includes('exit') ? '#7E7C7C': '#e5e5e5');
+    const [bgSwitch, setSwitch] = useState(privateSet ? '#7E7C7C' : '#e5e5e5');
   
     var albums =[ // this is a lst of all the albums
       {label: "Default", value: "default"},
@@ -64,7 +62,7 @@ function EditRecorder () {
     const handleChange = nextChecked => {
       setPublic(nextChecked);
       if (bgSwitch == '#e5e5e5'){
-        setSwitch('#22D6D6');
+        setSwitch('#7E7C7C');
       }else{
         setSwitch('#e5e5e5');
       }
@@ -194,7 +192,13 @@ function EditRecorder () {
           pathname: '/',
         });
       }
-    
+      
+      function about() {
+        history.push({
+          pathname: '/about',
+        });
+      }
+
       function library() {
         history.push({
           pathname: '/library',
@@ -214,7 +218,7 @@ function EditRecorder () {
         switch(name) {
           case "side-button b1":
             if (bgColor1 == '#e5e5e5'){
-              setColor1('#22D6D6');
+              setColor1('#7E7C7C');
               vtype.push('filler');
             }else{
               setColor1('#e5e5e5');
@@ -223,7 +227,7 @@ function EditRecorder () {
             break;
           case "side-button b2":
             if (bgColor2 == '#e5e5e5'){
-              setColor2('#22D6D6');
+              setColor2('#7E7C7C');
               vtype.push('regular');
             }else{
               setColor2('#e5e5e5');
@@ -232,7 +236,7 @@ function EditRecorder () {
             break;
           case "side-button b3":
             if (bgColor3 == '#e5e5e5'){
-              setColor3('#22D6D6');
+              setColor3('#7E7C7C');
               vtype.push('y/n');
             }else{
               setColor3('#e5e5e5');
@@ -241,7 +245,7 @@ function EditRecorder () {
             break;
           case "side-button b4":
             if (bgColor4 == '#e5e5e5'){
-              setColor4('#22D6D6');
+              setColor4('#7E7C7C');
               vtype.push('greeting');
             }else{
               setColor4('#e5e5e5');
@@ -250,7 +254,7 @@ function EditRecorder () {
             break;
           case "side-button b5":
             if (bgColor5 == '#e5e5e5'){
-              setColor5('#22D6D6');
+              setColor5('#7E7C7C');
               vtype.push('exit');
             }else{
               setColor5('#e5e5e5');
@@ -281,18 +285,18 @@ function EditRecorder () {
             backgroundColor: isDisabled
               ? null
               : isSelected
-              ? '#22D6D6'
+              ? '#7E7C7C'
               : isFocused
-              ? '#22D6D6'
+              ? '#7E7C7C'
               : null,
             ':active': {
               ...styles[':active'],
               backgroundColor:
-                !isDisabled && (isSelected ? '#22D6D6' : null),
+                !isDisabled && (isSelected ? '#7E7C7C' : null),
             },
           };
         },
-        control: styles => ({ ...styles, backgroundColor: 'rgba(34, 214, 214, 0.1)' }),
+        control: styles => ({ ...styles, backgroundColor: 'rgba(126, 124, 124, 0.1)' }),
         multiValue: (styles, { data }) => {
           return {
             ...styles,
@@ -310,10 +314,10 @@ function EditRecorder () {
             open={open} 
             onClose={() => dispatch({ type: 'close' })}
             >
-                <Modal.Header className="modal-header">Feel free to correct your answer!</Modal.Header>
+                <Modal.Header className="edit-modal-header">Feel free to correct your answer!</Modal.Header>
                 <Modal.Content>
 
-                <div contentEditable="true" className="modal-ans font-class-1" onChange={e=>setAnswerProvided(e.target.value)}>{transcript}
+                <div contentEditable="true" className="edit-modal-ans edit-modal-text" onChange={e=>setAnswerProvided(e.target.value)}>{transcript}
                 </div>
                 </Modal.Content>
                 <Modal.Actions>
@@ -326,7 +330,7 @@ function EditRecorder () {
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">
                     TOIA
                 </div>
-                <div className="nav-about_icon app-monsterrat-black">
+                <div onClick={about} className="nav-about_icon app-monsterrat-black">
                     About Us
                 </div>
                 <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
@@ -353,8 +357,8 @@ function EditRecorder () {
                     onChange={handleChange}
                     checked={isPublic}
                     handleDiameter={28}
-                    onColor="#0CADAD"
-                    onHandleColor="#099595"
+                    onColor="#FFFFFF"
+                    onHandleColor="#FFFFFF"
                     uncheckedIcon={false}
                     checkedIcon={false}
                     boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
@@ -379,9 +383,9 @@ function EditRecorder () {
             </div>
             <Webcam className="edit-layout" audio={true} ref={webcamRef} mirrored={true} videoConstraints={videoConstraints}/>
             {capturing ? (
-                <button className="edit-icon" onClick={handleStopCaptureClick}><img src={stopIcon}/></button>
+                <button className="edit-icon" onClick={handleStopCaptureClick}><i class="fa fa-stop" style={{fontSize: 34}}></i></button>
             ) : (
-                <button className="edit-icon" onClick={handleStartCaptureClick}><img src={recordIcon}/></button>
+                <button className="edit-icon" onClick={handleStartCaptureClick}><i class="fa fa-video-camera" style={{fontSize: 34}}></i></button>
             )}
             {recordedChunks.length > 0 && (
                 <button className="edit-check" onClick={openModal}><i class="fa fa-check"></i></button>

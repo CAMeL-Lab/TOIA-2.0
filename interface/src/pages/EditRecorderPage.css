@@ -4,7 +4,7 @@ video {
 }
 .edit-layout {
   position: absolute;
-  left: 41%;
+  left: 39%;
   top: 12%;
   border-radius: 10px;
 }
@@ -45,18 +45,19 @@ video {
 .edit-icon {
   display: block;
   position: absolute;
-  left: 42%;
+  left: 40%;
   top: 61.5%;
   width: 48px;
   z-index: 3;
   background-color: transparent;
   border: 0;
+  color: white;
 }
 .edit-check {
   display: block;
   position: absolute;
-  left: 92%;
-  top: 61%;
+  left: 84%;
+  top: 60%;
   width: 80px;
   font-size: 40px;
   z-index: 3;
@@ -151,17 +152,17 @@ video {
 
 /*Questions and text field*/
 .edit-type-q {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 41%;
+  left: 39%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 78%;
-  width: 55vw;
+  top: 75%;
+  width: 53vw;
   color: #707070;
 }
 .speech {
@@ -171,8 +172,8 @@ video {
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 46%;
-  width: 47%;
+  left: 45%;
+  width: 40vw;
   padding: 5px;
   position: absolute;
   resize: none;
@@ -201,7 +202,7 @@ video {
   text-align: center;
 }
 .edit-modal-ans {
-  background-color: var(--robins-egg-blue);
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 200px;

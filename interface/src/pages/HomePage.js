@@ -61,6 +61,12 @@ function HomePage() {
     });
   }
 
+  function about() {
+    history.push({
+      pathname: '/about',
+    });
+  }
+
   function library() {
     history.push({
       pathname: '/library',
@@ -131,7 +137,7 @@ function HomePage() {
         <div onClick={home} className="nav-toia_icon app-opensans-normal">
           TOIA
         </div>
-        <div className="nav-about_icon app-monsterrat-black">
+        <div onClick={about} className="nav-about_icon app-monsterrat-black">
           About Us
         </div>
         <div onClick={library} className="nav-talk_icon app-monsterrat-black">
