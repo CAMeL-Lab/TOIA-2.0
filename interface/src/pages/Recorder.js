@@ -51,18 +51,14 @@ function Recorder () {
   const { open } = state
 
 
-  /*useEffect(() => {
+  useEffect(() => {
     axios.get('http://localhost:3000/getQuestions').then((res)=>{
       setQuestionList(res.data);
     });
-    setName(history.location.state.name);
-    setLanguage(history.location.state.language);
-    setAvatarID(history.location.state.new_avatar_ID);
-<<<<<<< HEAD
-  });*/
-=======
+    setName(history.location.state.avatarName);
+    setLanguage(history.location.state.avatarLanguage);
+    setAvatarID(history.location.state.avatarID);
   },[]);
->>>>>>> 826b8e8a169a0d104528278c109e0aa73bf79e17
 
   // setName(history.location.state.name);
   // setLanguage(history.location.state.language);
@@ -250,7 +246,7 @@ function Recorder () {
                       placeholder={"Type your own question"}
                       type={"text"}
                       required={false}
-                      onChange={e=>setQuestionSelected(e.target.value)}
+                      onChange={buttonClick}
                     />
                   </div>
                 </Sidebar.Pusher>

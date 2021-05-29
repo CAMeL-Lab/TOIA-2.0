@@ -49,7 +49,8 @@ function HomePage() {
     }
   }
 
-  function submitHandler(){
+  function submitHandler(e){
+    e.preventDefault();
     history.push({
       pathname: '/garden',
     });

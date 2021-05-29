@@ -63,7 +63,8 @@ function AvatarViewPage() {
         }
     }
 
-    function submitHandler1(){
+    function submitHandler1(e){
+        e.preventDefault();
         history.push({
             pathname: '/garden',
         });
@@ -71,6 +72,7 @@ function AvatarViewPage() {
     
 
     function submitHandler(event){
+        event.preventDefault();
         history.push({
             pathname: '/player',
             state: {
@@ -181,7 +183,7 @@ function AvatarViewPage() {
             </div>
             <h1 className="view-title view-font-class-1 ">Here is infromation on the TOIA selected</h1>
             <img className="view-still" src={video}/>
-            <input  onClick={submitHandler} className="view-submit-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
+
             <div className="view-group">
                 <div className="view-name view-font-class-1 ">Name: </div>
                 <input
@@ -283,6 +285,7 @@ function AvatarViewPage() {
                     <option value="XH">Xhosa</option>
                 </select>
             </div>
+        <input  onClick={submitHandler} className="view-submit-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
         </div>
     );
 }

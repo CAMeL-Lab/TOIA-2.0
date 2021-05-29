@@ -10,28 +10,21 @@ import axios from 'axios';
 
 function AvatarGardenPage() {
 
-    // React.useEffect(() => {
-    //     console.log('wohoo');
-    //     axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
-    //         console.log(res);
-    //     });
+    const [avatarName, setName] = useState(null);
+    const [avatarLanguage, setLanguage] = useState(null);
+    const [avatarID, setAvatarID] = useState(null);
+
+    React.useEffect(() => {
+        setName(history.location.state.avatarName);
+        setLanguage(history.location.state.avatarLanguage);
+        setAvatarID(history.location.state.avatarID);
        
-    // });
+    });
 
     var avatars = [ //This is a list that will hold the still image and name of avatar the user has created, needs to come from backend (Wahib)
-        { still: sampleVideo, question: "John Doe", album: "default business"},
-        { still: sampleVideo, question: "Jane Doe", album: "default personal"},
-        { still: sampleVideo, question: "Mary Doe", album: "default fun"},
-        { still: sampleVideo, question: "John Doe", album: "default business"},
-        { still: sampleVideo, question: "Matthew Doe", album: "default personal"},
-        { still: sampleVideo, question: "Joseph Doe", album: "default business personal"},
-        { still: sampleVideo, question: "Peter Doe", album: "default business" },
-        { still: sampleVideo, question: "Paul Doe", album: "default fun personal"},
-        { still: sampleVideo, question: "Nizar Doe", album: "default business"},
-        { still: sampleVideo, question: "Tyeece Green", album: "default personal"},
-        { still: sampleVideo, question: "Daniel Doe", album: "default fun"},
-        { still: sampleVideo, question: "Goliath Doe", album: "default business"},
-        { still: sampleVideo, question: "John Doe", album: "default business"},
+        { still: sampleVideo, question: "What's a usual business day like?", album: "default business"},
+        { still: sampleVideo, question: "What are your hobbies?", album: "default personal"},
+        { still: sampleVideo, question: "What sports do you like?", album: "default fun"},
         ];
 
     var albums =[ // this is a lst of all the albums
@@ -130,9 +123,14 @@ function AvatarGardenPage() {
     }
 
     function add() {
-    history.push({
-        pathname: '/recorder',
-    });
+        history.push({
+            pathname: '/recorder',
+            state: {
+                avatarName,
+                avatarLanguage,
+                avatarID
+            }
+        });
     }
 
 

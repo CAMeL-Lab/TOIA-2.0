@@ -5,6 +5,7 @@ import React, {useState} from "react";
 import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
+import axios from 'axios';
 
 function SignUpPage() {
 
@@ -35,11 +36,26 @@ function SignUpPage() {
     e.preventDefault();
   }
 
-  function submitHandler(){
+  function submitHandler(event){
+    event.preventDefault();
     if (pass === cpass){
-      history.push({
-        pathname: '/garden',
-      });
+
+        axios.post('http://localhost:3000/createAvatar',
+          {
+            name:fname,
+            language,
+            privacySetting: 'public',
+            bio: 'toia is great!'
+          }).then((res)=>{
+            history.push({
+              pathname: '/garden',
+              state: {
+                avatarName:fname,
+                avatarLanguage:language,
+                avatarID: res.data.new_avatar_ID
+              }
+            });
+          });
     }else{
       alert('Passwords need to match');
     }
@@ -97,6 +113,23 @@ function SignUpPage() {
   
   return (
     <form className="signup-page" onSubmit={submitHandler}>
+      <div className="nav-heading-bar">
+          <div onClick={home} className="nav-toia_icon app-opensans-normal">
+            TOIA
+          </div>
+          <div className="nav-about_icon app-monsterrat-black">
+            About Us
+          </div>
+          <div onClick={library} className="nav-talk_icon app-monsterrat-black">
+            Talk To TOIA
+          </div>
+          <div onClick={garden} className="nav-my_icon app-monsterrat-black">
+            My TOIA
+          </div>
+          <div onClick={openModal}className="nav-login_icon app-monsterrat-black">
+            Login
+          </div>
+      </div>
       <Modal //this is the new pop up menu
         size='large'
         style={inlineStyle.modal}
@@ -132,21 +165,30 @@ function SignUpPage() {
             </Modal.Content>
         </Modal>
       <div className="signup-group">
-          <input className="signup-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
-          <input
-              className="signup-pass1 signup-font-class-1"
-              placeholder={"Confirm Password"}
-              type={"password"}
+      <h1 className="signup-title signup-font-class-3 ">Get Started</h1>
+      <p className="signup_text signup-font-class-2 signup-animate-enter">Enter the following information to create your TOIA account</p>
+      <input
+              className="signup-fname signup-font-class-1"
+              placeholder={"First Name"}
+              type={"text"}
               required={true}
-              onChange={e=>setCPass(e.target.value)}
+              onChange={e=>setFName(e.target.value)}
           />
           <input
-              className="signup-pass signup-font-class-1"
-              placeholder={"Create Password"}
-              type={"password"}
+              className="signup-lname signup-font-class-1"
+              placeholder={"Last Name"}
+              type={"text"}
               required={true}
-              onChange={e=>setPass(e.target.value)}
+              onChange={e=>setLname(e.target.value)}
           />
+      <input
+              className="signup-email signup-font-class-1"
+              placeholder={"Email"}
+              type={"email"}
+              required={true}
+              onChange={e=>setEmail(e.target.value)}
+          />
+   
           <div className="signup-language signup-font-class-1 ">Language:</div>
           <select className="signup-lang signup-font-class-1" onChange={e=>setLanguage(e.target.value)} required={true}>
               <option value="" disabled selected hidden>Select Language...</option>
@@ -224,45 +266,21 @@ function SignUpPage() {
               <option value="XH">Xhosa</option>
           </select>
           <input
-              className="signup-email signup-font-class-1"
-              placeholder={"Email"}
-              type={"email"}
+              className="signup-pass signup-font-class-1"
+              placeholder={"Create Password"}
+              type={"password"}
               required={true}
-              onChange={e=>setEmail(e.target.value)}
+              onChange={e=>setPass(e.target.value)}
           />
           <input
-              className="signup-lname signup-font-class-1"
-              placeholder={"Last Name"}
-              type={"text"}
+              className="signup-pass1 signup-font-class-1"
+              placeholder={"Confirm Password"}
+              type={"password"}
               required={true}
-              onChange={e=>setLname(e.target.value)}
+              onChange={e=>setCPass(e.target.value)}
           />
-          <input
-              className="signup-fname signup-font-class-1"
-              placeholder={"First Name"}
-              type={"text"}
-              required={true}
-              onChange={e=>setFName(e.target.value)}
-          />
-          <p className="signup_text signup-font-class-2 signup-animate-enter">Enter the following information to create your TOIA account</p>
-          <h1 className="signup-title signup-font-class-3 ">Get Started</h1>
-      </div>
-      <div className="nav-heading-bar">
-          <div onClick={home} className="nav-toia_icon app-opensans-normal">
-            TOIA
-          </div>
-          <div className="nav-about_icon app-monsterrat-black">
-            About Us
-          </div>
-          <div onClick={library} className="nav-talk_icon app-monsterrat-black">
-            Talk To TOIA
-          </div>
-          <div onClick={garden} className="nav-my_icon app-monsterrat-black">
-            My TOIA
-          </div>
-          <div onClick={openModal}className="nav-login_icon app-monsterrat-black">
-            Login
-          </div>
+
+          <input className="signup-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
       </div>
     </form>
   );
