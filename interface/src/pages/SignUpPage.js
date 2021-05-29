@@ -81,6 +81,12 @@ function SignUpPage() {
     });
   }
 
+  function about() {
+    history.push({
+      pathname: '/about',
+    });
+  }
+
   function library() {
     history.push({
       pathname: '/library',
@@ -279,8 +285,25 @@ function SignUpPage() {
               required={true}
               onChange={e=>setCPass(e.target.value)}
           />
-
-          <input className="signup-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
+          <p className="signup_text signup-font-class-2 signup-animate-enter">Enter the following information to create your TOIA account</p>
+          <h1 className="signup-title signup-font-class-3 ">Get Started</h1>
+      </div>
+      <div className="nav-heading-bar">
+          <div onClick={home} className="nav-toia_icon app-opensans-normal">
+            TOIA
+          </div>
+          <div onClick={about} className="nav-about_icon app-monsterrat-black">
+            About Us
+          </div>
+          <div onClick={library} className="nav-talk_icon app-monsterrat-black">
+            Talk To TOIA
+          </div>
+          <div onClick={garden} className="nav-my_icon app-monsterrat-black">
+            My TOIA
+          </div>
+          <div onClick={openModal}className="nav-login_icon app-monsterrat-black">
+            Login
+          </div>
       </div>
     </form>
   );

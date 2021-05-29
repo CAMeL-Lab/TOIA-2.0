@@ -10,45 +10,205 @@
 .garden-add:hover {
   transform: scale(1.1);
 }
+.garden-stream:hover {
+  transform: scale(1.1);
+}
+.garden-trash:hover {
+  transform: scale(1.07);
+}
+.garden-move_icon:hover {
+  transform: scale(1.07);
+}
+.garden-settings:hover {
+  transform: scale(1.1);
+}
+.garden-settings-delete:hover {
+  transform: scale(1.1);
+}
+.garden-settings-save:hover {
+  transform: scale(1.1);
+}
+
 
 /*elements*/
+.garden-title {
+  background-color: transparent;
+  height: auto;
+  left: 35%;
+  position: absolute;
+  top: 3%;
+  font-size: 36px;
+}
+.stream-heading{
+  left: 3%;
+  position: absolute;
+  top: 15%;
+  font-size: 24px;
+}
+.garden-settings{
+  color: #7E7C7C;
+  font-size: 30px;
+  transition: all 0.2s ease-out;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 4%;
+  left: 90%;
+}
+.garden-carousel{
+  height: 50vh;
+  width: 25vw;
+  left: 0%;
+  top: 30%;
+  position: absolute;
+}
+.garden-carousel-card{
+  text-align: center;
+  align-items: center;
+}
+.t1{
+  font-size: 24px;
+  margin-bottom: 0px;
+}
+.t2{
+  font-size: 18px;
+  color: #707070;
+}
+.garden-carousel-menu{
+  color: #7E7C7C;
+  font-size: 18px;
+}
+.garden-carousel-menu p{
+  display: inline;
+}
+.stream-text{
+  left: 31.5%;
+  position: absolute;
+  top: 65%;
+  font-size: 20px; 
+  color:#707070;
+}
+.elem-1 {
+  background-color: #7E7C7C;
+  border-radius: 30px;
+  height: 20vh;
+  left: 65%;
+  top: 30%;
+  width: 26vw;
+  position: absolute;
+}
+.elem-2 {
+  background-color: #7E7C7C;
+  border-radius: 30px;
+  height: 20vh;
+  left: 65%;
+  top: 60%;
+  width: 26vw;
+  position: absolute;
+}
+.elem-text-1 {
+  color: white;
+  width: 35%;
+  text-align: center;
+  position: absolute;
+  font-size: 100px;
+}
+.elem-text-2 {
+  color: white;
+  width: 60%;
+  left: 35%;
+  top: 13%;
+  text-align: center;
+  position: absolute;
+  font-size: 30px;
+}
+.section1 {
+  background-color: transparent;
+  position: absolute;
+  left: 2.5%;
+  top: 10%;
+  height: 87vh;
+  width: 95vw;
+}
+.section2 {
+  background-color: transparent;
+  position: absolute;
+  left: 2.5%;
+  top: 87%;
+  height: 87vh;
+  width: 95vw;
+}
+.garden-hidden {
+  position: relative;
+  left: 92.5%;
+  top: 50%;
+  height: 100px;
+}
+.video-text{
+  left: 90.5%;
+  position: absolute;
+  top: 85%;
+  font-size: 18px; 
+  color:#707070;
+}
+
+/*buttons*/
+.garden-delete {
+  color: white;
+  font-size: 15px;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: relative;
+  top: 43%;
+  left: 2%;
+}
+.garden-checkbox {
+  position: relative;
+  left: 2%;
+  top: 43%;
+  height: 15px;
+  width: 10px;
+  cursor: pointer;
+}
+.garden-trash {
+  background-color: transparent;
+  height: 35px;
+  top: 60%;
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.garden-move_icon {
+  background-color: transparent;
+  height: 27px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  position: absolute;
+  top: 5%;
+  left: 0px;
+}
 .garden-add {
   background-color: transparent;
   height: 98px;
   left: 90%;
-  top: 80%;
+  top: 70%;
   width: 98px;
   position: absolute;
+  cursor: pointer;
   pointer-events: auto;
   transition: all 0.2s ease-out;
 }
-
-/*buttons*/
-.garden-edit {
-  background-color: #22d6d6;
-  color: white;
-  font-family: "Montserrat", Helvetica, Arial, serif;
-  font-style: normal;
-  font-size: 15px;
-  font-weight: 500;
-  text-align: center;
-  border-radius: 5px;
-  border-color: transparent;
-  margin-right: 20px;
+.garden-stream {
+  background-color: transparent;
+  left: 31%;
+  top: 45%;
+  width: 120px;
+  position: absolute;
   cursor: pointer;
-}
-.garden-delete {
-  background-color: #d21a1a;
-  color: white;
-  font-family: "Montserrat", Helvetica, Arial, serif;
-  font-style: normal;
-  font-size: 15px;
-  font-weight: 500;
-  text-align: center;
-  border-radius: 5px;
-  border-color: transparent;
-  width: 90px;
-  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease-out;
 }
 
 /*grid*/
@@ -58,69 +218,65 @@
   border-radius: 15px;
   height: 250px;
   width: 250px;
-  background-position: center;
-  background-size: 250px 250px;
 }
 .garden-grid {
   padding: 10px;
   overflow-y: scroll;
   height: 65vh;
   width: 80vw;
-  left: 10%;
-  top: 15%;
+  left: 2%;
+  top: 10%;
   position: absolute;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
 }
 .garden-grid > div {
-  flex-basis: calc(25% - 40px);
+  flex-basis: calc(33.33%);
+}
+.column {
+  float: left;
+  width: 48%;
+  height: 200px;
+  margin-bottom: 50px;
+  background-size:auto;
+  background-position: center;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.garden-question {
+  background-color: black;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .garden-name {
-  color: black;
-  font-family: "Montserrat", Helvetica, Arial, serif;
-  font-style: normal;
-  font-size: 15px;
-  font-weight: 500;
-  text-align: center;
-  top: 15%;
+  color: white;
+  font-size: 18px;
+  height: 50%;
+  width: 80%;
+  overflow: auto;
   position: relative;
-  padding: 10px;
+  left: 5%;
 }
-.garden-popup {
-  top: 60%;
-  left: 3%;
-  position: relative;
-}
+
 /*searchbar*/
 .garden-search {
-  background-color: #f8f8f8;
+  background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 13%;
+  left: 3%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 7%;
-  width: 45vw;
-  padding: 2px;
-  font-size: 15px;
-  margin: 5px 0;
-}
-.garden-sort {
-  background-color: #f8f8f8;
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 60%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 7%;
-  width: 30vw;
+  top: 0%;
+  width: 79vw;
   padding: 2px;
   font-size: 15px;
   margin: 5px 0;
@@ -154,4 +310,145 @@
   padding-left: 5px;
   padding-top: 2px;
   color: black;
+}
+
+/*Settings Popup Menu*/
+.garden-settings-name {
+  background-color: transparent;
+  height: 17px;
+  left: 24%;
+  position: absolute;
+  text-align: left;
+  top: 32%;
+  width: 78px;
+}
+.garden-settings-name_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 30%;
+  width: 400px;
+}
+.garden-settings-email {
+  background-color: transparent;
+  height: 17px;
+  left: 24%;
+  position: absolute;
+  text-align: left;
+  top: 42%;
+  width: 78px;
+}
+.garden-settings-email_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 40%;
+  width: 400px;
+}
+.garden-settings-pass {
+  background-color: transparent;
+  height: 17px;
+  left: 20%;
+  position: absolute;
+  text-align: left;
+  top: 52%;
+  width: 78px;
+}
+.garden-settings-pass_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 50%;
+  width: 400px;
+}
+.garden-settings-lang {
+  background-color: transparent;
+  height: 17px;
+  left: 20%;
+  position: absolute;
+  text-align: left;
+  top: 62%;
+  width: 78px;
+}
+.garden-settings-lang_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 60%;
+  width: 400px;
+}
+.garden-settings-delete{
+  color: white;
+  background-color: red;
+  border-radius: 20px;
+  height: 5vh;
+  width: 10vw;
+  text-align: center;
+  display: flex;
+  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  align-items: center;
+  position: absolute;
+  top: 75%;
+  left: 17%;
+}
+.garden-settings-text{
+  font-size: 18px;
+}
+.garden-settings-save{
+  color: white;
+  background-color: #7E7C7C;
+  border-radius: 20px;
+  height: 5vh;
+  width: 10vw;
+  text-align: center;
+  display: flex;
+  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  align-items: center;
+  position: absolute;
+  top: 75%;
+  left: 70%;
+}
+
+/*fonts*/
+.garden-font-class-2 {
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.garden-font-class-3 {
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }

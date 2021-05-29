@@ -1,0 +1,326 @@
+.avatar-settings-page-1 {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+.settings-section1 {
+  background-color: transparent;
+  position: absolute;
+  left: 2.5%;
+  top: 10%;
+  height: 80vh;
+  width: 95vw;
+}
+.settings-section2 {
+  background-color: transparent;
+  position: absolute;
+  left: 2.5%;
+  top: 70%;
+  height: 87vh;
+  width: 95vw;
+}
+
+/*In Page Text*/
+.settings-settings {
+  background-color: transparent;
+  height: auto;
+  left: 2%;
+  position: absolute;
+  text-align: center;
+  width: 350px;
+  font-size: 36px;
+}
+.settings-name {
+  background-color: transparent;
+  height: 17px;
+  left: 5%;
+  position: absolute;
+  text-align: left;
+  top: 13%;
+  width: 78px;
+}
+.settings-priv {
+  background-color: transparent;
+  height: 17px;
+  left: 5%;
+  position: absolute;
+  text-align: left;
+  top: 22%;
+  width: 78px;
+}
+.settings-lang {
+  background-color: transparent;
+  height: 17px;
+  left: 5%;
+  position: absolute;
+  text-align: left;
+  top: 31%;
+  width: 78px;
+}
+.settings-bio {
+  background-color: transparent;
+  height: 17px;
+  left: 5%;
+  position: absolute;
+  text-align: left;
+  top: 40%;
+  width: 78px;
+}
+
+/*Text Boxes and their placeholders*/
+.settings-still {
+  width: 250px;
+  top: 0%;
+  left: 70%;
+  position: absolute;
+}
+.settings-menu{
+  color: #7E7C7C;
+  font-size: 24px;
+  left: 71%;
+  top: 55%;
+  position: absolute;
+}
+.settings-menu p{
+  display: inline;
+}
+.settings-name_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 12%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 12%;
+  width: 470px;
+}
+.settings-priv_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 12%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 21%;
+  width: 470px;
+}
+.settings-lang_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 12%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 30%;
+  width: 470px;
+}
+.settings-bio_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 100px;
+  left: 12%;
+  padding: 8px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 39%;
+  width: 470px;
+}
+
+/*grid*/
+.settings-box {
+  margin: 20px;
+  text-align: center;
+  border-radius: 15px;
+  height: 250px;
+  width: 250px;
+}
+.settings-grid {
+  padding: 10px;
+  overflow-y: scroll;
+  height: 65vh;
+  width: 80vw;
+  left: 2%;
+  top: 10%;
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.settings-grid > div {
+  flex-basis: calc(33.33%);
+}
+.column {
+  float: left;
+  width: 48%;
+  height: 200px;
+  margin-bottom: 50px;
+  background-size:auto;
+  background-position: center;
+  cursor: pointer;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.settings-question {
+  background-color: black;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.settings-delete {
+  color: white;
+  font-size: 15px;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: relative;
+  top: 43%;
+  left: 2%;
+}
+.settings-checkbox {
+  position: relative;
+  left: 2%;
+  top: 43%;
+  height: 15px;
+  width: 10px;
+  cursor: pointer;
+}
+.settings-q {
+  color:white;
+  height: 50%;
+  width: 80%;
+  overflow: auto;
+  position: relative;
+  left: 5%;
+}
+
+/*searchbar*/
+.settings-search {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 3%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 0%;
+  width: 79vw;
+  padding: 2px;
+  font-size: 15px;
+  margin: 5px 0;
+}
+.settings-search::-webkit-input-placeholder {
+  font-family: FontAwesome;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: black;
+}
+.settings-search::-moz-placeholder {
+  font-family: FontAwesome;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: black;
+}
+.settings-search:-ms-input-placeholder {
+  font-family: FontAwesome;
+  font-weight: normal;
+  overflow: visible;
+  vertical-align: top;
+  display: inline-block !important;
+  padding-left: 5px;
+  padding-top: 2px;
+  color: black;
+}
+
+/*elements*/
+.settings-trash {
+  background-color: transparent;
+  height: 35px;
+  top: 60%;
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.settings-add {
+  background-color: transparent;
+  height: 98px;
+  left: 90%;
+  top: 70%;
+  width: 98px;
+  position: absolute;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease-out;
+}
+.settings-hidden {
+  position: relative;
+  left: 92.5%;
+  top: 50%;
+  height: 100px;
+}
+.settings-video-text{
+  left: 90.5%;
+  position: absolute;
+  top: 85%;
+  font-size: 18px; 
+  color:#707070;
+}
+
+/*Alignment and Fonts*/
+.settings-font-class-1 {
+  color: rgba(0, 0, 0, 0.75);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.21px;
+}
+.settings-font-class-2 {
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.18px;
+}
+.settings-font-class-3 {
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
+}
+
+/*Animations*/
+.settings-add:hover {
+  transform: scale(1.1);
+}
+.settings-trash:hover {
+  transform: scale(1.07);
+}

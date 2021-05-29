@@ -5,8 +5,8 @@ import Home from "../pages/HomePage";
 import SignUp from "../pages/SignUpPage";
 import AvatarGarden from "../pages/AvatarGardenPage";
 import AvatarLibrary from "../pages/AvatarLibraryPage";
-import Settings from "../pages/AvatarSettings";
-import AvatarView from "../pages/AvatarViewPage";
+import Settings from "../pages/AvatarStream";
+import AboutUs from "../pages/AboutUsPage";
 import Recorder from "../pages/Recorder";
 import Player from "../pages/Player";
 import EditRecorder from "../pages/EditRecorderPage";
@@ -18,8 +18,8 @@ export default function Routes() {
         <Route path="/signup" component={SignUp} />
 		<Route path="/garden" component={AvatarGarden} />
 		<Route path="/library" component={AvatarLibrary} />
-		<Route path="/settings" component={Settings} />
-		<Route path="/view" component={AvatarView} />
+		<Route path="/stream" component={Settings} />
+		<Route path="/about" component={AboutUs} />
 		<Route path="/recorder" component={Recorder} />
 		<Route path="/editrecorder" component={EditRecorder} />
 		<Route path="/player" component={Player} />
