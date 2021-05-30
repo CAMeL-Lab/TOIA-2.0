@@ -80,9 +80,9 @@ function Recorder () {
     axios.get('http://localhost:3000/getQuestions').then((res)=>{
       setQuestionList(res.data);
     });
-    setName(history.location.state.avatarName);
-    setLanguage(history.location.state.avatarLanguage);
-    setAvatarID(history.location.state.avatarID);
+    setName(history.location.state.toiaName);
+    setLanguage(history.location.state.toiaLanguage);
+    setAvatarID(history.location.state.toiaID);
   },[]);
 
   // setName(history.location.state.name);

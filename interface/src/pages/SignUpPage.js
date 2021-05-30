@@ -40,19 +40,20 @@ function SignUpPage() {
     event.preventDefault();
     if (pass === cpass){
 
-        axios.post('http://localhost:3000/createAvatar',
+        axios.post('http://localhost:3000/createTOIA',
           {
-            name:fname,
-            language,
-            privacySetting: 'public',
-            bio: 'toia is great!'
+            firstName:fname,
+            lastName:lname,
+            email,
+            pwd:pass,
+            language
           }).then((res)=>{
             history.push({
               pathname: '/garden',
               state: {
-                avatarName:fname,
-                avatarLanguage:language,
-                avatarID: res.data.new_avatar_ID
+                toiaName:fname,
+                toiaLanguage:language,
+                toiaID: res.data.new_toia_ID
               }
             });
           });
@@ -285,8 +286,8 @@ function SignUpPage() {
               required={true}
               onChange={e=>setCPass(e.target.value)}
           />
-          <p className="signup_text signup-font-class-2 signup-animate-enter">Enter the following information to create your TOIA account</p>
-          <h1 className="signup-title signup-font-class-3 ">Get Started</h1>
+          <input className="signup-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
+
       </div>
       <div className="nav-heading-bar">
           <div onClick={home} className="nav-toia_icon app-opensans-normal">

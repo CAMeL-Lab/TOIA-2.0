@@ -20,15 +20,14 @@ var cardSelected = [];//the videos selected to be edited or deleted
 
 function AvatarGardenPage() {
 
-    const [avatarName, setName] = useState(null);
-    const [avatarLanguage, setLanguage] = useState(null);
-    const [avatarID, setAvatarID] = useState(null);
+    const [toiaName, setName] = useState(null);
+    const [toiaLanguage, setLanguage] = useState(null);
+    const [toiaID, setAvatarID] = useState(null);
 
     React.useEffect(() => {
-        setName(history.location.state.avatarName);
-        setLanguage(history.location.state.avatarLanguage);
-        setAvatarID(history.location.state.avatarID);
-       
+        setName(history.location.state.toiaName);
+        setLanguage(history.location.state.toiaLanguage);
+        setAvatarID(history.location.state.toiaID);
     });
 
     /*functions in charge of opening and closing the various pop up menus*/
@@ -101,10 +100,10 @@ function AvatarGardenPage() {
         ];
         
     var streams =[// This is a list of all the user streams
-        { still: sampleVideo, maker: "Nizar H.", streamName: "All Stream", ppl: "8", heart:"5", thumbs: "3"},
-        { still: sampleVideo, maker: "Nizar H.", streamName: "Professor Stream", ppl: "8", heart:"5", thumbs: "3"},
-        { still: sampleVideo, maker: "Nizar H.", streamName: "Fun Stream", ppl: "8", heart:"5", thumbs: "3"},
-        { still: sampleVideo, maker: "Nizar H.", streamName: "Abu Dhabi Stream", ppl: "8", heart:"5", thumbs: "3"},
+        { still: sampleVideo, maker: toiaName, streamName: "All Stream", ppl: "8", heart:"5", thumbs: "3"},
+        { still: sampleVideo, maker: toiaName, streamName: "Professor Stream", ppl: "8", heart:"5", thumbs: "3"},
+        { still: sampleVideo, maker: toiaName, streamName: "Fun Stream", ppl: "8", heart:"5", thumbs: "3"},
+        { still: sampleVideo, maker: toiaName, streamName: "Abu Dhabi Stream", ppl: "8", heart:"5", thumbs: "3"},
     ]
 
     var settingData = [
@@ -113,7 +112,7 @@ function AvatarGardenPage() {
 
     const [data, setData] = useState(avatars);//this sets data to the state of the avatars list
     const [displayItem, setDisplayItem] = useState('none')
-    let name = "Nizar"; //this holds the name of user
+
     let new_p = "15"; //this holds the number of new people
     let new_q = "2"; //this holds the number of new questions
 
@@ -220,6 +219,11 @@ function AvatarGardenPage() {
     function add() {
         history.push({
             pathname: '/recorder',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID
+              }
         });
     }
     function album_page() {
@@ -433,7 +437,7 @@ function AvatarGardenPage() {
             </div>
             <div className="section1">
                 <h1 className="garden-title garden-font-class-3 " //welcome message
-                >Welcome Back {name}</h1>
+                >Welcome Back {toiaName}</h1>
                 <h1 className="stream-heading garden-font-class-3 ">My TOIA streams</h1>
                 <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
                 <Carousel //this is the sliding image carousel that holds all the streams I got it from here https://brainhubeu.github.io/react-carousel/docs/gettingStarted

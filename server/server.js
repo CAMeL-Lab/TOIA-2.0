@@ -142,6 +142,46 @@ let upload = multer({
 // Implementing the recorder
 
 
+app.post('/login',(req,res)=>{
+
+	req.body.email
+	req.body.pwd
+
+	let query_checkEmailExists=`SELECT COUNT(*) AS cnt FROM toia_user WHERE email="${req.body.email}";`
+
+	connection.query(query_checkEmailExists,(err,entry,fields)=>{
+		if(err){
+			throw err;
+		}
+		else{
+			if(entry[0].cnt==0){
+				res.send("-1");
+			}else{
+				let query_checkPasswordCorrect=`SELECT * FROM toia_user WHERE email="${req.body.email}";`
+		
+				connection.query(query_checkPasswordCorrect, (err,entry,fields)=>{
+					if (err){
+						throw err;
+					}
+					else{
+						console.log(entry);
+						if(entry[0].password==req.body.pwd){
+							let userData={
+								toia_id:entry[0].id,
+								firstName:entry[0].first_name,
+								language:entry[0].language
+							}
+							res.send(userData);
+						}else{
+							res.send("-2");
+						}
+					}
+				});
+			}
+		}
+	});
+});
+
 app.get('/getAllAvatars',(req,res)=>{
 
 	let getAvatarQuery=`SELECT name,id_avatar FROM avatar;`;
@@ -217,36 +257,19 @@ app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
 	});
 });
 
-app.post('/createAvatar',(req,res)=>{
-	
-	let isPrivate;
+app.post('/createTOIA',(req,res)=>{
 
-	if(req.body.privacySetting=='public'){
-		isPrivate=0;
-
-	}else{
-		isPrivate=1;
-	}
-
-	name=req.body.name;
-
-	let queryCreateAvatar;
-	if(req.body.bio!=''){
-		queryCreateAvatar=`INSERT INTO avatar(name,is_private,description,language) VALUES("${req.body.name}",${isPrivate},"${req.body.bio}","${req.body.language}");`
-	}else{
-		queryCreateAvatar=`INSERT INTO avatar(name,is_private,language) VALUES("${req.body.name}",${isPrivate},"${req.body.language}");`
-	}
-
-	connection.query(queryCreateAvatar, (err,entry,fields)=>{
+	let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${req.body.firstName}","${req.body.lastName}","${req.body.email}","${req.body.pwd}","${req.body.language}");`
+	connection.query(queryCreateTOIA, (err,entry,fields)=>{
 		if (err){
 			throw err;
 		}else{
 			console.log(entry.insertId);
-			res.send({new_avatar_ID: entry.insertId});
+			res.send({new_toia_ID: entry.insertId});
 		}
 	});
-	mkdirp(`./public/static/avatar_garden/${req.body.name}`);
-	mkdirp(`./public/static/avatar_garden/${req.body.name}/videos`);
+	mkdirp(`./public/static/avatar_garden/${req.body.firstName}`);
+	mkdirp(`./public/static/avatar_garden/${req.body.firstName}/videos`);
 
 });
 
