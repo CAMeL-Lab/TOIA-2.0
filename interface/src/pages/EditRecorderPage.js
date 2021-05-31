@@ -222,10 +222,10 @@ function EditRecorder () {
       function setType(event){
         event.preventDefault();
         if(videoType!=null){
-
-        }else{
-          setVideoType(e.)
         }
+        // }else{
+        //   setVideoType(e.)
+        // }
       }
      
       function changecolor(event) {
