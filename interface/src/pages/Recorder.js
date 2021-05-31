@@ -77,7 +77,7 @@ function Recorder () {
 
 
   useEffect(() => {
-    axios.get('http://localhost:3000/getQuestions').then((res)=>{
+    axios.get('http://localhost:3000/getAllVideos').then((res)=>{
       setQuestionList(res.data);
     });
     setName(history.location.state.toiaName);

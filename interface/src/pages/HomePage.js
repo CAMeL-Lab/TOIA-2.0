@@ -78,6 +78,7 @@ function HomePage() {
       }else if(res.data==-2){
         setHasPasswordError(true);
       }else {
+        console.log(res.data);
         history.push({
           pathname: '/garden',
           state: {

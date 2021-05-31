@@ -22,13 +22,35 @@ function AvatarGardenPage() {
 
     const [toiaName, setName] = useState(null);
     const [toiaLanguage, setLanguage] = useState(null);
-    const [toiaID, setAvatarID] = useState(null);
+    const [toiaID, setTOIAid] = useState(null);
+    const [videoList,setVideoList]=useState([]);
+    const [streamList,setStreamList]=useState([]);
+
+    //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
         setName(history.location.state.toiaName);
         setLanguage(history.location.state.toiaLanguage);
-        setAvatarID(history.location.state.toiaID);
-    });
+        setTOIAid(history.location.state.toiaID);
+
+        axios.post('http://localhost:3000/getUserVideos',{
+            params:{
+                toiaID: history.location.state.toiaID
+            }
+        }).then((res)=>{
+            setVideoList(res.data);
+        });
+
+        axios.post('http://localhost:3000/getUserStreams',{
+            params:{
+                toiaID: history.location.state.toiaID
+            }
+        }).then((res)=>{
+            setStreamList(res.data);
+            console.log(res.data);
+        });
+
+    },[]);
 
     /*functions in charge of opening and closing the various pop up menus*/
     function exampleReducer( state, action ) { //for warning window when you delete
@@ -83,34 +105,34 @@ function AvatarGardenPage() {
     }
     //
 
-    var avatars = [ //This is a list that will hold the still image and name of avatar the user has created, needs to come from backend (Wahib)
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun"},
-        { still: sampleVideo, question: "What is your favourite sport?", album: "default business"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business personal"},
-        { still: sampleVideo, question: "What is your name?", album: "default business" },
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun personal"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default business"},
-        { still: sampleVideo, question: "How old are you?", album: "default personal"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun"},
-        { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
-        { still: sampleVideo, question: "Where do you live?", album: "default business"},
-        ];
+    // var avatars = [ //This is a list that will hold the still image and name of avatar the user has created, needs to come from backend (Wahib)
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun"},
+    //     { still: sampleVideo, question: "What is your favourite sport?", album: "default business"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business personal"},
+    //     { still: sampleVideo, question: "What is your name?", album: "default business" },
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun personal"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default business"},
+    //     { still: sampleVideo, question: "How old are you?", album: "default personal"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun"},
+    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
+    //     { still: sampleVideo, question: "Where do you live?", album: "default business"},
+    //     ];
         
-    var streams =[// This is a list of all the user streams
-        { still: sampleVideo, maker: toiaName, streamName: "All Stream", ppl: "8", heart:"5", thumbs: "3"},
-        { still: sampleVideo, maker: toiaName, streamName: "Professor Stream", ppl: "8", heart:"5", thumbs: "3"},
-        { still: sampleVideo, maker: toiaName, streamName: "Fun Stream", ppl: "8", heart:"5", thumbs: "3"},
-        { still: sampleVideo, maker: toiaName, streamName: "Abu Dhabi Stream", ppl: "8", heart:"5", thumbs: "3"},
-    ]
+    // var streams =[// This is a list of all the user streams
+    //     { still: sampleVideo, maker: toiaName, streamName: "All Stream", ppl: "8", heart:"5", thumbs: "3"},
+    //     { still: sampleVideo, maker: toiaName, streamName: "Professor Stream", ppl: "8", heart:"5", thumbs: "3"},
+    //     { still: sampleVideo, maker: toiaName, streamName: "Fun Stream", ppl: "8", heart:"5", thumbs: "3"},
+    //     { still: sampleVideo, maker: toiaName, streamName: "Abu Dhabi Stream", ppl: "8", heart:"5", thumbs: "3"},
+    // ]
 
     var settingData = [
         {name: "Nizar Habash", email:"nizar.habash@gmail.com", password:"habash123", language: "English"}
     ]
 
-    const [data, setData] = useState(avatars);//this sets data to the state of the avatars list
+    const [data, setData] = useState(videoList);//this sets data to the state of the avatars list
     const [displayItem, setDisplayItem] = useState('none')
 
     let new_p = "15"; //this holds the number of new people
@@ -118,7 +140,7 @@ function AvatarGardenPage() {
 
     const searchData = (searchval) => {//search function
         if (!searchval) {
-        setData(avatars);//if search is empty show all avatars
+        setData(videoList);//if search is empty show all avatars
         return;
         }
 
@@ -141,13 +163,13 @@ function AvatarGardenPage() {
     const renderStream = (card, index) => {//cards for streams
         return(
             <div className="garden-carousel-card">
-                <img src={card.still} width="170" //stream thumbnail
+                <img src={sampleVideo} width="170" //stream thumbnail
                 />
                 <div  onClick={album_page}>
                     <h1 className="t1 garden-font-class-2" //name of user
-                    >{card.maker}</h1> 
+                    >{toiaName}</h1> 
                     <p className="t2 garden-font-class-2" //individual stream name
-                    >{card.streamName}</p>
+                    >{card.name}</p>
                 </div>
                 <br></br>
                 <div className="garden-carousel-menu" //stats that appear under stream 
@@ -161,16 +183,17 @@ function AvatarGardenPage() {
     };
 
     const renderCard = (card, index) => {//cards for videos
+        console.log(card);
         return(
             <div className="row">
-                <div onClick={edit} className="column" style={{ backgroundImage: `url(${card.still})`, cursor: `pointer`}} //video thumbnail
+                <div onClick={()=>edit(card)} className="column" style={{ backgroundImage: `url(${sampleVideo})`, cursor: `pointer`}} //video thumbnail
                 />
                 <div className="column garden-question">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
                     /> 
                     <h1 className="garden-name garden-font-class-2" //question
                     >{card.question}</h1>
-                    <button onClick={(event) => {cardSelected.push(avatars[index].question); openModal(event)}} className="garden-delete" //trash can
+                    <button onClick={(event) => {cardSelected.push(videoList[index].question); openModal(event)}} className="garden-delete" //trash can
                     ><i class="fa fa-trash"></i></button>
                     
                 </div>
@@ -211,10 +234,20 @@ function AvatarGardenPage() {
     }
 
     /*navigations to pages from buttons*/
-    function edit() {
+    function edit(video) {
         history.push({
           pathname: '/editrecorder',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID,
+            videoID: video.id_video,
+            videoType: video.type,
+            question: video.question,
+            answer: video.answer
+          }
         });
+
     }
     function add() {
         history.push({
@@ -235,10 +268,10 @@ function AvatarGardenPage() {
     const handleClick = (event, index) => {//function that populates and depopulates the cardSelected variable and controls visibility of hidden menu
         let isChecked = event.target.checked;
         if (isChecked == true){//checks if a video has been selected, adds to list and makes hidden menu appear
-            cardSelected.push(avatars[index].question);
+            cardSelected.push(videoList[index].question);
             setDisplayItem('block');
         }else{
-            cardSelected.splice(cardSelected.indexOf(avatars[index].question), 1);//else video is being deselected, deletes from list
+            cardSelected.splice(cardSelected.indexOf(videoList[index].question), 1);//else video is being deselected, deletes from list
             if (cardSelected.length == 0){//checks if no video is being selected, hides hidden menu
                 setDisplayItem('none');
             }
@@ -453,7 +486,7 @@ function AvatarGardenPage() {
                 ]}
                 className="garden-carousel"
                 >
-                    {streams.map(renderStream)}
+                    {streamList.map(renderStream)}
                 </Carousel>
                 <div onClick={album_page}><img className="garden-stream" src={addButton} // add stream button
                 /></div>
@@ -474,7 +507,7 @@ function AvatarGardenPage() {
                 />
                 <div className ="garden-grid" // videos 
                 >
-                    {data.map(renderCard)}
+                    {videoList.map(renderCard)}
                 </div>
                 <div className="garden-hidden" style={{display: displayItem}} // hidden menu that appears when video is selected
                 >
@@ -497,7 +530,7 @@ function AvatarGardenPage() {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            {streams.map((option, index) => ( // this is the menu, its a list of the stream names I took form the streams variable
+                            {streamList.map((option, index) => ( // this is the menu, its a list of the stream names I took form the streams variable
                                 <MenuItem selected={index === selectedIndex} onClick={(event) => handleMenuClose(event, index)}>{option.streamName}</MenuItem>
                             ))}
                         </Menu>

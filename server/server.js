@@ -198,9 +198,36 @@ app.get('/getAllAvatars',(req,res)=>{
 			
 });
 
+app.post('/getUserVideos',(req,res)=>{
+	let query_userVideos=`SELECT * FROM video WHERE toia_user_id="${req.body.params.toiaID}";`;
+	connection.query(query_userVideos, (err,entries,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+			res.send(entries);
+		}		
+	});
+});
+
+app.post('/getUserStreams',(req,res)=>{
+	let query_userStreams=`SELECT * FROM stream WHERE toia_user_id="${req.body.params.toiaID}";`;
+	connection.query(query_userStreams, (err,entries,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+			console.log(entries);
+			res.send(entries);
+		}		
+	});
+
+});
+
+
 app.get('/getAvatarInfo',(req,res)=>{
 	console.log('hihihi');
-	let query_avatar_info=`SELECT name,language,description FROM avatar WHERE id_avatar="${req.query.avatarID}";`
+	let query_avatar_info=`SELECT name,language,description FROM avatar WHERE id_avatar="${req.query.avatarID}";`;
 	connection.query(query_avatar_info, (err,entry,fields)=>{
 		if (err){
 			throw err;

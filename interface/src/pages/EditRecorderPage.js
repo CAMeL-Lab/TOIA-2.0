@@ -18,13 +18,12 @@ const videoConstraints = {
     facingMode: "user"
   };
   
-var vtype = ['filler', 'greeting', 'exit']; // this variable holds the list of the video type choses (return with the same name)
-var privateSet = true;
-var albumSelected = [ // this is the selected albums 
-  {label: "Default", value: "default"},
-  {label: "Personal", value: "personal"},
-];
-var question = 'Question chosen/typed'; //this is the question from the video the user wanted to edit
+//var vtype = ['filler', 'greeting', 'exit']; // this variable holds the list of the video type choses (return with the same name)
+// var privateSet = true;
+// var albumSelected = [ // this is the selected albums 
+//   {label: "Default", value: "default"},
+//   {label: "Personal", value: "personal"},
+// ];
 
 function EditRecorder () {
 
@@ -56,9 +55,6 @@ function EditRecorder () {
       {label: "Fun", value: "fun"},
       ];
   
-    var albumSelect = []; // this holds the list of labels for the new selected albums
-    const [albumC, setAlbum] = useState(albumSelected);
-    const [isPublic, setPublic] = useState(privateSet); //boolean for private settings
     const handleChange = nextChecked => {
       setPublic(nextChecked);
       if (bgSwitch == '#e5e5e5'){
@@ -73,15 +69,28 @@ function EditRecorder () {
     const [capturing, setCapturing] = useState(false);
     const [recordedChunks, setRecordedChunks] = useState([]);
 
-    const [avatarName, setName] = useState(null);
-    const [avatarLanguage, setLanguage] = useState(null);
-    const [avatarID, setAvatarID] = useState(null);
-
-    const [questionList,setQuestionList]=useState([]);
+    const [toiaName, setName] = useState(null);
+    const [toiaLanguage, setLanguage] = useState(null);
+    const [toiaID, setTOIAid] = useState(null);
+    const [videoID,setVideoID]=useState(null);
+    const [question,setQuestion]=useState(null);
+    const [answer,setAnswer]=useState(null);
     const [videoType,setVideoType]=useState(null);
-    const [questionSelected,setQuestionSelected]=useState(question);
-    const [answerProvided,setAnswerProvided]=useState(null);
+    const [videoStreams,setVideoStreams]=useState([]);
+    const [videoIsPrivate,setIsPrivate]=useState(false);
 
+    React.useEffect(() => {
+      setName(history.location.state.toiaName);
+      setLanguage(history.location.state.toiaLanguage);
+      setTOIAid(history.location.state.toiaID);
+      setVideoID(history.location.state.videoID);
+      setVideoType(history.location.state.videoType);
+      if(history.location.state.videoType!=null){
+
+      }
+      setQuestion(history.location.state.question);
+      setAnswer(history.location.state.answer);
+    });
 
         /*useEffect(() => {
         axios.get('http://localhost:3000/getQuestions').then((res)=>{
@@ -98,7 +107,7 @@ function EditRecorder () {
 
 
     const handleStartCaptureClick = React.useCallback((e) => {
-        console.log(avatarName,avatarLanguage,avatarID);
+
         SpeechRecognition.startListening({ continuous: true });
         setCapturing(true);
         mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
@@ -131,8 +140,7 @@ function EditRecorder () {
 
     const handleDownload = React.useCallback((e) => {
 
-
-        if (questionSelected == null){
+        if (question == null){
         alert("Cannot submit until a question is chosen or written, ensure that text field is not highlight when submitting");
         } else {
 
@@ -143,16 +151,16 @@ function EditRecorder () {
 
             let form = new FormData();
             form.append('blob', blob);
-            form.append('name',avatarName);
-            form.append('language',avatarLanguage);
-            form.append('question', questionSelected);
+            form.append('id',toiaID);
+            form.append('name',toiaName);
+            form.append('language',toiaLanguage);
+            form.append('question', question);
             form.append('answer', transcript);
             console.log(form);
-            axios.post('http://localhost:3000/recorder',form).then((nextQuestion)=>{
-            const findQuestion = (element)=>element==questionSelected;
-            let qIndex=questionList.findIndex(findQuestion);
-            questionList[qIndex]=nextQuestion.data;
-            
+            axios.post('http://localhost:3000/recorder',form).then(()=>{
+              history.push({
+                pathname: '/garden',
+              });
             });
 
             // axios({
@@ -210,6 +218,15 @@ function EditRecorder () {
             pathname: '/garden',
         });
       }
+
+      function setType(event){
+        event.preventDefault();
+        if(videoType!=null){
+
+        }else{
+          setVideoType(e.)
+        }
+      }
      
       function changecolor(event) {
         event.preventDefault();
@@ -263,6 +280,10 @@ function EditRecorder () {
             break;
         }
       }
+
+      // function renderTypeButtons(){
+      //   return
+      // }
       
       function logout(){
           //logout function needs to be implemented (wahib)
@@ -317,7 +338,7 @@ function EditRecorder () {
                 <Modal.Header className="edit-modal-header">Feel free to correct your answer!</Modal.Header>
                 <Modal.Content>
 
-                <div contentEditable="true" className="edit-modal-ans edit-modal-text" onChange={e=>setAnswerProvided(e.target.value)}>{transcript}
+                <div contentEditable="true" className="edit-modal-ans edit-modal-text" onChange={e=>setAnswer(e.target.value)}>{transcript}
                 </div>
                 </Modal.Content>
                 <Modal.Actions>
@@ -345,11 +366,12 @@ function EditRecorder () {
             </div>
             <h1 className="edit-title edit-font-class-3 ">Edit Recording</h1>
             <div className="side-bar">
-                <div className="side-button b1" style={{backgroundColor: bgColor1}} onClick={changecolor}>Filler</div>
-                <div className="side-button b2" style={{backgroundColor: bgColor2}} onClick={changecolor}>Regular Answer</div>
-                <div className="side-button b3" style={{backgroundColor: bgColor3}} onClick={changecolor}>Yes or No</div>
-                <div className="side-button b4" style={{backgroundColor: bgColor4}} onClick={changecolor}>Greeting</div>
-                <div className="side-button b5" style={{backgroundColor: bgColor5}} onClick={changecolor}>Exit</div>
+                <div className="side-button b1" value="filler" id="filler" style={{backgroundColor: bgColor1}} onClick={setType}>Filler</div>
+                <div className="side-button b2" value="answer" id="answer" style={{backgroundColor: bgColor2}} onClick={setType}>Regular Answer</div>
+                <div className="side-button b2" value="no-answer" id="no-answer" style={{backgroundColor: bgColor2}} onClick={setType}>No Answer Provided</div>
+                <div className="side-button b3" value="y/n-answer" id="y/n-answer" style={{backgroundColor: bgColor3}} onClick={setType}>Yes or No</div>
+                <div className="side-button b4" value="greeting" id="greeting" style={{backgroundColor: bgColor4}} onClick={setType}>Greeting</div>
+                <div className="side-button b5" value="exit" id="exit" style={{backgroundColor: bgColor5}} onClick={setType}>Exit</div>
                 <hr className="divider1"></hr>
                 <div className="font-class-1 public" style={{backgroundColor: bgSwitch}}>
                 <span>Public</span>
@@ -393,9 +415,9 @@ function EditRecorder () {
             <p className="speech">{transcript}</p>
             <input
                 className="edit-type-q edit-font-class-1"
-                defaultValue={questionSelected}
+                defaultValue={question}
                 type={"text"}
-                onChange={e=>setQuestionSelected(e.target.value)}
+                onChange={e=>setQuestion(e.target.value)}
             />
         </form>
     );
