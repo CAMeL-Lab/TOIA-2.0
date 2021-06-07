@@ -4,6 +4,8 @@ import 'semantic-ui-css/semantic.min.css';
 import React, { useState } from "react";
 import submitButton from "../icons/submit-button.svg";
 import sampleVideo from "../icons/sample-video.svg";
+import alberto from "../images/alberto.jpeg";
+import wahib from "../images/wahib.jpg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 
@@ -23,8 +25,8 @@ function AvatarViewPage() {
 
     var team =[// This is a list of all members names and their accompanying pictures
         { still: sampleVideo, member: "Nizar H."},
-        { still: sampleVideo, member: "Wahib K."},
-        { still: sampleVideo, member: "Alberto C."},
+        { still: wahib, member: "Wahib K."},
+        { still: alberto, member: "Alberto C."},
         { still: sampleVideo, member: "Kertu K."},
         { still: sampleVideo, member: "Goffredo P."},
         { still: sampleVideo, member: "Erin C."},
@@ -34,7 +36,7 @@ function AvatarViewPage() {
     const renderTeam = (card, index) => {//cards for members
         return(
             <div className="about-box border-0">
-                <img src={card.still} width="150" //person thumbnail
+                <img src={card.still} width="150" height="150" //person thumbnail
                 />
                 <div>
                     <h1 className="about-name" //name of person
@@ -144,7 +146,7 @@ function AvatarViewPage() {
                 <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
                     My TOIA
                 </div>
-                <div onClick={isLogin ? logout : openModal}className="nav-login_icon app-monsterrat-black">
+                <div onClick={isLogin ? logout : openModal} className="nav-login_icon app-monsterrat-black">
                    {isLogin ? 'Logout' : 'Login'}
                 </div>
             </div>
@@ -155,8 +157,35 @@ function AvatarViewPage() {
             >
                 {team.map(renderTeam)}
             </div>
+            <p className="publication-links">Publication Links </p>
+            <div className = "publications">
+            <ul>
+                <li>
+                Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,
+                SIGdial, April 2021
+                </li>
+                <li > 
+                Nizar Habash and Alberto Chierchi, A View From the Crowd: Evaluation Challenges for Time-Offset Interaction Applications,
+                Association for Computational Linguistics, April 2021, <a href="https://www.aclweb.org/anthology/2021.humeval-1.9.pdf">[PDF]</a>
+                <a href="https://www.aclweb.org/anthology/2021.humeval-1.9.bib">[BIB]</a>
+                </li>
+                <li> 
+                Alberto Chierici, Nizar Habash, Margarita Bicec, The Margarita Dialogue Corpus: A Data Set for Time-Offset Interactions and Unstructured Dialogue Systems,
+                Proceedings of the 12th Language Resources and Evaluation Conference, May 2020, <a href="https://www.aclweb.org/anthology/2020.lrec-1.60.pdf">[PDF]</a>
+                <a href="https://www.aclweb.org/anthology/2020.lrec-1.60.bib">[BIB]</a>
+                </li>
+                <li>
+                Dana Abu Ali, Muaz Ahmad, Hayat Al Hassan, Paula Dozsa, Ming Hu, Jose Varias, Nizar Habash, A Bilingual Interactive Human Avatar Dialogue System,
+                Proceedings of the 19th Annual SIGdial Meeting on Discourse and Dialogue, July 2018, <a href="https://www.aclweb.org/anthology/W18-5027.pdf">[PDF]</a>
+                <a href="https://www.aclweb.org/anthology/W18-5027.bib">[BIB]</a>
+                </li>
+            </ul>
+
+            </div>
             
         </div>
+        
+        
     );
 }
 

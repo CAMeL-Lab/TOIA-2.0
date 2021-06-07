@@ -49,6 +49,7 @@ video {
   position: absolute;
   left: 40%;
   top: 61.5%;
+  /* position: relative; */
   width: 48px;
   z-index: 3;
   background-color: transparent;
@@ -165,9 +166,10 @@ video {
   overflow: auto;
   text-align: center;
   position: absolute;
-  width: 40vw;
-  top: 62%;
-  left: 45%
+  /* position: relative;
+  width: 40vw; */
+  /* top: 62%;
+  left: 45% */
 }
 .type-q {
   background-color: rgba(126, 124, 124, 0.1);

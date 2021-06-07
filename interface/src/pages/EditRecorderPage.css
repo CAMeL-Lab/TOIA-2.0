@@ -3,9 +3,9 @@ video {
   position: relative;
 }
 .edit-layout {
-  position: absolute;
+  position: relative;
   left: 39%;
-  top: 12%;
+  top: 25%;
   border-radius: 10px;
 }
 .edit-record-page {
@@ -45,13 +45,13 @@ video {
 .edit-icon {
   display: block;
   position: absolute;
-  left: 40%;
+  left: 39%;
   top: 61.5%;
   width: 48px;
   z-index: 3;
   background-color: transparent;
   border: 0;
-  color: white;
+  color: rgb(240, 16, 16);
 }
 .edit-check {
   display: block;
