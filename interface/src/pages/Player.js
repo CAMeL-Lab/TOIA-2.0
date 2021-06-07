@@ -20,7 +20,32 @@ function Player(){
       }
   }
 
-  const { transcript, resetTranscript } = useSpeechRecognition({command: '*',callback:fetchData});
+  function fetchData(){
+
+    // event.preventDefault();
+  
+    // SpeechRecognition.stopListening();
+
+    if(transcript!=''){
+      let question = transcript[0].toUpperCase()+transcript.slice(1);
+      resetTranscript();
+
+      let videoElem= <video className="player-vid" key={question} autoPlay><source src={`http://localhost:3000/player/${avatarID}/${avatarName}/${language}/${question}`} type='video/mp4'></source></video>;
+
+      setVideo(videoElem);
+    }
+
+  }
+
+  const commands=[
+    {
+      command: '*',
+      callback:fetchData
+    }
+  ];
+
+
+  const { transcript, resetTranscript } = useSpeechRecognition(commands);
   
   const [avatarName, setAvatarName] = React.useState(null);
   const [language, setLanguage] = React.useState(null);
@@ -30,28 +55,20 @@ function Player(){
   const [caption,setCaption] = useState(null);
   let isLogin = false; //login variable
   var input1, input2;
+  let [micMute, setMicStatus]=React.useState(false);
+  let [micString, setMicString]=React.useState('Mute');
 
   React.useEffect(() => {
     setAvatarName(history.location.state.name);
     setLanguage(history.location.state.language);
     setInteractionLanguage(history.location.state.interactionLanguage);
     setAvatarID(history.location.state.avatarID);
+    if(micMute==false){
+      SpeechRecognition.startListening({continuous:true});
+    }
   });
 
 
-  function fetchData(event){
-
-    event.preventDefault();
-  
-    SpeechRecognition.stopListening();
-
-    let question = transcript[0].toUpperCase()+transcript.slice(1);
-
-    let videoElem= <video className="player-vid" key={question} autoPlay><source src={`http://localhost:3000/player/${avatarID}/${avatarName}/${language}/${question}`} type='video/mp4'></source></video>;
-
-    setVideo(videoElem);
-
-  }
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const { open } = state
@@ -73,6 +90,21 @@ function Player(){
             input2 = event.target.value;
             break;
         }
+    }
+
+    function micStatusChange(){
+      if(micMute==true){
+        setMicStatus(false);
+        setMicString('Mute');
+        SpeechRecognition.startListening({continuous:true});
+      }else{
+        SpeechRecognition.stopListening();
+        setMicStatus(true);
+        setMicString('Unmute');
+        fetchData();
+  
+      }
+
     }
 
     function submitHandler(){
@@ -186,10 +218,10 @@ function Player(){
         <h1 className="player-name player-font-class-3 ">{avatarName}</h1>
         <p className="player-lang player-font-class-2 ">{language}</p>
         {video}
-        <button onClick={()=>{SpeechRecognition.startListening({ continuous: true })}}>Start</button>
+        {/* <button onClick={()=>{SpeechRecognition.startListening({ continuous: true })}}>Start</button>
         <button onClick={fetchData}>Stop</button>
-        <button onClick={resetTranscript}>Reset</button>
-        <p>{transcript}</p>
+        <button onClick={resetTranscript}>Reset</button> */}
+        <button onClick={micStatusChange}>{micString}</button>
 
       </div>
     </div>

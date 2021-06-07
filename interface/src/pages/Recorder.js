@@ -76,15 +76,14 @@ function Recorder () {
   };
 
 
-  /*useEffect(() => {
-    axios.get('http://localhost:3000/getQuestions').then((res)=>{
+  useEffect(() => {
+    axios.get('http://localhost:3000/getAllVideos').then((res)=>{
       setQuestionList(res.data);
     });
-    setName(history.location.state.name);
-    setLanguage(history.location.state.language);
-    setAvatarID(history.location.state.new_avatar_ID);
-  });
-  },[]);*/
+    setName(history.location.state.toiaName);
+    setLanguage(history.location.state.toiaLanguage);
+    setAvatarID(history.location.state.toiaID);
+  },[]);
 
   // setName(history.location.state.name);
   // setLanguage(history.location.state.language);

@@ -1,12 +1,13 @@
 import './App.css';
 import './HomePage.css';
 import 'semantic-ui-css/semantic.min.css';
-import React from "react";
+import React, {useState, useEffect, useRef} from "react";
 import signupButton from "../icons/signup-button.svg";
 import submitButton from "../icons/submit-button.svg";
 import sample from "../icons/sample-video.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
+import axios from 'axios';
 
 
 function HomePage() {
@@ -28,11 +29,21 @@ function HomePage() {
   let isLogin = false; // this will tell if user is logged in to determine whether my TOIA will activate login pop *Wahib*
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
+  var [hasEmailError, setHasEmailError] = useState(false);
+  var [hasPasswordError, setHasPasswordError] = useState(false);
   const { open } = state
 
   function openModal(e){
     dispatch({ type: 'open' });
     e.preventDefault();
+  }
+
+  function ErrorComponent_email() {
+    return <p>E-mail not found</p>
+  }
+
+  function ErrorComponent_pwd() {
+    return <p>Password not found</p>
   }
 
   function myChangeHandler(event){
@@ -49,9 +60,34 @@ function HomePage() {
     }
   }
 
-  function submitHandler(){
-    history.push({
-      pathname: '/garden',
+  function submitHandler(e){
+    e.preventDefault();
+
+    setHasPasswordError(false);
+    setHasPasswordError(false);
+
+    let params={
+      email:input1,
+      pwd:input2
+    }
+
+    axios.post('http://localhost:3000/login',params).then(res=>{
+      if(res.data==-1){
+          //alert('Email not found');
+        setHasEmailError(true);
+      }else if(res.data==-2){
+        setHasPasswordError(true);
+      }else {
+        console.log(res.data);
+        history.push({
+          pathname: '/garden',
+          state: {
+            toiaName:res.data.firstName,
+            toiaLanguage:res.data.language,
+            toiaID: res.data.toia_id
+          }
+        });
+      }
     });
   }
 
@@ -108,6 +144,9 @@ function HomePage() {
               <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
               <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
             </Modal.Header>
+
+            {hasEmailError && <ErrorComponent_email></ErrorComponent_email>}
+            {hasPasswordError && <ErrorComponent_pwd></ErrorComponent_pwd>}
 
             <Modal.Content>
               <form className="login_popup" onSubmit={submitHandler}>

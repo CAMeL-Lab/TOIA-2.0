@@ -40,8 +40,12 @@ const connection = mysql.createConnection({
 
 connection.connect()
 
-let count=9000;
+let count=24000;
+let name='';
+let video_id='';
 
+let answerTheseQuestions=["What is your favorite sport?","What is your designation?","Where do you live?","Who is your favorite actor?"];
+let index=0;
 //Check if entry exists in database, otherwise create one
 
 // async function getPath(avatarName){
@@ -70,12 +74,12 @@ let count=9000;
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		//cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
-		cb(null,`./public/static/avatar_garden/Wahib/videos`);
+		cb(null,`./public/static/avatar_garden/${name}/videos`);
 	},
 	filename: function (req, file, cb) {
 		crypto.pseudoRandomBytes(16, function (err, raw) {
-			let video_id=(raw.toString('hex') + Date.now()).slice(0,32);
-			cb(null, 'WAHIB_'+video_id + '.' + mime.getExtension(file.mimetype));
+			video_id=(raw.toString('hex') + Date.now()).slice(0,32);
+			cb(null, name+video_id + '.' + mime.getExtension(file.mimetype));
 		});
   }
 });
@@ -138,6 +142,46 @@ let upload = multer({
 // Implementing the recorder
 
 
+app.post('/login',(req,res)=>{
+
+	req.body.email
+	req.body.pwd
+
+	let query_checkEmailExists=`SELECT COUNT(*) AS cnt FROM toia_user WHERE email="${req.body.email}";`
+
+	connection.query(query_checkEmailExists,(err,entry,fields)=>{
+		if(err){
+			throw err;
+		}
+		else{
+			if(entry[0].cnt==0){
+				res.send("-1");
+			}else{
+				let query_checkPasswordCorrect=`SELECT * FROM toia_user WHERE email="${req.body.email}";`
+		
+				connection.query(query_checkPasswordCorrect, (err,entry,fields)=>{
+					if (err){
+						throw err;
+					}
+					else{
+						console.log(entry);
+						if(entry[0].password==req.body.pwd){
+							let userData={
+								toia_id:entry[0].id,
+								firstName:entry[0].first_name,
+								language:entry[0].language
+							}
+							res.send(userData);
+						}else{
+							res.send("-2");
+						}
+					}
+				});
+			}
+		}
+	});
+});
+
 app.get('/getAllAvatars',(req,res)=>{
 
 	let getAvatarQuery=`SELECT name,id_avatar FROM avatar;`;
@@ -154,9 +198,36 @@ app.get('/getAllAvatars',(req,res)=>{
 			
 });
 
+app.post('/getUserVideos',(req,res)=>{
+	let query_userVideos=`SELECT * FROM video WHERE toia_user_id="${req.body.params.toiaID}";`;
+	connection.query(query_userVideos, (err,entries,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+			res.send(entries);
+		}		
+	});
+});
+
+app.post('/getUserStreams',(req,res)=>{
+	let query_userStreams=`SELECT * FROM stream WHERE toia_user_id="${req.body.params.toiaID}";`;
+	connection.query(query_userStreams, (err,entries,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+			console.log(entries);
+			res.send(entries);
+		}		
+	});
+
+});
+
+
 app.get('/getAvatarInfo',(req,res)=>{
 	console.log('hihihi');
-	let query_avatar_info=`SELECT name,language,description FROM avatar WHERE id_avatar="${req.query.avatarID}";`
+	let query_avatar_info=`SELECT name,language,description FROM avatar WHERE id_avatar="${req.query.avatarID}";`;
 	connection.query(query_avatar_info, (err,entry,fields)=>{
 		if (err){
 			throw err;
@@ -187,7 +258,7 @@ app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
 		avatar_name: avatarName,
 		KB_version: "1.0",
 		language: "US-en",
-		boolean_test: true 
+		avatar_id:avatarID
 	}).then((videoDetails)=>{
 		let answerToQuestion=videoDetails.data.answer;
 		let query_avatar_idx=`SELECT idx FROM video WHERE avatar_id_avatar=${avatarID} AND id_video="${videoDetails.data.id_video}";`
@@ -197,8 +268,14 @@ app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
 			}
 			else{
 				let index=entry[0].idx;
-				let video_file=avatarName.toLowerCase()+'2019_'+index+'_'+videoDetails.data.id_video+'.mp4';
-				let video_path='./public/static/avatar_garden/margarita2019/videos/'+video_file;
+				let video_file=''
+				console.log(avatarName);
+				if(avatarName=='Margarita'){
+					video_file='margarita2019_'+index+'_'+videoDetails.data.id_video+'.mp4';
+				}else{
+					video_file=avatarName+videoDetails.data.id_video+'.webm';
+				}
+				let video_path=`./public/static/avatar_garden/${avatarName}/videos/${video_file}`;
 				
 				res.sendFile(video_path, { root: __dirname });
 			}
@@ -207,43 +284,29 @@ app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
 	});
 });
 
-app.post('/createAvatar',(req,res)=>{
-	
-	let isPrivate;
+app.post('/createTOIA',(req,res)=>{
 
-	if(req.body.privacySetting=='public'){
-		isPrivate=0;
-
-	}else{
-		isPrivate=1;
-	}
-
-	let queryCreateAvatar;
-	if(req.body.bio!=''){
-		queryCreateAvatar=`INSERT INTO avatar(name,is_private,description,language) VALUES("${req.body.name}",${isPrivate},"${req.body.bio}","${req.body.language}");`
-	}else{
-		queryCreateAvatar=`INSERT INTO avatar(name,is_private,language) VALUES("${req.body.name}",${isPrivate},"${req.body.language}");`
-	}
-
-	connection.query(queryCreateAvatar, (err,entry,fields)=>{
+	let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${req.body.firstName}","${req.body.lastName}","${req.body.email}","${req.body.pwd}","${req.body.language}");`
+	connection.query(queryCreateTOIA, (err,entry,fields)=>{
 		if (err){
 			throw err;
 		}else{
 			console.log(entry.insertId);
-			res.send({new_avatar_ID: entry.insertId});
+			res.send({new_toia_ID: entry.insertId});
 		}
 	});
-	mkdirp(`./public/static/avatar_garden/${req.body.name}`);
-	mkdirp(`./public/static/avatar_garden/${req.body.name}/videos`);
+	mkdirp(`./public/static/avatar_garden/${req.body.firstName}`);
+	mkdirp(`./public/static/avatar_garden/${req.body.firstName}/videos`);
 
 });
 
 
 app.get('/getQuestions',(req,res)=>{
-	axios.get('http://localhost:4000/getMandatoryQuestions').then((questionArr)=>{
-		console.log('yehee');
-		res.send(questionArr.data.mandatoryQuestions);
-	})
+	// axios.get('http://localhost:4000/getMandatoryQuestions').then((questionArr)=>{
+	// 	console.log('yehee');
+	// 	res.send(questionArr.data.mandatoryQuestions);
+	// })
+	res.send(["What is your name?","How are you?","Where are you from?"]);
 });
 
 app.post('/recorder',upload.any(),(req,res)=>{
@@ -262,33 +325,44 @@ app.post('/recorder',upload.any(),(req,res)=>{
 	console.log(req.body);
 	let qa_pair=question+' '+answer;
 	console.log(qa_pair);
-	axios.post('http://localhost:4000/generateNextQ',{
-		qa_pair
-	}).then((nextQuestions)=>{
-		console.log('yehee');
-		res.send(nextQuestions.data.q[0]);
-	});
+	// axios.post('http://localhost:4000/generateNextQ',{
+	// 	qa_pair
+	// }).then((nextQuestions)=>{
+	// 	console.log('yehee');
+	// 	res.send(nextQuestions.data.q[0]);
+	// });
+	res.send(answerTheseQuestions[index]);
+	index=index+1;
 
-	// let idAvatar;
-	// let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${req.body.name}";`;
-	// connection.query(getAvatarIdQuery,(err,entry,fields)=>{
-	// 	if (err){
-	// 		throw err;
-	// 	}
-	// 	else{
-	// 		console.log(entry);
-	// 		idAvatar=entry[0].id_avatar;
-	// 		let querySaveVideo = `INSERT INTO video(id_video,question,answer,type,avatar_id_avatar,idx) VALUES("${video_id}","${question}","${answer}","answer",${idAvatar},${count});`;
+	let idAvatar;
+	let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${req.body.name}";`;
+	connection.query(getAvatarIdQuery,(err,entry,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+			console.log(entry);
+			idAvatar=entry[0].id_avatar;
+			let querySaveVideo = `INSERT INTO video(id_video,question,answer,type,avatar_id_avatar,idx) VALUES("${video_id}","${question}","${answer}","answer",${idAvatar},${count});`;
 
 		
-	// 		connection.query(querySaveVideo, (err,entry,fields)=>{
-	// 			if (err){
-	// 				throw err;
-	// 			}
-	// 		});
-	// 	}
-	// });
-	// count=count+20;
+			connection.query(querySaveVideo, (err,entry,fields)=>{
+				if (err){
+					throw err;
+				}else{
+					axios.post('http://localhost:5000/update_avatar',{
+						question,
+						answer,
+						KB_version: "1.0",
+						language: "US-en",
+						id_video:video_id,
+						avatar_id:idAvatar
+					});
+				}
+			});
+		}
+	});
+	count=count+20;
 
 
 
