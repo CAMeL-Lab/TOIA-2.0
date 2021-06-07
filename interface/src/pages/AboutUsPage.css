@@ -34,6 +34,63 @@
   color: #707070;
 }
 
+.publication-links{
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  text-align: left;
+  letter-spacing: -0.015em;
+  width: 70vw;
+  position: absolute;
+  left: 14%;
+  top: 93%;
+  color: #707070;
+}
+
+.publications{
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18px;
+  text-align: left;
+  letter-spacing: -0.015em;
+  width: 70vw;
+  position: absolute;
+  left: 14%;
+  top: 98%;
+  color: #707070; 
+  
+  /* padding: 0 */
+}
+
+/* li {
+  margin-left: 10px;
+  /* list-style-type: circle; */
+  /* font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18px;
+  text-align: left;
+  letter-spacing: -0.015em;
+  width: 70vw;
+  color: #707070;
+}
+
+li a {
+  margin-left: inherit;
+}
+
+ul {
+  padding-left: 2rem;
+  list-style-type: square;
+} */ 
+
+ul li {
+  padding: 2rem;
+  color: #707070;
+  list-style-type: square;
+} 
 /*grid*/
 .about-box {
   margin: 5px;
