@@ -63,7 +63,7 @@ function HomePage() {
   function submitHandler(e){
     e.preventDefault();
 
-    setHasPasswordError(false);
+    setHasEmailError(false);
     setHasPasswordError(false);
 
     let params={

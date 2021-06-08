@@ -29,6 +29,8 @@ function SignUpPage() {
   const [cpass, setCPass] = useState('');
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
+  var [hasEmailError, setHasEmailError] = useState(false);
+  var [hasPasswordError, setHasPasswordError] = useState(false);
   const { open } = state
 
   function openModal(e){
@@ -36,10 +38,17 @@ function SignUpPage() {
     e.preventDefault();
   }
 
+  function ErrorComponent_email() {
+    return <p>E-mail not found</p>
+  }
+
+  function ErrorComponent_pwd() {
+    return <p>Password not found</p>
+  }
+
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-
         axios.post('http://localhost:3000/createTOIA',
           {
             firstName:fname,
@@ -60,6 +69,39 @@ function SignUpPage() {
     }else{
       alert('Passwords need to match');
     }
+  }
+
+  function loginHandler(event){
+
+    event.preventDefault();
+
+    setHasEmailError(false);
+    setHasPasswordError(false);
+
+    let params={
+      email:input1,
+      pwd:input2
+    }
+
+    axios.post('http://localhost:3000/login',params).then(res=>{
+      if(res.data==-1){
+          //alert('Email not found');
+        setHasEmailError(true);
+      }else if(res.data==-2){
+        setHasPasswordError(true);
+      }else {
+        console.log(res.data);
+        history.push({
+          pathname: '/garden',
+          state: {
+            toiaName:res.data.firstName,
+            toiaLanguage:res.data.language,
+            toiaID: res.data.toia_id
+          }
+        });
+      }
+    });
+    
   }
 
   function myChangeHandler(event){
@@ -119,6 +161,44 @@ function SignUpPage() {
 
   
   return (
+    <div>
+    <Modal //this is the new pop up menu
+    size='large'
+    style={inlineStyle.modal}
+    open={open} 
+    onClose={() => dispatch({ type: 'close' })}
+  >
+        <Modal.Header className="login_header">
+          <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
+          <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
+        </Modal.Header>
+
+        {hasEmailError && <ErrorComponent_email></ErrorComponent_email>}
+        {hasPasswordError && <ErrorComponent_pwd></ErrorComponent_pwd>}
+
+        <Modal.Content>
+          <form className="login_popup" onSubmit={loginHandler}>
+            <input
+              className="login_email login-font-class-1"
+              placeholder={"Email"}
+              type={"email"}
+              required={true}
+              onChange={myChangeHandler}
+              name={"email"}
+            />
+            <input
+              className="login_pass login-font-class-1"
+              placeholder={"Password"}
+              type={"password"}
+              required={true}
+              onChange={myChangeHandler}
+              name={"pass"}
+            />
+            <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
+            <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
+          </form>
+        </Modal.Content>
+    </Modal>
     <form className="signup-page" onSubmit={submitHandler}>
       <div className="nav-heading-bar">
           <div onClick={home} className="nav-toia_icon app-opensans-normal">
@@ -137,40 +217,6 @@ function SignUpPage() {
             Login
           </div>
       </div>
-      <Modal //this is the new pop up menu
-        size='large'
-        style={inlineStyle.modal}
-        open={open} 
-        onClose={() => dispatch({ type: 'close' })}
-      >
-            <Modal.Header className="login_header">
-              <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
-              <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
-            </Modal.Header>
-
-            <Modal.Content>
-              <form className="login_popup" onSubmit={submitHandler}>
-                <input
-                  className="login_email login-font-class-1"
-                  placeholder={"Email"}
-                  type={"email"}
-                  required={true}
-                  onChange={myChangeHandler}
-                  name={"email"}
-                />
-                <input
-                  className="login_pass login-font-class-1"
-                  placeholder={"Password"}
-                  type={"password"}
-                  required={true}
-                  onChange={myChangeHandler}
-                  name={"pass"}
-                />
-                <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
-                <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
-              </form>
-            </Modal.Content>
-        </Modal>
       <div className="signup-group">
       <h1 className="signup-title signup-font-class-3 ">Get Started</h1>
       <p className="signup_text signup-font-class-2 signup-animate-enter">Enter the following information to create your TOIA account</p>
@@ -307,6 +353,7 @@ function SignUpPage() {
           </div>
       </div>
     </form>
+    </div>
   );
 }
 

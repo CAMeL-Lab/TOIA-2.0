@@ -41,13 +41,15 @@ function EditRecorder () {
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const { open } = state
 
-    const [bgColor1, setColor1] = useState(vtype.includes('filler') ? '#7E7C7C': '#e5e5e5');
-    const [bgColor2, setColor2] = useState(vtype.includes('regular') ? '#7E7C7C': '#e5e5e5');
-    const [bgColor3, setColor3] = useState(vtype.includes('y/n') ? '#7E7C7C': '#e5e5e5');
-    const [bgColor4, setColor4] = useState(vtype.includes('greeting') ? '#7E7C7C': '#e5e5e5');
-    const [bgColor5, setColor5] = useState(vtype.includes('exit') ? '#7E7C7C': '#e5e5e5');
-    const [bgSwitch, setSwitch] = useState(privateSet ? '#7E7C7C' : '#e5e5e5');
+    const [fillerColor, setFillerColor] = useState('#e5e5e5');
+    const [answerColor, setAnswerColor] = useState('#e5e5e5');
+    const [yesNoColor, setYesNoColor] = useState('#e5e5e5');
+    const [exitColor, setExitColor] = useState('#e5e5e5');
+    const [greetingColor, setGreetingColor] = useState('#e5e5e5');
+    const [privacyColor, setPrivacyColor] = useState('#e5e5e5');
   
+    //vtype.includes('filler') ? '#7E7C7C': 
+
     var albums =[ // this is a lst of all the albums
       {label: "Default", value: "default"},
       {label: "Business", value: "business"},
@@ -56,11 +58,11 @@ function EditRecorder () {
       ];
   
     const handleChange = nextChecked => {
-      setPublic(nextChecked);
-      if (bgSwitch == '#e5e5e5'){
-        setSwitch('#7E7C7C');
+      //setPublic(nextChecked);
+      if (privacyColor == '#e5e5e5'){
+        setPrivacyColor('#7E7C7C');
       }else{
-        setSwitch('#e5e5e5');
+        setPrivacyColor('#e5e5e5');
       }
     };
 
@@ -79,18 +81,24 @@ function EditRecorder () {
     const [videoStreams,setVideoStreams]=useState([]);
     const [videoIsPrivate,setIsPrivate]=useState(false);
 
+    const [sideButtonElements,setSideButtonElements]=useState([]);
+
     React.useEffect(() => {
       setName(history.location.state.toiaName);
       setLanguage(history.location.state.toiaLanguage);
       setTOIAid(history.location.state.toiaID);
       setVideoID(history.location.state.videoID);
       setVideoType(history.location.state.videoType);
-      if(history.location.state.videoType!=null){
-
-      }
       setQuestion(history.location.state.question);
       setAnswer(history.location.state.answer);
+
+      makeSideButtonElements(history.location.state.videoType);
     });
+
+    function makeSideButtonElements(vtype){
+
+    }
+
 
         /*useEffect(() => {
         axios.get('http://localhost:3000/getQuestions').then((res)=>{
@@ -181,9 +189,9 @@ function EditRecorder () {
             resetTranscript();
             setRecordedChunks([]);
 
-            for( var i=0; i < albumC.length; i++){
-              albumSelect.push(albumC[i].label);
-            }
+            // for( var i=0; i < albumC.length; i++){
+            //   albumSelect.push(albumC[i].label);
+            // }
         }
       }
         e.preventDefault();
@@ -218,64 +226,61 @@ function EditRecorder () {
             pathname: '/garden',
         });
       }
-
-      function setType(event){
-        event.preventDefault();
-        if(videoType!=null){
-        }
-        // }else{
-        //   setVideoType(e.)
-        // }
-      }
      
-      function changecolor(event) {
+      function setType(event) {
         event.preventDefault();
         var name = event.target.className;
     
         switch(name) {
           case "side-button b1":
-            if (bgColor1 == '#e5e5e5'){
-              setColor1('#7E7C7C');
-              vtype.push('filler');
+            if (fillerColor == '#e5e5e5'){
+              setFillerColor('#7E7C7C');
+              setVideoType('filler');
+
+              setAnswerColor('#e5e5e5');
+              setYesNoColor('#e5e5e5');
+              setGreetingColor('#e5e5e5');
+              setExitColor('#e5e5e5');
+
             }else{
-              setColor1('#e5e5e5');
-              vtype.splice(vtype.indexOf('filler'), 1);
+              setFillerColor('#e5e5e5');
+              setVideoType(null);
             }
             break;
           case "side-button b2":
-            if (bgColor2 == '#e5e5e5'){
-              setColor2('#7E7C7C');
-              vtype.push('regular');
+            if (answerColor == '#e5e5e5'){
+              setAnswerColor('#7E7C7C');
+              setVideoType('answer');
             }else{
-              setColor2('#e5e5e5');
-              vtype.splice(vtype.indexOf('regular'), 1);
+              setAnswerColor('#e5e5e5');
+              setVideoType(null);
             }
             break;
           case "side-button b3":
-            if (bgColor3 == '#e5e5e5'){
-              setColor3('#7E7C7C');
-              vtype.push('y/n');
+            if (yesNoColor == '#e5e5e5'){
+              setYesNoColor('#7E7C7C');
+              setVideoType('y/n-answer');
             }else{
-              setColor3('#e5e5e5');
-              vtype.splice(vtype.indexOf('y/n'), 1);
+              setYesNoColor('#e5e5e5');
+              setVideoType(null);
             }
             break;
           case "side-button b4":
-            if (bgColor4 == '#e5e5e5'){
-              setColor4('#7E7C7C');
-              vtype.push('greeting');
+            if (greetingColor == '#e5e5e5'){
+              setGreetingColor('#7E7C7C');
+              setVideoType('greeting');
             }else{
-              setColor4('#e5e5e5');
-              vtype.splice(vtype.indexOf('greeting'), 1);
+              setGreetingColor('#e5e5e5');
+              setVideoType(null);
             }
             break;
           case "side-button b5":
-            if (bgColor5 == '#e5e5e5'){
-              setColor5('#7E7C7C');
-              vtype.push('exit');
+            if (exitColor == '#e5e5e5'){
+              setExitColor('#7E7C7C');
+              setVideoType('exit');
             }else{
-              setColor5('#e5e5e5');
-              vtype.splice(vtype.indexOf('exit'), 1);
+              setExitColor('#e5e5e5');
+              setVideoType(null);
             }
             break;
         }
@@ -366,18 +371,18 @@ function EditRecorder () {
             </div>
             <h1 className="edit-title edit-font-class-3 ">Edit Recording</h1>
             <div className="side-bar">
-                <div className="side-button b1" value="filler" id="filler" style={{backgroundColor: bgColor1}} onClick={setType}>Filler</div>
-                <div className="side-button b2" value="answer" id="answer" style={{backgroundColor: bgColor2}} onClick={setType}>Regular Answer</div>
-                <div className="side-button b2" value="no-answer" id="no-answer" style={{backgroundColor: bgColor2}} onClick={setType}>No Answer Provided</div>
-                <div className="side-button b3" value="y/n-answer" id="y/n-answer" style={{backgroundColor: bgColor3}} onClick={setType}>Yes or No</div>
-                <div className="side-button b4" value="greeting" id="greeting" style={{backgroundColor: bgColor4}} onClick={setType}>Greeting</div>
-                <div className="side-button b5" value="exit" id="exit" style={{backgroundColor: bgColor5}} onClick={setType}>Exit</div>
+                <div className="side-button b1" value="filler" id="filler" style={{backgroundColor: fillerColor}} onClick={setType}>Filler</div>
+                <div className="side-button b2" value="answer" id="answer" style={{backgroundColor: answerColor}} onClick={setType}>Regular Answer</div>
+                {/* <div className="side-button b2" value="no-answer" id="no-answer" style={{backgroundColor: bgColor2}} onClick={setType}>No Answer Provided</div> */}
+                <div className="side-button b3" value="y/n-answer" id="y/n-answer" style={{backgroundColor: yesNoColor}} onClick={setType}>Yes or No</div>
+                <div className="side-button b4" value="greeting" id="greeting" style={{backgroundColor: greetingColor}} onClick={setType}>Greeting</div>
+                <div className="side-button b5" value="exit" id="exit" style={{backgroundColor: exitColor}} onClick={setType}>Exit</div>
                 <hr className="divider1"></hr>
-                <div className="font-class-1 public" style={{backgroundColor: bgSwitch}}>
+                <div className="font-class-1 public" style={{backgroundColor: privacyColor}}>
                 <span>Public</span>
                 <Switch
                     onChange={handleChange}
-                    checked={isPublic}
+                    // checked={isPublic}
                     handleDiameter={28}
                     onColor="#FFFFFF"
                     onHandleColor="#FFFFFF"
@@ -396,10 +401,10 @@ function EditRecorder () {
                     placeholder = "Select album...."
                     isClearable
                     isMulti
-                    onChange={setAlbum}
+                    // onChange={setAlbum}
                     styles={customStyles}
                     options={albums}
-                    value={albumC}
+                    // value={albumC}
                     />
                 </div> 
             </div>

@@ -39,15 +39,15 @@ function AvatarGardenPage() {
             }
         }).then((res)=>{
             setVideoList(res.data);
-        });
 
-        axios.post('http://localhost:3000/getUserStreams',{
-            params:{
-                toiaID: history.location.state.toiaID
-            }
-        }).then((res)=>{
-            setStreamList(res.data);
-            console.log(res.data);
+            axios.post('http://localhost:3000/getUserStreams',{
+                params:{
+                    toiaID: history.location.state.toiaID
+                }
+            }).then((res)=>{
+                setStreamList(res.data);
+                console.log(res.data);
+            });
         });
 
     },[]);
@@ -199,32 +199,32 @@ function AvatarGardenPage() {
                 </div>
             </div>
         )
-    }
+    };
     
     /*navbar navigation fucntions*/
     function home() {
         history.push({
           pathname: '/',
         });
-      }
+    }
 
     function about() {
         history.push({
           pathname: '/about',
         });
-      }
+    }
     
       function library() {
         history.push({
           pathname: '/library',
         });
-      }
+    }
     
       function garden() {
         history.push({
             pathname: '/garden',
         });
-      }
+    }
     
     function logout(){
         //logout function needs to be implemented (wahib)
@@ -491,7 +491,7 @@ function AvatarGardenPage() {
                 <div onClick={album_page}><img className="garden-stream" src={addButton} // add stream button
                 /></div>
                 <h1 className="stream-text garden-font-class-3">Add Stream</h1>
-                <div className="elem-1" //the new question element
+                {/* <div className="elem-1" //the new question element
                 >
                     <p className="elem-text-1 garden-font-class-3" >{new_p}</p>
                     <p className="elem-text-2 garden-font-class-3">New Conversations</p>
@@ -500,7 +500,7 @@ function AvatarGardenPage() {
                 >
                     <p className="elem-text-1 garden-font-class-3" >{new_q}</p>
                     <p className="elem-text-2 garden-font-class-3">New questions!</p>
-                </div>
+                </div> */}
             </div>
             <div className="section2">
                 <input className="garden-search" type="text" placeholder="&#xF002;" onChange={(event) => searchData(event.target.value)} // search bar

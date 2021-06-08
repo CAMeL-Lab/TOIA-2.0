@@ -16,10 +16,7 @@ const videoConstraints = {
   facingMode: "user"
 };
 
-var vtype = []; // this variable holds the list of the video type choses
-
 function Recorder () {
-  // const history = useHistory();
 
   function exampleReducer( state, action ) {
     switch (action.type) {
@@ -37,14 +34,20 @@ function Recorder () {
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
 
-  const [avatarName, setName] = useState(null);
-  const [avatarLanguage, setLanguage] = useState(null);
-  const [avatarID, setAvatarID] = useState(null);
+  const [toiaName, setName] = useState(null);
+  const [toiaLanguage, setLanguage] = useState(null);
+  const [toiaID, setTOIAid] = useState(null);
 
-  const [questionList,setQuestionList]=useState([]);
+  // const [questionList,setQuestionList]=useState([]);
   const [videoType,setVideoType]=useState(null);
   const [questionSelected,setQuestionSelected]=useState(null);
   const [answerProvided,setAnswerProvided]=useState(null);
+  const [isPrivate,setPrivacySetting]=useState(false);
+  const [listStreams, setListStreams]=useState([]);
+  const [allStreams, setAllStreams]=useState([]);
+
+  var albumSelect = [];// this holds the list of labels for the new selected albums
+  // const [albumC, setAlbum] = useState('');
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
   const { open } = state
@@ -63,34 +66,37 @@ function Recorder () {
     {label: "Fun", value: "fun"},
     ];
 
-  var albumSelect = [];// this holds the list of labels for the new selected albums
-  const [albumC, setAlbum] = useState('');
-  const [isPublic, setPublic] = useState(false); //boolean for private settings
   const handleChange = nextChecked => {
-    setPublic(nextChecked);
     if (bgSwitch == '#e5e5e5'){
       setSwitch('#7E7C7C');
+      setPrivacySetting(true);
     }else{
       setSwitch('#e5e5e5');
+      setPrivacySetting(false);
     }
   };
 
-
   useEffect(() => {
-    axios.get('http://localhost:3000/getAllVideos').then((res)=>{
-      setQuestionList(res.data);
-    });
+    // axios.get('http://localhost:3000/getAllVideos').then((res)=>{
+    //   setQuestionList(res.data);
+    // });
     setName(history.location.state.toiaName);
     setLanguage(history.location.state.toiaLanguage);
-    setAvatarID(history.location.state.toiaID);
+    setTOIAid(history.location.state.toiaID);
+
+    axios.post('http://localhost:3000/getUserStreams',{
+      params:{
+          toiaID: history.location.state.toiaID
+      }
+    }).then((res)=>{
+      res.data.forEach((stream)=>{
+        setAllStreams(allStreams => [...allStreams, stream.name]);
+      });
+    });
+  
   },[]);
 
-  // setName(history.location.state.name);
-  // setLanguage(history.location.state.language);
-
-
   const handleStartCaptureClick = React.useCallback((e) => {
-    console.log(avatarName,avatarLanguage,avatarID);
     SpeechRecognition.startListening({ continuous: true });
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
@@ -123,9 +129,8 @@ function Recorder () {
 
   const handleDownload = React.useCallback((e) => {
 
-
     if (questionSelected == null){
-      alert("Cannot submit until a question is chosen or written, ensure that text field is not highlight when submitting");
+      alert("Cannot submit until a question is written, ensure that the question being answered by the video is written correctly in the text box before submitting");
     } else {
 
       if (recordedChunks.length) {
@@ -135,17 +140,22 @@ function Recorder () {
 
         let form = new FormData();
         form.append('blob', blob);
-        form.append('name',avatarName);
-        form.append('language',avatarLanguage);
+        form.append('id',toiaID);
+        form.append('name',toiaName);
+        form.append('language',toiaLanguage);
         form.append('question', questionSelected);
-        form.append('answer', transcript);
-        console.log(form);
-        axios.post('http://localhost:3000/recorder',form).then((nextQuestion)=>{
-          const findQuestion = (element)=>element==questionSelected;
-          let qIndex=questionList.findIndex(findQuestion);
-          questionList[qIndex]=nextQuestion.data;
+        form.append('answer', answerProvided);
+        form.append('videoType', videoType);
+        form.append('private', isPrivate);
+        form.append('streams', listStreams);
+      
+        axios.post('http://localhost:3000/recorder',form);
+        // .then((nextQuestion)=>{
+        //   const findQuestion = (element)=>element==questionSelected;
+        //   let qIndex=questionList.findIndex(findQuestion);
+        //   questionList[qIndex]=nextQuestion.data;
           
-        });
+        // });
 
         // axios({
         //   method: 'post',
@@ -165,9 +175,9 @@ function Recorder () {
         resetTranscript();
         setRecordedChunks([]);
 
-        for( var i=0; i < albumC.length; i++){
-          albumSelect.push(albumC[i].label);
-        }
+        // for( var i=0; i < albumC.length; i++){
+        //   albumSelect.push(albumC[i].label);
+        // }
 
       }
     }
@@ -207,54 +217,82 @@ function Recorder () {
     event.preventDefault();
     var name = event.target.className;
 
+    console.log(videoType);
+    console.log(allStreams);
+
     switch(name) {
       case "side-button b1":
         if (bgColor1 == '#e5e5e5'){
           setColor1('#7E7C7C');
-          vtype.push('filler');
+          setColor2('#e5e5e5');
+          setColor3('#e5e5e5');
+          setColor4('#e5e5e5');
+          setColor5('#e5e5e5');
+          setVideoType('filler');
         }else{
           setColor1('#e5e5e5');
-          vtype.splice(vtype.indexOf('filler'), 1);
+          setVideoType(null);
         }
         break;
       case "side-button b2":
         if (bgColor2 == '#e5e5e5'){
           setColor2('#7E7C7C');
-          vtype.push('regular');
+          setColor1('#e5e5e5');
+          setColor3('#e5e5e5');
+          setColor4('#e5e5e5');
+          setColor5('#e5e5e5');
+          setVideoType('answer');
         }else{
           setColor2('#e5e5e5');
-          vtype.splice(vtype.indexOf('regular'), 1);
+          setVideoType(null);
         }
         break;
       case "side-button b3":
         if (bgColor3 == '#e5e5e5'){
           setColor3('#7E7C7C');
-          vtype.push('y/n');
+          setColor1('#e5e5e5');
+          setColor2('#e5e5e5');
+          setColor4('#e5e5e5');
+          setColor5('#e5e5e5');
+          setVideoType('y/n-answer');
         }else{
           setColor3('#e5e5e5');
-          vtype.splice(vtype.indexOf('y/n'), 1);
+          setVideoType(null);
         }
         break;
       case "side-button b4":
         if (bgColor4 == '#e5e5e5'){
           setColor4('#7E7C7C');
-          vtype.push('greeting');
+          setColor1('#e5e5e5');
+          setColor2('#e5e5e5');
+          setColor3('#e5e5e5');
+          setColor5('#e5e5e5');
+          setVideoType('greeting');
         }else{
           setColor4('#e5e5e5');
-          vtype.splice(vtype.indexOf('greeting'), 1);
+          setVideoType(null);
         }
         break;
       case "side-button b5":
         if (bgColor5 == '#e5e5e5'){
           setColor5('#7E7C7C');
-          vtype.push('exit');
+          setColor1('#e5e5e5');
+          setColor2('#e5e5e5');
+          setColor3('#e5e5e5');
+          setColor4('#e5e5e5');
+          setVideoType('exit');
         }else{
           setColor5('#e5e5e5');
-          vtype.splice(vtype.indexOf('exit'), 1);
+          setVideoType(null);
         }
         break;
     }
   }
+
+  // function setStream(event){
+  //   // event.preventDefault();
+  //   setListStreams(listStreams => [...listStreams, event.target.value]);
+  // }
   
   function logout(){
       //logout function needs to be implemented (wahib)
@@ -345,10 +383,10 @@ function Recorder () {
           <div className="side-button b5" style={{backgroundColor: bgColor5}} onClick={changecolor}>Exit</div>
           <hr className="divider1"></hr>
           <div className="font-class-1 public" style={{backgroundColor: bgSwitch}}>
-            <span>Public</span>
+            <span>Private</span>
             <Switch
               onChange={handleChange}
-              checked={isPublic}
+              checked={isPrivate}
               handleDiameter={28}
               onColor="#FFFFFF"
               onHandleColor="#FFFFFF"
@@ -367,10 +405,10 @@ function Recorder () {
                 placeholder = "Select album...."
                 isClearable
                 isMulti
-                onChange={setAlbum}
+                onChange={(e)=>setListStreams(listStreams => [...listStreams, e.target.value])}
                 styles={customStyles}
-                options={albums}
-                value={albumC}
+                options={allStreams}
+                value={listStreams}
               />
           </div> 
         </div>
