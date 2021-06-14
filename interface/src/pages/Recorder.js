@@ -412,6 +412,7 @@ function Recorder () {
               />
           </div> 
         </div>
+        <div class="Video-Layout">
         <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true} videoConstraints={videoConstraints}/>
         {capturing ? (
           <button className="icon" onClick={handleStopCaptureClick}><i class="fa fa-stop" style={{fontSize: 34}}></i></button>
@@ -423,6 +424,7 @@ function Recorder () {
           <button className="check" onClick={openModal}><i class="fa fa-check"></i></button>
         )}
         <p className="recorder-speech">{transcript}</p>
+        </div>
         <input
           className="type-q font-class-1"
           placeholder={"Type your own question"}
