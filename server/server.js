@@ -12,6 +12,7 @@ const multer  = require('multer');
 const crypto = require('crypto');
 const mime = require('mime');
 const path = require('path');
+const {Storage} = require('@google-cloud/storage')
 
 const cors = require('cors');
 
@@ -25,7 +26,7 @@ const server = app.listen(process.env.PORT || 3000, () => console.log('Server is
 
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
 app.use(express.static('./public'));
 
@@ -36,13 +37,28 @@ const connection = mysql.createConnection({
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE
-})
+});
 
-connection.connect()
+connection.connect();
 
-let count=24000;
-let name='';
-let video_id='';
+const gc = new Storage({
+	keyFilename: path.join(__dirname,"/toia-capstone-2021-a17d9d7dd482.json"),
+	projectId:'toia-capstone-2021'
+});
+
+const videoStore=gc.bucket('toia_store');
+
+
+// async function uploadFile() {
+
+// }
+
+// uploadFile().catch(console.error);
+
+
+// let count=24000;
+// let name='';
+// let video_id='';
 
 let answerTheseQuestions=["What is your favorite sport?","What is your designation?","Where do you live?","Who is your favorite actor?"];
 let index=0;
@@ -71,22 +87,22 @@ let index=0;
 // }
 
 
-let storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		//cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
-		cb(null,`./public/static/avatar_garden/${name}/videos`);
-	},
-	filename: function (req, file, cb) {
-		crypto.pseudoRandomBytes(16, function (err, raw) {
-			video_id=(raw.toString('hex') + Date.now()).slice(0,32);
-			cb(null, name+video_id + '.' + mime.getExtension(file.mimetype));
-		});
-  }
-});
+// let storage = multer.diskStorage({
+// 	destination: function (req, file, cb) {
+// 		//cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
+// 		cb(null,`./public/static/avatar_garden/${name}/videos`);
+// 	},
+// 	filename: function (req, file, cb) {
+// 		crypto.pseudoRandomBytes(16, function (err, raw) {
+// 			video_id=(raw.toString('hex') + Date.now()).slice(0,32);
+// 			cb(null, name+video_id + '.' + mime.getExtension(file.mimetype));
+// 		});
+//   }
+// });
 
-let upload = multer({
-	storage:storage
-});
+// let upload = multer({
+// 	storage:storage
+// });
 // var type = upload.single('blob');
 
 //Migrating the Margarita2019 Knowledge Base
@@ -309,69 +325,69 @@ app.get('/getQuestions',(req,res)=>{
 	res.send(["What is your name?","How are you?","Where are you from?"]);
 });
 
-app.post('/recorder',upload.any(),(req,res)=>{
 
-	// upload(req,res,(err)=>{
-	// 	if(err){
-	// 		console.log('oops');
-	// 	}else{
-	// 		console.log(req.file);
-	// 	}
-	// });
-	// console.log('Save successful');
 
-	let question = req.body.question;
-	let answer = req.body.answer;
-	console.log(req.body);
-	let qa_pair=question+' '+answer;
-	console.log(qa_pair);
-	// axios.post('http://localhost:4000/generateNextQ',{
-	// 	qa_pair
-	// }).then((nextQuestions)=>{
-	// 	console.log('yehee');
-	// 	res.send(nextQuestions.data.q[0]);
-	// });
-	res.send(answerTheseQuestions[index]);
-	index=index+1;
+app.post('/recorder',async (req,res)=>{
+	
+	let videoID;
+	let isPrivate;
 
-	let idAvatar;
-	let getAvatarIdQuery=`SELECT id_avatar FROM avatar WHERE name="${req.body.name}";`;
-	connection.query(getAvatarIdQuery,(err,entry,fields)=>{
+
+	if(req.body.private=false){
+		isPrivate=0;
+	}else{
+		isPrivate=1;
+	}
+
+	let query_getNextIndex=`SELECT MAX(idx) AS maxIndex FROM video ;`;
+	connection.query(query_getNextIndex, async (err,entry,fields)=>{
 		if (err){
 			throw err;
 		}
 		else{
-			console.log(entry);
-			idAvatar=entry[0].id_avatar;
-			let querySaveVideo = `INSERT INTO video(id_video,question,answer,type,avatar_id_avatar,idx) VALUES("${video_id}","${question}","${answer}","answer",${idAvatar},${count});`;
+			crypto.pseudoRandomBytes(32, async function (err, raw) {
+				videoID=req.body.toiaName+'_'+req.body.toiaID+'_'+entry[0].maxIndex+'_'+(raw.toString('hex') + Date.now()).slice(0,32)+'.'+mime.getExtension(req.blob.mimetype);
 
-		
-			connection.query(querySaveVideo, (err,entry,fields)=>{
+				await videoStore.upload(req.file, {
+					destination: `accounts/${req.body.toiaID}/Videos/${videoID}`
+				});
+				
+				console.log(`Video upload successful`);
+			});
+
+			let query_saveVideo = `INSERT INTO video(id_video,question,answer,type,toia_id,idx,private,language) VALUES("${videoID}","${req.body.question}","${req.body.answer}","${req.body.type}",${req.body.toiaID},${entry[0].maxIndex},${isPrivate},"${req.body.language}";`;
+			connection.query(query_saveVideo, (err,entry,fields)=>{
 				if (err){
 					throw err;
 				}else{
+					console.log("Video entry created in database")
 					axios.post('http://localhost:5000/update_avatar',{
-						question,
-						answer,
+						question:req.body.question,
+						answer:req.body.answer,
 						KB_version: "1.0",
 						language: "US-en",
-						id_video:video_id,
-						avatar_id:idAvatar
-					});
+						id_video:videoID,
+						avatar_id:req.body.toiaID
+					}).then(console.log("Data updated in Dialogue Manager"));
 				}
 			});
-		}
+		}		
 	});
-	count=count+20;
 
 
+	// let question = req.body.question;
+	// let answer = req.body.answer;
 
+	// let qa_pair=question+' '+answer;
 
-
-
-
-
-
+	// // axios.post('http://localhost:4000/generateNextQ',{
+	// // 	qa_pair
+	// // }).then((nextQuestions)=>{
+	// // 	console.log('yehee');
+	// // 	res.send(nextQuestions.data.q[0]);
+	// // });
+	// res.send(answerTheseQuestions[index]);
+	// index=index+1;
 
 			
 	// 		let video_file=avatar.toLowerCase()+'2019_'+index+'_'+video_id+'.mp4';

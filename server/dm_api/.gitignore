@@ -133,3 +133,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#Google Cloud Service Key
+toia-capstone-2021-a17d9d7dd482.json
