@@ -4,8 +4,8 @@ video {
 }
 .layout {
   position: absolute;
-  left: 39%;
-  top: 12%;
+  left: 0;
+  top: 130px;
   border-radius: 10px;
 }
 .record-page {
@@ -47,8 +47,9 @@ video {
 .icon {
   display: block;
   position: absolute;
-  left: 40%;
-  top: 61.5%;
+  left: 1%;
+  top: 490px;
+  
   /* position: relative; */
   width: 48px;
   z-index: 3;
@@ -59,8 +60,8 @@ video {
 .check {
   display: block;
   position: absolute;
-  left: 84%;
-  top: 60%;
+  left: 38%;
+  top: 480px;
   width: 80px;
   font-size: 40px;
   z-index: 3;
@@ -161,15 +162,15 @@ video {
   height: 31px;
   z-index: 1;
   border: 0;
-  padding: 5px;
+  /* padding: 0px 5px; */
   resize: none;
   overflow: auto;
   text-align: center;
   position: absolute;
   /* position: relative;
   width: 40vw; */
-  /* top: 62%;
-  left: 45% */
+  top: 490px;
+  left: 90px;
 }
 .type-q {
   background-color: rgba(126, 124, 124, 0.1);
@@ -215,4 +216,12 @@ video {
   --robins-blue: rgba(34, 214, 214, 1);
   --mist-gray: rgba(196, 196, 196, 1);
   --check-green: rgba(106, 226, 62, 1);
+}
+
+
+.Video-Layout {
+  position: relative;
+  left: 39%;
+  top: 12%;
+  height: 80vh;
 }
