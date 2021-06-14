@@ -7,6 +7,7 @@ video {
   left: 39%;
   top: 12%;
   border-radius: 10px;
+  width: 55%;
 }
 .record-page {
   background-color: white;
@@ -59,7 +60,7 @@ video {
 .check {
   display: block;
   position: absolute;
-  left: 84%;
+  left: 86%;
   top: 60%;
   width: 80px;
   font-size: 40px;
@@ -166,6 +167,9 @@ video {
   overflow: auto;
   text-align: center;
   position: absolute;
+  left: 45%;
+  top:61.5%;
+  width: 40%;
   /* position: relative;
   width: 40vw; */
   /* top: 62%;
