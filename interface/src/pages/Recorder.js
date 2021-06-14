@@ -8,6 +8,7 @@ import axios from 'axios';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
+import { Multiselect } from 'multiselect-react-dropdown';
 import Switch from "react-switch";
 
 const videoConstraints = {
@@ -85,7 +86,7 @@ function Recorder () {
       let streamsReceived=[];
       console.log("got daata");
       res.data.forEach((stream)=>{
-        streamsReceived.push(stream.name);
+        streamsReceived.push({name: stream.name});
       });
       setAllStreams(streamsReceived);
     });
@@ -173,6 +174,7 @@ function Recorder () {
   
   const openModal=React.useCallback((e)=>{
     e.preventDefault();
+    console.log(listStreams,isPrivate,questionSelected,answerProvided);
     if (questionSelected == null){
       alert("Please choose a question before submitting your response.");
     } else if (videoType==null){
@@ -347,7 +349,7 @@ function Recorder () {
       <Modal //this is the new pop up menu
       
       size='large'
-      style={{height: "80%",width: "70%", top:"5%", alignContent:"center"}}
+      style={{position: "absolute", height: "80%",width: "70%", top:"5%", alignContent:"center"}}
       open={open} 
       onClose={handleClose}
       >
@@ -413,14 +415,11 @@ function Recorder () {
           </div>
           <hr className="divider2"></hr>
           <div className="select">
-            <CreatableSelect
-                placeholder = "Select album...."
-                isClearable
-                isMulti
-                onChange={(e)=>setListStreams(listStreams => [...listStreams, e.target.value])}
-                styles={customStyles}
-                options={allStreams}
-                value={listStreams}
+              <Multiselect
+                options={allStreams} // Options to display in the dropdown
+                onSelect={(list,item)=>{setListStreams([...listStreams,item])}} // Function will trigger on select event
+                // onRemove={this.onRemove} // Function will trigger on remove event
+                displayValue="name" // Property name to display in the dropdown options
               />
           </div> 
         </div>
