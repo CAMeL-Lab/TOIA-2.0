@@ -8,6 +8,7 @@ import axios from 'axios';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
+import { Multiselect } from 'multiselect-react-dropdown';
 import Switch from "react-switch";
 
 const videoConstraints = {
@@ -39,15 +40,14 @@ function Recorder () {
   const [toiaID, setTOIAid] = useState(null);
 
   // const [questionList,setQuestionList]=useState([]);
+  const [recordedVideo,setRecordedVideo]=useState();
   const [videoType,setVideoType]=useState(null);
   const [questionSelected,setQuestionSelected]=useState(null);
   const [answerProvided,setAnswerProvided]=useState(null);
   const [isPrivate,setPrivacySetting]=useState(false);
   const [listStreams, setListStreams]=useState([]);
   const [allStreams, setAllStreams]=useState([]);
-
-  var albumSelect = [];// this holds the list of labels for the new selected albums
-  // const [albumC, setAlbum] = useState('');
+  const [videoPlayback,setVideoComponent]=useState(null);
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
   const { open } = state
@@ -59,14 +59,8 @@ function Recorder () {
   const [bgColor5, setColor5] = useState('#e5e5e5');
   const [bgSwitch, setSwitch] = useState('#e5e5e5');
 
-  var albums =[ // this is a lst of all the albums
-    {label: "Default", value: "default"},
-    {label: "Business", value: "business"},
-    {label: "Personal", value: "personal"},
-    {label: "Fun", value: "fun"},
-    ];
-
   const handleChange = nextChecked => {
+    console.log(isPrivate);
     if (bgSwitch == '#e5e5e5'){
       setSwitch('#7E7C7C');
       setPrivacySetting(true);
@@ -89,9 +83,12 @@ function Recorder () {
           toiaID: history.location.state.toiaID
       }
     }).then((res)=>{
+      let streamsReceived=[];
+      console.log("got daata");
       res.data.forEach((stream)=>{
-        setAllStreams(allStreams => [...allStreams, stream.name]);
+        streamsReceived.push({name: stream.name});
       });
+      setAllStreams(streamsReceived);
     });
   
   },[]);
@@ -127,66 +124,84 @@ function Recorder () {
     e.preventDefault();
   }, [mediaRecorderRef, webcamRef, setCapturing]);
 
-  const handleDownload = React.useCallback((e) => {
+  function handleDownload(e){
+    e.preventDefault();
+    console.log(answerProvided,videoType,questionSelected);
 
+    let form = new FormData();
+    form.append('blob', recordedVideo);
+    form.append('id',toiaID);
+    form.append('name',toiaName);
+    form.append('language',toiaLanguage);
+    form.append('question', questionSelected);
+    form.append('answer', answerProvided);
+    form.append('videoType', videoType);
+    form.append('private', isPrivate);
+    form.append('streams', listStreams);
+  
+    axios.post('http://localhost:3000/recorder',form);
+    // .then((nextQuestion)=>{
+    //   const findQuestion = (element)=>element==questionSelected;
+    //   let qIndex=questionList.findIndex(findQuestion);
+    //   questionList[qIndex]=nextQuestion.data;
+      
+    // });
+
+    // axios({
+    //   method: 'post',
+    //   url: 'http://localhost:3000/recorder',
+    //   data: {
+    //     body: form, // This is the body part
+    //   }
+    // });
+
+
+
+    // const a = document.createElement("a");
+    // a.style = "display: none";
+    // a.href = url;
+    // a.download = inputName+".mp4";
+    // a.click();
+    resetTranscript();
+    setRecordedChunks([]);
+    dispatch({ type: 'close' });
+
+    // for( var i=0; i < albumC.length; i++){
+    //   albumSelect.push(albumC[i].label);
+    // }
+  
+  };
+  
+  const openModal=React.useCallback((e)=>{
+    e.preventDefault();
+    console.log(listStreams,isPrivate,questionSelected,answerProvided);
     if (questionSelected == null){
-      alert("Cannot submit until a question is written, ensure that the question being answered by the video is written correctly in the text box before submitting");
-    } else {
-
+      alert("Please choose a question before submitting your response.");
+    } else if (videoType==null){
+      alert("Please choose a video type before submitting your response.");
+    } else{
       if (recordedChunks.length) {
         const blob = new Blob(recordedChunks, {
           type: "video/webm"
         });
+        setRecordedVideo(blob);
 
-        let form = new FormData();
-        form.append('blob', blob);
-        form.append('id',toiaID);
-        form.append('name',toiaName);
-        form.append('language',toiaLanguage);
-        form.append('question', questionSelected);
-        form.append('answer', answerProvided);
-        form.append('videoType', videoType);
-        form.append('private', isPrivate);
-        form.append('streams', listStreams);
-      
-        axios.post('http://localhost:3000/recorder',form);
-        // .then((nextQuestion)=>{
-        //   const findQuestion = (element)=>element==questionSelected;
-        //   let qIndex=questionList.findIndex(findQuestion);
-        //   questionList[qIndex]=nextQuestion.data;
-          
-        // });
-
-        // axios({
-        //   method: 'post',
-        //   url: 'http://localhost:3000/recorder',
-        //   data: {
-        //     body: form, // This is the body part
-        //   }
-        // });
-  
-
-
-        // const a = document.createElement("a");
-        // a.style = "display: none";
-        // a.href = url;
-        // a.download = inputName+".mp4";
-        // a.click();
-        resetTranscript();
-        setRecordedChunks([]);
-
-        // for( var i=0; i < albumC.length; i++){
-        //   albumSelect.push(albumC[i].label);
-        // }
-
+        let videoElem= <video id="playbackVideo" width="720" height="405" autoPlay controls><source src={window.URL.createObjectURL(blob)} type='video/mp4'></source></video>;
+        setVideoComponent(videoElem);
+        // document.getElementById("videoRecorded").src = window.URL.createObjectURL(blob);
+        setAnswerProvided(transcript);
+        dispatch({ type: 'open' });
+      } else{
+        alert("Please record a video clip before submitting your response.");
       }
     }
+  },[recordedChunks]);
+
+  function handleClose(e){
     e.preventDefault();
-  }, [recordedChunks]);
-  
-  function openModal(e){
-    dispatch({ type: 'open' });
-    e.preventDefault();
+    setVideoComponent(null);
+    setRecordedChunks([]);
+    dispatch({ type: 'close' });
   }
 
   function home() {
@@ -219,6 +234,7 @@ function Recorder () {
 
     console.log(videoType);
     console.log(allStreams);
+
 
     switch(name) {
       case "side-button b1":
@@ -301,13 +317,6 @@ function Recorder () {
         });
   }
 
-  const inlineStyle = {
-    modal : {
-        height: '400px',
-        width: '800px',
-    }
-  };
-
   const customStyles = {
     option: (styles, { isDisabled, isFocused, isSelected }) => {
       return {
@@ -338,16 +347,21 @@ function Recorder () {
   return (
     <form className="record-page" name="form1" action="form1" >
       <Modal //this is the new pop up menu
-      closeIcon={true}
+      
       size='large'
-      style={inlineStyle.modal}
+      style={{position: "absolute", height: "80%",width: "70%", top:"5%", alignContent:"center"}}
       open={open} 
-      onClose={() => dispatch({ type: 'close' })}
+      onClose={handleClose}
       >
-          <Modal.Header className="modal-header">Feel free to correct your answer!</Modal.Header>
+          <Modal.Header className="modal-header">
+            <div>Do you want to save this video entry? </div>
+            </Modal.Header>
           <Modal.Content>
-
-          <div contentEditable="true" className="modal-ans font-class-1" onChange={e=>setAnswerProvided(e.target.value)}>{transcript}
+          <div id="typeOfVideo">Video Type: {videoType}</div>
+          {videoPlayback}
+          {/* <video id="videoRecorded"></video> */}
+          <div id="answerCorrection">Feel free to correct your answer below:</div>
+          <div contentEditable="true" className="modal-ans font-class-1" onChange={e=>setAnswerProvided(e.target.value)}>{answerProvided}
           </div>
           </Modal.Content>
           <Modal.Actions>
@@ -383,7 +397,7 @@ function Recorder () {
           <div className="side-button b5" style={{backgroundColor: bgColor5}} onClick={changecolor}>Exit</div>
           <hr className="divider1"></hr>
           <div className="font-class-1 public" style={{backgroundColor: bgSwitch}}>
-            <span>Private</span>
+            <span>Public</span>
             <Switch
               onChange={handleChange}
               checked={isPrivate}
@@ -401,14 +415,11 @@ function Recorder () {
           </div>
           <hr className="divider2"></hr>
           <div className="select">
-            <CreatableSelect
-                placeholder = "Select album...."
-                isClearable
-                isMulti
-                onChange={(e)=>setListStreams(listStreams => [...listStreams, e.target.value])}
-                styles={customStyles}
-                options={allStreams}
-                value={listStreams}
+              <Multiselect
+                options={allStreams} // Options to display in the dropdown
+                onSelect={(list,item)=>{setListStreams([...listStreams,item])}} // Function will trigger on select event
+                // onRemove={this.onRemove} // Function will trigger on remove event
+                displayValue="name" // Property name to display in the dropdown options
               />
           </div> 
         </div>
