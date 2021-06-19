@@ -83,9 +83,11 @@
   display: inline;
 }
 .stream-text{
-  left: 31.5%;
+  left: 940px;
+  /* 61.5%; */
   position: absolute;
-  top: 65%;
+  top: 400px;
+  /* 45%; */
   font-size: 20px; 
   color:#707070;
 }
@@ -202,8 +204,10 @@
 }
 .garden-stream {
   background-color: transparent;
-  left: 31%;
-  top: 45%;
+  left: 935px;
+  /* 61%; */
+  top: 275px;
+  /* 30%; */
   width: 120px;
   position: absolute;
   cursor: pointer;
@@ -451,4 +455,24 @@
   font-style: normal;
   font-weight: 700;
   letter-spacing: -0.015em;
+}
+
+
+/* .BrainhubCarousel {
+  display: grid;
+}
+
+.BrainhubCarousel .BrainhubCarousel__trackContainer .BrainhubCarousel__track {
+  display: grid;
+} */
+
+.carousel.slide {
+  width: 120px;
+  height: 220px;
+  margin-top: 230px;
+  margin-left: 40px;
+}
+
+.carousel-inner {
+  width: 220px;
 }

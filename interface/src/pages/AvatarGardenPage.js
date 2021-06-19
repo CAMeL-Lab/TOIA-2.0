@@ -1,5 +1,4 @@
 import './App.css';
-import './AvatarGardenPage.css';
 import 'semantic-ui-css/semantic.min.css';
 import React, { useState } from 'react';
 import Fuse from "fuse.js";
@@ -12,9 +11,11 @@ import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
-import Carousel,  { slidesToShowPlugin } from '@brainhubeu/react-carousel';
+// import Carousel,  { slidesToShowPlugin } from '@brainhubeu/react-carousel';
+import Carousel from 'react-bootstrap/Carousel';
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
+import './AvatarGardenPage.css';
 
 var cardSelected = [];//the videos selected to be edited or deleted
 
@@ -473,19 +474,8 @@ function AvatarGardenPage() {
                 >Welcome Back {toiaName}</h1>
                 <h1 className="stream-heading garden-font-class-3 ">My TOIA streams</h1>
                 <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
-                <Carousel //this is the sliding image carousel that holds all the streams I got it from here https://brainhubeu.github.io/react-carousel/docs/gettingStarted
-                plugins={[
-                    'clickToChange',
-                    'centered',
-                    {
-                      resolve: slidesToShowPlugin,
-                      options: {
-                       numberOfSlides: 1.5
-                      }
-                    },
-                ]}
-                className="garden-carousel"
-                >
+                <Carousel> 
+                
                     {streamList.map(renderStream)}
                 </Carousel>
                 <div onClick={album_page}><img className="garden-stream" src={addButton} // add stream button
@@ -501,6 +491,21 @@ function AvatarGardenPage() {
                     <p className="elem-text-1 garden-font-class-3" >{new_q}</p>
                     <p className="elem-text-2 garden-font-class-3">New questions!</p>
                 </div> */}
+                {// previous code for carousel:
+                /* //this is the sliding image carousel that holds all the streams I got it from here https://brainhubeu.github.io/react-carousel/docs/gettingStarted
+//                 // plugins={[ */
+//                 //     'clickToChange',
+//                 //     'centered',
+//                 //     {
+//                 //       resolve: slidesToShowPlugin,
+//                 //       options: {
+//                 //        numberOfSlides: 1
+//                 //       }
+//                 //     },
+//                 // ]}
+//                 // className="garden-carousel"
+//                 // >}
+                }
             </div>
             <div className="section2">
                 <input className="garden-search" type="text" placeholder="&#xF002;" onChange={(event) => searchData(event.target.value)} // search bar
