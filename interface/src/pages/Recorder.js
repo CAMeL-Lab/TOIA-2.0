@@ -126,7 +126,6 @@ function Recorder () {
 
   function handleDownload(e){
     e.preventDefault();
-    console.log(answerProvided,videoType,questionSelected);
 
     let form = new FormData();
     form.append('blob', recordedVideo);
@@ -138,6 +137,8 @@ function Recorder () {
     form.append('videoType', videoType);
     form.append('private', isPrivate);
     form.append('streams', listStreams);
+
+    console.log(form);
   
     axios.post('http://localhost:3000/recorder',form);
     // .then((nextQuestion)=>{

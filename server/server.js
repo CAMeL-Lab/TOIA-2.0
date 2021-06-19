@@ -8,22 +8,23 @@ const mysql = require('mysql');
 require('dotenv').config();
 
 const Buffer = require('buffer');
-const multer  = require('multer');
 const crypto = require('crypto');
 const mime = require('mime');
 const path = require('path');
 const {Storage} = require('@google-cloud/storage')
 
+var multiparty = require('multiparty');
+
 const cors = require('cors');
 
 const axios=require('axios');
+const e = require('express');
 
 //Create an 'express' instance
 
 const app = express()
 const server = app.listen(process.env.PORT || 3000, () => console.log('Server is listening!'));
-
-
+ 
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use(express.json());
@@ -49,61 +50,8 @@ const gc = new Storage({
 const videoStore=gc.bucket('toia_store');
 
 
-// async function uploadFile() {
-
-// }
-
-// uploadFile().catch(console.error);
-
-
-// let count=24000;
-// let name='';
-// let video_id='';
-
 let answerTheseQuestions=["What is your favorite sport?","What is your designation?","Where do you live?","Who is your favorite actor?"];
 let index=0;
-//Check if entry exists in database, otherwise create one
-
-// async function getPath(avatarName){
-// 	let query=`SELECT COUNT(*) AS present FROM avatar WHERE name="${avatarName}";`
-
-// 	 connection.query(query, (err,rows,fields)=>{
-
-// 		if (err){
-// 			throw err;
-// 		}
-// 		else{
-	
-// 			if(rows[0].present==0){
-// 				console.log('wooh')
-// 				mkdirp(`./public/static/avatar_garden/${avatarName}`);
-// 				mkdirp(`./public/static/avatar_garden/${avatarName}/videos`);
-
-// 			}
-// 			let path= `./public/static/avatar_garden/${avatarName}/videos`;
-// 		}
-// 	});
-
-// }
-
-
-// let storage = multer.diskStorage({
-// 	destination: function (req, file, cb) {
-// 		//cb(null,`./public/static/avatar_garden/${req.body.name}/videos`);
-// 		cb(null,`./public/static/avatar_garden/${name}/videos`);
-// 	},
-// 	filename: function (req, file, cb) {
-// 		crypto.pseudoRandomBytes(16, function (err, raw) {
-// 			video_id=(raw.toString('hex') + Date.now()).slice(0,32);
-// 			cb(null, name+video_id + '.' + mime.getExtension(file.mimetype));
-// 		});
-//   }
-// });
-
-// let upload = multer({
-// 	storage:storage
-// });
-// var type = upload.single('blob');
 
 //Migrating the Margarita2019 Knowledge Base
 
@@ -124,44 +72,20 @@ let index=0;
 // }
 
 
-// Quering the database
+app.post('/createTOIA',(req,res)=>{
 
-// let ans=[]
-// question="What city would you most like to live in?"
-// query='SELECT * FROM video;';
-// console.log(query);
-// connection.query(query, (err,entries,fields)=>{
-// 	if (err){
-// 		throw err;
-// 	}
-// 	else{console.log(entries.length);}
-
-// })
-
-
-
-// Figuring out authentication
-
-// //configuring authentication
-
-// passport.use(new LocalStrategy((username, password, success)=>{
-	
-// }));
-
-
-// //Login page
-
-// app.get('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true })
-// )
-
-
-// Implementing the recorder
-
+	let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${req.body.firstName}","${req.body.lastName}","${req.body.email}","${req.body.pwd}","${req.body.language}");`
+	connection.query(queryCreateTOIA, (err,entry,fields)=>{
+		if (err){
+			throw err;
+		}else{
+			console.log(entry.insertId);
+			res.send({new_toia_ID: entry.insertId});
+		}
+	});
+});
 
 app.post('/login',(req,res)=>{
-
-	req.body.email
-	req.body.pwd
 
 	let query_checkEmailExists=`SELECT COUNT(*) AS cnt FROM toia_user WHERE email="${req.body.email}";`
 
@@ -215,7 +139,7 @@ app.get('/getAllAvatars',(req,res)=>{
 });
 
 app.post('/getUserVideos',(req,res)=>{
-	let query_userVideos=`SELECT * FROM video WHERE toia_user_id="${req.body.params.toiaID}";`;
+	let query_userVideos=`SELECT * FROM video WHERE toia_id="${req.body.params.toiaID}";`;
 	connection.query(query_userVideos, (err,entries,fields)=>{
 		if (err){
 			throw err;
@@ -227,7 +151,7 @@ app.post('/getUserVideos',(req,res)=>{
 });
 
 app.post('/getUserStreams',(req,res)=>{
-	let query_userStreams=`SELECT * FROM stream WHERE toia_user_id="${req.body.params.toiaID}";`;
+	let query_userStreams=`SELECT * FROM stream WHERE toia_id="${req.body.params.toiaID}";`;
 	connection.query(query_userStreams, (err,entries,fields)=>{
 		if (err){
 			throw err;
@@ -300,22 +224,6 @@ app.get('/player/:avatarID/:avatarName/:language/:question',(req,res)=>{
 	});
 });
 
-app.post('/createTOIA',(req,res)=>{
-
-	let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${req.body.firstName}","${req.body.lastName}","${req.body.email}","${req.body.pwd}","${req.body.language}");`
-	connection.query(queryCreateTOIA, (err,entry,fields)=>{
-		if (err){
-			throw err;
-		}else{
-			console.log(entry.insertId);
-			res.send({new_toia_ID: entry.insertId});
-		}
-	});
-	mkdirp(`./public/static/avatar_garden/${req.body.firstName}`);
-	mkdirp(`./public/static/avatar_garden/${req.body.firstName}/videos`);
-
-});
-
 
 app.get('/getQuestions',(req,res)=>{
 	// axios.get('http://localhost:4000/getMandatoryQuestions').then((questionArr)=>{
@@ -329,50 +237,76 @@ app.get('/getQuestions',(req,res)=>{
 
 app.post('/recorder',async (req,res)=>{
 	
-	let videoID;
 	let isPrivate;
+	let vidIndex;
 
-
-	if(req.body.private=false){
-		isPrivate=0;
-	}else{
-		isPrivate=1;
-	}
-
-	let query_getNextIndex=`SELECT MAX(idx) AS maxIndex FROM video ;`;
-	connection.query(query_getNextIndex, async (err,entry,fields)=>{
-		if (err){
-			throw err;
+    let form = new multiparty.Form();
+    form.parse(req, function(err, fields, file) {
+		console.log(fields);
+		if(fields.private[0]=='false'){
+			isPrivate=0;
+		}else{
+			isPrivate=1;
 		}
-		else{
-			crypto.pseudoRandomBytes(32, async function (err, raw) {
-				videoID=req.body.toiaName+'_'+req.body.toiaID+'_'+entry[0].maxIndex+'_'+(raw.toString('hex') + Date.now()).slice(0,32)+'.'+mime.getExtension(req.blob.mimetype);
 
-				await videoStore.upload(req.file, {
-					destination: `accounts/${req.body.toiaID}/Videos/${videoID}`
-				});
-				
-				console.log(`Video upload successful`);
-			});
+		let query_getNextIndex=`SELECT MAX(idx) AS maxIndex FROM video;`;
+		connection.query(query_getNextIndex, async (err,entry,data)=>{
+			if (err){
+				throw err;
+			}
+			else{
 
-			let query_saveVideo = `INSERT INTO video(id_video,question,answer,type,toia_id,idx,private,language) VALUES("${videoID}","${req.body.question}","${req.body.answer}","${req.body.type}",${req.body.toiaID},${entry[0].maxIndex},${isPrivate},"${req.body.language}";`;
-			connection.query(query_saveVideo, (err,entry,fields)=>{
-				if (err){
-					throw err;
+				if(entry[0].maxIndex==null){
+					vidIndex=0;
 				}else{
-					console.log("Video entry created in database")
-					axios.post('http://localhost:5000/update_avatar',{
-						question:req.body.question,
-						answer:req.body.answer,
-						KB_version: "1.0",
-						language: "US-en",
-						id_video:videoID,
-						avatar_id:req.body.toiaID
-					}).then(console.log("Data updated in Dialogue Manager"));
+					vidIndex=entry[0].maxIndex+1;
 				}
-			});
-		}		
-	});
+				// await videoStore.upload(file.blob[0].path, {
+				// 	destination: `accounts/${fields.id}/Videos/${videoID}`
+				// });
+				
+				// console.log(`Video upload successful`);
+				crypto.pseudoRandomBytes(32, async function (err, raw) {
+					videoID=fields.name[0]+'_'+fields.id[0]+'_'+vidIndex+'_'+(raw.toString('hex') + Date.now()).slice(0,16)+'.mp4';
+	
+					
+					await videoStore.upload(file.blob[0].path, {
+						destination: `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/${videoID}`
+					});
+					
+					console.log(`Video upload successful`);
+
+
+					let query_saveVideo = `INSERT INTO video(id_video,question,answer,type,toia_id,idx,private,language,likes,views) VALUES("${videoID}","${fields.question[0]}","${fields.answer[0]}","${fields.videoType[0]}",${fields.id[0]},${vidIndex},${isPrivate},"${fields.language[0]}",0,0);`;
+					connection.query(query_saveVideo, (err,entry,results)=>{
+						if (err){
+							throw err;
+						}else{
+							console.log("Video entry created in database")
+							// axios.post('http://localhost:5000/update_avatar',{
+							// 	question:req.body.question,
+							// 	answer:req.body.answer,
+							// 	KB_version: "1.0",
+							// 	language: "US-en",
+							// 	id_video:videoID,
+							// 	avatar_id:req.body.toiaID
+							// }).then(console.log("Data updated in Dialogue Manager"));
+						}
+					});
+
+				});
+			}		
+		});
+
+
+    });
+	// form.on('part',(part)=>{
+	// 	console.log(part.id);
+	// });
+
+
+
+
 
 
 	// let question = req.body.question;
