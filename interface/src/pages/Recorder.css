@@ -6,9 +6,9 @@ video {
 .layout {
   position: absolute;
   left: 0;
-  top: 33%;
+  top: 4.5%;
   border-radius: 10px;
-  width: 90%;
+  width: 100%;
 }
 .record-page {
   background-color: white;
@@ -24,7 +24,7 @@ video {
 .font-class-1 {
   font-family: "Montserrat", Helvetica, Arial, serif;
   font-style: normal;
-  font-size: 14px;
+  font-size: 1.5rem;
   font-weight: 500;
 }
 .font-class-3 {
@@ -52,7 +52,7 @@ video {
   display: block;
   position: absolute;
   left: 1%;
-  top: 100%;
+  top: 65%;
   
   /* position: relative; */
   width: 48px;
@@ -60,18 +60,23 @@ video {
   background-color: transparent;
   border: 0;
   color: white;
+  font-size: 3rem;
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 .check {
   display: block;
   position: absolute;
-  left: 73%;
-  top: 99%;
+  left: 90%;
+  top: 65%;
   width: 80px;
   font-size: 40px;
   z-index: 3;
   background-color: transparent;
   border: 0;
   color: var(--check-green);
+  font-size: 3rem;
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+
 }
 
 /*Side Buttons*/
@@ -175,19 +180,19 @@ video {
   overflow: auto;
   text-align: center;
   position: absolute;
-  left: 45%;
   top:61.5%;
-  width: 40%;
+  width: 80%;
   /* position: relative;
   width: 40vw; */
-  top: 100%;
-  left: 25%;
+  top: 66.5%;
+  left: 10%;
+  font-size: 1.5rem;
 }
 .type-q {
   background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
-  height: 31px;
+  height: 41px;
   /* left: 39%; */
   left: 0%;
   padding: 5px;
@@ -195,9 +200,10 @@ video {
   resize: none;
   text-align: left;
   /* top: 75%; */
-  top: 120%;
-  width: 53vw;
+  top: 85%;
+  width: 100%;
   color: #707070;
+  font-size: 1.5rem;
 }
 
 /*modal elements*/
@@ -263,7 +269,7 @@ video {
 .Video-Layout {
   position: relative;
   left: 550px;
-  top: 0;
+  top: 80px;
   height: 600px;
-  width: 900px;
+  width: 770px;
 }

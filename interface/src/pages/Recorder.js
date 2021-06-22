@@ -436,7 +436,7 @@ function Recorder () {
               className="switch"
             />
           </div>
-          <hr className="divider2"></hr>
+          {/* <hr className="divider2"></hr> */}
           <div className="select">
               <Multiselect
                 options={allStreams} // Options to display in the dropdown
@@ -449,9 +449,9 @@ function Recorder () {
         <div class="Video-Layout">
         <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true} videoConstraints={videoConstraints}/>
         {capturing ? (
-          <button className="icon" onClick={handleStopCaptureClick}><i class="fa fa-stop" style={{fontSize: 34}}></i></button>
+          <button className="icon" onClick={handleStopCaptureClick}><i class="fa fa-stop" ></i></button>
         ) : (
-          <button className="icon" onClick={handleStartCaptureClick}><i class="fa fa-video-camera" style={{fontSize: 34}}></i>
+          <button className="icon" onClick={handleStartCaptureClick}><i class="fa fa-video-camera"></i>
           </button>
         )}
         {recordedChunks.length > 0 && (
@@ -472,3 +472,5 @@ function Recorder () {
 }
 
 export default Recorder;
+
+// removed this from icon -> style={{fontSize: 34}}
