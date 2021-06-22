@@ -98,7 +98,7 @@
   font-weight: 500;
 }
 .home-montserrat-black {
-  color: black;
+  color: var(--t-color);
   font-family: "Montserrat", Helvetica, Arial, serif;
   font-style: normal;
 }

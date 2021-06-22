@@ -6,6 +6,12 @@ import submitButton from "../icons/submit-button.svg";
 import sampleVideo from "../icons/sample-video.svg";
 import alberto from "../images/alberto.jpeg";
 import wahib from "../images/wahib.jpg";
+import kertu from "../images/kertu.jpg";
+import erin from "../images/erin.jpeg";
+import nizar from "../images/nizar.jpg";
+import goffredo from "../images/goffredo.jpeg";
+import tyeece from "../images/Tyeece.jpg";
+import armaan from "../images/armaan.jpg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 
@@ -24,19 +30,20 @@ function AvatarViewPage() {
     var input1, input2;//holds email and pass from popup
 
     var team =[// This is a list of all members names and their accompanying pictures
-        { still: sampleVideo, member: "Nizar H."},
+        { still: nizar, member: "Nizar H."},
         { still: wahib, member: "Wahib K."},
         { still: alberto, member: "Alberto C."},
-        { still: sampleVideo, member: "Kertu K."},
-        { still: sampleVideo, member: "Goffredo P."},
-        { still: sampleVideo, member: "Erin C."},
-        { still: sampleVideo, member: "Tyeece H."},
+        { still: kertu, member: "Kertu K."},
+        { still: goffredo, member: "Goffredo P."},
+        { still: erin, member: "Erin C."},
+        { still: tyeece, member: "Tyeece H."},
+        { still: armaan, member: "Armaan A."},
     ]
 
     const renderTeam = (card, index) => {//cards for members
         return(
             <div className="about-box border-0">
-                <img src={card.still} width="150" height="150" //person thumbnail
+                <img src={card.still} className = "image-sizing" //person thumbnail
                 />
                 <div>
                     <h1 className="about-name" //name of person
@@ -157,8 +164,9 @@ function AvatarViewPage() {
             >
                 {team.map(renderTeam)}
             </div>
-            <p className="publication-links">Publication Links </p>
+            
             <div className = "publications">
+            <p className="publication-links">Publication Links </p>
             <ul>
                 <li>
                 Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,

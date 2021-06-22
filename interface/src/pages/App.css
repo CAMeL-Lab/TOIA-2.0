@@ -22,9 +22,17 @@
 }*/
 
 /*navbar*/
+
+:root {
+  --nv-color: #00587A;
+  --bg-color: white;
+  --hd-color: #008891;
+  --t-color: #0F3057;
+}
 .nav-heading-bar {
   align-items: flex-start;
-  background-color:  #7e7c7c;
+  /* background-color:  #7e7c7c; */
+  background-color: var(--nv-color);
   display: inline-flex;
   flex-direction: row;
   height: 40px;
@@ -148,6 +156,7 @@
 }
 .login_header {
   text-align: center;
+  color: var(--nv-color);
 }
 .login_welcome {
   font-weight: bold;

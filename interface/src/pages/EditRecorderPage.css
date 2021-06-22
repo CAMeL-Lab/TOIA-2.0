@@ -68,14 +68,21 @@ video {
 
 /*Side Buttons*/
 .side-bar {
-  height: 80vh;
+  /* height: 80vh; */
+  /* height: 600px;
   width: 30vw;
   top: 12%;
   left: 3%;
+  position: absolute; */
+  height: 600px;
+  width: 450px;
+  top: 120px;
+  left: 50px;
   position: absolute;
+
 }
 .side-button {
-  height: 6vh;
+  /* height: 6vh;
   width: 12vw;
   display: flex;
   justify-content: center;
@@ -83,14 +90,44 @@ video {
   padding: 5px;
   border-radius: 15px;
   cursor: pointer;
-  transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out; */
+  height: 10%;
+  width: 35%;
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 5px 0;
+  border-radius: 15px;
+  cursor: pointer;
+    /* transition: all 0.2s ease-out; */
+  text-align: center;
 }
 .b1 {
   position: absolute;
-  top: 0%;
-  left: 0%;
+  top: 20%;
+  left: 25%;
 }
 .b2 {
+  position: absolute;
+  top: 40%;
+  left: 0%;
+}
+.b3 {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+}
+.b4 {
+  position: absolute;
+  top: 60%;
+  left: 0%;
+}
+.b5 {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+}
+/* .b2 {
   position: absolute;
   top: 0%;
   left: 59%;
@@ -109,10 +146,10 @@ video {
   position: absolute;
   top: 20%;
   left: 0%;
-}
+} */
 .public {
   height: 6vh;
-  width: 100%;
+  width: 95%;
   display: flex;
   align-items: center;
   border-radius: 15px;
@@ -120,7 +157,8 @@ video {
   transition: all 0.2s ease-out;
   position: absolute;
   padding-left: 15%;
-  top: 40%;
+  /* top: 40%; */
+  top: 80%;
   left: 0%;
 }
 .switch {
@@ -129,9 +167,10 @@ video {
 }
 .select {
   position: absolute;
-  top: 60%;
+  /* top: 60%; */
+  top: 100%;
   left: 0%;
-  width: 100%;
+  width: 95%;
 }
 .divider1 {
   position: absolute;

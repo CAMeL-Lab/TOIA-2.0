@@ -10,6 +10,7 @@ import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 import { Multiselect } from 'multiselect-react-dropdown';
 import Switch from "react-switch";
+// import { Navbar, NavItem, NavDropdown, MenuItem, Nav, Container } from 'react-bootstrap';
 
 const videoConstraints = {
   width: 720,
@@ -62,7 +63,7 @@ function Recorder () {
   const handleChange = nextChecked => {
     console.log(isPrivate);
     if (bgSwitch == '#e5e5e5'){
-      setSwitch('#7E7C7C');
+      setSwitch('#b1f7b0');
       setPrivacySetting(true);
     }else{
       setSwitch('#e5e5e5');
@@ -186,7 +187,7 @@ function Recorder () {
           type: "video/webm"
         });
         setRecordedVideo(blob);
-
+        // the ratio we are using is 16:9 or the universal high definition standard for european television
         let videoElem= <video id="playbackVideo" width="720" height="405" autoPlay controls><source src={window.URL.createObjectURL(blob)} type='video/mp4'></source></video>;
         setVideoComponent(videoElem);
         // document.getElementById("videoRecorded").src = window.URL.createObjectURL(blob);
@@ -240,7 +241,7 @@ function Recorder () {
     switch(name) {
       case "side-button b1":
         if (bgColor1 == '#e5e5e5'){
-          setColor1('#7E7C7C');
+          setColor1('#b1f7b0');
           setColor2('#e5e5e5');
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
@@ -253,7 +254,7 @@ function Recorder () {
         break;
       case "side-button b2":
         if (bgColor2 == '#e5e5e5'){
-          setColor2('#7E7C7C');
+          setColor2('#b1f7b0');
           setColor1('#e5e5e5');
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
@@ -266,7 +267,7 @@ function Recorder () {
         break;
       case "side-button b3":
         if (bgColor3 == '#e5e5e5'){
-          setColor3('#7E7C7C');
+          setColor3('#b1f7b0');
           setColor1('#e5e5e5');
           setColor2('#e5e5e5');
           setColor4('#e5e5e5');
@@ -279,7 +280,7 @@ function Recorder () {
         break;
       case "side-button b4":
         if (bgColor4 == '#e5e5e5'){
-          setColor4('#7E7C7C');
+          setColor4('#b1f7b0');
           setColor1('#e5e5e5');
           setColor2('#e5e5e5');
           setColor3('#e5e5e5');
@@ -292,7 +293,7 @@ function Recorder () {
         break;
       case "side-button b5":
         if (bgColor5 == '#e5e5e5'){
-          setColor5('#7E7C7C');
+          setColor5('#b1f7b0');
           setColor1('#e5e5e5');
           setColor2('#e5e5e5');
           setColor3('#e5e5e5');
@@ -371,7 +372,8 @@ function Recorder () {
           </Button>
           </Modal.Actions>
       </Modal>
-      <div className="nav-heading-bar">
+      
+        <div className="nav-heading-bar">
           <div onClick={home} className="nav-toia_icon app-opensans-normal">
               TOIA
           </div>
@@ -388,14 +390,34 @@ function Recorder () {
               Logout
           </div>
       </div>
-      <h1 className="title font-class-3 ">Recorder</h1>            
+      {/* <Navbar bg="light" expand="lg">
+  <Container>
+    <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+    <Navbar.Collapse id="basic-navbar-nav">
+      <Nav className="me-auto">
+        <Nav.Link href="#home">Home</Nav.Link>
+        <Nav.Link href="#link">Link</Nav.Link>
+        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+          <NavDropdown.Divider />
+          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+        </NavDropdown>
+      </Nav>
+    </Navbar.Collapse>
+  </Container>
+</Navbar> */}
+      {/* <h1 className="title font-class-3 ">Recorder</h1>             */}
       <div>
         <div className="side-bar">
+          <h1 className="title font-class-3 ">Recorder</h1>           
           <div className="side-button b1" style={{backgroundColor: bgColor1}} onClick={changecolor}>Filler</div>
-          <div className="side-button b2" style={{backgroundColor: bgColor2}} onClick={changecolor}>Regular Answer</div>
+          <div className="side-button b2" style={{backgroundColor: bgColor2}} onClick={changecolor}>Q&A</div>
           <div className="side-button b3" style={{backgroundColor: bgColor3}} onClick={changecolor}>Yes or No</div>
-          <div className="side-button b4" style={{backgroundColor: bgColor4}} onClick={changecolor}>Greeting</div>
-          <div className="side-button b5" style={{backgroundColor: bgColor5}} onClick={changecolor}>Exit</div>
+          <div className="side-button b4" style={{backgroundColor: bgColor4}} onClick={changecolor}>Hello!</div>
+          <div className="side-button b5" style={{backgroundColor: bgColor5}} onClick={changecolor}>Bye!</div>
           <hr className="divider1"></hr>
           <div className="font-class-1 public" style={{backgroundColor: bgSwitch}}>
             <span>Public</span>
@@ -403,7 +425,7 @@ function Recorder () {
               onChange={handleChange}
               checked={isPrivate}
               handleDiameter={28}
-              onColor="#FFFFFF"
+              onColor="#00587A"
               onHandleColor="#FFFFFF"
               uncheckedIcon={false}
               checkedIcon={false}
@@ -436,13 +458,14 @@ function Recorder () {
           <button className="check" onClick={openModal}><i class="fa fa-check"></i></button>
         )}
         <p className="recorder-speech">{transcript}</p>
-        </div>
         <input
           className="type-q font-class-1"
           placeholder={"Type your own question"}
           type={"text"}
           onChange={e=>setQuestionSelected(e.target.value)}
         />
+        </div>
+        
       </div>
     </form>
   );

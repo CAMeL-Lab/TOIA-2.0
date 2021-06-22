@@ -6,9 +6,9 @@ video {
 .layout {
   position: absolute;
   left: 0;
-  top: 130px;
+  top: 33%;
   border-radius: 10px;
-  width: 55%;
+  width: 90%;
 }
 .record-page {
   background-color: white;
@@ -30,7 +30,8 @@ video {
 .font-class-3 {
   color: black;
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-size: 24px;
+  font-size: 3rem;
+  /* changed from 24 px; */
   font-style: normal;
   font-weight: 700;
   letter-spacing: -0.54px;
@@ -38,10 +39,11 @@ video {
 .title {
   background-color: transparent;
   height: auto;
-  left: 37%;
+  /* left: 37%; */
   position: absolute;
-  text-align: center;
-  top: 3%;
+  text-align: left;
+  /*change from center*/
+  /* top: 3%; */
   width: 350px;
 }
 
@@ -50,7 +52,7 @@ video {
   display: block;
   position: absolute;
   left: 1%;
-  top: 570px;
+  top: 100%;
   
   /* position: relative; */
   width: 48px;
@@ -62,8 +64,8 @@ video {
 .check {
   display: block;
   position: absolute;
-  left: 86%;
-  top: 60%;
+  left: 73%;
+  top: 99%;
   width: 80px;
   font-size: 40px;
   z-index: 3;
@@ -74,7 +76,8 @@ video {
 
 /*Side Buttons*/
 .side-bar {
-  height: 80vh;
+  /* height: 80vh; */
+  height: 600px;
   width: 30vw;
   top: 16%;
   left: 3%;
@@ -90,6 +93,9 @@ video {
   border-radius: 15px;
   cursor: pointer;
   transition: all 0.2s ease-out;
+
+  /* Changes */
+  font-size: 1.5rem;
 }
 .b1 {
   position: absolute;
@@ -174,20 +180,22 @@ video {
   width: 40%;
   /* position: relative;
   width: 40vw; */
-  top: 490px;
-  left: 90px;
+  top: 100%;
+  left: 25%;
 }
 .type-q {
   background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 39%;
+  /* left: 39%; */
+  left: 0%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 75%;
+  /* top: 75%; */
+  top: 120%;
   width: 53vw;
   color: #707070;
 }
@@ -254,7 +262,8 @@ video {
 
 .Video-Layout {
   position: relative;
-  left: 39%;
-  top: 12%;
-  height: 80vh;
+  left: 550px;
+  top: 0;
+  height: 600px;
+  width: 900px;
 }

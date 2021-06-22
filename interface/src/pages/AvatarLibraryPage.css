@@ -40,7 +40,7 @@
   position: absolute;
   top: 9%;
   left: 60%;
-  background-color: #7E7C7C;
+  background-color: var(--nv-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,7 +82,7 @@
   flex-basis: calc(18%);
 }
 .library-name {
-  color: black;
+  color: var(--t-color);
   font-family: "Montserrat", Helvetica, Arial, serif;
   font-style: normal;
   font-size: 20px;
