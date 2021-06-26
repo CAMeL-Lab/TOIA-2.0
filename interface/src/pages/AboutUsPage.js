@@ -12,6 +12,8 @@ import nizar from "../images/nizar.jpg";
 import goffredo from "../images/goffredo.jpeg";
 import tyeece from "../images/Tyeece.jpg";
 import armaan from "../images/armaan.jpg";
+import nyuad from "../images/nyuad-rb.png";
+import camel from "../images/camel-lab-rb.png";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 
@@ -159,6 +161,7 @@ function AvatarViewPage() {
                    {isLogin ? 'Logout' : 'Login'}
                 </div>
             </div>
+            <div className = "about-team">
             <h1 className="about-heading">Meet The Team</h1>
             <p className="about-text">The collection of researchers, both graduate and undegraduate, designers 
                 and intelligent minds that came together to make TOIA possible </p>
@@ -166,6 +169,14 @@ function AvatarViewPage() {
             >
                 {team.map(renderTeam)}
             </div>
+            </div>
+
+            <div className = "logos">
+            <a href="https://nyuad.nyu.edu/en/"><img src={nyuad} className = "nyuadImage"/></a>
+            <a href="https://github.com/nizarhabash1/TOIA-NYUAD"><i className="fa fa-github gitImage"></i></a>
+            <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel} className = "camelImage"/></a>
+            </div>
+            
             
             <div className = "publications">
             <p className="publication-links">Publication Links </p>

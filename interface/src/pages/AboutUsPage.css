@@ -17,45 +17,54 @@
 
 /*page text*/
 .about-heading{
+  
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
   font-style: normal;
   font-weight: bold;
-  font-size: 36px;
+  font-size: 3rem;
   text-align: center;
   letter-spacing: -0.015em;
-  position: absolute;
-  left: 40%;
-  top: 4%;
+  position: relative;
+  /* left: 50%; */
+  top: 0%;
   color: var(--hd-color);
+  margin: 0 auto;
 }
 .about-text{
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 24px;
+  font-size: 1.75rem;
   text-align: center;
   letter-spacing: -0.015em;
-  width: 70vw;
-  position: absolute;
-  left: 14%;
-  top: 13%;
+  width: 70%;
+  position: relative;
+  /* left: 14%;
+  top: 13%; */
   /* color: #707070; */
   color: var(--t-color);
+  margin: 0 auto;
+  margin-top: 20px;
+  line-height: 1.85;
+
 }
 
 .publication-links{
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
   font-style: normal;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 3rem;
   text-align: left;
   letter-spacing: -0.015em;
-  width: 70vw;
-  position: absolute;
-  left: 10.7%;
-  top: 13%;
+  /* width: 70vw; */
+  position: relative;
+  /* left: 10.7%; */
+  top: 0%;
+  left: 0%;
   /* color: #707070; */
+  margin: 0 0 20px;
   color: var(--hd-color);
+  padding-left: 40px;
 }
 
 .publications{
@@ -65,16 +74,17 @@
   font-size: 18px;
   text-align: left;
   letter-spacing: -0.015em;
-  width: 100vw;
+  width: 1270px;
   position: absolute;
-  /* left: 14%; */
-  top: 98%;
-  padding: 150px;
-  /* color: #707070;  */
+  left: 50px;
+  top: 1350px;
+  /* padding: 150px; */
+  /* color: #707070; */
   color: var(--t-color);
   background-color: var(--bg-color);
-  
-  /* padding: 0 */
+  /* padding: 0; */
+  height: 500px;
+  margin-bottom: 200px;
 }
 
 /* li {
@@ -99,10 +109,17 @@ ul {
   list-style-type: square;
 } */ 
 
+ul {
+  list-style: none;
+  padding: 0 50px;
+  
+  
+}
+
 ul li {
   padding: 10px;
   /* color: #707070; */
-  color: var(--t-color);
+  color: black;
   list-style-type: square;
   line-height: 2;
 } 
@@ -114,11 +131,14 @@ ul li {
 .about-grid {
   padding: 5px;
   overflow-y: auto;
-  height: 70vh;
-  width: 84vw;
-  left: 8%;
-  top: 25%;
-  position: absolute;
+  height: 70%;
+  /* width: 84vw; */
+  width: 100%;
+  /* left: 8%;
+  top: 25%; */
+  left: 0%;
+  top: 15%;
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -140,9 +160,55 @@ ul li {
 .image-sizing {
   /* max-width:150px;
   max-height:150px; */
-  width: 200px;
-  height: 250px;
+  width: 180px;
+  height: 230px;
   /* max-width: 85%; */
   /* max-height: 85%; */
   object-fit: cover;
+}
+
+
+.about-team {
+  width: 1270px;
+  height: 700px;
+  top: 80px;
+  left: 50px;
+  position: absolute;
+  text-align: center;
+
+}
+
+
+.nyuadImage {
+  width: 25%;
+  height: auto;
+  position: relative;
+  right: 22.5%;
+  top:35%;
+}
+
+.gitImage {
+  font-size: 10rem;
+  position: relative;
+  right: 1.5%;
+  top: 20%;
+  color: var(--nv-color);
+}
+
+.camelImage {
+  width: 15%;
+  height: auto;
+  left: 22.5%;
+  position: relative;
+  top: 20%;
+
+}
+
+.logos {
+  width: 1270px;
+  height: 300px;
+  top: 880px;
+  left: 50px;
+  position: absolute;
+  text-align: center;
 }
