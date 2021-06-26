@@ -108,24 +108,34 @@ video {
   position: absolute;
   /* top: 20%; */
   top: 15%;
-  left: 25%;
+  left: 0%;
 }
 .b2 {
   position: absolute;
+  /* top: 30%;
+  left: 0%; */
+  top: 15%;
+  left: 50%;
+}
+.b3 {
+  position: absolute;
+  /* top: 30%;
+  left: 50%; */
   top: 30%;
   left: 0%;
 }
-.b3 {
+.b4 {
   position: absolute;
   top: 30%;
   left: 50%;
 }
-.b4 {
+.b5 {
   position: absolute;
   top: 45%;
   left: 0%;
 }
-.b5 {
+
+.b6 {
   position: absolute;
   top: 45%;
   left: 50%;

@@ -100,10 +100,11 @@ ul {
 } */ 
 
 ul li {
-  padding: 2rem;
+  padding: 10px;
   /* color: #707070; */
   color: var(--t-color);
   list-style-type: square;
+  line-height: 2;
 } 
 /*grid*/
 .about-box {

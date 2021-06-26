@@ -8,6 +8,14 @@ import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
+import alberto from "../images/alberto.jpeg";
+import wahib from "../images/wahib.jpg";
+import kertu from "../images/kertu.jpg";
+import erin from "../images/erin.jpeg";
+import nizar from "../images/nizar.jpg";
+import goffredo from "../images/goffredo.jpeg";
+import tyeece from "../images/Tyeece.jpg";
+import armaan from "../images/armaan.jpg";
 
 function AvatarLibraryPage() {
 
@@ -43,11 +51,11 @@ function AvatarLibraryPage() {
     var input1, input2; //input fields for email and password
 
     var streams =[// This is a list of all streams publically available
-      { still: sampleVideo, maker: "Nizar H.", streamName: "All Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: sampleVideo, maker: "Kertu K.", streamName: "All Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: sampleVideo, maker: "Wahib K.", streamName: "Fun Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: sampleVideo, maker: "Alberto C.", streamName: "Business Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: sampleVideo, maker: "Nizar H.", streamName: "Professor Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"}
+      { still: nizar, maker: "Nizar H.", streamName: "All Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
+      { still: kertu, maker: "Kertu K.", streamName: "All Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
+      { still: wahib, maker: "Wahib K.", streamName: "Fun Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
+      { still: alberto, maker: "Alberto C.", streamName: "Business Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
+      { still: nizar, maker: "Nizar H.", streamName: "Professor Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"}
      ]
     
     let hLight1 = 2; //variables that hold the index number of the higlighted TOIA streams
@@ -55,11 +63,12 @@ function AvatarLibraryPage() {
     var interactionLanguage; //variable that holds the language the user will want to interact with TOIA in
     const [viewIndex, setviewIndex] = useState(0); //this hold the index of the avater to be seen in the view pop up
     
+    
 
     const renderStream = (card, index) => {//cards for streams
       return(
           <div  onClick={(event) => {setviewIndex(index); openModal2(event)}} className="library-box border-0">
-              <img src={card.still} width="150" //stream thumbnail
+              <img src={card.still} width="150" height = "157" className = "imgStyling" //stream thumbnail
               />
               <div>
                   <h1 className="library-name" //name of user

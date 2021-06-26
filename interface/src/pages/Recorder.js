@@ -58,6 +58,7 @@ function Recorder () {
   const [bgColor3, setColor3] = useState('#e5e5e5');
   const [bgColor4, setColor4] = useState('#e5e5e5');
   const [bgColor5, setColor5] = useState('#e5e5e5');
+  const [bgColor6, setColor6] = useState('#e5e5e5');
   const [bgSwitch, setSwitch] = useState('#e5e5e5');
 
   const handleChange = nextChecked => {
@@ -246,6 +247,7 @@ function Recorder () {
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
+          setColor6('#e5e5e5');
           setVideoType('filler');
         }else{
           setColor1('#e5e5e5');
@@ -259,6 +261,7 @@ function Recorder () {
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
+          setColor6('#e5e5e5');
           setVideoType('answer');
         }else{
           setColor2('#e5e5e5');
@@ -272,6 +275,7 @@ function Recorder () {
           setColor2('#e5e5e5');
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
+          setColor6('#e5e5e5');
           setVideoType('y/n-answer');
         }else{
           setColor3('#e5e5e5');
@@ -285,6 +289,7 @@ function Recorder () {
           setColor2('#e5e5e5');
           setColor3('#e5e5e5');
           setColor5('#e5e5e5');
+          setColor6('#e5e5e5');
           setVideoType('greeting');
         }else{
           setColor4('#e5e5e5');
@@ -298,12 +303,27 @@ function Recorder () {
           setColor2('#e5e5e5');
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
+          setColor6('#e5e5e5');
           setVideoType('exit');
         }else{
           setColor5('#e5e5e5');
           setVideoType(null);
         }
         break;
+      case "side-button b6":
+      if (bgColor6 == '#e5e5e5'){
+        setColor6('#b1f7b0');
+        setColor1('#e5e5e5');
+        setColor2('#e5e5e5');
+        setColor3('#e5e5e5');
+        setColor4('#e5e5e5');
+        setColor5('#e5e5e5');
+        setVideoType('exit');
+      }else{
+        setColor6('#e5e5e5');
+        setVideoType(null);
+      }
+      break;
     }
   }
 
@@ -413,13 +433,51 @@ function Recorder () {
       <div>
         <div className="side-bar">
           <h1 className="title font-class-3 ">Recorder</h1>           
-          <div className="side-button b1" style={{backgroundColor: bgColor1}} onClick={changecolor}>Filler</div>
-          <div className="side-button b2" style={{backgroundColor: bgColor2}} onClick={changecolor}>Q&A</div>
-          <div className="side-button b3" style={{backgroundColor: bgColor3}} onClick={changecolor}>Yes or No</div>
-          <div className="side-button b4" style={{backgroundColor: bgColor4}} onClick={changecolor}>Hello!</div>
-          <div className="side-button b5" style={{backgroundColor: bgColor5}} onClick={changecolor}>Bye!</div>
+          <div className="side-button b1 tooltip" style={{backgroundColor: bgColor1}} onClick={changecolor}>Hello!
+            <span class="tooltiptext">
+              Video type for initial greetings 
+              <br/> 
+              <i>Hi!, Hello!, Marhaba!, Nihao!</i>
+
+            </span>
+          </div>
+          <div className="side-button b2 tooltip" style={{backgroundColor: bgColor2}} onClick={changecolor}>Bye!
+          <span class="tooltiptext">
+              Video type for farewell greetings 
+              <br/>
+              <i> Bye!, Goodbye!, Maa Salama!, Sayonara!</i>
+          </span>
+          </div>
+          <div className="side-button b3 tooltip" style={{backgroundColor: bgColor3}} onClick={changecolor}>Answer
+          <span class="tooltiptext">
+              Video type for content answers to questions <br/>
+              <i> I love Pizza; My name is Mary.</i>
+          </span>
+          </div>
+          <div className="side-button b4 tooltip" style={{backgroundColor: bgColor4}} onClick={changecolor}>Yes/No
+          <span class="tooltiptext">
+              Video type for positive/negative answers <br/>
+              <i>Yes!, Right!, Yep!, No!, Never!</i>
+          </span>
+          </div>
+          <div className="side-button b5 tooltip" style={{backgroundColor: bgColor5}} onClick={changecolor}>Filler
+          <span class="tooltiptext">
+              Video type for filler videos that will be used <br/>
+              when waiting for the conversant to ask a question <br/>
+              <i> nodding head, smiling, brushing hair, sipping coffee, <br/> 
+                scratching nose, checking phone, ... </i>"
+          </span>
+          </div>
+          <div className="side-button b6 tooltip" style={{backgroundColor: bgColor6}} onClick={changecolor}>What?
+          <span class="tooltiptext">
+                Video type for requests for more information<br/>
+                <i> I did not get that; sorry, can you repeat?; please elaborate?; huh?; 
+                You can ask me about my family, my job, and my artwork...</i>"
+          </span>
+          </div>
+
           <hr className="divider1"></hr>
-          <div className="font-class-1 public" style={{backgroundColor: bgSwitch}}>
+          <div className="font-class-1 public tooltip" style={{backgroundColor: bgSwitch}}>
             <span>Public</span>
             <Switch
               onChange={handleChange}
@@ -435,6 +493,10 @@ function Recorder () {
               width={54}
               className="switch"
             />
+
+          <span class="public_tooltip">
+          Set the privacy of the specific video
+          </span>
           </div>
           {/* <hr className="divider2"></hr> */}
           <div className="select">
@@ -443,19 +505,31 @@ function Recorder () {
                 onSelect={(list,item)=>{setListStreams([...listStreams,item])}} // Function will trigger on select event
                 // onRemove={this.onRemove} // Function will trigger on remove event
                 displayValue="name" // Property name to display in the dropdown options
+                placeholder = "Select Stream"
               />
           </div> 
         </div>
         <div class="Video-Layout">
         <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true} videoConstraints={videoConstraints}/>
         {capturing ? (
-          <button className="icon" onClick={handleStopCaptureClick}><i class="fa fa-stop" ></i></button>
+          <button className="icon tooltip" onClick={handleStopCaptureClick}><i class="fa fa-stop" ></i>
+          <span class="camera_tooltip">
+          Click to stop recording
+          </span>
+          </button>
         ) : (
-          <button className="icon" onClick={handleStartCaptureClick}><i class="fa fa-video-camera"></i>
+          <button className="icon tooltip" onClick={handleStartCaptureClick}><i class="fa fa-video-camera"></i>
+          <span class="camera_tooltip">
+          Click to start/restart recording
+          </span>
           </button>
         )}
         {recordedChunks.length > 0 && (
-          <button className="check" onClick={openModal}><i class="fa fa-check"></i></button>
+          <button className="check tooltip" onClick={openModal}><i class="fa fa-check"></i>
+          <span class="check_tooltip">
+          Save Video
+          </span>
+          </button>
         )}
         <p className="recorder-speech">{transcript}</p>
         <input

@@ -30,14 +30,16 @@ function AvatarViewPage() {
     var input1, input2;//holds email and pass from popup
 
     var team =[// This is a list of all members names and their accompanying pictures
-        { still: nizar, member: "Nizar H."},
-        { still: wahib, member: "Wahib K."},
+        
         { still: alberto, member: "Alberto C."},
-        { still: kertu, member: "Kertu K."},
-        { still: goffredo, member: "Goffredo P."},
-        { still: erin, member: "Erin C."},
         { still: tyeece, member: "Tyeece H."},
+        { still: wahib, member: "Wahib K."},
+        { still: kertu, member: "Kertu K."},
         { still: armaan, member: "Armaan A."},
+        { still: goffredo, member: "Goffredo P."}, 
+        { still: erin, member: "Erin C."},
+        { still: nizar, member: "Nizar H."},
+        
     ]
 
     const renderTeam = (card, index) => {//cards for members
@@ -170,7 +172,8 @@ function AvatarViewPage() {
             <ul>
                 <li>
                 Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,
-                SIGdial, April 2021
+                SIGdial, April 2021 <a href="https://www.aclweb.org/anthology/2020.lrec-1.60.pdf">[PDF]</a>
+                
                 </li>
                 <li > 
                 Nizar Habash and Alberto Chierchi, A View From the Crowd: Evaluation Challenges for Time-Offset Interaction Applications,
