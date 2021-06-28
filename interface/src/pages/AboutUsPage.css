@@ -180,27 +180,27 @@ ul li {
 
 
 .nyuadImage {
-  width: 25%;
+  width: 22.5%;
   height: auto;
   position: relative;
-  right: 22.5%;
+  right: 18%;
   top:35%;
 }
 
 .gitImage {
   font-size: 10rem;
   position: relative;
-  right: 1.5%;
+  left: 1.5%;
   top: 20%;
   color: var(--nv-color);
 }
 
 .camelImage {
-  width: 15%;
+  width: 22.5%;
   height: auto;
-  left: 22.5%;
+  left: 16%;
   position: relative;
-  top: 20%;
+  top: 27.5%;
 
 }
 
