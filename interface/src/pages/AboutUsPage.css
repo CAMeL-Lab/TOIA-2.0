@@ -17,7 +17,7 @@
 
 /*page text*/
 .about-heading{
-  
+
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
   font-style: normal;
   font-weight: bold;
@@ -77,7 +77,7 @@
   width: 1270px;
   position: absolute;
   left: 50px;
-  top: 1350px;
+  top: 1250px;
   /* padding: 150px; */
   /* color: #707070; */
   color: var(--t-color);
@@ -107,13 +107,13 @@ li a {
 ul {
   padding-left: 2rem;
   list-style-type: square;
-} */ 
+} */
 
 ul {
   list-style: none;
   padding: 0 50px;
-  
-  
+
+
 }
 
 ul li {
@@ -122,7 +122,7 @@ ul li {
   color: black;
   list-style-type: square;
   line-height: 2;
-} 
+}
 /*grid*/
 .about-box {
   margin: 5px;
@@ -131,7 +131,7 @@ ul li {
 .about-grid {
   padding: 5px;
   overflow-y: auto;
-  height: 70%;
+  height: 90%;
   /* width: 84vw; */
   width: 100%;
   /* left: 8%;
