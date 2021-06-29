@@ -80,7 +80,7 @@ function Recorder () {
     setLanguage(history.location.state.toiaLanguage);
     setTOIAid(history.location.state.toiaID);
 
-    axios.post('http://localhost:3000/getUserStreams',{
+    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserStreams',{
       params:{
           toiaID: history.location.state.toiaID
       }
@@ -142,7 +142,7 @@ function Recorder () {
 
     console.log(form);
   
-    axios.post('http://localhost:3000/recorder',form);
+    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/recorder',form);
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
     //   let qIndex=questionList.findIndex(findQuestion);

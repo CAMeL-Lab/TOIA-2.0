@@ -82,9 +82,19 @@ let index=0;
 // 	}
 // }
 
-app.get('/',(req,res)=>{
-	res.send("Connection successful");
+app.get('/getAllUsersTest',(req,res)=>{
+
+	let getTest=`SELECT firstName FROM toia_user;`
+	connection.query(queryCreateTOIA, (err,entry,fields)=>{
+		if (err){
+			throw err;
+		}else{
+		
+			res.send(entry);
+		}
+	});
 });
+
 
 
 app.post('/createTOIA',(req,res)=>{
