@@ -32,26 +32,26 @@ app.use(express.static('./public'));
 
 //Connect to MySQL database for Production
 
-// let config = {
-//     user: process.env.DB_USERNAME,
-//     database: process.env.DB_DATABASE,
-//     password: process.env.DB_PASSWORD,
-// }
+let config = {
+    user: process.env.DB_USERNAME,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
+}
 
-// config.socketPath = `/cloudsql/toia`;
+config.socketPath = `/cloudsql/${process.env.DB_INSTANCE_CONNECTION_NAME}`;
 
-// let connection = mysql.createConnection(config);
+let connection = mysql.createConnection(config);
 
 //Connect to MySQL database for Development
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
-});
+// const connection = mysql.createConnection({
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USERNAME,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_DATABASE
+// });
 
-connection.connect();
+// connection.connect();
 
 const gc = new Storage({
 	keyFilename: path.join(__dirname,"/toia-capstone-2021-a17d9d7dd482.json"),
