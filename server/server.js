@@ -82,6 +82,10 @@ let index=0;
 // 	}
 // }
 
+app.get('/',(req,res)=>{
+	res.send("Connection successful");
+});
+
 
 app.post('/createTOIA',(req,res)=>{
 
