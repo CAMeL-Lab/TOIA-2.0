@@ -84,7 +84,7 @@ let index=0;
 
 app.get('/getAllUsersTest',(req,res)=>{
 
-	let getTest=`SELECT firstName FROM toia_user;`
+	let getTest=`SELECT first_name FROM toia_user;`
 	connection.query(getTest, (err,entry,fields)=>{
 		if (err){
 			throw err;
