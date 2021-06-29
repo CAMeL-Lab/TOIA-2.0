@@ -25,10 +25,10 @@ function Recorder () {
       case 'close':
         return { open: false };
       case 'open':
-        return { open: true }; 
+        return { open: true };
     }
   }
-  
+
   const { transcript, resetTranscript } = useSpeechRecognition({command: '*'});
 
   const webcamRef = useRef(null);
@@ -92,7 +92,7 @@ function Recorder () {
       });
       setAllStreams(streamsReceived);
     });
-  
+
   },[]);
 
   const handleStartCaptureClick = React.useCallback((e) => {
@@ -119,7 +119,7 @@ function Recorder () {
   );
 
   const handleStopCaptureClick = React.useCallback((e) => {
-  
+
     SpeechRecognition.stopListening();
     mediaRecorderRef.current.stop();
     setCapturing(false);
@@ -141,13 +141,13 @@ function Recorder () {
     form.append('streams', listStreams);
 
     console.log(form);
-  
+
     axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/recorder',form);
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
     //   let qIndex=questionList.findIndex(findQuestion);
     //   questionList[qIndex]=nextQuestion.data;
-      
+
     // });
 
     // axios({
@@ -172,9 +172,9 @@ function Recorder () {
     // for( var i=0; i < albumC.length; i++){
     //   albumSelect.push(albumC[i].label);
     // }
-  
+
   };
-  
+
   const openModal=React.useCallback((e)=>{
     e.preventDefault();
     console.log(listStreams,isPrivate,questionSelected,answerProvided);
@@ -218,7 +218,7 @@ function Recorder () {
       pathname: '/about',
     });
   }
-  
+
   function library() {
     history.push({
       pathname: '/library',
@@ -230,7 +230,7 @@ function Recorder () {
         pathname: '/garden',
     });
   }
- 
+
   function changecolor(event) {
     event.preventDefault();
     var name = event.target.className;
@@ -240,7 +240,7 @@ function Recorder () {
 
 
     switch(name) {
-      case "side-button b1":
+      case "side-button b1 tooltip":
         if (bgColor1 == '#e5e5e5'){
           setColor1('#b1f7b0');
           setColor2('#e5e5e5');
@@ -254,7 +254,7 @@ function Recorder () {
           setVideoType(null);
         }
         break;
-      case "side-button b2":
+      case "side-button b2 tooltip":
         if (bgColor2 == '#e5e5e5'){
           setColor2('#b1f7b0');
           setColor1('#e5e5e5');
@@ -268,7 +268,7 @@ function Recorder () {
           setVideoType(null);
         }
         break;
-      case "side-button b3":
+      case "side-button b3 tooltip":
         if (bgColor3 == '#e5e5e5'){
           setColor3('#b1f7b0');
           setColor1('#e5e5e5');
@@ -282,7 +282,7 @@ function Recorder () {
           setVideoType(null);
         }
         break;
-      case "side-button b4":
+      case "side-button b4 tooltip":
         if (bgColor4 == '#e5e5e5'){
           setColor4('#b1f7b0');
           setColor1('#e5e5e5');
@@ -296,7 +296,7 @@ function Recorder () {
           setVideoType(null);
         }
         break;
-      case "side-button b5":
+      case "side-button b5 tooltip":
         if (bgColor5 == '#e5e5e5'){
           setColor5('#b1f7b0');
           setColor1('#e5e5e5');
@@ -310,7 +310,7 @@ function Recorder () {
           setVideoType(null);
         }
         break;
-      case "side-button b6":
+      case "side-button b6 tooltip":
       if (bgColor6 == '#e5e5e5'){
         setColor6('#b1f7b0');
         setColor1('#e5e5e5');
@@ -331,7 +331,7 @@ function Recorder () {
   //   // event.preventDefault();
   //   setListStreams(listStreams => [...listStreams, event.target.value]);
   // }
-  
+
   function logout(){
       //logout function needs to be implemented (wahib)
       history.push({
@@ -369,10 +369,10 @@ function Recorder () {
   return (
     <form className="record-page" name="form1" action="form1" >
       <Modal //this is the new pop up menu
-      
+
       size='large'
       style={{position: "absolute", height: "80%",width: "70%", top:"5%", alignContent:"center"}}
-      open={open} 
+      open={open}
       onClose={handleClose}
       >
           <Modal.Header className="modal-header">
@@ -392,7 +392,7 @@ function Recorder () {
           </Button>
           </Modal.Actions>
       </Modal>
-      
+
         <div className="nav-heading-bar">
           <div onClick={home} className="nav-toia_icon app-opensans-normal">
               TOIA
@@ -432,18 +432,18 @@ function Recorder () {
       {/* <h1 className="title font-class-3 ">Recorder</h1>             */}
       <div>
         <div className="side-bar">
-          <h1 className="title font-class-3 ">Recorder</h1>           
+          <h1 className="title font-class-3 ">Recorder</h1>
           <div className="side-button b1 tooltip" style={{backgroundColor: bgColor1}} onClick={changecolor}>Hello!
             <span class="tooltiptext">
-              Video type for initial greetings 
-              <br/> 
+              Video type for initial greetings
+              <br/>
               <i>Hi!, Hello!, Marhaba!, Nihao!</i>
 
             </span>
           </div>
           <div className="side-button b2 tooltip" style={{backgroundColor: bgColor2}} onClick={changecolor}>Bye!
           <span class="tooltiptext">
-              Video type for farewell greetings 
+              Video type for farewell greetings
               <br/>
               <i> Bye!, Goodbye!, Maa Salama!, Sayonara!</i>
           </span>
@@ -464,14 +464,14 @@ function Recorder () {
           <span class="tooltiptext">
               Video type for filler videos that will be used <br/>
               when waiting for the conversant to ask a question <br/>
-              <i> nodding head, smiling, brushing hair, sipping coffee, <br/> 
+              <i> nodding head, smiling, brushing hair, sipping coffee, <br/>
                 scratching nose, checking phone, ... </i>"
           </span>
           </div>
           <div className="side-button b6 tooltip" style={{backgroundColor: bgColor6}} onClick={changecolor}>What?
           <span class="tooltiptext">
                 Video type for requests for more information<br/>
-                <i> I did not get that; sorry, can you repeat?; please elaborate?; huh?; 
+                <i> I did not get that; sorry, can you repeat?; please elaborate?; huh?;
                 You can ask me about my family, my job, and my artwork...</i>"
           </span>
           </div>
@@ -507,7 +507,7 @@ function Recorder () {
                 displayValue="name" // Property name to display in the dropdown options
                 placeholder = "Select Stream"
               />
-          </div> 
+          </div>
         </div>
         <div class="Video-Layout">
         <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true} videoConstraints={videoConstraints}/>
@@ -539,7 +539,7 @@ function Recorder () {
           onChange={e=>setQuestionSelected(e.target.value)}
         />
         </div>
-        
+
       </div>
     </form>
   );
