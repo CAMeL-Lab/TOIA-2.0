@@ -34,14 +34,14 @@ function AvatarGardenPage() {
         setLanguage(history.location.state.toiaLanguage);
         setTOIAid(history.location.state.toiaID);
 
-        axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserVideos',{
+        axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserVideos',{
             params:{
                 toiaID: history.location.state.toiaID
             }
         }).then((res)=>{
             setVideoList(res.data);
 
-            axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserStreams',{
+            axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserStreams',{
                 params:{
                     toiaID: history.location.state.toiaID
                 }

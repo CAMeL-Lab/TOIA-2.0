@@ -71,7 +71,7 @@ function HomePage() {
       pwd:input2
     }
 
-    axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/login',params).then(res=>{
+    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/login',params).then(res=>{
       if(res.data==-1){
           //alert('Email not found');
         setHasEmailError(true);
