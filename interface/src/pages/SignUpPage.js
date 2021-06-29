@@ -49,7 +49,7 @@ function SignUpPage() {
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-        axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/createTOIA',
+        axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/createTOIA',
           {
             firstName:fname,
             lastName:lname,
