@@ -49,7 +49,7 @@ function SignUpPage() {
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-        axios.post('http://localhost:3000/createTOIA',
+        axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/createTOIA',
           {
             firstName:fname,
             lastName:lname,
@@ -83,7 +83,7 @@ function SignUpPage() {
       pwd:input2
     }
 
-    axios.post('http://localhost:3000/login',params).then(res=>{
+    axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/login',params).then(res=>{
       if(res.data==-1){
           //alert('Email not found');
         setHasEmailError(true);
