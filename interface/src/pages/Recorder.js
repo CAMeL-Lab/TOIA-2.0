@@ -339,6 +339,11 @@ function Recorder () {
         });
   }
 
+//   const tooltipStyles = StyleSheet.create({
+//     bold: {fontWeight: 'bold'},
+//     italic: {fontStyle: 'italic'},
+//     underline: {textDecorationLine: 'underline'}
+// })
   const customStyles = {
     option: (styles, { isDisabled, isFocused, isSelected }) => {
       return {
@@ -437,7 +442,8 @@ function Recorder () {
             <span class="tooltiptext">
               Video type for initial greetings
               <br/>
-              <i>Hi!, Hello!, Marhaba!, Nihao!</i>
+
+              <i class = "tooltipExample">Hi!, Hello!, Marhaba!, Nihao!</i>
 
             </span>
           </div>
@@ -445,34 +451,34 @@ function Recorder () {
           <span class="tooltiptext">
               Video type for farewell greetings
               <br/>
-              <i> Bye!, Goodbye!, Maa Salama!, Sayonara!</i>
+              <i class = "tooltipExample"> Bye!, Goodbye!, Maa Salama!, Sayonara!</i>
           </span>
           </div>
           <div className="side-button b3 tooltip" style={{backgroundColor: bgColor3}} onClick={changecolor}>Answer
           <span class="tooltiptext">
               Video type for content answers to questions <br/>
-              <i> I love Pizza; My name is Mary.</i>
+              <i class = "tooltipExample"> I love Pizza; My name is Mary.</i>
           </span>
           </div>
           <div className="side-button b4 tooltip" style={{backgroundColor: bgColor4}} onClick={changecolor}>Yes/No
           <span class="tooltiptext">
               Video type for positive/negative answers <br/>
-              <i>Yes!, Right!, Yep!, No!, Never!</i>
+              <i class = "tooltipExample">Yes!, Right!, Yep!, No!, Never!</i>
           </span>
           </div>
           <div className="side-button b5 tooltip" style={{backgroundColor: bgColor5}} onClick={changecolor}>Filler
           <span class="tooltiptext">
               Video type for filler videos that will be used <br/>
               when waiting for the conversant to ask a question <br/>
-              <i> nodding head, smiling, brushing hair, sipping coffee, <br/>
+              <i class = "tooltipExample"> nodding head, smiling, brushing hair, sipping coffee, <br/>
                 scratching nose, checking phone, ... </i>"
           </span>
           </div>
           <div className="side-button b6 tooltip" style={{backgroundColor: bgColor6}} onClick={changecolor}>What?
           <span class="tooltiptext">
                 Video type for requests for more information<br/>
-                <i> I did not get that; sorry, can you repeat?; please elaborate?; huh?;
-                You can ask me about my family, my job, and my artwork...</i>"
+                <i class = "tooltipExample"> I did not get that; sorry, can you repeat?; <br/>please elaborate?; huh?;<br/>
+                You can ask me about my family, my job,<br/> and my artwork...</i>"
           </span>
           </div>
 
