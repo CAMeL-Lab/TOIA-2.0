@@ -16,6 +16,7 @@ import nyuad from "../images/nyuad-rb.png";
 import camel from "../images/camel.png";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
+import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
 
 
 function AvatarViewPage() {
@@ -183,7 +184,7 @@ function AvatarViewPage() {
             <ul>
                 <li>
                 Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,
-                SIGdial, April 2021 <a href="https://www.aclweb.org/anthology/2020.lrec-1.60.pdf">[PDF]</a>
+                SIGdial, April 2021 <a href={sigDail}>[PDF]</a>
 
                 </li>
                 <li >
