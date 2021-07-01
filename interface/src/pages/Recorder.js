@@ -10,6 +10,7 @@ import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 import { Multiselect } from 'multiselect-react-dropdown';
 import Switch from "react-switch";
+import env from './env.json';
 // import { Navbar, NavItem, NavDropdown, MenuItem, Nav, Container } from 'react-bootstrap';
 
 const videoConstraints = {
@@ -80,7 +81,7 @@ function Recorder () {
     setLanguage(history.location.state.toiaLanguage);
     setTOIAid(history.location.state.toiaID);
 
-    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserStreams',{
+    axios.post(`${env['server-url']}/getUserStreams`,{
       params:{
           toiaID: history.location.state.toiaID
       }
@@ -142,7 +143,7 @@ function Recorder () {
 
     console.log(form);
 
-    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/recorder',form);
+    axios.post(`${env['server-url']}/recorder`,form);
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
     //   let qIndex=questionList.findIndex(findQuestion);

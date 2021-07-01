@@ -30,35 +30,50 @@ app.use(express.json());
 
 app.use(express.static('./public'));
 
-//Connect to MySQL database for Production
+let config;
+let connection;
 
-let config = {
-    user: process.env.DB_USERNAME,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
+//Connect to CloudSQL database for Production
+if(process.env.ENVIRONMENT=='production'){
+
+	config = {
+		user: process.env.DB_USERNAME,
+		database: process.env.DB_DATABASE,
+		password: process.env.DB_PASSWORD,
+	}
+
+	config.socketPath = `/cloudsql/${process.env.DB_INSTANCE_CONNECTION_NAME}`;
+
+	connection = mysql.createConnection(config);
+
+}else if(process.env.ENVIRONMENT=='development'){
+
+	connection = mysql.createConnection({
+		host: process.env.DB_HOST,
+		user: process.env.DB_USERNAME,
+		password: process.env.DB_PASSWORD,
+		database: process.env.DB_DATABASE
+	});
+
+	connection.connect();
 }
-
-config.socketPath = `/cloudsql/${process.env.DB_INSTANCE_CONNECTION_NAME}`;
-
-let connection = mysql.createConnection(config);
-
-//Connect to MySQL database for Development
-
-// const connection = mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USERNAME,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_DATABASE
-// });
-
-// connection.connect();
 
 const gc = new Storage({
 	keyFilename: path.join(__dirname,"/toia-capstone-2021-a17d9d7dd482.json"),
 	projectId:'toia-capstone-2021'
 });
 
-const videoStore=gc.bucket('toia_store');
+let videoStore;
+
+if(process.env.ENVIRONMENT=='production'){
+
+	videoStore=gc.bucket('toia_store');
+
+}else if(process.env.ENVIRONMENT=='development'){
+
+	videoStore=gc.bucket('toia_test-wahib_mac');
+
+}
 
 
 let answerTheseQuestions=["What is your favorite sport?","What is your designation?","Where do you live?","Who is your favorite actor?"];

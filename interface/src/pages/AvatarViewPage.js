@@ -31,7 +31,7 @@ function AvatarViewPage() {
     
     React.useEffect(() => {
     
-        axios.get('http://localhost:3000/getAvatarInfo',{params:{
+        axios.get(`${env['server-url']}/getAvatarInfo`,{params:{
             avatarID: history.location.state.id_avatar
         }}).then((res)=>{
             setName(res.data.name);

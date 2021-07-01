@@ -6,6 +6,7 @@ import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
+import env from './env.json';
 
 function SignUpPage() {
 
@@ -49,7 +50,7 @@ function SignUpPage() {
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-        axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/createTOIA',
+        axios.post(`${env['server-url']}/createTOIA`,
           {
             firstName:fname,
             lastName:lname,
@@ -83,7 +84,7 @@ function SignUpPage() {
       pwd:input2
     }
 
-    axios.post('http://api-dot-toia-capstone-2021.nw.r.appspot.com/login',params).then(res=>{
+    axios.post(`${env['server-url']}/login`,params).then(res=>{
       if(res.data==-1){
           //alert('Email not found');
         setHasEmailError(true);
