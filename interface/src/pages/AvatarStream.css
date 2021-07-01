@@ -10,79 +10,89 @@
 .settings-section1 {
   background-color: transparent;
   position: absolute;
-  left: 2.5%;
+  /* left: 2.5%;
   top: 10%;
   height: 80vh;
-  width: 95vw;
+  width: 95vw; */
+  left: 50px;
+  top: 80px;
+  height: 600px;
+  width: 1270px;
 }
 .settings-section2 {
   background-color: transparent;
   position: absolute;
-  left: 2.5%;
+  /* left: 2.5%;
   top: 70%;
   height: 87vh;
-  width: 95vw;
+  width: 95vw; */
+  left: 50px;
+  top: 580px;
+  height: 700px;
+  width: 1270px;
 }
 
 /*In Page Text*/
 .settings-settings {
   background-color: transparent;
   height: auto;
-  left: 2%;
+  left: 0%;
   position: absolute;
   text-align: center;
-  width: 350px;
-  font-size: 36px;
+  /* width: 350px; */
+  font-size: 3rem;
 }
 .settings-name {
   background-color: transparent;
   height: 17px;
-  left: 5%;
+  left: 3%;
   position: absolute;
   text-align: left;
-  top: 13%;
+  top: 16%;
   width: 78px;
 }
 .settings-priv {
   background-color: transparent;
   height: 17px;
-  left: 5%;
-  position: absolute;
-  text-align: left;
-  top: 22%;
-  width: 78px;
-}
-.settings-lang {
-  background-color: transparent;
-  height: 17px;
-  left: 5%;
+  left: 3%;
   position: absolute;
   text-align: left;
   top: 31%;
   width: 78px;
 }
+.settings-lang {
+  background-color: transparent;
+  height: 17px;
+  left: 3%;
+  position: absolute;
+  text-align: left;
+  top: 46%;
+  width: 78px;
+}
 .settings-bio {
   background-color: transparent;
   height: 17px;
-  left: 5%;
+  left: 3%;
   position: absolute;
   text-align: left;
-  top: 40%;
+  top: 61%;
   width: 78px;
 }
 
 /*Text Boxes and their placeholders*/
 .settings-still {
   width: 250px;
-  top: 0%;
-  left: 70%;
+  top: 13%;
+  /* left: 70%; */
+  right: 15%;
   position: absolute;
 }
 .settings-menu{
   color: #7E7C7C;
   font-size: 24px;
-  left: 71%;
-  top: 55%;
+  /* left: 71%; */
+  top: 65%;
+  right: 17%;
   position: absolute;
 }
 .settings-menu p{
@@ -93,12 +103,12 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 12%;
+  left: 15%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 12%;
+  top: 14.5%;
   width: 470px;
 }
 .settings-priv_box {
@@ -106,38 +116,38 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 12%;
+  left: 15%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 21%;
+  top: 29.5%;
   width: 470px;
 }
 .settings-lang_box {
   background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
-  height: 31px;
-  left: 12%;
+  height: 34px;
+  left: 15%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 30%;
-  width: 470px;
+  top: 44.5%;
+  width: 475px;
 }
 .settings-bio_box {
   background-color: rgba(126, 124, 124, 0.1);
   border: 0;
   border-radius: 3px;
   height: 100px;
-  left: 12%;
+  left: 15%;
   padding: 8px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 39%;
+  top: 58.5%;
   width: 470px;
 }
 
@@ -150,11 +160,11 @@
   width: 250px;
 }
 .settings-grid {
-  padding: 10px;
+  /* padding: 10px; */
   overflow-y: scroll;
-  height: 65vh;
-  width: 80vw;
-  left: 2%;
+  height: 64.5%;
+  width: 85%;
+  left: 0%;
   top: 10%;
   position: absolute;
   display: flex;
@@ -218,15 +228,15 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 3%;
+  left: 0%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
   top: 0%;
-  width: 79vw;
+  width: 85%;
   padding: 2px;
-  font-size: 15px;
+  font-size: 1.5rem;
   margin: 5px 0;
 }
 .settings-search::-webkit-input-placeholder {
@@ -272,13 +282,14 @@
 .settings-add {
   background-color: transparent;
   height: 98px;
-  left: 90%;
-  top: 70%;
+  left: 89.5%;
+  top: 55%;
   width: 98px;
   position: absolute;
   cursor: pointer;
   pointer-events: auto;
   transition: all 0.2s ease-out;
+
 }
 .settings-hidden {
   position: relative;
@@ -287,10 +298,10 @@
   height: 100px;
 }
 .settings-video-text{
-  left: 90.5%;
+  left: 89.5%;
   position: absolute;
-  top: 85%;
-  font-size: 18px; 
+  top: 68%;
+  font-size: 1.5rem;
   color:#707070;
 }
 
@@ -298,7 +309,7 @@
 .settings-font-class-1 {
   color: rgba(0, 0, 0, 0.75);
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-size: 14px;
+  font-size: 1.5rem;
   font-style: normal;
   font-weight: 500;
   letter-spacing: -0.21px;

@@ -8,13 +8,14 @@ import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 import axios from 'axios';
+import nizar from "../images/nizar.jpg";
 
 var cardSelected = [];//the videos selected to be edited or deleted
 
 function AvatarSettings() {
 
   var stream =[//Holds info on the stream
-    {still: sampleVideo, name: "Professor Stream", privacy: "Public", language: "English", bio:"This is my professor album", ppl: "8", heart:"5", thumbs:"3"}
+    {still: nizar, name: "Professor Stream", privacy: "Public", language: "English", bio:"This is my professor album", ppl: "8", heart:"5", thumbs:"3"}
   ]
 
   var avatars = [ //This hold the video and information that are apart of the selected stream (Wahib)
@@ -39,7 +40,7 @@ function AvatarSettings() {
       case 'close':
         return { open: false };
       case 'open':
-        return { open: true }; 
+        return { open: true };
     }
   }
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -84,11 +85,11 @@ function AvatarSettings() {
             />
             <div className="column settings-question">
                 <input className="settings-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} // checkbox
-                /> 
+                />
                 <h1 className="settings-q settings-font-class-2" //question
                 >{card.question}</h1>
                 <button onClick={(event) => {cardSelected.push(avatars[index].question); openModal(event)}} className="settings-delete" //trashcan
-                ><i class="fa fa-trash"></i></button>             
+                ><i class="fa fa-trash"></i></button>
             </div>
         </div>
     )
@@ -115,7 +116,7 @@ function AvatarSettings() {
           dispatch({ type: 'close' });
           //return streams[selectedIndex].streamName and cardSelected as videos to move to slected album (Wahib)
           setSelectedIndex(null);
-      }  
+      }
   }
 
   function changehandler(classname, newVal) { //captures any changes to the stream info
@@ -195,7 +196,7 @@ function AvatarSettings() {
       size='large'
       closeIcon={true}
       style={inlineStyle.modal}
-      open={open} 
+      open={open}
       onClose={() => dispatch({ type: 'close' })}
       >
           <Modal.Header className="login_header">
@@ -208,7 +209,7 @@ function AvatarSettings() {
           </Button>
           </Modal.Actions>
       </Modal>
-      <div className="nav-heading-bar" //nav bar 
+      <div className="nav-heading-bar" //nav bar
       >
           <div onClick={home} className="nav-toia_icon app-opensans-normal">
               TOIA
@@ -334,9 +335,9 @@ function AvatarSettings() {
         />
         <div className="settings-menu" //the stats that appear under the image
         >
-            <p style={{marginRight: 52}}>{stream[0].ppl}&nbsp;<i class="fa fa-users"></i></p>
-            <p style={{marginRight: 25}}>{stream[0].heart}<i class="fa fa-heart"></i></p>
-            <p style={{marginLeft: 26}}>{stream[0].thumbs}&nbsp;<i class="fa fa-thumbs-up"></i></p>
+            <p style={{marginRight: 40}}>{stream[0].ppl}&nbsp;<i class="fa fa-users"></i></p>
+            <p style={{marginRight: 25}}>{stream[0].heart}<i  class="fa fa-heart"></i></p>
+            <p style={{marginLeft: 5}}>{stream[0].thumbs}&nbsp;<i  class="fa fa-thumbs-up"></i></p>
         </div>
       </div>
       <div className="settings-section2" //the second section of the page that has the search bar and videos
@@ -351,7 +352,7 @@ function AvatarSettings() {
         >
             <div onClick={openModal}><img className="settings-trash" src={trashIcon} /></div>
         </div>
-        <div onClick={add}><img className="settings-add" src={addButton} //the add video button 
+        <div onClick={add}><img className="settings-add" src={addButton} //the add video button
         /></div>
         <h1 className="settings-video-text settings-font-class-3">Add Video</h1>
       </div>

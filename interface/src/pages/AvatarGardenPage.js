@@ -2,6 +2,8 @@ import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 import React, { useState } from 'react';
 import Fuse from "fuse.js";
+import Carousel from 'react-elastic-carousel'
+import styled from "styled-components";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,10 +14,15 @@ import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 // import Carousel,  { slidesToShowPlugin } from '@brainhubeu/react-carousel';
-import Carousel from 'react-bootstrap/Carousel';
+// import Carousel from 'react-bootstrap/Carousel';
+
+
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
 import './AvatarGardenPage.css';
+import wahib from "../images/wahib.jpg";
+import kertu from "../images/kertu.jpg";
+import erin from "../images/erin.jpeg";
 
 var cardSelected = [];//the videos selected to be edited or deleted
 
@@ -59,7 +66,7 @@ function AvatarGardenPage() {
           case 'close':
             return { open: false };
           case 'open':
-            return { open: true }; 
+            return { open: true };
         }
     }
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -76,7 +83,7 @@ function AvatarGardenPage() {
           case 'close':
             return { open2: false };
           case 'open':
-            return { open2: true }; 
+            return { open2: true };
         }
     }
     const [state2, dispatch2] = React.useReducer(exampleReducer2, {open2: false,})
@@ -121,7 +128,7 @@ function AvatarGardenPage() {
     //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
     //     { still: sampleVideo, question: "Where do you live?", album: "default business"},
     //     ];
-        
+
     // var streams =[// This is a list of all the user streams
     //     { still: sampleVideo, maker: toiaName, streamName: "All Stream", ppl: "8", heart:"5", thumbs: "3"},
     //     { still: sampleVideo, maker: toiaName, streamName: "Professor Stream", ppl: "8", heart:"5", thumbs: "3"},
@@ -168,12 +175,12 @@ function AvatarGardenPage() {
                 />
                 <div  onClick={album_page}>
                     <h1 className="t1 garden-font-class-2" //name of user
-                    >{toiaName}</h1> 
+                    >{toiaName}</h1>
                     <p className="t2 garden-font-class-2" //individual stream name
                     >{card.name}</p>
                 </div>
                 <br></br>
-                <div className="garden-carousel-menu" //stats that appear under stream 
+                <div className="garden-carousel-menu" //stats that appear under stream
                 >
                     <p style={{marginRight: 30}}>{card.ppl}&nbsp;<i class="fa fa-users"></i></p>
                     <p style={{marginRight: 14}}>{card.heart}<i class="fa fa-heart"></i></p>
@@ -191,17 +198,17 @@ function AvatarGardenPage() {
                 />
                 <div className="column garden-question">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
-                    /> 
+                    />
                     <h1 className="garden-name garden-font-class-2" //question
                     >{card.question}</h1>
                     <button onClick={(event) => {cardSelected.push(videoList[index].question); openModal(event)}} className="garden-delete" //trash can
                     ><i class="fa fa-trash"></i></button>
-                    
+
                 </div>
             </div>
         )
     };
-    
+
     /*navbar navigation fucntions*/
     function home() {
         history.push({
@@ -214,19 +221,19 @@ function AvatarGardenPage() {
           pathname: '/about',
         });
     }
-    
+
       function library() {
         history.push({
           pathname: '/library',
         });
     }
-    
+
       function garden() {
         history.push({
             pathname: '/garden',
         });
     }
-    
+
     function logout(){
         //logout function needs to be implemented (wahib)
         history.push({
@@ -287,7 +294,7 @@ function AvatarGardenPage() {
             dispatch({ type: 'close' });
             //return streams[selectedIndex].streamName and cardSelected as videos to move to slected album (Wahib)
             setSelectedIndex(null);
-        }  
+        }
     }
 
     function save() {//this function saves all changes the user makes to the account settings
@@ -315,7 +322,7 @@ function AvatarGardenPage() {
             size='large'
             closeIcon={true}
             style={inlineStyle.modal}
-            open={open} 
+            open={open}
             onClose={() => dispatch({ type: 'close' })}
             >
                 <Modal.Header className="login_header">
@@ -332,7 +339,7 @@ function AvatarGardenPage() {
             size='large'
             closeIcon={true}
             style={inlineStyleSetting.modal}
-            open={open2} 
+            open={open2}
             onClose={() => dispatch2({ type: 'close' })}
             >
                 <Modal.Header className="login_header">
@@ -347,7 +354,7 @@ function AvatarGardenPage() {
                         defaultValue = {settingData[0].name}
                         type={"text"}
                         onChange={e=>(settingData[0].name = e.target.value)}
-                    /> 
+                    />
                     <div className="garden-settings-email garden-font-class-2" //the email input field
                     >Email: </div>
                     <input
@@ -355,7 +362,7 @@ function AvatarGardenPage() {
                         defaultValue = {settingData[0].email}
                         type={"email"}
                         onChange={e=>(settingData[0].email = e.target.value)}
-                    /> 
+                    />
                     <div className="garden-settings-pass garden-font-class-2" //the password input field
                     >Password: </div>
                     <input
@@ -363,7 +370,7 @@ function AvatarGardenPage() {
                         defaultValue = {settingData[0].password}
                         type={"password"}
                         onChange={e=>(settingData[0].password = e.target.value)}
-                    /> 
+                    />
                     <div className="garden-settings-lang garden-font-class-2" //the language input field
                     >Language: </div>
                     <select className="garden-settings-lang_box garden-font-class-2" onChange={e=>(settingData[0].language = e.target.value)} /*required={true}*/>
@@ -474,14 +481,34 @@ function AvatarGardenPage() {
                 >Welcome Back {toiaName}</h1>
                 <h1 className="stream-heading garden-font-class-3 ">My TOIA streams</h1>
                 <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
-                <Carousel> 
-                
-                    {streamList.map(renderStream)}
+                {// <Carousel
+                // plugins={[
+                //           'clickToChange',
+                //           'centered',
+                //           {
+                //             resolve: slidesToShowPlugin,
+                //             options: {
+                //              numberOfSlides: 1
+                //             }
+                //           },
+                //       ]}
+                //       className="garden-carousel"
+                //       >
+                //
+                //     {streamList.map(renderStream)}
+                //
+                // </Carousel>
+              }
+
+
+                <Carousel itemsToShow={1} showArrows ={false} >
+                  {streamList.map(renderStream)}
                 </Carousel>
+
                 <div onClick={album_page}><img className="garden-stream" src={addButton} // add stream button
                 /></div>
-                <h1 className="stream-text garden-font-class-3">Add Stream</h1>
-                {/* <div className="elem-1" //the new question element
+              {/*   <h1 className="stream-text garden-font-class-3">Add Stream</h1>
+                 <div className="elem-1" //the new question element
                 >
                     <p className="elem-text-1 garden-font-class-3" >{new_p}</p>
                     <p className="elem-text-2 garden-font-class-3">New Conversations</p>
@@ -510,7 +537,7 @@ function AvatarGardenPage() {
             <div className="section2">
                 <input className="garden-search" type="text" placeholder="&#xF002;" onChange={(event) => searchData(event.target.value)} // search bar
                 />
-                <div className ="garden-grid" // videos 
+                <div className ="garden-grid" // videos
                 >
                     {videoList.map(renderCard)}
                 </div>

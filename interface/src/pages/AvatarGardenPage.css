@@ -37,13 +37,13 @@
   left: 35%;
   position: absolute;
   top: 3%;
-  font-size: 36px;
+  font-size: 3rem;
 }
 .stream-heading{
-  left: 3%;
+  left: 0%;
   position: absolute;
   top: 15%;
-  font-size: 24px;
+  font-size: 1.75rem;
 }
 .garden-settings{
   color: #7E7C7C;
@@ -54,11 +54,10 @@
   cursor: pointer;
   position: absolute;
   top: 4%;
-  left: 90%;
+  left: 92.5%;
 }
 .garden-carousel{
-  height: 50vh;
-  width: 25vw;
+
   left: 0%;
   top: 30%;
   position: absolute;
@@ -66,6 +65,8 @@
 .garden-carousel-card{
   text-align: center;
   align-items: center;
+  /* height: 250px;
+  width: 250px; */
 }
 .t1{
   font-size: 24px;
@@ -88,7 +89,7 @@
   position: absolute;
   top: 400px;
   /* 45%; */
-  font-size: 20px; 
+  font-size: 20px;
   color:#707070;
 }
 .elem-1 {
@@ -128,18 +129,26 @@
 .section1 {
   background-color: transparent;
   position: absolute;
-  left: 2.5%;
+  /* left: 2.5%;
   top: 10%;
   height: 87vh;
-  width: 95vw;
+  width: 95vw; */
+  left: 50px;
+  top: 80px;
+  height: 600px;
+  width: 1270px;
 }
 .section2 {
   background-color: transparent;
   position: absolute;
-  left: 2.5%;
+  /* left: 2.5%;
   top: 87%;
   height: 87vh;
-  width: 95vw;
+  width: 95vw; */
+  left: 50px;
+  top: 680px;
+  height: 600px;
+  width: 1270px;
 }
 .garden-hidden {
   position: relative;
@@ -151,7 +160,7 @@
   left: 90.5%;
   position: absolute;
   top: 85%;
-  font-size: 18px; 
+  font-size: 18px;
   color:#707070;
 }
 
@@ -204,9 +213,9 @@
 }
 .garden-stream {
   background-color: transparent;
-  left: 935px;
+  left: 76%;
   /* 61%; */
-  top: 275px;
+  top: 60%;
   /* 30%; */
   width: 120px;
   position: absolute;
@@ -224,11 +233,11 @@
   width: 250px;
 }
 .garden-grid {
-  padding: 10px;
+  /* padding: 10px; */
   overflow-y: scroll;
-  height: 65vh;
-  width: 80vw;
-  left: 2%;
+  height: 82%;
+  width: 85%;
+  left: 0%;
   top: 10%;
   position: absolute;
   display: flex;
@@ -274,15 +283,15 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 3%;
+  left: 0%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
   top: 0%;
-  width: 79vw;
+  width: 85%;
   padding: 2px;
-  font-size: 15px;
+  font-size: 1.5rem;
   margin: 5px 0;
 }
 .garden-search::-webkit-input-placeholder {
@@ -476,3 +485,37 @@
 .carousel-inner {
   width: 220px;
 }
+
+
+/* .Test {
+  width: 250px;
+  top: 12%;
+} */
+
+
+.rec.rec-carousel-wrapper {
+  width: 250px;
+  position: absolute;
+  top: 35%;
+  right:83.5%;
+
+}
+
+.rec.rec-dot_active {
+  background-color: rgba(229,229,229,1);
+  box-shadow: 0 0 1px 3px rgb(229,229,229);
+}
+
+.ejXxNI:hover {
+  cursor: pointer;
+  box-shadow: 0 0 1px 3px rgb(229 229 229)
+}
+
+.ejXxNI:focus {
+cursor: pointer;
+box-shadow: 0 0 1px 3px rgb(229 229 229)
+}
+
+/* .rec.rec-slider-container {
+  top:42%;
+} */
