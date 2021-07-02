@@ -137,8 +137,6 @@ function Recorder () {
   function handleDownload(e){
     e.preventDefault();
 
-    console.log(questionSelected,answerProvided,videoType,isPrivate);
-
     let form = new FormData();
     form.append('blob', recordedVideo);
     form.append('id',toiaID);
@@ -152,7 +150,25 @@ function Recorder () {
 
     axios.post(`${env['server-url']}/recorder`,form);
 
+    resetTranscript();
+    setRecordedChunks([]);
+    dispatch({ type: 'close' });
 
+    setSwitch('#e5e5e5');
+    setPrivacySetting(true);
+    setPrivacyText('Private');
+
+    setColor1('#e5e5e5');
+    setColor2('#e5e5e5');
+    setColor3('#e5e5e5');
+    setColor4('#e5e5e5');
+    setColor5('#e5e5e5');
+    setColor6('#e5e5e5');
+    setVideoType(null);
+    setVideoTypeFormal(null);
+
+    setQuestionSelected(null);
+    document.getElementById('video-text-box').value="";
 
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
@@ -161,24 +177,6 @@ function Recorder () {
 
     // });
 
-    // axios({
-    //   method: 'post',
-    //   url: 'http://localhost:3000/recorder',
-    //   data: {
-    //     body: form, // This is the body part
-    //   }
-    // });
-
-
-
-    // const a = document.createElement("a");
-    // a.style = "display: none";
-    // a.href = url;
-    // a.download = inputName+".mp4";
-    // a.click();
-    resetTranscript();
-    setRecordedChunks([]);
-    dispatch({ type: 'close' });
 
     // for( var i=0; i < albumC.length; i++){
     //   albumSelect.push(albumC[i].label);
@@ -581,6 +579,8 @@ function Recorder () {
         <input
           className="type-q font-class-1"
           placeholder={"Type your own question"}
+          value={questionSelected}
+          id="video-text-box"
           type={"text"}
           onChange={setQuestionValue}
         />
