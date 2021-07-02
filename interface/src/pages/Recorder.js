@@ -44,9 +44,11 @@ function Recorder () {
   // const [questionList,setQuestionList]=useState([]);
   const [recordedVideo,setRecordedVideo]=useState();
   const [videoType,setVideoType]=useState(null);
+  const [videoTypeFormal,setVideoTypeFormal]=useState(null);
   const [questionSelected,setQuestionSelected]=useState(null);
   const [answerProvided,setAnswerProvided]=useState(null);
-  const [isPrivate,setPrivacySetting]=useState(false);
+  const [isPrivate,setPrivacySetting]=useState(true);
+  const [privacyText,setPrivacyText]=useState("Private");
   const [listStreams, setListStreams]=useState([]);
   const [allStreams, setAllStreams]=useState([]);
   const [videoPlayback,setVideoComponent]=useState(null);
@@ -63,13 +65,15 @@ function Recorder () {
   const [bgSwitch, setSwitch] = useState('#e5e5e5');
 
   const handleChange = nextChecked => {
-    console.log(isPrivate);
     if (bgSwitch == '#e5e5e5'){
       setSwitch('#b1f7b0');
-      setPrivacySetting(true);
+      setPrivacySetting(false);
+      setPrivacyText('Public');
     }else{
       setSwitch('#e5e5e5');
-      setPrivacySetting(false);
+      setPrivacySetting(true);
+      setPrivacyText('Private');
+  
     }
   };
 
@@ -133,6 +137,8 @@ function Recorder () {
   function handleDownload(e){
     e.preventDefault();
 
+    console.log(questionSelected,answerProvided,videoType,isPrivate);
+
     let form = new FormData();
     form.append('blob', recordedVideo);
     form.append('id',toiaID);
@@ -144,9 +150,10 @@ function Recorder () {
     form.append('private', isPrivate);
     form.append('streams', listStreams);
 
-    console.log(form);
-
     axios.post(`${env['server-url']}/recorder`,form);
+
+
+
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
     //   let qIndex=questionList.findIndex(findQuestion);
@@ -238,10 +245,6 @@ function Recorder () {
   function changecolor(event) {
     event.preventDefault();
     var name = event.target.className;
-    console.log(questionSelected);
-    console.log(videoType);
-    console.log(allStreams);
-
 
     switch(name) {
       case "side-button b1 tooltip":
@@ -253,9 +256,11 @@ function Recorder () {
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
           setVideoType('greeting');
+          setVideoTypeFormal('Hello!')
         }else{
           setColor1('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b2 tooltip":
@@ -267,10 +272,12 @@ function Recorder () {
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
           setVideoType('exit');
+          setVideoTypeFormal('Bye!')
           
         }else{
           setColor2('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b3 tooltip":
@@ -282,9 +289,11 @@ function Recorder () {
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
           setVideoType('answer');
+          setVideoTypeFormal('Answer')
         }else{
           setColor3('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b4 tooltip":
@@ -296,9 +305,11 @@ function Recorder () {
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
           setVideoType('y/n-answer');
+          setVideoTypeFormal('Yes/No!')
         }else{
           setColor4('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b5 tooltip":
@@ -310,10 +321,12 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor6('#e5e5e5');
           setVideoType('filler');
+          setVideoTypeFormal('Filler')
 
         }else{
           setColor5('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b6 tooltip":
@@ -325,21 +338,23 @@ function Recorder () {
         setColor4('#e5e5e5');
         setColor5('#e5e5e5');
         setVideoType('answer');
+        setVideoTypeFormal('What?')
       }else{
         setColor6('#e5e5e5');
         setVideoType(null);
+        setVideoTypeFormal(null);
       }
       break;
     }
   }
 
   function setQuestionValue(event){
-
-    console.log(event.target.value);
-  
     setQuestionSelected(event.target.value);
+  }
 
-    console.log(questionSelected);
+  function setAnswerValue(event){
+    setAnswerProvided(event.target.value);
+    console.log(answerProvided);
   }
 
   // function setStream(event){
@@ -391,7 +406,7 @@ function Recorder () {
       <Modal //this is the new pop up menu
 
       size='large'
-      style={{position: "absolute", height: "80%",width: "70%", top:"5%", alignContent:"center"}}
+      style={{position: "absolute", height: "80%",width: "70%", top:"2%", alignContent:"center"}}
       open={open}
       onClose={handleClose}
       >
@@ -399,12 +414,22 @@ function Recorder () {
             <div>Do you want to save this video entry? </div>
             </Modal.Header>
           <Modal.Content>
-          <div id="typeOfVideo">Video Type: {videoType}</div>
+          <div id="typeOfVideo">Video Type: {videoTypeFormal}</div>
+          <div id="questionOfVideo">Question being answered: "{questionSelected}"</div>
+          <div id="privacyOfVideo">Privacy Settings: {privacyText}</div>
+          <div id="divider"></div>
           {videoPlayback}
           {/* <video id="videoRecorded"></video> */}
           <div id="answerCorrection">Feel free to correct your answer below:</div>
-          <div contentEditable="true" className="modal-ans font-class-1" onChange={e=>setAnswerProvided(e.target.value)}>{answerProvided}
-          </div>
+          <input
+            className="modal-ans font-class-1"
+            placeholder={answerProvided}
+            value={answerProvided}
+            type={"text"}
+            onChange={setAnswerValue}
+          />
+          {/* <div contentEditable="true" className="modal-ans font-class-1" onChange={setAnswerValue}>{answerProvided}
+          </div> */}
           </Modal.Content>
           <Modal.Actions>
           <Button color='green' inverted onClick={handleDownload}>
@@ -502,7 +527,7 @@ function Recorder () {
             <span>Public</span>
             <Switch
               onChange={handleChange}
-              checked={isPrivate}
+              checked={!isPrivate}
               handleDiameter={28}
               onColor="#00587A"
               onHandleColor="#FFFFFF"
