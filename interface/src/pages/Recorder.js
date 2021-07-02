@@ -97,6 +97,8 @@ function Recorder () {
   },[]);
 
   const handleStartCaptureClick = React.useCallback((e) => {
+    resetTranscript();
+    setRecordedChunks([]);
     SpeechRecognition.startListening({ continuous: true });
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
@@ -107,6 +109,7 @@ function Recorder () {
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
+    console.log(questionSelected);
     e.preventDefault();
   }, [webcamRef, setCapturing, mediaRecorderRef]);
 
@@ -176,8 +179,7 @@ function Recorder () {
 
   };
 
-  const openModal=React.useCallback((e)=>{
-    e.preventDefault();
+  function openModal(event){
     console.log(listStreams,isPrivate,questionSelected,answerProvided);
     if (questionSelected == null){
       alert("Please choose a question before submitting your response.");
@@ -199,7 +201,8 @@ function Recorder () {
         alert("Please record a video clip before submitting your response.");
       }
     }
-  },[recordedChunks]);
+    event.preventDefault();
+  }
 
   function handleClose(e){
     e.preventDefault();
@@ -235,7 +238,7 @@ function Recorder () {
   function changecolor(event) {
     event.preventDefault();
     var name = event.target.className;
-
+    console.log(questionSelected);
     console.log(videoType);
     console.log(allStreams);
 
@@ -249,7 +252,7 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('filler');
+          setVideoType('greeting');
         }else{
           setColor1('#e5e5e5');
           setVideoType(null);
@@ -263,7 +266,8 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('answer');
+          setVideoType('exit');
+          
         }else{
           setColor2('#e5e5e5');
           setVideoType(null);
@@ -277,7 +281,7 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('y/n-answer');
+          setVideoType('answer');
         }else{
           setColor3('#e5e5e5');
           setVideoType(null);
@@ -291,7 +295,7 @@ function Recorder () {
           setColor3('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('greeting');
+          setVideoType('y/n-answer');
         }else{
           setColor4('#e5e5e5');
           setVideoType(null);
@@ -305,7 +309,8 @@ function Recorder () {
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('exit');
+          setVideoType('filler');
+
         }else{
           setColor5('#e5e5e5');
           setVideoType(null);
@@ -319,13 +324,22 @@ function Recorder () {
         setColor3('#e5e5e5');
         setColor4('#e5e5e5');
         setColor5('#e5e5e5');
-        setVideoType('exit');
+        setVideoType('answer');
       }else{
         setColor6('#e5e5e5');
         setVideoType(null);
       }
       break;
     }
+  }
+
+  function setQuestionValue(event){
+
+    console.log(event.target.value);
+  
+    setQuestionSelected(event.target.value);
+
+    console.log(questionSelected);
   }
 
   // function setStream(event){
@@ -543,7 +557,7 @@ function Recorder () {
           className="type-q font-class-1"
           placeholder={"Type your own question"}
           type={"text"}
-          onChange={e=>setQuestionSelected(e.target.value)}
+          onChange={setQuestionValue}
         />
         </div>
 
