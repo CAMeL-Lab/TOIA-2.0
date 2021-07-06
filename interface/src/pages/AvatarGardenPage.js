@@ -194,7 +194,7 @@ function AvatarGardenPage() {
         console.log(card);
         return(
             <div className="row">
-                <div onClick={()=>edit(card)} className="column" style={{ backgroundImage: `url(${sampleVideo})`, cursor: `pointer`}} //video thumbnail
+                <div onClick={()=>edit(card)} className="column" style={{ backgroundImage: `url(${sampleVideo})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
                 />
                 <div className="column garden-question">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
@@ -314,6 +314,8 @@ function AvatarGardenPage() {
             width: '50vw',
         }
     };
+
+    const searchText = "Hi"
 
 
     return (
@@ -476,11 +478,21 @@ function AvatarGardenPage() {
                     Logout
                 </div>
             </div>
+            <div className="section3">
+              <h1 className="garden-title garden-font-class-1 " //welcome message
+              >Welcome Back {toiaName}</h1>
+            {  // {<h4 className="garden-subtitle garden-font-class-3 " //welcome message
+              // >Here are your All stream videos!</h4>
+            }
+
+            <h1 className="garden-notifications garden-font-class-3 " //welcome message
+            >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1>
+              <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
+            </div>
             <div className="section1">
-                <h1 className="garden-title garden-font-class-3 " //welcome message
-                >Welcome Back {toiaName}</h1>
-                <h1 className="stream-heading garden-font-class-3 ">My TOIA streams</h1>
-                <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
+
+                <h1 className="stream-heading garden-font-class-3 ">My TOIA Streams</h1>
+
                 {// <Carousel
                 // plugins={[
                 //           'clickToChange',
@@ -500,6 +512,8 @@ function AvatarGardenPage() {
                 // </Carousel>
               }
 
+                <button className="stream-settings"><i class="fa fa-cog"></i></button>
+                <button className="stream-private"><i class="fa fa-eye" aria-hidden="true"></i></button>
 
                 <Carousel itemsToShow={1} showArrows ={false} >
                   {streamList.map(renderStream)}
@@ -507,6 +521,7 @@ function AvatarGardenPage() {
 
                 <div onClick={album_page}><img className="garden-stream" src={addButton} // add stream button
                 /></div>
+                <h1 className="stream-add-text garden-font-class-3">Add Stream</h1>
               {/*   <h1 className="stream-text garden-font-class-3">Add Stream</h1>
                  <div className="elem-1" //the new question element
                 >
@@ -533,9 +548,11 @@ function AvatarGardenPage() {
 //                 // className="garden-carousel"
 //                 // >}
                 }
+
+
             </div>
             <div className="section2">
-                <input className="garden-search" type="text" placeholder="&#xF002;" onChange={(event) => searchData(event.target.value)} // search bar
+                <input className="garden-search garden-search-text" type="text" placeholder="&#xF002;   Here are your All Stream videos" onChange={(event) => searchData(event.target.value)} // search bar
                 />
                 <div className ="garden-grid" // videos
                 >
@@ -574,6 +591,8 @@ function AvatarGardenPage() {
             </div>
         </div>
     );
+
 }
+
 
 export default AvatarGardenPage;

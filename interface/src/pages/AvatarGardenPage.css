@@ -34,27 +34,48 @@
 .garden-title {
   background-color: transparent;
   height: auto;
-  left: 35%;
+  /* left: 35%; */
   position: absolute;
-  top: 3%;
+  top: 45%;
   font-size: 3rem;
+  /* margin: auto; */
+  width: 1020px;
+  text-align: center;
+  /* left:0% */
+  display:flex;
+  left: 2.5%;
+}
+
+.garden-subtitle {
+  background-color: transparent;
+  height: auto;
+  /* left: 35%; */
+  position: absolute;
+  top: 77.5%;
+  font-size: 1.25rem;
+  /* margin: auto; */
+  /* width: 1020px; */
+  text-align: center;
+  left:3%
 }
 .stream-heading{
-  left: 0%;
+  left: 2.5%;
   position: absolute;
-  top: 15%;
-  font-size: 1.75rem;
+  top: 12%;
+  font-size: 1.65rem;
+
+  /* margin: 0 auto; */
 }
 .garden-settings{
   color: #7E7C7C;
-  font-size: 30px;
+  font-size: 45px;
   transition: all 0.2s ease-out;
   background-color: transparent;
   border: transparent;
   cursor: pointer;
   position: absolute;
-  top: 4%;
-  left: 92.5%;
+  top: 34.5%;
+  left: 94%;
 }
 .garden-carousel{
 
@@ -69,7 +90,7 @@
   width: 250px; */
 }
 .t1{
-  font-size: 24px;
+  font-size: 1.5rem;
   margin-bottom: 0px;
 }
 .t2{
@@ -134,9 +155,12 @@
   height: 87vh;
   width: 95vw; */
   left: 50px;
-  top: 80px;
-  height: 600px;
-  width: 1270px;
+  top: 0px;
+  height: 800px;
+  width: 215px;
+  border-right:  2px solid;
+  border-color: rgba(229,229,229,0.56);
+  /* border-right: solid 1px rgba(229,229,229,0.16); */
 }
 .section2 {
   background-color: transparent;
@@ -145,10 +169,25 @@
   top: 87%;
   height: 87vh;
   width: 95vw; */
-  left: 50px;
-  top: 680px;
-  height: 600px;
-  width: 1270px;
+  left: 265px;
+  top: 200px;
+  height: 550px;
+  width: 1005px;
+}
+
+.section3 {
+  background-color: transparent;
+  position: absolute;
+  /* left: 2.5%;
+  top: 87%;
+  height: 87vh;
+  width: 95vw; */
+  left: 265px;
+  top: 0px;
+  height: 200px;
+  width: 1005px;
+  border-bottom:  2px solid;
+  border-color: rgba(229,229,229,0.56);
 }
 .garden-hidden {
   position: relative;
@@ -157,11 +196,22 @@
   height: 100px;
 }
 .video-text{
-  left: 90.5%;
+  left: 30%;
   position: absolute;
-  top: 85%;
+  top: 25%;
   font-size: 18px;
   color:#707070;
+}
+
+.stream-add-text{
+  left: 22.5%;
+  position: absolute;
+  top: 76.5%;
+  font-size: 18px;
+  color:#707070;
+  /* width: 25%; */
+  text-align: center;
+  margin: auto;
 }
 
 /*buttons*/
@@ -203,9 +253,9 @@
 .garden-add {
   background-color: transparent;
   height: 98px;
-  left: 90%;
-  top: 70%;
-  width: 98px;
+  left: 30.5%;
+  top: 12.5%;
+  width: 75px;
   position: absolute;
   cursor: pointer;
   pointer-events: auto;
@@ -213,11 +263,11 @@
 }
 .garden-stream {
   background-color: transparent;
-  left: 76%;
+  left: 27.5%;
   /* 61%; */
-  top: 60%;
+  top: 66.5%;
   /* 30%; */
-  width: 120px;
+  width: 70px;
   position: absolute;
   cursor: pointer;
   pointer-events: auto;
@@ -236,21 +286,23 @@
   /* padding: 10px; */
   overflow-y: scroll;
   height: 82%;
-  width: 85%;
-  left: 0%;
-  top: 10%;
+  width: 97%;
+  left: 0.5%;
+  top: 11%;
   position: absolute;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
 }
 .garden-grid > div {
-  flex-basis: calc(33.33%);
+  flex-basis: calc(25%);
+    padding-left: 10.2px;
+    padding-right: 10.2px;
 }
 .column {
   float: left;
   width: 48%;
-  height: 200px;
+  height: 126.73px;
   margin-bottom: 50px;
   background-size:auto;
   background-position: center;
@@ -283,16 +335,27 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 0%;
+  left: 1.5%;
   padding: 5px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 0%;
-  width: 85%;
+  top: 1.5%;
+  width: 96%;
   padding: 2px;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin: 5px 0;
+}
+
+.garden-search-text {
+  /* font-style: italic; */
+  font-weight: 300;
+  color: rgb(229,229,229);
+  font-family: "Montserrat-Medium", Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+
 }
 .garden-search::-webkit-input-placeholder {
   font-family: FontAwesome;
@@ -456,10 +519,25 @@
 .garden-font-class-2 {
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 300;
   letter-spacing: -0.015em;
 }
 .garden-font-class-3 {
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 200;
+  letter-spacing: -0.015em;
+}
+
+.garden-font-class-4 {
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  font-size: 1.25rem;
+}
+
+.garden-font-class-1 {
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
   font-style: normal;
   font-weight: 700;
@@ -495,9 +573,11 @@
 
 .rec.rec-carousel-wrapper {
   width: 250px;
-  position: absolute;
-  top: 35%;
-  right:83.5%;
+  position: relative;
+  top: 18%;
+  /* right:11%; */
+  /* margin: 0 auto; */
+  right: 17.5%;
 
 }
 
@@ -519,3 +599,55 @@ box-shadow: 0 0 1px 3px rgb(229 229 229)
 /* .rec.rec-slider-container {
   top:42%;
 } */
+
+
+.stream-settings {
+  color: #7E7C7C;
+  opacity: 0.3;
+  font-size: 18px;
+  transition: all 0.2s ease-out;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 19.5%;
+  left: 80%;
+
+}
+
+.stream-settings:hover{
+  visibility: hidden;
+}
+
+.stream-private {
+  color: #7E7C7C;
+  opacity: 0.5;
+  font-size: 15px;
+  transition: all 0.2s ease-out;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 22%;
+  left: 80.25%;
+
+}
+
+.garden-notifications {
+  background-color: var(--nv-color);
+  height: 50%;
+  /* left: 35%; */
+  position: absolute;
+  top: 25.5%;
+  font-size: 1.5rem;
+  /* margin: auto; */
+  width: 39.5%;
+  text-align: center;
+  /* left:0% */
+  display:flex;
+  left: 52.5%;
+  border-radius: 10px;
+  color: white;
+  padding: 10px 0px 0px 10px;
+  font-weight: 550
+}

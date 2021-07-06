@@ -160,12 +160,12 @@
 }
 .login_welcome {
   font-weight: bold;
-  font-size: 36px;
+  font-size: 2.5rem;
   letter-spacing: -0.015em;
 }
 .login_blurb {
   font-weight: 500;
-  font-size: 12px;
+  font-size: 1.25rem;
   letter-spacing: -0.015em;
   color: rgba(0, 0, 0, 0.75);
 }
@@ -174,26 +174,26 @@
   border-radius: 3px;
   border: none;
   height: 31px;
-  left: 18%;
+  left: 9%;
   top: 15%;
   position: relative;
   padding: 5px;
   resize: none;
   text-align: left;
-  width: 370px;
+  width: 455px;
 }
 .login_pass {
   background-color: rgba(126, 124, 124, 0.1);
   border-radius: 3px;
   border: none;
   height: 31px;
-  left: 18%;
+  left: 9%;
   top: 23%;
   position: relative;
   padding: 5px;
   resize: none;
   text-align: left;
-  width: 370px;
+  width: 455px;
 }
 .login_button {
   background-color: transparent;
@@ -218,7 +218,7 @@
 .login-font-class-1 {
   color: rgba(0, 0, 0, 0.75);
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-size: 14px;
+  font-size: 1.25rem;
   font-style: normal;
   font-weight: 500;
   letter-spacing: -0.21px;

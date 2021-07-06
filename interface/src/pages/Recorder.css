@@ -303,8 +303,8 @@ video {
   padding: 5px;
   font-size: 0.85rem;
   /* Position the tooltip */
-  top: 655px;
-  right: 170px;
+  top: 555px;
+  right: 10px;
   position: fixed;
   z-index: 3000;
   line-height: 2;
@@ -332,8 +332,8 @@ video {
   /* top: 45px;
   left: 350px;
   position: absolute; */
-  top: 655px;
-  right: 170px;
+  top: 555px;
+  right: 10px;
   position: fixed;
   z-index: 3000;
   line-height: 2;
@@ -361,8 +361,8 @@ video {
   /* top: 55px;
   right: 40px;
   position: absolute; */
-  top: 655px;
-  right: 170px;
+  top: 555px;
+  right: 10px;
   position: fixed;
   z-index: 3000;
   line-height: 2;
@@ -391,8 +391,8 @@ video {
   /* top: 55px;
   left: 40px;
   position: absolute; */
-  top: 655px;
-  right: 170px;
+  top: 555px;
+  right: 10px;
   position: fixed;
   z-index: 3000;
   line-height: 2;

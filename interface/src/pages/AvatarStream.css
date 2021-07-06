@@ -27,7 +27,7 @@
   height: 87vh;
   width: 95vw; */
   left: 50px;
-  top: 580px;
+  top: 880px;
   height: 700px;
   width: 1270px;
 }
@@ -57,7 +57,7 @@
   left: 3%;
   position: absolute;
   text-align: left;
-  top: 31%;
+  top: 26%;
   width: 78px;
 }
 .settings-lang {
@@ -66,7 +66,7 @@
   left: 3%;
   position: absolute;
   text-align: left;
-  top: 46%;
+  top: 36%;
   width: 78px;
 }
 .settings-bio {
@@ -75,7 +75,7 @@
   left: 3%;
   position: absolute;
   text-align: left;
-  top: 61%;
+  top: 46%;
   width: 78px;
 }
 
@@ -121,7 +121,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 29.5%;
+  top: 24.5%;
   width: 470px;
 }
 .settings-lang_box {
@@ -134,7 +134,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 44.5%;
+  top: 34.5%;
   width: 475px;
 }
 .settings-bio_box {
@@ -147,7 +147,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 58.5%;
+  top: 44.5%;
   width: 470px;
 }
 
@@ -177,7 +177,7 @@
 .column {
   float: left;
   width: 48%;
-  height: 200px;
+  height: 126.73px;
   margin-bottom: 50px;
   background-size:auto;
   background-position: center;
@@ -282,7 +282,7 @@
 .settings-add {
   background-color: transparent;
   height: 98px;
-  left: 89.5%;
+  left: 86.5%;
   top: 55%;
   width: 98px;
   position: absolute;
@@ -298,7 +298,7 @@
   height: 100px;
 }
 .settings-video-text{
-  left: 89.5%;
+  left: 86.5%;
   position: absolute;
   top: 68%;
   font-size: 1.5rem;
