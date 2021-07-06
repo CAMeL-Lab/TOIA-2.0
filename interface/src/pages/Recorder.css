@@ -217,6 +217,10 @@ video {
 
 /*modal elements*/
 
+#divider{
+  padding: 5px;
+}
+
 #typeOfVideo{
   color: black;
   font-family: "Montserrat", Helvetica, Arial, serif;
@@ -224,7 +228,27 @@ video {
   font-size: 15px;
   font-weight: 700;
   text-align: center;
-  padding: 15px;
+}
+
+#questionOfVideo{
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px;
+  
+}
+
+#privacyOfVideo{
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  
 }
 
 #answerCorrection {
@@ -238,10 +262,10 @@ video {
 }
 
 #playbackVideo{
-
   text-align: center;
   left: 10%;
 }
+
 .modal-header {
   color: black;
   font-family: "Montserrat", Helvetica, Arial, serif;

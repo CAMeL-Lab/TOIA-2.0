@@ -8,6 +8,7 @@ import sample from "../icons/sample-video.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
+import env from './env.json';
 
 
 function HomePage() {
@@ -63,6 +64,8 @@ function HomePage() {
   function submitHandler(e){
     e.preventDefault();
 
+    console.log(env);
+
     setHasEmailError(false);
     setHasPasswordError(false);
 
@@ -71,7 +74,7 @@ function HomePage() {
       pwd:input2
     }
 
-    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/login',params).then(res=>{
+    axios.post(`${env['server-url']}/login`,params).then(res=>{
       if(res.data==-1){
           //alert('Email not found');
         setHasEmailError(true);

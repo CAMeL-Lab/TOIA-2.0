@@ -19,6 +19,7 @@ import {Modal, Button } from 'semantic-ui-react';
 
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
+import env from './env.json';
 import './AvatarGardenPage.css';
 import wahib from "../images/wahib.jpg";
 import kertu from "../images/kertu.jpg";
@@ -41,14 +42,14 @@ function AvatarGardenPage() {
         setLanguage(history.location.state.toiaLanguage);
         setTOIAid(history.location.state.toiaID);
 
-        axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserVideos',{
+        axios.post(`${env['server-url']}/getUserVideos`,{
             params:{
                 toiaID: history.location.state.toiaID
             }
         }).then((res)=>{
             setVideoList(res.data);
 
-            axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserStreams',{
+            axios.post(`${env['server-url']}/getUserStreams`,{
                 params:{
                     toiaID: history.location.state.toiaID
                 }

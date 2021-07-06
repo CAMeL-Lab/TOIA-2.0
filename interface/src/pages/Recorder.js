@@ -10,6 +10,7 @@ import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 import { Multiselect } from 'multiselect-react-dropdown';
 import Switch from "react-switch";
+import env from './env.json';
 // import { Navbar, NavItem, NavDropdown, MenuItem, Nav, Container } from 'react-bootstrap';
 
 const videoConstraints = {
@@ -43,9 +44,11 @@ function Recorder () {
   // const [questionList,setQuestionList]=useState([]);
   const [recordedVideo,setRecordedVideo]=useState();
   const [videoType,setVideoType]=useState(null);
+  const [videoTypeFormal,setVideoTypeFormal]=useState(null);
   const [questionSelected,setQuestionSelected]=useState(null);
   const [answerProvided,setAnswerProvided]=useState(null);
-  const [isPrivate,setPrivacySetting]=useState(false);
+  const [isPrivate,setPrivacySetting]=useState(true);
+  const [privacyText,setPrivacyText]=useState("Private");
   const [listStreams, setListStreams]=useState([]);
   const [allStreams, setAllStreams]=useState([]);
   const [videoPlayback,setVideoComponent]=useState(null);
@@ -62,13 +65,15 @@ function Recorder () {
   const [bgSwitch, setSwitch] = useState('#e5e5e5');
 
   const handleChange = nextChecked => {
-    console.log(isPrivate);
     if (bgSwitch == '#e5e5e5'){
       setSwitch('#b1f7b0');
-      setPrivacySetting(true);
+      setPrivacySetting(false);
+      setPrivacyText('Public');
     }else{
       setSwitch('#e5e5e5');
-      setPrivacySetting(false);
+      setPrivacySetting(true);
+      setPrivacyText('Private');
+  
     }
   };
 
@@ -80,7 +85,7 @@ function Recorder () {
     setLanguage(history.location.state.toiaLanguage);
     setTOIAid(history.location.state.toiaID);
 
-    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/getUserStreams',{
+    axios.post(`${env['server-url']}/getUserStreams`,{
       params:{
           toiaID: history.location.state.toiaID
       }
@@ -96,6 +101,8 @@ function Recorder () {
   },[]);
 
   const handleStartCaptureClick = React.useCallback((e) => {
+    resetTranscript();
+    setRecordedChunks([]);
     SpeechRecognition.startListening({ continuous: true });
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
@@ -106,6 +113,7 @@ function Recorder () {
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
+    console.log(questionSelected);
     e.preventDefault();
   }, [webcamRef, setCapturing, mediaRecorderRef]);
 
@@ -140,9 +148,28 @@ function Recorder () {
     form.append('private', isPrivate);
     form.append('streams', listStreams);
 
-    console.log(form);
+    axios.post(`${env['server-url']}/recorder`,form);
 
-    axios.post('https://api-dot-toia-capstone-2021.nw.r.appspot.com/recorder',form);
+    resetTranscript();
+    setRecordedChunks([]);
+    dispatch({ type: 'close' });
+
+    setSwitch('#e5e5e5');
+    setPrivacySetting(true);
+    setPrivacyText('Private');
+
+    setColor1('#e5e5e5');
+    setColor2('#e5e5e5');
+    setColor3('#e5e5e5');
+    setColor4('#e5e5e5');
+    setColor5('#e5e5e5');
+    setColor6('#e5e5e5');
+    setVideoType(null);
+    setVideoTypeFormal(null);
+
+    setQuestionSelected(null);
+    document.getElementById('video-text-box').value="";
+
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
     //   let qIndex=questionList.findIndex(findQuestion);
@@ -150,24 +177,6 @@ function Recorder () {
 
     // });
 
-    // axios({
-    //   method: 'post',
-    //   url: 'http://localhost:3000/recorder',
-    //   data: {
-    //     body: form, // This is the body part
-    //   }
-    // });
-
-
-
-    // const a = document.createElement("a");
-    // a.style = "display: none";
-    // a.href = url;
-    // a.download = inputName+".mp4";
-    // a.click();
-    resetTranscript();
-    setRecordedChunks([]);
-    dispatch({ type: 'close' });
 
     // for( var i=0; i < albumC.length; i++){
     //   albumSelect.push(albumC[i].label);
@@ -175,8 +184,7 @@ function Recorder () {
 
   };
 
-  const openModal=React.useCallback((e)=>{
-    e.preventDefault();
+  function openModal(event){
     console.log(listStreams,isPrivate,questionSelected,answerProvided);
     if (questionSelected == null){
       alert("Please choose a question before submitting your response.");
@@ -198,7 +206,8 @@ function Recorder () {
         alert("Please record a video clip before submitting your response.");
       }
     }
-  },[recordedChunks]);
+    event.preventDefault();
+  }
 
   function handleClose(e){
     e.preventDefault();
@@ -235,10 +244,6 @@ function Recorder () {
     event.preventDefault();
     var name = event.target.className;
 
-    console.log(videoType);
-    console.log(allStreams);
-
-
     switch(name) {
       case "side-button b1 tooltip":
         if (bgColor1 == '#e5e5e5'){
@@ -248,10 +253,12 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('filler');
+          setVideoType('greeting');
+          setVideoTypeFormal('Hello!')
         }else{
           setColor1('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b2 tooltip":
@@ -262,10 +269,13 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('answer');
+          setVideoType('exit');
+          setVideoTypeFormal('Bye!')
+          
         }else{
           setColor2('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b3 tooltip":
@@ -276,10 +286,12 @@ function Recorder () {
           setColor4('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('y/n-answer');
+          setVideoType('answer');
+          setVideoTypeFormal('Answer')
         }else{
           setColor3('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b4 tooltip":
@@ -290,10 +302,12 @@ function Recorder () {
           setColor3('#e5e5e5');
           setColor5('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('greeting');
+          setVideoType('y/n-answer');
+          setVideoTypeFormal('Yes/No!')
         }else{
           setColor4('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b5 tooltip":
@@ -304,10 +318,13 @@ function Recorder () {
           setColor3('#e5e5e5');
           setColor4('#e5e5e5');
           setColor6('#e5e5e5');
-          setVideoType('exit');
+          setVideoType('filler');
+          setVideoTypeFormal('Filler')
+
         }else{
           setColor5('#e5e5e5');
           setVideoType(null);
+          setVideoTypeFormal(null);
         }
         break;
       case "side-button b6 tooltip":
@@ -318,13 +335,24 @@ function Recorder () {
         setColor3('#e5e5e5');
         setColor4('#e5e5e5');
         setColor5('#e5e5e5');
-        setVideoType('exit');
+        setVideoType('answer');
+        setVideoTypeFormal('What?')
       }else{
         setColor6('#e5e5e5');
         setVideoType(null);
+        setVideoTypeFormal(null);
       }
       break;
     }
+  }
+
+  function setQuestionValue(event){
+    setQuestionSelected(event.target.value);
+  }
+
+  function setAnswerValue(event){
+    setAnswerProvided(event.target.value);
+    console.log(answerProvided);
   }
 
   // function setStream(event){
@@ -376,7 +404,7 @@ function Recorder () {
       <Modal //this is the new pop up menu
 
       size='large'
-      style={{position: "absolute", height: "80%",width: "70%", top:"5%", alignContent:"center"}}
+      style={{position: "absolute", height: "80%",width: "70%", top:"2%", alignContent:"center"}}
       open={open}
       onClose={handleClose}
       >
@@ -384,12 +412,22 @@ function Recorder () {
             <div>Do you want to save this video entry? </div>
             </Modal.Header>
           <Modal.Content>
-          <div id="typeOfVideo">Video Type: {videoType}</div>
+          <div id="typeOfVideo">Video Type: {videoTypeFormal}</div>
+          <div id="questionOfVideo">Question being answered: "{questionSelected}"</div>
+          <div id="privacyOfVideo">Privacy Settings: {privacyText}</div>
+          <div id="divider"></div>
           {videoPlayback}
           {/* <video id="videoRecorded"></video> */}
           <div id="answerCorrection">Feel free to correct your answer below:</div>
-          <div contentEditable="true" className="modal-ans font-class-1" onChange={e=>setAnswerProvided(e.target.value)}>{answerProvided}
-          </div>
+          <input
+            className="modal-ans font-class-1"
+            placeholder={answerProvided}
+            value={answerProvided}
+            type={"text"}
+            onChange={setAnswerValue}
+          />
+          {/* <div contentEditable="true" className="modal-ans font-class-1" onChange={setAnswerValue}>{answerProvided}
+          </div> */}
           </Modal.Content>
           <Modal.Actions>
           <Button color='green' inverted onClick={handleDownload}>
@@ -487,7 +525,7 @@ function Recorder () {
             <span>Public</span>
             <Switch
               onChange={handleChange}
-              checked={isPrivate}
+              checked={!isPrivate}
               handleDiameter={28}
               onColor="#00587A"
               onHandleColor="#FFFFFF"
@@ -541,8 +579,10 @@ function Recorder () {
         <input
           className="type-q font-class-1"
           placeholder={"Type your own question"}
+          value={questionSelected}
+          id="video-text-box"
           type={"text"}
-          onChange={e=>setQuestionSelected(e.target.value)}
+          onChange={setQuestionValue}
         />
         </div>
 

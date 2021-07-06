@@ -17,6 +17,7 @@ import camel from "../images/camel.png";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
+import env from './env.json';
 
 
 function AvatarViewPage() {
