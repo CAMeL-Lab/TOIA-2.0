@@ -1,9 +1,9 @@
 .signup-page {
   background-color: white;
-  height: 100vh;
-  margin: 0px;
-  min-height: 700px;
-  min-width: 1440px;
+  height: 800px;
+  margin: 50px;
+  min-height: 800px;
+  min-width: 1270px;
   position: relative;
   width: 100%;
 }
@@ -32,7 +32,7 @@
   background-color: transparent;
   position: absolute;
   height: 70px;
-  top: 85%;
+  top: 81%;
   left: 31%;
   pointer-events: auto;
   transition: all 0.2s ease;
@@ -40,11 +40,11 @@
 }
 .signup-group {
   background-color: transparent;
-  height: 70vh;
-  left: 30%;
+  height: 70%;
+  left: 25%;
   position: absolute;
-  top: 10%;
-  width: 40vw;
+  top: 50px;
+  width: 40%;
 }
 
 /*text and textboxes*/
@@ -58,7 +58,7 @@
 .signup_text {
   background-color: transparent;
   height: auto;
-  left: 22%;
+  left: 5%;
   position: absolute;
   text-align: center;
   top: 13%;
@@ -74,7 +74,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 27%;
+  top: 23%;
   width: 245px;
 }
 .signup-lname {
@@ -87,8 +87,8 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 27%;
-  width: 245px;
+  top: 23%;
+  width: 279px;
 }
 .signup-email {
   background-color:rgba(126, 124, 124, 0.1);
@@ -100,7 +100,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 38%;
+  top: 34%;
   width: 570px;
 }
 .signup-language {
@@ -109,7 +109,7 @@
   left: 0px;
   position: absolute;
   text-align: left;
-  top: 50%;
+  top: 46%;
   width: 78px;
 }
 .signup-lang {
@@ -117,13 +117,13 @@
   border: 0;
   border-radius: 3px;
   height: 31px;
-  left: 78px;
-  padding: 5px;
+  left: 83px;
+  padding: 5px 5px 5px 2px;
   position: absolute;
   resize: none;
   text-align: left;
-  top: 49%;
-  width: 492px;
+  top: 45%;
+  width: 487px;
 }
 .signup-pass {
   background-color: rgba(126, 124, 124, 0.1);
@@ -135,7 +135,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 60%;
+  top: 56%;
   width: 570px;
 }
 .signup-pass1 {
@@ -148,7 +148,7 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 71%;
+  top: 67%;
   width: 570px;
 }
 
@@ -156,7 +156,7 @@
 .signup-font-class-1 {
   color: var(--black);
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-size: 14px;
+  font-size: 1.2rem;
   font-style: normal;
   font-weight: 500;
   letter-spacing: -0.21px;
@@ -164,7 +164,7 @@
 .signup-font-class-2 {
   color: var(--black);
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-size: 12px;
+  font-size: 1.35rem;
   font-style: normal;
   font-weight: 500;
   letter-spacing: -0.015em;
@@ -172,7 +172,7 @@
 .signup-font-class-3 {
   color: black;
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-size: 36px;
+  font-size: 3rem;
   font-style: normal;
   font-weight: 700;
   letter-spacing: -0.015em;
