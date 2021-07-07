@@ -18,14 +18,14 @@ function HomePage() {
       case 'close':
         return { open: false };
       case 'open':
-        return { open: true }; 
+        return { open: true };
     }
   }
 
 
   let welcome_text= "Welcome to";
   let toia_text= "TOIA";
-  let blurb = "Placeholder for blurb or short description of TOIA";
+  let blurb = " experience communication and interaction reimagined.";
   var input1, input2; //these hold all the user login data
   let isLogin = false; // this will tell if user is logged in to determine whether my TOIA will activate login pop *Wahib*
 
@@ -140,7 +140,7 @@ function HomePage() {
       <Modal //this is the new pop up menu
         size='large'
         style={inlineStyle.modal}
-        open={open} 
+        open={open}
         onClose={() => dispatch({ type: 'close' })}
       >
             <Modal.Header className="login_header">
@@ -193,7 +193,7 @@ function HomePage() {
         </div>
       </div>
       <img className="home-sample-videos home-animate-enter" src={sample} />
-      
+
       <div className="home-overlap-group">
         <div className="home-des home-montserrat-black">{blurb}</div>
         <h1 className="home-toia home-opensans-normal">{toia_text}</h1>
