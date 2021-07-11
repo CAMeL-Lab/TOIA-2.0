@@ -9,7 +9,7 @@ import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
 import env from './env.json';
-
+import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
 
 function HomePage() {
 
@@ -109,7 +109,7 @@ function HomePage() {
           toiaLanguage,
           toiaID
         }
-      });   
+      });
     }else{
       history.push({
         pathname: '/',
@@ -126,7 +126,7 @@ function HomePage() {
           toiaLanguage,
           toiaID
         }
-      });   
+      });
     }else{
       history.push({
         pathname: '/about',
@@ -143,7 +143,7 @@ function HomePage() {
           toiaLanguage,
           toiaID
         }
-      });   
+      });
     }else{
       history.push({
         pathname: '/library',
@@ -161,7 +161,7 @@ function HomePage() {
           toiaLanguage,
           toiaID
         }
-      });   
+      });
     }else{
       openModal(e);
     }
@@ -176,7 +176,7 @@ function HomePage() {
           toiaLanguage,
           toiaID
         }
-      });  
+      });
     }else{
       history.push({
         pathname: '/signup',
@@ -245,7 +245,12 @@ function HomePage() {
           {isLoggedIn ? 'Logout' : 'Login'}
         </div>
       </div>
-      <img className="home-sample-videos home-animate-enter" src={sample} />
+      
+      <video className="home-sample-videos home-animate-enter"autoPlay muted>
+          <source src={toia_home_vid} type="video/mp4"/>
+
+          Your browser does not support the video tag.
+      </video>
 
       <div className="home-overlap-group">
         <div className="home-des home-montserrat-black">{blurb}</div>

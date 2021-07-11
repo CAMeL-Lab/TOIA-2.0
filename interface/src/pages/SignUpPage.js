@@ -50,7 +50,7 @@ function SignUpPage() {
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-        axios.post(`${env['REACT_APP_SERVER_HOST']}/createTOIA`,
+        axios.post(`${env['server-url']}/createTOIA`,
           {
             firstName:fname,
             lastName:lname,
