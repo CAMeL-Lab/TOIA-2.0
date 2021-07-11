@@ -38,6 +38,13 @@ function AvatarGardenPage() {
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
+
+        if(history.location.state==undefined){
+            history.push({
+                pathname: '/'
+            });
+        }
+
         setName(history.location.state.toiaName);
         setLanguage(history.location.state.toiaLanguage);
         setTOIAid(history.location.state.toiaID);
@@ -55,7 +62,6 @@ function AvatarGardenPage() {
                 }
             }).then((res)=>{
                 setStreamList(res.data);
-                console.log(res.data);
             });
         });
 
@@ -170,8 +176,9 @@ function AvatarGardenPage() {
     };
 
     const renderStream = (card, index) => {//cards for streams
+
         return(
-            <div className="garden-carousel-card">
+            <div className="garden-carousel-card" id={card.id_stream}>
                 <img src={sampleVideo} width="170" //stream thumbnail
                 />
                 <div  onClick={album_page}>
@@ -209,29 +216,62 @@ function AvatarGardenPage() {
             </div>
         )
     };
+    
+    function handleSelectCurrentStream(currentItemObject,currentPageIndex){
+
+        axios.post(`${env['server-url']}/getStreamVideos`,{
+            params:{
+                streamID: currentItemObject.item.id
+            }
+        }).then((res)=>{
+            console.log(res.data); 
+            setVideoList(res.data);
+
+        });
+    }
 
     /*navbar navigation fucntions*/
     function home() {
         history.push({
           pathname: '/',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+          }
         });
     }
 
     function about() {
         history.push({
           pathname: '/about',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+          }
         });
     }
 
       function library() {
         history.push({
           pathname: '/library',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+          }
         });
     }
 
       function garden() {
         history.push({
             pathname: '/garden',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID
+              }
         });
     }
 
@@ -516,7 +556,7 @@ function AvatarGardenPage() {
                 <button className="stream-settings"><i class="fa fa-cog"></i></button>
                 <button className="stream-private"><i class="fa fa-eye" aria-hidden="true"></i></button>
 
-                <Carousel itemsToShow={1} showArrows ={false} >
+                <Carousel itemsToShow={1} showArrows ={false} onChange={handleSelectCurrentStream} >
                   {streamList.map(renderStream)}
                 </Carousel>
 

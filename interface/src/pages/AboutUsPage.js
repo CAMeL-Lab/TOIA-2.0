@@ -1,7 +1,7 @@
 import './App.css';
 import './AboutUsPage.css';
 import 'semantic-ui-css/semantic.min.css';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import submitButton from "../icons/submit-button.svg";
 import sampleVideo from "../icons/sample-video.svg";
 import alberto from "../images/alberto.jpeg";
@@ -17,6 +17,7 @@ import camel from "../images/camel.png";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
+import axios from 'axios';
 import env from './env.json';
 
 
@@ -30,8 +31,21 @@ function AvatarViewPage() {
         e.preventDefault();
     }
 
-    let isLogin = false;//boolean to show whehter user is logged in or not
+    const [toiaName, setName] = useState(null);
+    const [toiaLanguage, setLanguage] = useState(null);
+    const [toiaID, setTOIAid] = useState(null);
+    const [isLoggedIn,setLoginState]=useState(false);
+
     var input1, input2;//holds email and pass from popup
+
+    useEffect(() => {
+        if(history.location.state!=undefined){
+          setLoginState(true);
+          setName(history.location.state.toiaName);
+          setLanguage(history.location.state.toiaLanguage);
+          setTOIAid(history.location.state.toiaID);
+        }
+    },[]);
 
     var team =[// This is a list of all members names and their accompanying pictures
 
@@ -60,47 +74,113 @@ function AvatarViewPage() {
     };
     /*navbar functions*/
     function home() {
-        history.push({
-          pathname: '/',
-        });
-      }
-
-      function library() {
-        history.push({
-          pathname: '/library',
-        });
-      }
-
-      function garden(e) {
-        if (isLogin) {
+        if(isLoggedIn){
           history.push({
-            pathname: '/garden',
-          });
+            pathname: '/',
+            state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+            }
+          });   
         }else{
-          openModal(e);
+          history.push({
+            pathname: '/',
+          });
         }
-      }
+    }
 
-     function logout(){
-         //logout function needs to be implemented (wahib)
-         history.push({
-             pathname: '/',
-           });
-     }
+    function about() {
+        if(isLoggedIn){
+            history.push({
+            pathname: '/about',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID
+            }
+            });   
+        }else{
+            history.push({
+            pathname: '/about',
+            });
+        }
+    }
+
+    function library() {
+        if(isLoggedIn){
+            history.push({
+            pathname: '/library',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID
+            }
+            });   
+        }else{
+            history.push({
+            pathname: '/library',
+            });
+        }
+    }
+
+    function garden(e) {
+        if (isLoggedIn) {
+            history.push({
+            pathname: '/garden',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID
+                }
+            });
+        }else{
+            openModal(e);
+        }
+    }
+
+    function logout(){
+        history.push({
+            pathname: '/'
+        });
+    }
      //
 
      /*login popup functions*/
-     function signup(){
+    function signup(){
         history.push({
-          pathname: '/signup',
-        });
-      }
-
-    function submitHandler1(){
-        history.push({
-            pathname: '/garden',
+            pathname: '/signup',
         });
     }
+
+    function submitHandler(e){
+        e.preventDefault();
+
+        let params={
+            email:input1,
+            pwd:input2
+        }
+
+        axios.post(`${env['server-url']}/login`,params).then(res=>{
+            if(res.data==-1){
+                //alert('Email not found');
+                alert("Incorrect e-mail address.");
+            }else if(res.data==-2){
+                alert("Incorrect password.");
+            }else {
+                console.log(res.data);
+                history.push({
+                    pathname: '/garden',
+                    state: {
+                    toiaName:res.data.firstName,
+                    toiaLanguage:res.data.language,
+                    toiaID: res.data.toia_id
+                    }
+                });
+            }
+        });
+    }
+
     const inlineStyle = {
         modal : {
             height: '560px',
@@ -124,7 +204,7 @@ function AvatarViewPage() {
                     </Modal.Header>
 
                     <Modal.Content>
-                    <form className="login_popup" onSubmit={submitHandler1}>
+                    <form className="login_popup" onSubmit={submitHandler}>
                         <input
                         className="login_email login-font-class-1"
                         placeholder={"Email"}
@@ -150,7 +230,7 @@ function AvatarViewPage() {
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">
                     TOIA
                 </div>
-                <div className="nav-about_icon app-monsterrat-black nav-selected">
+                <div onClick={about} className="nav-about_icon app-monsterrat-black nav-selected">
                     About Us
                 </div>
                 <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
@@ -159,8 +239,8 @@ function AvatarViewPage() {
                 <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
                     My TOIA
                 </div>
-                <div onClick={isLogin ? logout : openModal} className="nav-login_icon app-monsterrat-black">
-                   {isLogin ? 'Logout' : 'Login'}
+                <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
+                   {isLoggedIn ? 'Logout' : 'Login'}
                 </div>
             </div>
             <div className = "about-team">

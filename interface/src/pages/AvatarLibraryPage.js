@@ -1,7 +1,7 @@
 import './App.css';
 import './AvatarLibraryPage.css';
 import 'semantic-ui-css/semantic.min.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Fuse from "fuse.js";
 import sampleVideo from "../icons/sample-video.svg";
 import submitButton from "../icons/submit-button.svg";
@@ -16,6 +16,7 @@ import nizar from "../images/nizar.jpg";
 import goffredo from "../images/goffredo.jpeg";
 import tyeece from "../images/Tyeece.jpg";
 import armaan from "../images/armaan.jpg";
+import env from './env.json';
 
 function AvatarLibraryPage() {
 
@@ -35,7 +36,6 @@ function AvatarLibraryPage() {
         dispatch({ type: 'open' });
         e.preventDefault();
     }
-    //
 
 
     const [open2, dispatch2] = useState(false);// this is to open the view pop up 
@@ -46,49 +46,96 @@ function AvatarLibraryPage() {
     }
     //
 
+    const [toiaName, setName] = useState(null);
+    const [toiaLanguage, setLanguage] = useState(null);
+    const [toiaID, setTOIAid] = useState(null);
+    const [isLoggedIn,setLoginState]=useState(false);
+    const [allData,setAllData]=useState([]);
+    const [searchData,setSearchData]=useState([]);
 
-    let isLogin = true; // boolean for whether user is logged in or not
+    const [interactionLanguage,setInteractionLanguage]=useState(null);
+
+    useEffect(() => {
+      if(history.location.state!=undefined){
+        setLoginState(true);
+        setName(history.location.state.toiaName);
+        setLanguage(history.location.state.toiaLanguage);
+        setTOIAid(history.location.state.toiaID);
+      }
+
+      axios.get(`${env['server-url']}/getAllStreams`).then((res)=>{
+        setAllData(res.data);
+        setSearchData(res.data);
+      });
+  
+    },[]);
+
     var input1, input2; //input fields for email and password
-
-    var streams =[// This is a list of all streams publically available
-      { still: nizar, maker: "Nizar H.", streamName: "All Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: kertu, maker: "Kertu K.", streamName: "All Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: wahib, maker: "Wahib K.", streamName: "Fun Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: alberto, maker: "Alberto C.", streamName: "Business Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"},
-      { still: nizar, maker: "Nizar H.", streamName: "Professor Stream", language: "English", bio: "This is a sample bio", ppl: "8", heart:"5", thumbs: "3"}
-     ]
     
     let hLight1 = 2; //variables that hold the index number of the higlighted TOIA streams
     let hLight2 = 1;
-    var interactionLanguage; //variable that holds the language the user will want to interact with TOIA in
+
     const [viewIndex, setviewIndex] = useState(0); //this hold the index of the avater to be seen in the view pop up
     
-    
+    function goToPlayer(element){
 
+      if(isLoggedIn){
+        history.push({
+          pathname: '/player',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID,
+            toiaToTalk: element.id,
+            toiaFirstNameToTalk: element.first_name,
+            toiaLastNameToTalk: element.last_name,
+            streamToTalk: element.id_stream,
+            streamNameToTalk: element.name+" stream"
+          }
+        });   
+      }else{
+        history.push({
+          pathname: '/player',
+          state: {
+            toiaToTalk: element.id,
+            toiaFirstNameToTalk: element.first_name,
+            toiaLastNameToTalk: element.last_name,
+            streamToTalk: element.id_stream,
+            streamNameToTalk: element.name+" stream"
+          }
+        });
+      }
+    }
+    
     const renderStream = (card, index) => {//cards for streams
+
       return(
-          <div  onClick={(event) => {setviewIndex(index); openModal2(event)}} className="library-box border-0">
-              <img src={card.still} width="150" height = "157" className = "imgStyling" //stream thumbnail
+          <div className="garden-carousel-card" id={card.id_stream} onClick={()=>{goToPlayer(card)}}>
+              <img src={sampleVideo} width="170" //stream thumbnail
               />
               <div>
-                  <h1 className="library-name" //name of user
-                  >{card.maker}</h1> 
-                  <p className="library-stream" //individual stream name
-                  >{card.streamName}</p>
+                  <h1 className="t1 garden-font-class-2" //name of user
+                  >{card.first_name+' '+card.last_name}</h1>
+                  <p className="t2 garden-font-class-2" //individual stream name
+                  >{card.name + " stream"}</p>
+              </div>
+              <br></br>
+              <div className="garden-carousel-menu" //stats that appear under stream
+              >
+                  {/* <p style={{marginRight: 30}}>{card.views}&nbsp;<i class="fa fa-users"></i></p>
+                  <p style={{marginLeft: 15}}>{card.likes}&nbsp;<i class="fa fa-thumbs-up"></i></p> */}
               </div>
           </div>
       )
     };
     
-
-    const [data, setData] = useState(streams);//this sets data to the state of the avatars list
-    const searchData = (searchval) => {//search function
+    const searchStreams = (searchval) => {//search function
       if (!searchval) {
-      setData(streams);//if search is empty show all avatars
+      setSearchData(allData);//if search is empty show all avatars
       return;
       }
 
-      const fuse = new Fuse(data, {
+      const fuse = new Fuse(allData, {
         keys: [ // sets criteria for search, allows for user to search for both name and stream name
           'maker', 
           {
@@ -101,12 +148,12 @@ function AvatarLibraryPage() {
       const result = fuse.search(searchval);//collects the results of those that match the search
       const match = [];
       if (!result.length) {
-          setData([]);//if there are no results show nothing
+          setSearchData([]);//if there are no results show nothing
       } else {
           result.forEach(({item}) => {
               match.push(item);
           });
-          setData(match);//display all the cards that match the search value
+          setSearchData(match);//display all the cards that match the search value
       }
     };
 
@@ -125,48 +172,107 @@ function AvatarLibraryPage() {
         }
     }
 
-    function submitHandler(){
-        history.push({
+    function submitHandler(e){
+      e.preventDefault();
+  
+      let params={
+        email:input1,
+        pwd:input2
+      }
+  
+      axios.post(`${env['server-url']}/login`,params).then(res=>{
+        if(res.data==-1){
+            //alert('Email not found');
+          alert("Incorrect e-mail address.");
+        }else if(res.data==-2){
+          alert("Incorrect password");
+          // setHasPasswordError(true);
+        }else {
+          history.push({
             pathname: '/garden',
-        });
+            state: {
+              toiaName:res.data.firstName,
+              toiaLanguage:res.data.language,
+              toiaID: res.data.toia_id
+            }
+          });
+        }
+      });
     }
-    //
   
     // Nav bar functions 
-      function home() {
+    function home() {
+      if(isLoggedIn){
+        history.push({
+          pathname: '/',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+          }
+        });   
+      }else{
         history.push({
           pathname: '/',
         });
       }
+    }
       
-      function about() {
-        history.push({
-          pathname: '/about',
-        });
-      }
-      
-      function library() {
-        history.push({
-          pathname: '/library',
-        });
-      }
-    
-      function garden(e) {
-        if (isLogin) {
+    function about() {
+      if(isLoggedIn){
           history.push({
-            pathname: '/garden',
+          pathname: '/about',
+          state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+          }
+          });   
+      }else{
+          history.push({
+          pathname: '/about',
           });
-        }else{
-          openModal(e);
-        }
       }
+    }
+      
+    function library() {
+      if(isLoggedIn){
+          history.push({
+          pathname: '/library',
+          state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+          }
+          });   
+      }else{
+          history.push({
+          pathname: '/library',
+          });
+      }
+    }
+    
+    function garden(e) {
+      if (isLoggedIn) {
+          history.push({
+          pathname: '/garden',
+          state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+              }
+          });
+      }else{
+          openModal(e);
+      }
+    }
 
-     function logout(){
-         //logout function needs to be implemented (wahib)
-         history.push({
-             pathname: '/',
-           });
-     }
+    function logout(){
+        //logout function needs to be implemented (wahib)
+        history.push({
+          pathname: '/',
+        });
+      }
      
      // navigation functions from elements in webpage
 
@@ -225,18 +331,17 @@ function AvatarLibraryPage() {
                 onClose={() => dispatch2(false)}
             >
                 <Modal.Content>
-                  <img className="library-view-img" src={streams[viewIndex].still}/>
+                {/* <img className="library-view-img" src={allData[viewIndex].still}/> */}
                   <div className="library-view-menu" //the stats that appear under the image
                   >
-                      <p style={{marginRight: 52}}>{streams[viewIndex].ppl}&nbsp;<i class="fa fa-users"></i></p>
-                      <p style={{marginRight: 25}}>{streams[viewIndex].heart}<i class="fa fa-heart"></i></p>
-                      <p style={{marginLeft: 26}}>{streams[viewIndex].thumbs}&nbsp;<i class="fa fa-thumbs-up"></i></p>
+                      {/* <p style={{marginRight: 52}}>{allData[viewIndex].views}&nbsp;<i class="fa fa-users"></i></p>
+                      <p style={{marginLeft: 26}}>{allData[viewIndex].likes}&nbsp;<i class="fa fa-thumbs-up"></i></p> */}
                   </div>
-                  <h1 className="library-view-text" style={{top: '6%'}}>{streams[viewIndex].maker}</h1>
-                  <h2 className="library-view-text text" style={{top: '16%'}}>{streams[viewIndex].streamName}</h2>
-                  <p className="library-view-text text" style={{top: '31%'}}>{streams[viewIndex].language}</p>
-                  <p className="library-view-text text" style={{top: '42%'}}>{streams[viewIndex].bio}</p>
-                  <select className="library-lang-box" onChange={e=>(interactionLanguage = e.target.value)}>
+                  {/* <h1 className="library-view-text" style={{top: '6%'}}>{allData[viewIndex].maker}</h1>
+                  <h2 className="library-view-text text" style={{top: '16%'}}>{allData[viewIndex].streamName}</h2>
+                  <p className="library-view-text text" style={{top: '31%'}}>{allData[viewIndex].language}</p>
+                  <p className="library-view-text text" style={{top: '42%'}}>{allData[viewIndex].bio}</p> */}
+                  <select className="library-lang-box" onChange={e=>(setInteractionLanguage(e.target.value))}>
                     <option value="" disabled selected hidden>What language would you like to speak in..</option>
                     <option value="AF">Afrikaans</option>
                     <option value="SQ">Albanian</option>
@@ -328,32 +433,32 @@ function AvatarLibraryPage() {
                 <div onClick={garden} className="nav-my_icon app-monsterrat-black nav-deselect">
                     My TOIA
                 </div>
-                <div onClick={isLogin ? logout : openModal}className="nav-login_icon app-monsterrat-black nav-deselect" //depending on whter user is logged in or not, the button will change from login to logout
+                <div onClick={isLoggedIn ? logout : openModal}className="nav-login_icon app-monsterrat-black nav-deselect" //depending on whter user is logged in or not, the button will change from login to logout
                 >
-                   {isLogin ? 'Logout' : 'Login'}
+                   {isLoggedIn ? 'Logout' : 'Login'}
                 </div>
             </div>
             <div className="library-highlights">
               <div className="row" // highlighted streams
               >
                 <div onClick={(event) => {setviewIndex(hLight1); openModal2(event)}} className="library-box border-0 column">
-                  <img src={streams[hLight1].still} width="190" //stream thumbnail
+                  {/* <img src={allData[hLight1].still} width="190" //stream thumbnail */}
                   />
                   <div>
-                      <h1 className="library-name" //name of user
-                      >{streams[hLight1].maker}</h1> 
-                      <p className="library-stream" //individual stream name
-                      >{streams[hLight1].streamName}</p>
+                      {/* <h1 className="library-name" //name of user
+                      >{allData[hLight1].maker}</h1>  */}
+                      {/* <p className="library-stream" //individual stream name
+                      >{allData[hLight1].streamName}</p> */}
                   </div>
                 </div>
                 <div onClick={(event) => {setviewIndex(hLight2); openModal2(event)}} className="library-box border-0 column">
-                  <img src={streams[hLight2].still} width="190" //stream thumbnail
+                  {/* <img src={allData[hLight2].still} width="190" //stream thumbnail */}
                   />
                   <div>
-                      <h1 className="library-name" //name of user
-                      >{streams[hLight2].maker}</h1> 
-                      <p className="library-stream" //individual stream name
-                      >{streams[hLight2].streamName}</p>
+                      {/* <h1 className="library-name" //name of user
+                      >{allData[hLight2].maker}</h1>  */}
+                      {/* <p className="library-stream" //individual stream name
+                      >{allData[hLight2].streamName}</p> */}
                   </div>
                 </div>
               </div>
@@ -361,10 +466,10 @@ function AvatarLibraryPage() {
             <div className="library-random">
               <h1 className="library-text">Match me with a random TOIA</h1>
             </div>
-            <input className="library-search" type="text" placeholder="&#xF002;" onChange={(event) => searchData(event.target.value)}/>
+            <input className="library-search" type="text" placeholder="&#xF002;" onChange={(event) => searchStreams(event.target.value)}/>
             <div className ="library-grid" //videos
             >
-                {data.map(renderStream)}
+                {allData.map(renderStream)}
             </div>
         </div>
     );

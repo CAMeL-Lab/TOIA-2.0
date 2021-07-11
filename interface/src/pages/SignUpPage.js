@@ -68,16 +68,13 @@ function SignUpPage() {
             });
           });
     }else{
-      alert('Passwords need to match');
+      alert('Passwords need to match.');
     }
   }
 
   function loginHandler(event){
 
     event.preventDefault();
-
-    setHasEmailError(false);
-    setHasPasswordError(false);
 
     let params={
       email:input1,
@@ -86,10 +83,9 @@ function SignUpPage() {
 
     axios.post(`${env['server-url']}/login`,params).then(res=>{
       if(res.data==-1){
-          //alert('Email not found');
-        setHasEmailError(true);
+        alert('Incorrect email address.');
       }else if(res.data==-2){
-        setHasPasswordError(true);
+        alert('Incorrect password.');
       }else {
         console.log(res.data);
         history.push({
@@ -138,13 +134,7 @@ function SignUpPage() {
   }
 
   function garden(e) {
-    if (isLogin) {
-      history.push({
-        pathname: '/garden',
-      });
-    }else{
       openModal(e);
-    }
   }
 
   function signup(){
@@ -173,9 +163,6 @@ function SignUpPage() {
           <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
           <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
         </Modal.Header>
-
-        {hasEmailError && <ErrorComponent_email></ErrorComponent_email>}
-        {hasPasswordError && <ErrorComponent_pwd></ErrorComponent_pwd>}
 
         <Modal.Content>
           <form className="login_popup" onSubmit={loginHandler}>
