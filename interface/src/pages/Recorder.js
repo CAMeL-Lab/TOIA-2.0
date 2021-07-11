@@ -1,7 +1,7 @@
 import './App.css';
 import './Recorder.css';
 import 'semantic-ui-css/semantic.min.css';
-import React,  {useState, useEffect, useRef} from "react";
+import React,  {useState, useEffect, useRef, createRef} from "react";
 import Webcam from "react-webcam";
 import CreatableSelect from 'react-select/creatable';
 import axios from 'axios';
@@ -49,8 +49,9 @@ function Recorder () {
   const [answerProvided,setAnswerProvided]=useState(null);
   const [isPrivate,setPrivacySetting]=useState(true);
   const [privacyText,setPrivacyText]=useState("Private");
-  const [listStreams, setListStreams]=useState([]);
   const [allStreams, setAllStreams]=useState([]);
+  const [listStreams, setListStreams]=useState([]);
+  const [mainStreamVal, setMainStreamVal]=useState([]);
   const [videoPlayback,setVideoComponent]=useState(null);
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -93,9 +94,11 @@ function Recorder () {
       let streamsReceived=[];
       console.log("got daata");
       res.data.forEach((stream)=>{
-        streamsReceived.push({name: stream.name});
+        streamsReceived.push({name: stream.name,id:stream.id_stream});
       });
       setAllStreams(streamsReceived);
+      setListStreams([streamsReceived[0]]);
+      setMainStreamVal([streamsReceived[0]]);
     });
 
   },[]);
@@ -169,6 +172,8 @@ function Recorder () {
 
     setQuestionSelected(null);
     document.getElementById('video-text-box').value="";
+
+    setListStreams([allStreams[0]]);
 
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
@@ -354,6 +359,7 @@ function Recorder () {
     setAnswerProvided(event.target.value);
     console.log(answerProvided);
   }
+
 
   // function setStream(event){
   //   // event.preventDefault();
@@ -546,9 +552,11 @@ function Recorder () {
           <div className="select">
               <Multiselect
                 options={allStreams} // Options to display in the dropdown
-                onSelect={(list,item)=>{setListStreams([...listStreams,item])}} // Function will trigger on select event
-                // onRemove={this.onRemove} // Function will trigger on remove event
+                onSelect={(list,item)=>{setListStreams(list)}} // Function will trigger on select event
+                onRemove={(list,item)=>{setListStreams(list)}} // Function will trigger on remove event
                 displayValue="name" // Property name to display in the dropdown options
+                selectedValues={mainStreamVal}
+                disablePreSelectedValues={true}
                 placeholder = "Select Stream"
               />
           </div>

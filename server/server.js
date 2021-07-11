@@ -119,8 +119,14 @@ app.post('/createTOIA',(req,res)=>{
 		if (err){
 			throw err;
 		}else{
-			console.log(entry.insertId);
-			res.send({new_toia_ID: entry.insertId});
+			let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
+			connection.query(queryAllStream, (err,stream_entry,fields)=>{
+				if (err){
+					throw err;
+				}else{
+					res.send({new_toia_ID: entry.insertId});
+				}
+			});
 		}
 	});
 });
@@ -283,6 +289,15 @@ app.post('/recorder',async (req,res)=>{
     let form = new multiparty.Form();
     form.parse(req, function(err, fields, file) {
 		console.log(fields);
+
+		console.log(fields.streams[0]);
+		
+		// fields.streams.forEach((item)=>{
+		// 	item.forEach((streamEntry)=>{
+		// 		console.log(streamEntry);
+		// 	});
+		// });
+
 		if(fields.private[0]=='false'){
 			isPrivate=0;
 		}else{
@@ -343,10 +358,6 @@ app.post('/recorder',async (req,res)=>{
 	// form.on('part',(part)=>{
 	// 	console.log(part.id);
 	// });
-
-
-
-
 
 
 	// let question = req.body.question;
