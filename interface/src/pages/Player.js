@@ -8,6 +8,7 @@ import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import env from './env.json';
 
 function Player(){
 
@@ -20,23 +21,6 @@ function Player(){
       }
   }
 
-  function fetchData(){
-
-    // event.preventDefault();
-  
-    // SpeechRecognition.stopListening();
-
-    if(transcript!=''){
-      let question = transcript[0].toUpperCase()+transcript.slice(1);
-      resetTranscript();
-
-      let videoElem= <video className="player-vid" key={question} autoPlay><source src={`http://localhost:3000/player/${avatarID}/${avatarName}/${language}/${question}`} type='video/mp4'></source></video>;
-
-      setVideo(videoElem);
-    }
-
-  }
-
   const commands=[
     {
       command: '*',
@@ -47,28 +31,43 @@ function Player(){
 
   const { transcript, resetTranscript } = useSpeechRecognition(commands);
   
-  const [avatarName, setAvatarName] = React.useState(null);
-  const [language, setLanguage] = React.useState(null);
+  const [toiaName, setName] = React.useState(null);
+  const [toiaLanguage, setLanguage] = React.useState(null);
   const [interactionLanguage,setInteractionLanguage] = useState(null);
-  const [avatarID,setAvatarID] = React.useState(null);
+  const [toiaID,setTOIAid] = React.useState(null);
+  const [isLoggedIn,setLoginState]=useState(false);
+
+  const [toiaIDToTalk,setTOIAIdToTalk]=useState(null);
+  const [toiaFirstNameToTalk,setTOIAFirstNameToTalk]=useState(null);
+  const [toiaLastNameToTalk,setTOIALastNameToTalk]=useState(null);
+  const [streamIdToTalk, setStreamIdToTalk]=useState(null);
+  const [streamNameToTalk, setStreamNameToTalk]=useState(null);
+
   const [video,setVideo] = useState(null);
   const [caption,setCaption] = useState(null);
-  let isLogin = false; //login variable
+
   var input1, input2;
   let [micMute, setMicStatus]=React.useState(false);
   let [micString, setMicString]=React.useState('Mute');
 
   React.useEffect(() => {
-    setAvatarName(history.location.state.name);
-    setLanguage(history.location.state.language);
-    setInteractionLanguage(history.location.state.interactionLanguage);
-    setAvatarID(history.location.state.avatarID);
+    if(history.location.state.toiaID!=undefined){
+      setLoginState(true);
+      setTOIAid(history.location.state.toiaID);
+      setName(history.location.state.toiaName);
+      setLanguage(history.location.state.toiaLanguage);
+    }
+    setTOIAIdToTalk(history.location.state.toiaToTalk);
+    setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
+    setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
+    setStreamIdToTalk(history.location.state.streamToTalk);
+    setStreamNameToTalk(history.location.state.streamNameToTalk);
+
     if(micMute==false){
       SpeechRecognition.startListening({continuous:true});
     }
+
   });
-
-
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const { open } = state
@@ -92,6 +91,23 @@ function Player(){
         }
     }
 
+  function fetchData(){
+
+    // event.preventDefault();
+  
+    // SpeechRecognition.stopListening();
+
+    if(transcript!=''){
+      let question = transcript[0].toUpperCase()+transcript.slice(1);
+      resetTranscript();
+
+      let videoElem= <video className="player-vid" key={question} autoPlay><source src={`${env['server-url']}/player/${toiaIDToTalk}/${toiaFirstNameToTalk}/${question}`} type='video/mp4'></source></video>;
+
+      setVideo(videoElem);
+    }
+
+  }
+
     function micStatusChange(){
       if(micMute==true){
         setMicStatus(false);
@@ -107,37 +123,97 @@ function Player(){
 
     }
 
-    function submitHandler(){
-        history.push({
-            pathname: '/garden',
-        });
+    function submitHandler(e){
+      e.preventDefault();
+
+      let params={
+          email:input1,
+          pwd:input2
+      }
+
+      axios.post(`${env['server-url']}/login`,params).then(res=>{
+          if(res.data==-1){
+              //alert('Email not found');
+              alert("Incorrect e-mail address.");
+          }else if(res.data==-2){
+              alert("Incorrect password.");
+          }else {
+              console.log(res.data);
+              history.push({
+                  pathname: '/garden',
+                  state: {
+                  toiaName:res.data.firstName,
+                  toiaLanguage:res.data.language,
+                  toiaID: res.data.toia_id
+                  }
+              });
+          }
+      });
     }
 
     function home() {
-      history.push({
-        pathname: '/',
-      });
+      if(isLoggedIn){
+        history.push({
+          pathname: '/',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+          }
+        });   
+      }else{
+        history.push({
+          pathname: '/',
+        });
+      }
     }
     
     function about() {
-      history.push({
-        pathname: '/about',
-      });
+      if(isLoggedIn){
+          history.push({
+          pathname: '/about',
+          state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+          }
+          });   
+      }else{
+          history.push({
+          pathname: '/about',
+          });
+      }
     }
 
     function library() {
-      history.push({
-        pathname: '/library',
-      });
+      if(isLoggedIn){
+          history.push({
+          pathname: '/library',
+          state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+          }
+          });   
+      }else{
+          history.push({
+          pathname: '/library',
+          });
+      }
     }
   
     function garden(e) {
-      if (isLogin) {
-        history.push({
+      if (isLoggedIn) {
+          history.push({
           pathname: '/garden',
-        });
+          state: {
+              toiaName,
+              toiaLanguage,
+              toiaID
+              }
+          });
       }else{
-        openModal(e);
+          openModal(e);
       }
     }
 
@@ -146,7 +222,7 @@ function Player(){
        history.push({
            pathname: '/',
          });
-   }
+    }
    
    function signup(){
       history.push({
@@ -210,13 +286,13 @@ function Player(){
           <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
               My TOIA
           </div>
-          <div onClick={isLogin ? logout : openModal}className="nav-login_icon app-monsterrat-black">
-              {isLogin ? 'Logout' : 'Login'}
+          <div onClick={isLoggedIn ? logout : openModal}className="nav-login_icon app-monsterrat-black">
+              {isLoggedIn ? 'Logout' : 'Login'}
           </div>
       </div>
       <div className="player-group">
-        <h1 className="player-name player-font-class-3 ">{avatarName}</h1>
-        <p className="player-lang player-font-class-2 ">{language}</p>
+        <h1 className="player-name player-font-class-3 ">{toiaFirstNameToTalk} {toiaLastNameToTalk}</h1>
+        <p className="player-lang player-font-class-2 ">{streamNameToTalk}</p>
         {video}
         {/* <button onClick={()=>{SpeechRecognition.startListening({ continuous: true })}}>Start</button>
         <button onClick={fetchData}>Stop</button>

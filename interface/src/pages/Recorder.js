@@ -79,6 +79,11 @@ function Recorder () {
   };
 
   useEffect(() => {
+    if(history.location.state==undefined){
+      history.push({
+          pathname: '/'
+      });
+    }
     // axios.get('http://localhost:3000/getAllVideos').then((res)=>{
     //   setQuestionList(res.data);
     // });
@@ -149,7 +154,7 @@ function Recorder () {
     form.append('answer', answerProvided);
     form.append('videoType', videoType);
     form.append('private', isPrivate);
-    form.append('streams', listStreams);
+    form.append('streams', JSON.stringify(listStreams));
 
     axios.post(`${env['server-url']}/recorder`,form);
 
@@ -172,8 +177,6 @@ function Recorder () {
 
     setQuestionSelected(null);
     document.getElementById('video-text-box').value="";
-
-    setListStreams([allStreams[0]]);
 
     // .then((nextQuestion)=>{
     //   const findQuestion = (element)=>element==questionSelected;
@@ -224,26 +227,46 @@ function Recorder () {
   function home() {
     history.push({
       pathname: '/',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+      }
     });
-  }
+}
 
   function about() {
     history.push({
       pathname: '/about',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+      }
     });
   }
 
   function library() {
     history.push({
       pathname: '/library',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+      }
     });
   }
 
   function garden() {
     history.push({
         pathname: '/garden',
+        state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+          }
     });
-  }
+}
 
   function changecolor(event) {
     event.preventDefault();

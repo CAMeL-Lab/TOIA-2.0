@@ -27,24 +27,35 @@ function HomePage() {
   let toia_text= "TOIA";
   let blurb = " experience communication and interaction reimagined.";
   var input1, input2; //these hold all the user login data
-  let isLogin = false; // this will tell if user is logged in to determine whether my TOIA will activate login pop *Wahib*
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-  var [hasEmailError, setHasEmailError] = useState(false);
-  var [hasPasswordError, setHasPasswordError] = useState(false);
+
+  const [toiaName, setName] = useState(null);
+  const [toiaLanguage, setLanguage] = useState(null);
+  const [toiaID, setTOIAid] = useState(null);
+  const [isLoggedIn,setLoginState]=useState(false);
+
   const { open } = state
+
+  useEffect(() => {
+    if(history.location.state!=undefined){
+      setLoginState(true);
+      setName(history.location.state.toiaName);
+      setLanguage(history.location.state.toiaLanguage);
+      setTOIAid(history.location.state.toiaID);
+    }
+
+  },[]);
 
   function openModal(e){
     dispatch({ type: 'open' });
     e.preventDefault();
   }
 
-  function ErrorComponent_email() {
-    return <p>E-mail not found</p>
-  }
-
-  function ErrorComponent_pwd() {
-    return <p>Password not found</p>
+  function logout(){
+    history.push({
+      pathname: '/',
+    });
   }
 
   function myChangeHandler(event){
@@ -64,11 +75,6 @@ function HomePage() {
   function submitHandler(e){
     e.preventDefault();
 
-    console.log(env);
-
-    setHasEmailError(false);
-    setHasPasswordError(false);
-
     let params={
       email:input1,
       pwd:input2
@@ -77,11 +83,11 @@ function HomePage() {
     axios.post(`${env['server-url']}/login`,params).then(res=>{
       if(res.data==-1){
           //alert('Email not found');
-        setHasEmailError(true);
+        alert("Incorrect e-mail address.");
       }else if(res.data==-2){
-        setHasPasswordError(true);
+        alert("Incorrect password");
+        // setHasPasswordError(true);
       }else {
-        console.log(res.data);
         history.push({
           pathname: '/garden',
           state: {
@@ -95,37 +101,87 @@ function HomePage() {
   }
 
   function home() {
-    history.push({
-      pathname: '/',
-    });
+    if(isLoggedIn){
+      history.push({
+        pathname: '/',
+        state: {
+          toiaName,
+          toiaLanguage,
+          toiaID
+        }
+      });   
+    }else{
+      history.push({
+        pathname: '/',
+      });
+    }
   }
 
   function about() {
-    history.push({
-      pathname: '/about',
-    });
+    if(isLoggedIn){
+      history.push({
+        pathname: '/about',
+        state: {
+          toiaName,
+          toiaLanguage,
+          toiaID
+        }
+      });   
+    }else{
+      history.push({
+        pathname: '/about',
+      });
+    }
   }
 
   function library() {
-    history.push({
-      pathname: '/library',
-    });
+    if(isLoggedIn){
+      history.push({
+        pathname: '/library',
+        state: {
+          toiaName,
+          toiaLanguage,
+          toiaID
+        }
+      });   
+    }else{
+      history.push({
+        pathname: '/library',
+      });
+    }
   }
 
   function garden(e) {
-    if (isLogin) {
+
+    if(isLoggedIn){
       history.push({
         pathname: '/garden',
-      });
+        state: {
+          toiaName,
+          toiaLanguage,
+          toiaID
+        }
+      });   
     }else{
       openModal(e);
     }
   }
 
   function signup(){
-    history.push({
-      pathname: '/signup',
-    });
+    if(isLoggedIn==true){
+      history.push({
+        pathname: '/garden',
+        state: {
+          toiaName,
+          toiaLanguage,
+          toiaID
+        }
+      });  
+    }else{
+      history.push({
+        pathname: '/signup',
+      });
+    }
   }
 
   const inlineStyle = {
@@ -147,9 +203,6 @@ function HomePage() {
               <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
               <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
             </Modal.Header>
-
-            {hasEmailError && <ErrorComponent_email></ErrorComponent_email>}
-            {hasPasswordError && <ErrorComponent_pwd></ErrorComponent_pwd>}
 
             <Modal.Content>
               <form className="login_popup" onSubmit={submitHandler}>
@@ -188,8 +241,8 @@ function HomePage() {
         <div onClick={garden} className="nav-my_icon app-monsterrat-black">
           My TOIA
         </div>
-        <div onClick={openModal}className="nav-login_icon app-monsterrat-black">
-          Login
+        <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
+          {isLoggedIn ? 'Logout' : 'Login'}
         </div>
       </div>
       <img className="home-sample-videos home-animate-enter" src={sample} />

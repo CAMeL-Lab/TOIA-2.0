@@ -2,10 +2,36 @@ from flask import Flask, request
 import json
 import sqlalchemy as db
 import pandas as pd
+import os
 from utils import preprocess, toia_answer
+from dotenv import load_dotenv
 
-SQL_URL = "mysql+mysqlconnector://root@localhost/toia"
-ENGINE = db.create_engine(SQL_URL)
+load_dotenv()
+
+if os.environ["ENVIRONMENT"]=="development":
+    SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
+    ENGINE = db.create_engine(SQL_URL)
+
+elif os.environ["ENVIRONMENT"]=="production":
+
+    ENGINE = sqlalchemy.create_engine(
+        # Equivalent URL:
+        # mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_path>/<cloud_sql_instance_name>
+        sqlalchemy.engine.url.URL.create(
+            drivername=os.environ.get("DB_CONNECTION"),
+            username=os.environ.get("DB_USERNAME"),  # e.g. "my-database-user"
+            password=os.environ.get("DB_PASSWORD"),  # e.g. "my-database-password"
+            database=os.environ.get("DB_DATABASE"),  # e.g. "my-database-name"
+            query={
+                "unix_socket": "/cloudsql/{}".format(
+                    db_socket_dir,  # e.g. "/cloudsql"
+                    os.environ.get("DB_INSTANCE_CONNECTION_NAME"))  # i.e "<PROJECT-NAME>:<INSTANCE-REGION>:<INSTANCE-NAME>"
+            }
+        ),
+        **db_config
+    )
+
+
 CONNECTION = ENGINE.connect()
 METADATA = db.MetaData()
 VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
@@ -20,6 +46,9 @@ def dialogue_manager():
         raw_data = request.get_json()
         query = raw_data['query']
         avatar_id = raw_data['avatar_id']
+
+        print(query)
+        print(avatar_id)
 
         avatar_kb = db.select([VIDEOS]).where(
             VIDEOS.columns.toia_id == avatar_id,
