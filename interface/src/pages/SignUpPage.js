@@ -15,7 +15,7 @@ function SignUpPage() {
       case 'close':
         return { open: false };
       case 'open':
-        return { open: true }; 
+        return { open: true };
     }
   }
 
@@ -50,7 +50,7 @@ function SignUpPage() {
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-        axios.post(`${env['server-url']}/createTOIA`,
+        axios.post(`${env['REACT_APP_SERVER_HOST']}/createTOIA`,
           {
             firstName:fname,
             lastName:lname,
@@ -102,7 +102,7 @@ function SignUpPage() {
         });
       }
     });
-    
+
   }
 
   function myChangeHandler(event){
@@ -160,13 +160,13 @@ function SignUpPage() {
     }
   };
 
-  
+
   return (
     <div>
     <Modal //this is the new pop up menu
     size='large'
     style={inlineStyle.modal}
-    open={open} 
+    open={open}
     onClose={() => dispatch({ type: 'close' })}
   >
         <Modal.Header className="login_header">
@@ -242,7 +242,7 @@ function SignUpPage() {
               required={true}
               onChange={e=>setEmail(e.target.value)}
           />
-   
+
           <div className="signup-language signup-font-class-1 ">Language:</div>
           <select className="signup-lang signup-font-class-1" onChange={e=>setLanguage(e.target.value)} required={true}>
               <option value="" disabled selected hidden>Select Language...</option>
