@@ -20,13 +20,13 @@ import env from './env.json';
 
 function AvatarLibraryPage() {
 
-    /*functions in charge of opening and closing the various pop up menus*/    
+    /*functions in charge of opening and closing the various pop up menus*/
     function exampleReducer( state, action ) {
         switch (action.type) {
           case 'close':
             return { open: false };
           case 'open':
-            return { open: true }; 
+            return { open: true };
         }
     }
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -38,7 +38,7 @@ function AvatarLibraryPage() {
     }
 
 
-    const [open2, dispatch2] = useState(false);// this is to open the view pop up 
+    const [open2, dispatch2] = useState(false);// this is to open the view pop up
 
     function openModal2(e){
         dispatch2(true);
@@ -67,16 +67,16 @@ function AvatarLibraryPage() {
         setAllData(res.data);
         setSearchData(res.data);
       });
-  
+
     },[]);
 
     var input1, input2; //input fields for email and password
-    
+
     let hLight1 = 2; //variables that hold the index number of the higlighted TOIA streams
     let hLight2 = 1;
 
     const [viewIndex, setviewIndex] = useState(0); //this hold the index of the avater to be seen in the view pop up
-    
+
     function goToPlayer(element){
 
       if(isLoggedIn){
@@ -92,7 +92,7 @@ function AvatarLibraryPage() {
             streamToTalk: element.id_stream,
             streamNameToTalk: element.name+" stream"
           }
-        });   
+        });
       }else{
         history.push({
           pathname: '/player',
@@ -106,7 +106,7 @@ function AvatarLibraryPage() {
         });
       }
     }
-    
+
     const renderStream = (card, index) => {//cards for streams
 
       return(
@@ -128,7 +128,7 @@ function AvatarLibraryPage() {
           </div>
       )
     };
-    
+
     const searchStreams = (searchval) => {//search function
       if (!searchval) {
       setSearchData(allData);//if search is empty show all avatars
@@ -137,7 +137,7 @@ function AvatarLibraryPage() {
 
       const fuse = new Fuse(allData, {
         keys: [ // sets criteria for search, allows for user to search for both name and stream name
-          'maker', 
+          'maker',
           {
             name: 'streamName',
             weight: 0.5
@@ -161,7 +161,7 @@ function AvatarLibraryPage() {
     function myChangeHandler(event){
         event.preventDefault();
         var name = event.target.name;
-    
+
         switch(name) {
           case "email":
             input1 = event.target.value;
@@ -174,12 +174,12 @@ function AvatarLibraryPage() {
 
     function submitHandler(e){
       e.preventDefault();
-  
+
       let params={
         email:input1,
         pwd:input2
       }
-  
+
       axios.post(`${env['server-url']}/login`,params).then(res=>{
         if(res.data==-1){
             //alert('Email not found');
@@ -199,8 +199,8 @@ function AvatarLibraryPage() {
         }
       });
     }
-  
-    // Nav bar functions 
+
+    // Nav bar functions
     function home() {
       if(isLoggedIn){
         history.push({
@@ -210,14 +210,14 @@ function AvatarLibraryPage() {
             toiaLanguage,
             toiaID
           }
-        });   
+        });
       }else{
         history.push({
           pathname: '/',
         });
       }
     }
-      
+
     function about() {
       if(isLoggedIn){
           history.push({
@@ -227,14 +227,14 @@ function AvatarLibraryPage() {
               toiaLanguage,
               toiaID
           }
-          });   
+          });
       }else{
           history.push({
           pathname: '/about',
           });
       }
     }
-      
+
     function library() {
       if(isLoggedIn){
           history.push({
@@ -244,14 +244,14 @@ function AvatarLibraryPage() {
               toiaLanguage,
               toiaID
           }
-          });   
+          });
       }else{
           history.push({
           pathname: '/library',
           });
       }
     }
-    
+
     function garden(e) {
       if (isLoggedIn) {
           history.push({
@@ -273,7 +273,7 @@ function AvatarLibraryPage() {
           pathname: '/',
         });
       }
-     
+
      // navigation functions from elements in webpage
 
      function signup(){
@@ -294,7 +294,7 @@ function AvatarLibraryPage() {
             <Modal //this is the login pop up menu
                 size='large'
                 style={inlineStyle.modal}
-                open={open} 
+                open={open}
                 onClose={() => dispatch({ type: 'close' })}
             >
                 <Modal.Header className="login_header">
@@ -327,7 +327,7 @@ function AvatarLibraryPage() {
              <Modal //this is the view pop up menu
                 size='large'
                 style={inlineStyle.modal}
-                open={open2} 
+                open={open2}
                 onClose={() => dispatch2(false)}
             >
                 <Modal.Content>
@@ -438,34 +438,8 @@ function AvatarLibraryPage() {
                    {isLoggedIn ? 'Logout' : 'Login'}
                 </div>
             </div>
-            <div className="library-highlights">
-              <div className="row" // highlighted streams
-              >
-                <div onClick={(event) => {setviewIndex(hLight1); openModal2(event)}} className="library-box border-0 column">
-                  {/* <img src={allData[hLight1].still} width="190" //stream thumbnail */}
-                  />
-                  <div>
-                      {/* <h1 className="library-name" //name of user
-                      >{allData[hLight1].maker}</h1>  */}
-                      {/* <p className="library-stream" //individual stream name
-                      >{allData[hLight1].streamName}</p> */}
-                  </div>
-                </div>
-                <div onClick={(event) => {setviewIndex(hLight2); openModal2(event)}} className="library-box border-0 column">
-                  {/* <img src={allData[hLight2].still} width="190" //stream thumbnail */}
-                  />
-                  <div>
-                      {/* <h1 className="library-name" //name of user
-                      >{allData[hLight2].maker}</h1>  */}
-                      {/* <p className="library-stream" //individual stream name
-                      >{allData[hLight2].streamName}</p> */}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="library-random">
-              <h1 className="library-text">Match me with a random TOIA</h1>
-            </div>
+
+
             <input className="library-search" type="text" placeholder="&#xF002;" onChange={(event) => searchStreams(event.target.value)}/>
             <div className ="library-grid" //videos
             >
@@ -479,11 +453,28 @@ export default AvatarLibraryPage;
 
   /*
     const [avatarList, setAvatarList] = React.useState([]);
-    const [avatarCards, setAvatarCards] = React.useState(''); 
-    
+    const [avatarCards, setAvatarCards] = React.useState('');
+
     React.useEffect(() => {
         axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
             setAvatarList(res.data);
             setAvatarCards(avatarList.map(renderCard));
         });
     });*/
+
+
+  /*  <div className="library-highlights">
+    <div className="row" // highlighted streams
+    >
+      <div onClick={(event) => {setviewIndex(hLight1); openModal2(event)}} className="library-box border-0 column">
+
+
+      </div>
+      <div onClick={(event) => {setviewIndex(hLight2); openModal2(event)}} className="library-box border-0 column">
+
+      </div>
+    </div>
+  </div>
+  <div className="library-random">
+    <h1 className="library-text">Match me with a random TOIA</h1>
+  </div> */

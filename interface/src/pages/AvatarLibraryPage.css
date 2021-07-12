@@ -71,8 +71,8 @@
   overflow-y: auto;
   height: 75vh;
   width: 84vw;
-  left: 8%;
-  top: 58%;
+  left: 8.25%;
+  top: 18%;
   position: absolute;
   display: flex;
   flex-wrap: wrap;
@@ -112,8 +112,8 @@
   position: absolute;
   resize: none;
   text-align: left;
-  top: 52%;
-  width: 82vw;
+  top: 80px;
+  width: 81vw;
   padding: 2px;
   font-size: 15px;
   margin: 5px 0;

@@ -74,7 +74,7 @@ function Recorder () {
       setSwitch('#e5e5e5');
       setPrivacySetting(true);
       setPrivacyText('Private');
-  
+
     }
   };
 
@@ -205,7 +205,7 @@ function Recorder () {
         });
         setRecordedVideo(blob);
         // the ratio we are using is 16:9 or the universal high definition standard for european television
-        let videoElem= <video id="playbackVideo" width="720" height="405" autoPlay controls><source src={window.URL.createObjectURL(blob)} type='video/mp4'></source></video>;
+        let videoElem= <video id="playbackVideo" width="496" height="324" autoPlay controls><source src={window.URL.createObjectURL(blob)} type='video/mp4'></source></video>;
         setVideoComponent(videoElem);
         // document.getElementById("videoRecorded").src = window.URL.createObjectURL(blob);
         setAnswerProvided(transcript);
@@ -299,7 +299,7 @@ function Recorder () {
           setColor6('#e5e5e5');
           setVideoType('exit');
           setVideoTypeFormal('Bye!')
-          
+
         }else{
           setColor2('#e5e5e5');
           setVideoType(null);
@@ -580,7 +580,7 @@ function Recorder () {
                 displayValue="name" // Property name to display in the dropdown options
                 selectedValues={mainStreamVal}
                 disablePreSelectedValues={true}
-                placeholder = "Select Stream"
+                placeholder = "Add Stream"
               />
           </div>
         </div>

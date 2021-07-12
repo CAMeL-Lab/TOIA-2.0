@@ -238,7 +238,7 @@ video {
   font-weight: 700;
   text-align: center;
   padding: 10px;
-  
+
 }
 
 #privacyOfVideo{
@@ -248,7 +248,7 @@ video {
   font-size: 15px;
   font-weight: 700;
   text-align: center;
-  
+
 }
 
 #answerCorrection {
@@ -263,7 +263,7 @@ video {
 
 #playbackVideo{
   text-align: center;
-  left: 10%;
+  left: 19.5%;
 }
 
 .modal-header {
@@ -327,11 +327,11 @@ video {
   padding: 5px;
   font-size: 0.85rem;
   /* Position the tooltip */
-  top: 555px;
-  right: 10px;
+  top: 420px;
+  left: 200px;
   position: fixed;
   z-index: 3000;
-  line-height: 2;
+  line-height: 1.25;
   /* white-space: nowrap; */
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
   /* width: 25%; */
@@ -357,7 +357,7 @@ video {
   left: 350px;
   position: absolute; */
   top: 555px;
-  right: 10px;
+  left: 250px;
   position: fixed;
   z-index: 3000;
   line-height: 2;
@@ -386,7 +386,7 @@ video {
   right: 40px;
   position: absolute; */
   top: 555px;
-  right: 10px;
+  left: 410px;
   position: fixed;
   z-index: 3000;
   line-height: 2;
