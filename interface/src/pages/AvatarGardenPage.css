@@ -196,9 +196,9 @@
   height: 100px;
 }
 .video-text{
-  left: 30%;
+  left: 5.05%;
   position: absolute;
-  top: 25%;
+  top: 25.5%;
   font-size: 18px;
   color:#707070;
 }
@@ -253,7 +253,7 @@
 .garden-add {
   background-color: transparent;
   height: 98px;
-  left: 30.5%;
+  left: 5.5%;
   top: 12.5%;
   width: 75px;
   position: absolute;
@@ -287,7 +287,7 @@
   overflow-y: scroll;
   height: 82%;
   width: 97%;
-  left: 0.5%;
+  left: 15.5%;
   top: 11%;
   position: absolute;
   display: flex;
@@ -321,12 +321,17 @@
 }
 .garden-name {
   color: white;
-  font-size: 18px;
-  height: 50%;
-  width: 80%;
+  font-size: 13.5px;
+  height: 83%;
+  width: 100%;
   overflow: auto;
   position: relative;
-  left: 5%;
+  left: 10%;
+  margin-top: 10px;
+  /* text-align: left; */
+  word-wrap: break-word;
+
+
 }
 
 /*searchbar*/

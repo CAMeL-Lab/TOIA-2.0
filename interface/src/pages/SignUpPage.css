@@ -32,7 +32,7 @@
   background-color: transparent;
   position: absolute;
   height: 70px;
-  top: 81%;
+  top: 90%;
   left: 31%;
   pointer-events: auto;
   transition: all 0.2s ease;
@@ -40,11 +40,11 @@
 }
 .signup-group {
   background-color: transparent;
-  height: 70%;
-  left: 25%;
+  height: 560px;
+  left: 320px;
   position: absolute;
   top: 50px;
-  width: 40%;
+  width: 512px;
 }
 
 /*text and textboxes*/
@@ -176,6 +176,31 @@
   font-style: normal;
   font-weight: 700;
   letter-spacing: -0.015em;
+}
+
+/*Photo Upload */
+.signup-photo-upload {
+  background-color: transparent;
+  height: 17px;
+  left: 0px;
+  position: absolute;
+  text-align: left;
+  top: 78%;
+  width: 570px;
+}
+
+.signup-photo-upload-choose {
+  position: absolute;
+  text-align: left;
+  left: 20%;
+  bottom: -30%;
+}
+
+.signup-photo-upload-submit {
+  position: absolute;
+  text-align: left;
+  left: 88%;
+  bottom: -30%;
 }
 
 /*Colours*/

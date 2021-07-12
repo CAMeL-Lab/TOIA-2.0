@@ -320,6 +320,14 @@ function SignUpPage() {
               required={true}
               onChange={e=>setCPass(e.target.value)}
           />
+          <div className="signup-photo-upload signup-font-class-1" //delete button, function TBD
+          >
+            <form>
+              <label for="img">Select image:</label>
+              <input className= "signup-photo-upload-choose signup-font-class-1" type="file" id="img" name="img" accept="image/*"/>
+              <input className= "signup-photo-upload-submit signup-font-class-1" type="submit"/>
+            </form>
+          </div>
           <input className="signup-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
 
       </div>
