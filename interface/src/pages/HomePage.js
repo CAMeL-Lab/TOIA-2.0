@@ -25,7 +25,7 @@ function HomePage() {
 
   let welcome_text= "Welcome to";
   let toia_text= "TOIA";
-  let blurb = " experience communication and interaction reimagined.";
+  let blurb = " communication reimagined.";
   var input1, input2; //these hold all the user login data
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -191,6 +191,11 @@ function HomePage() {
     }
   };
 
+  const videoRef= useRef();
+  const setPlayBack = () => {
+    videoRef.current.playbackRate = 1.25;
+  };
+
   return (
     <div className="home-page">
       <Modal //this is the new pop up menu
@@ -245,8 +250,8 @@ function HomePage() {
           {isLoggedIn ? 'Logout' : 'Login'}
         </div>
       </div>
-      
-      <video className="home-sample-videos home-animate-enter"autoPlay muted>
+
+      <video ref={videoRef} onCanPlay={() => setPlayBack()} className="home-sample-videos home-animate-enter"autoPlay muted>
           <source src={toia_home_vid} type="video/mp4"/>
 
           Your browser does not support the video tag.

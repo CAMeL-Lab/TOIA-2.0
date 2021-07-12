@@ -102,6 +102,38 @@ function AvatarGardenPage() {
     }
     //
 
+    function exampleReducer3( state3, action ) { // for stream settings window
+        switch (action.type) {
+          case 'close':
+            return { open3: false };
+          case 'open':
+            return { open3: true };
+        }
+    }
+    const [state3, dispatch3] = React.useReducer(exampleReducer3, {open3: false,})
+    const { open3 } = state3
+
+    function openModal3(e){
+        dispatch3({ type: 'open' });
+        e.preventDefault();
+    }
+
+    function exampleReducer4( state4, action ) { // window for adding a stream
+        switch (action.type) {
+          case 'close':
+            return { open4: false };
+          case 'open':
+            return { open4: true };
+        }
+    }
+    const [state4, dispatch4] = React.useReducer(exampleReducer4, {open4: false,})
+    const { open4 } = state4
+
+    function openModal4(e){
+        dispatch4({ type: 'open' });
+        e.preventDefault();
+    }
+
     const [anchorEl, setAnchorEl] = useState(null); //for list of streams drop down menu when you click on move icon
     const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -145,6 +177,9 @@ function AvatarGardenPage() {
 
     var settingData = [
         {name: "Nizar Habash", email:"nizar.habash@gmail.com", password:"habash123", language: "English"}
+    ]
+    var streamData =[//Holds info on the stream
+      {name: "Fun Stream", privacy: "Public", language: "English", bio:"This is my fun album"}
     ]
 
     const [data, setData] = useState(videoList);//this sets data to the state of the avatars list
@@ -216,7 +251,7 @@ function AvatarGardenPage() {
             </div>
         )
     };
-    
+
     function handleSelectCurrentStream(currentItemObject,currentPageIndex){
 
         axios.post(`${env['server-url']}/getStreamVideos`,{
@@ -224,7 +259,7 @@ function AvatarGardenPage() {
                 streamID: currentItemObject.item.id
             }
         }).then((res)=>{
-            console.log(res.data); 
+            console.log(res.data);
             setVideoList(res.data);
 
         });
@@ -387,7 +422,7 @@ function AvatarGardenPage() {
             >
                 <Modal.Header className="login_header">
                 <h1 className="login_welcome login-opensans-normal">Account Settings</h1>
-                <p className="login_blurb login-montserrat-black">Edit the follwoing information about your account</p>
+                <p className="login_blurb login-montserrat-black">Edit the following information about your account</p>
                 </Modal.Header>
                 <Modal.Content>
                     <div className="garden-settings-name garden-font-class-2" //the name input field
@@ -501,6 +536,448 @@ function AvatarGardenPage() {
                     </div>
                 </Modal.Content>
             </Modal>
+            <Modal //This is the stream settings pop menu
+            size='large'
+            closeIcon={true}
+            style={inlineStyleSetting.modal}
+            open={open3}
+            onClose={() => dispatch3({ type: 'close' })}
+            >
+                <Modal.Header className="login_header">
+                <h1 className="login_welcome login-opensans-normal">Stream Settings</h1>
+                <p className="login_blurb login-montserrat-black">Edit the following information about your stream</p>
+                </Modal.Header>
+                <Modal.Content>
+                    <div className="stream-settings-name garden-font-class-2" //the name input field
+                    >Name: </div>
+                    <input
+                        className="stream-settings-name_box garden-font-class-2"
+                        defaultValue = {streamData[0].name}
+                        type={"text"}
+                        onChange={e=>(settingData[0].name = e.target.value)}
+                    />
+                    <div className="stream-settings-email garden-font-class-2" //the email input field
+                    >Privacy: </div>
+                    <select className="stream-settings-email_box garden-font-class-2"
+                            onChange={e=>(streamData[0].privacy = e.target.value)}>
+                      <option value="" disabled selected hidden>{streamData[0].privacy}</option>
+                      <option value="public">Public</option>
+                      <option value="private">Private</option>
+                    </select>
+                    {/*<input
+                        className="stream-settings-email_box garden-font-class-2"
+                        defaultValue = {settingData[0].email}
+                        type={"email"}
+                        onChange={e=>(settingData[0].email = e.target.value)}
+                    />*/}
+                    <div className="stream-settings-pass garden-font-class-2" //the password input field
+                    >Language: </div>
+                    {/*<input
+                        className="stream-settings-pass_box garden-font-class-2"
+                        defaultValue = {settingData[0].password}
+                        type={"password"}
+                        onChange={e=>(settingData[0].password = e.target.value)}
+                    />*/}
+                    <select className="stream-settings-pass_box garden-font-class-2" onChange={e=>(settingData[0].language = e.target.value)} /*required={true}*/>
+                        <option value="" disabled selected hidden>{settingData[0].language}</option>
+                        <option value="AF">Afrikaans</option>
+                        <option value="SQ">Albanian</option>
+                        <option value="AR">Arabic</option>
+                        <option value="HY">Armenian</option>
+                        <option value="EU">Basque</option>
+                        <option value="BN">Bengali</option>
+                        <option value="BG">Bulgarian</option>
+                        <option value="CA">Catalan</option>
+                        <option value="KM">Cambodian</option>
+                        <option value="ZH">Chinese (Mandarin)</option>
+                        <option value="HR">Croatian</option>
+                        <option value="CS">Czech</option>
+                        <option value="DA">Danish</option>
+                        <option value="NL">Dutch</option>
+                        <option value="EN">English</option>
+                        <option value="ET">Estonian</option>
+                        <option value="FJ">Fiji</option>
+                        <option value="FI">Finnish</option>
+                        <option value="FR">French</option>
+                        <option value="KA">Georgian</option>
+                        <option value="DE">German</option>
+                        <option value="EL">Greek</option>
+                        <option value="GU">Gujarati</option>
+                        <option value="HE">Hebrew</option>
+                        <option value="HI">Hindi</option>
+                        <option value="HU">Hungarian</option>
+                        <option value="IS">Icelandic</option>
+                        <option value="ID">Indonesian</option>
+                        <option value="GA">Irish</option>
+                        <option value="IT">Italian</option>
+                        <option value="JA">Japanese</option>
+                        <option value="JW">Javanese</option>
+                        <option value="KO">Korean</option>
+                        <option value="LA">Latin</option>
+                        <option value="LV">Latvian</option>
+                        <option value="LT">Lithuanian</option>
+                        <option value="MK">Macedonian</option>
+                        <option value="MS">Malay</option>
+                        <option value="ML">Malayalam</option>
+                        <option value="MT">Maltese</option>
+                        <option value="MI">Maori</option>
+                        <option value="MR">Marathi</option>
+                        <option value="MN">Mongolian</option>
+                        <option value="NE">Nepali</option>
+                        <option value="NO">Norwegian</option>
+                        <option value="FA">Persian</option>
+                        <option value="PL">Polish</option>
+                        <option value="PT">Portuguese</option>
+                        <option value="PA">Punjabi</option>
+                        <option value="QU">Quechua</option>
+                        <option value="RO">Romanian</option>
+                        <option value="RU">Russian</option>
+                        <option value="SM">Samoan</option>
+                        <option value="SR">Serbian</option>
+                        <option value="SK">Slovak</option>
+                        <option value="SL">Slovenian</option>
+                        <option value="ES">Spanish</option>
+                        <option value="SW">Swahili</option>
+                        <option value="SV">Swedish </option>
+                        <option value="TA">Tamil</option>
+                        <option value="TT">Tatar</option>
+                        <option value="TE">Telugu</option>
+                        <option value="TH">Thai</option>
+                        <option value="BO">Tibetan</option>
+                        <option value="TO">Tonga</option>
+                        <option value="TR">Turkish</option>
+                        <option value="UK">Ukrainian</option>
+                        <option value="UR">Urdu</option>
+                        <option value="UZ">Uzbek</option>
+                        <option value="VI">Vietnamese</option>
+                        <option value="CY">Welsh</option>
+                        <option value="XH">Xhosa</option>
+                    </select>
+                    <div className="stream-settings-lang garden-font-class-2" //the language input field
+                    >Bio: </div>
+                  {
+                  //  <select className="stream-settings-lang_box garden-font-class-2" onChange={e=>(settingData[0].language = e.target.value)} /*required={true}*/>
+                  //       <option value="" disabled selected hidden>{settingData[0].language}</option>
+                  //       <option value="AF">Afrikaans</option>
+                  //       <option value="SQ">Albanian</option>
+                  //       <option value="AR">Arabic</option>
+                  //       <option value="HY">Armenian</option>
+                  //       <option value="EU">Basque</option>
+                  //       <option value="BN">Bengali</option>
+                  //       <option value="BG">Bulgarian</option>
+                  //       <option value="CA">Catalan</option>
+                  //       <option value="KM">Cambodian</option>
+                  //       <option value="ZH">Chinese (Mandarin)</option>
+                  //       <option value="HR">Croatian</option>
+                  //       <option value="CS">Czech</option>
+                  //       <option value="DA">Danish</option>
+                  //       <option value="NL">Dutch</option>
+                  //       <option value="EN">English</option>
+                  //       <option value="ET">Estonian</option>
+                  //       <option value="FJ">Fiji</option>
+                  //       <option value="FI">Finnish</option>
+                  //       <option value="FR">French</option>
+                  //       <option value="KA">Georgian</option>
+                  //       <option value="DE">German</option>
+                  //       <option value="EL">Greek</option>
+                  //       <option value="GU">Gujarati</option>
+                  //       <option value="HE">Hebrew</option>
+                  //       <option value="HI">Hindi</option>
+                  //       <option value="HU">Hungarian</option>
+                  //       <option value="IS">Icelandic</option>
+                  //       <option value="ID">Indonesian</option>
+                  //       <option value="GA">Irish</option>
+                  //       <option value="IT">Italian</option>
+                  //       <option value="JA">Japanese</option>
+                  //       <option value="JW">Javanese</option>
+                  //       <option value="KO">Korean</option>
+                  //       <option value="LA">Latin</option>
+                  //       <option value="LV">Latvian</option>
+                  //       <option value="LT">Lithuanian</option>
+                  //       <option value="MK">Macedonian</option>
+                  //       <option value="MS">Malay</option>
+                  //       <option value="ML">Malayalam</option>
+                  //       <option value="MT">Maltese</option>
+                  //       <option value="MI">Maori</option>
+                  //       <option value="MR">Marathi</option>
+                  //       <option value="MN">Mongolian</option>
+                  //       <option value="NE">Nepali</option>
+                  //       <option value="NO">Norwegian</option>
+                  //       <option value="FA">Persian</option>
+                  //       <option value="PL">Polish</option>
+                  //       <option value="PT">Portuguese</option>
+                  //       <option value="PA">Punjabi</option>
+                  //       <option value="QU">Quechua</option>
+                  //       <option value="RO">Romanian</option>
+                  //       <option value="RU">Russian</option>
+                  //       <option value="SM">Samoan</option>
+                  //       <option value="SR">Serbian</option>
+                  //       <option value="SK">Slovak</option>
+                  //       <option value="SL">Slovenian</option>
+                  //       <option value="ES">Spanish</option>
+                  //       <option value="SW">Swahili</option>
+                  //       <option value="SV">Swedish </option>
+                  //       <option value="TA">Tamil</option>
+                  //       <option value="TT">Tatar</option>
+                  //       <option value="TE">Telugu</option>
+                  //       <option value="TH">Thai</option>
+                  //       <option value="BO">Tibetan</option>
+                  //       <option value="TO">Tonga</option>
+                  //       <option value="TR">Turkish</option>
+                  //       <option value="UK">Ukrainian</option>
+                  //       <option value="UR">Urdu</option>
+                  //       <option value="UZ">Uzbek</option>
+                  //       <option value="VI">Vietnamese</option>
+                  //       <option value="CY">Welsh</option>
+                  //       <option value="XH">Xhosa</option>
+                  //   </select>
+                }
+                <textarea
+                    className="stream-settings-lang_box garden-font-class-2"
+                    defaultValue = {streamData[0].bio}
+                    type={"text"}
+                    onChange={e=>(streamData[0].bio = e.target.value)}
+                    rows="4" cols="50"
+                />
+                <div className="stream-photo-upload garden-font-class-2" //delete button, function TBD
+                >
+                  <form>
+                    <label for="img">Select image:</label>
+                    <input className= "stream-photo-upload-choose garden-font-class-2" type="file" id="img" name="img" accept="image/*"/>
+                    <input className= "stream-photo-upload-submit garden-font-class-2" type="submit"/>
+                  </form>
+                </div>
+                    <div className="stream-settings-delete" //delete button, function TBD
+                    >
+                        <h1 className="garden-font-class-2 stream-settings-text">Discard</h1>
+                    </div>
+                    <div onClick={save} className="stream-settings-save" //saves changes made inaccount settings, function TBD
+                    >
+                        <h1 className="garden-font-class-2 stream-settings-text">Save</h1>
+                    </div>
+                </Modal.Content>
+            </Modal>
+            <Modal //This is the stream settings pop menu
+            size='large'
+            closeIcon={true}
+            style={inlineStyleSetting.modal}
+            open={open4}
+            onClose={() => dispatch4({ type: 'close' })}
+            >
+                <Modal.Header className="login_header">
+                <h1 className="login_welcome login-opensans-normal">Add Stream </h1>
+                <p className="login_blurb login-montserrat-black">Add the following information about your stream</p>
+                </Modal.Header>
+                <Modal.Content>
+                    <div className="stream-settings-name garden-font-class-2" //the name input field
+                    >Name: </div>
+                    <input
+                        className="stream-settings-name_box garden-font-class-2"
+                        defaultValue = {streamData[0].name}
+                        type={"text"}
+                        onChange={e=>(settingData[0].name = e.target.value)}
+                    />
+                    <div className="stream-settings-email garden-font-class-2" //the email input field
+                    >Privacy: </div>
+                    <select className="stream-settings-email_box garden-font-class-2"
+                            onChange={e=>(streamData[0].privacy = e.target.value)}>
+                      <option value="" disabled selected hidden>{streamData[0].privacy}</option>
+                      <option value="public">Public</option>
+                      <option value="private">Private</option>
+                    </select>
+                    {/*<input
+                        className="stream-settings-email_box garden-font-class-2"
+                        defaultValue = {settingData[0].email}
+                        type={"email"}
+                        onChange={e=>(settingData[0].email = e.target.value)}
+                    />*/}
+                    <div className="stream-settings-pass garden-font-class-2" //the password input field
+                    >Language: </div>
+                    {/*<input
+                        className="stream-settings-pass_box garden-font-class-2"
+                        defaultValue = {settingData[0].password}
+                        type={"password"}
+                        onChange={e=>(settingData[0].password = e.target.value)}
+                    />*/}
+                    <select className="stream-settings-pass_box garden-font-class-2" onChange={e=>(settingData[0].language = e.target.value)} /*required={true}*/>
+                        <option value="" disabled selected hidden>{settingData[0].language}</option>
+                        <option value="AF">Afrikaans</option>
+                        <option value="SQ">Albanian</option>
+                        <option value="AR">Arabic</option>
+                        <option value="HY">Armenian</option>
+                        <option value="EU">Basque</option>
+                        <option value="BN">Bengali</option>
+                        <option value="BG">Bulgarian</option>
+                        <option value="CA">Catalan</option>
+                        <option value="KM">Cambodian</option>
+                        <option value="ZH">Chinese (Mandarin)</option>
+                        <option value="HR">Croatian</option>
+                        <option value="CS">Czech</option>
+                        <option value="DA">Danish</option>
+                        <option value="NL">Dutch</option>
+                        <option value="EN">English</option>
+                        <option value="ET">Estonian</option>
+                        <option value="FJ">Fiji</option>
+                        <option value="FI">Finnish</option>
+                        <option value="FR">French</option>
+                        <option value="KA">Georgian</option>
+                        <option value="DE">German</option>
+                        <option value="EL">Greek</option>
+                        <option value="GU">Gujarati</option>
+                        <option value="HE">Hebrew</option>
+                        <option value="HI">Hindi</option>
+                        <option value="HU">Hungarian</option>
+                        <option value="IS">Icelandic</option>
+                        <option value="ID">Indonesian</option>
+                        <option value="GA">Irish</option>
+                        <option value="IT">Italian</option>
+                        <option value="JA">Japanese</option>
+                        <option value="JW">Javanese</option>
+                        <option value="KO">Korean</option>
+                        <option value="LA">Latin</option>
+                        <option value="LV">Latvian</option>
+                        <option value="LT">Lithuanian</option>
+                        <option value="MK">Macedonian</option>
+                        <option value="MS">Malay</option>
+                        <option value="ML">Malayalam</option>
+                        <option value="MT">Maltese</option>
+                        <option value="MI">Maori</option>
+                        <option value="MR">Marathi</option>
+                        <option value="MN">Mongolian</option>
+                        <option value="NE">Nepali</option>
+                        <option value="NO">Norwegian</option>
+                        <option value="FA">Persian</option>
+                        <option value="PL">Polish</option>
+                        <option value="PT">Portuguese</option>
+                        <option value="PA">Punjabi</option>
+                        <option value="QU">Quechua</option>
+                        <option value="RO">Romanian</option>
+                        <option value="RU">Russian</option>
+                        <option value="SM">Samoan</option>
+                        <option value="SR">Serbian</option>
+                        <option value="SK">Slovak</option>
+                        <option value="SL">Slovenian</option>
+                        <option value="ES">Spanish</option>
+                        <option value="SW">Swahili</option>
+                        <option value="SV">Swedish </option>
+                        <option value="TA">Tamil</option>
+                        <option value="TT">Tatar</option>
+                        <option value="TE">Telugu</option>
+                        <option value="TH">Thai</option>
+                        <option value="BO">Tibetan</option>
+                        <option value="TO">Tonga</option>
+                        <option value="TR">Turkish</option>
+                        <option value="UK">Ukrainian</option>
+                        <option value="UR">Urdu</option>
+                        <option value="UZ">Uzbek</option>
+                        <option value="VI">Vietnamese</option>
+                        <option value="CY">Welsh</option>
+                        <option value="XH">Xhosa</option>
+                    </select>
+                    <div className="stream-settings-lang garden-font-class-2" //the language input field
+                    >Bio: </div>
+                  {
+                  //  <select className="stream-settings-lang_box garden-font-class-2" onChange={e=>(settingData[0].language = e.target.value)} /*required={true}*/>
+                  //       <option value="" disabled selected hidden>{settingData[0].language}</option>
+                  //       <option value="AF">Afrikaans</option>
+                  //       <option value="SQ">Albanian</option>
+                  //       <option value="AR">Arabic</option>
+                  //       <option value="HY">Armenian</option>
+                  //       <option value="EU">Basque</option>
+                  //       <option value="BN">Bengali</option>
+                  //       <option value="BG">Bulgarian</option>
+                  //       <option value="CA">Catalan</option>
+                  //       <option value="KM">Cambodian</option>
+                  //       <option value="ZH">Chinese (Mandarin)</option>
+                  //       <option value="HR">Croatian</option>
+                  //       <option value="CS">Czech</option>
+                  //       <option value="DA">Danish</option>
+                  //       <option value="NL">Dutch</option>
+                  //       <option value="EN">English</option>
+                  //       <option value="ET">Estonian</option>
+                  //       <option value="FJ">Fiji</option>
+                  //       <option value="FI">Finnish</option>
+                  //       <option value="FR">French</option>
+                  //       <option value="KA">Georgian</option>
+                  //       <option value="DE">German</option>
+                  //       <option value="EL">Greek</option>
+                  //       <option value="GU">Gujarati</option>
+                  //       <option value="HE">Hebrew</option>
+                  //       <option value="HI">Hindi</option>
+                  //       <option value="HU">Hungarian</option>
+                  //       <option value="IS">Icelandic</option>
+                  //       <option value="ID">Indonesian</option>
+                  //       <option value="GA">Irish</option>
+                  //       <option value="IT">Italian</option>
+                  //       <option value="JA">Japanese</option>
+                  //       <option value="JW">Javanese</option>
+                  //       <option value="KO">Korean</option>
+                  //       <option value="LA">Latin</option>
+                  //       <option value="LV">Latvian</option>
+                  //       <option value="LT">Lithuanian</option>
+                  //       <option value="MK">Macedonian</option>
+                  //       <option value="MS">Malay</option>
+                  //       <option value="ML">Malayalam</option>
+                  //       <option value="MT">Maltese</option>
+                  //       <option value="MI">Maori</option>
+                  //       <option value="MR">Marathi</option>
+                  //       <option value="MN">Mongolian</option>
+                  //       <option value="NE">Nepali</option>
+                  //       <option value="NO">Norwegian</option>
+                  //       <option value="FA">Persian</option>
+                  //       <option value="PL">Polish</option>
+                  //       <option value="PT">Portuguese</option>
+                  //       <option value="PA">Punjabi</option>
+                  //       <option value="QU">Quechua</option>
+                  //       <option value="RO">Romanian</option>
+                  //       <option value="RU">Russian</option>
+                  //       <option value="SM">Samoan</option>
+                  //       <option value="SR">Serbian</option>
+                  //       <option value="SK">Slovak</option>
+                  //       <option value="SL">Slovenian</option>
+                  //       <option value="ES">Spanish</option>
+                  //       <option value="SW">Swahili</option>
+                  //       <option value="SV">Swedish </option>
+                  //       <option value="TA">Tamil</option>
+                  //       <option value="TT">Tatar</option>
+                  //       <option value="TE">Telugu</option>
+                  //       <option value="TH">Thai</option>
+                  //       <option value="BO">Tibetan</option>
+                  //       <option value="TO">Tonga</option>
+                  //       <option value="TR">Turkish</option>
+                  //       <option value="UK">Ukrainian</option>
+                  //       <option value="UR">Urdu</option>
+                  //       <option value="UZ">Uzbek</option>
+                  //       <option value="VI">Vietnamese</option>
+                  //       <option value="CY">Welsh</option>
+                  //       <option value="XH">Xhosa</option>
+                  //   </select>
+                }
+                <textarea
+                    className="stream-settings-lang_box garden-font-class-2"
+                    defaultValue = {streamData[0].bio}
+                    type={"text"}
+                    onChange={e=>(streamData[0].bio = e.target.value)}
+                    rows="4" cols="50"
+                />
+                <div className="stream-photo-upload garden-font-class-2" //delete button, function TBD
+                >
+                  <form>
+                    <label for="img">Select image:</label>
+                    <input className= "stream-photo-upload-choose garden-font-class-2" type="file" id="img" name="img" accept="image/*"/>
+                    <input className= "stream-photo-upload-submit garden-font-class-2" type="submit"/>
+                  </form>
+                </div>
+                    <div className="stream-settings-delete" //delete button, function TBD
+                    >
+                        <h1 className="garden-font-class-2 stream-settings-text">Discard</h1>
+                    </div>
+                    <div onClick={save} className="stream-settings-save" //saves changes made inaccount settings, function TBD
+                    >
+                        <h1 className="garden-font-class-2 stream-settings-text">Save</h1>
+                    </div>
+                </Modal.Content>
+            </Modal>
             <div className="nav-heading-bar" //Nav bar
             >
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">
@@ -521,7 +998,7 @@ function AvatarGardenPage() {
             </div>
             <div className="section3">
               <h1 className="garden-title garden-font-class-1 " //welcome message
-              >Welcome Back {toiaName}</h1>
+              >Hi {toiaName}</h1>
             {  // {<h4 className="garden-subtitle garden-font-class-3 " //welcome message
               // >Here are your All stream videos!</h4>
             }
@@ -534,7 +1011,7 @@ function AvatarGardenPage() {
 
                 <h1 className="stream-heading garden-font-class-3 ">My TOIA Streams</h1>
 
-                {// <Carousel
+                /*{// <Carousel
                 // plugins={[
                 //           'clickToChange',
                 //           'centered',
@@ -551,16 +1028,16 @@ function AvatarGardenPage() {
                 //     {streamList.map(renderStream)}
                 //
                 // </Carousel>
-              }
+              }*/
 
-                <button className="stream-settings"><i class="fa fa-cog"></i></button>
+                <button onClick={(event)=> {openModal3(event)}} className="stream-settings"><i class="fa fa-cog "></i></button>
                 <button className="stream-private"><i class="fa fa-eye" aria-hidden="true"></i></button>
 
                 <Carousel itemsToShow={1} showArrows ={false} onChange={handleSelectCurrentStream} >
                   {streamList.map(renderStream)}
                 </Carousel>
 
-                <div onClick={album_page}><img className="garden-stream" src={addButton} // add stream button
+                <div onClick={(event)=> {openModal4(event)}}><img className="garden-stream" src={addButton} // add stream button
                 /></div>
                 <h1 className="stream-add-text garden-font-class-3">Add Stream</h1>
               {/*   <h1 className="stream-text garden-font-class-3">Add Stream</h1>

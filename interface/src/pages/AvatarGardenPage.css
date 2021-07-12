@@ -515,6 +515,159 @@
   left: 70%;
 }
 
+/*Stream Settings Popup Menu*/
+.stream-settings-name {
+  background-color: transparent;
+  height: 17px;
+  left: 24%;
+  position: absolute;
+  text-align: left;
+  top: 32%;
+  width: 78px;
+}
+.stream-settings-name_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 30%;
+  width: 400px;
+}
+.stream-settings-email {
+  background-color: transparent;
+  height: 17px;
+  left: 23%;
+  position: absolute;
+  text-align: left;
+  top: 42%;
+  width: 78px;
+}
+.stream-settings-email_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 40%;
+  width: 400px;
+}
+.stream-settings-pass {
+  background-color: transparent;
+  height: 17px;
+  left: 20%;
+  position: absolute;
+  text-align: left;
+  top: 52%;
+  width: 78px;
+}
+.stream-settings-pass_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 50%;
+  width: 400px;
+}
+.stream-settings-lang {
+  background-color: transparent;
+  height: 17px;
+  left: 26.5%;
+  position: absolute;
+  text-align: left;
+  top: 62%;
+  width: 78px;
+}
+.stream-settings-lang_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 60%;
+  width: 400px;
+  /* resize: none; */
+  resize: both;
+}
+
+.stream-photo-upload {
+  background-color: transparent;
+  height: 17px;
+  left: 17.5%;
+  position: absolute;
+  text-align: left;
+  top: 70%;
+  width: 500px;
+}
+
+.stream-photo-upload-choose {
+  position: absolute;
+  text-align: left;
+  left: 20%;
+}
+
+.stream-photo-upload-submit {
+  position: absolute;
+  text-align: left;
+  left: 88%;
+}
+
+
+.stream-settings-delete{
+  color: white;
+  background-color: red;
+  border-radius: 20px;
+  height: 5vh;
+  width: 10vw;
+  text-align: center;
+  display: flex;
+  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  align-items: center;
+  position: absolute;
+  top: 85%;
+  left: 17%;
+}
+.stream-settings-text{
+  font-size: 18px;
+}
+.stream-settings-save{
+  color: white;
+  background-color: #7E7C7C;
+  border-radius: 20px;
+  height: 5vh;
+  width: 10vw;
+  text-align: center;
+  display: flex;
+  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  align-items: center;
+  position: absolute;
+  top: 85%;
+  left: 70%;
+}
+
 /*fonts*/
 .garden-font-class-2 {
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
@@ -604,33 +757,41 @@ box-shadow: 0 0 1px 3px rgb(229 229 229)
 .stream-settings {
   color: #7E7C7C;
   opacity: 0.3;
+  font-size: 22.5px;
+  transition: all 0.2s ease-out;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 20.5%;
+  left: 80%;
+  z-index: 100;
+
+}
+
+.stream-settings:hover{
+  transform: scale(1.1);
+  opacity: 0.7;
+}
+
+.stream-private {
+  color: #7E7C7C;
+  opacity: 0.5;
   font-size: 18px;
   transition: all 0.2s ease-out;
   background-color: transparent;
   border: transparent;
   cursor: pointer;
   position: absolute;
-  top: 19.5%;
-  left: 80%;
-
-}
-
-.stream-settings:hover{
-  visibility: hidden;
-}
-
-.stream-private {
-  color: #7E7C7C;
-  opacity: 0.5;
-  font-size: 15px;
-  transition: all 0.2s ease-out;
-  background-color: transparent;
-  border: transparent;
-  cursor: pointer;
-  position: absolute;
-  top: 22%;
+  top: 23.5%;
   left: 80.25%;
+  z-index: 100;
 
+}
+
+.stream-private:hover{
+  transform: scale(1.1);
+  opacity: 0.7;
 }
 
 .garden-notifications {
