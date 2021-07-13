@@ -193,7 +193,7 @@ function HomePage() {
 
   const videoRef= useRef();
   const setPlayBack = () => {
-    videoRef.current.playbackRate = 1.40;
+    videoRef.current.playbackRate = 1.5;
   };
 
   return (

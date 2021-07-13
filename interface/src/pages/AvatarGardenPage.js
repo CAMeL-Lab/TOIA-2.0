@@ -412,6 +412,21 @@ function AvatarGardenPage() {
 
     const searchText = "Hi"
 
+    // let privacy_eye = "fa fa-eye"
+    const [privacy_eye, setPrivacyEye] = useState('fa fa-eye');
+    const [stream_privacy, setStreamPrivacy] = useState('Public');
+
+    function toggleEye() {
+      if(privacy_eye === "fa fa-eye"){
+        setPrivacyEye("fa fa-eye-slash");
+        setStreamPrivacy("Private")
+        console.log("work toggle eye test")
+      }else{
+        setPrivacyEye("fa fa-eye");
+        setStreamPrivacy("Public")
+        console.log("second case toggle eye test")
+      }
+    }
 
     return (
         <div className="garden-page">
@@ -560,12 +575,12 @@ function AvatarGardenPage() {
             size='large'
             closeIcon={true}
             style={inlineStyleSetting.modal}
-            open={open4}
-            onClose={() => dispatch4({ type: 'close' })}
+            open={open3}
+            onClose={() => dispatch3({ type: 'close' })}
             >
                 <Modal.Header className="login_header">
-                <h1 className="login_welcome login-opensans-normal">Add Stream </h1>
-                <p className="login_blurb login-montserrat-black">Add the following information about your stream</p>
+                <h1 className="login_welcome login-opensans-normal">Edit Stream </h1>
+                <p className="login_blurb login-montserrat-black">Edit the following information about your stream</p>
                 </Modal.Header>
                 <Modal.Content>
                     <div className="stream-settings-name garden-font-class-2"  //the name input field
@@ -582,7 +597,7 @@ function AvatarGardenPage() {
                     <select className="stream-settings-email_box garden-font-class-2"
                             onChange={e=>(setNewStreamPrivacy(e.target.value))}
                             required={true}>
-                      <option value="" disabled selected hidden>Public</option>
+                      <option value="" disabled selected hidden>{stream_privacy}</option>
                       <option value="public">Public</option>
                       <option value="private">Private</option>
                     </select>
@@ -595,7 +610,7 @@ function AvatarGardenPage() {
 
                     <div className="stream-settings-lang garden-font-class-2" //the language input field
                     >Bio: </div>
-           
+
                 <textarea
                     className="stream-settings-lang_box garden-font-class-2"
                     placeholder = "Enter what your new stream will be about"
@@ -661,7 +676,7 @@ function AvatarGardenPage() {
 
                     <div className="stream-settings-lang garden-font-class-2" //the language input field
                     >Bio: </div>
-           
+
                 <textarea
                     className="stream-settings-lang_box garden-font-class-2"
                     placeholder = "Enter what your new stream will be about"
@@ -741,7 +756,7 @@ function AvatarGardenPage() {
               }*/
 
                 <button onClick={(event)=> {openModal3(event)}} className="stream-settings"><i class="fa fa-cog "></i></button>
-                <button className="stream-private"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                <button onClick ={toggleEye} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
 
                 <Carousel itemsToShow={1} showArrows ={false} onChange={handleSelectCurrentStream} >
                   {streamList.map(renderStream)}
@@ -776,7 +791,7 @@ function AvatarGardenPage() {
 //                 // className="garden-carousel"
 //                 // >}
                 }
- 
+
 
             </div>
             <div className="section2">
@@ -784,6 +799,8 @@ function AvatarGardenPage() {
                 />
                 <div className ="garden-grid" // videos
                 >
+                <div onClick={add}><img className="garden-add" src={addButton} // add video button
+                /></div>
                     {videoList.map(renderCard)}
                 </div>
                 <div className="garden-hidden" style={{display: displayItem}} // hidden menu that appears when video is selected
@@ -813,8 +830,7 @@ function AvatarGardenPage() {
                         </Menu>
                     </div>
                 </div>
-                <div onClick={add}><img className="garden-add" src={addButton} // add video button
-                /></div>
+
                 <h1 className="video-text garden-font-class-3">Add Video</h1>
             </div>
         </div>

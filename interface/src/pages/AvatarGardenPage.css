@@ -196,9 +196,9 @@
   height: 100px;
 }
 .video-text{
-  left: 5.05%;
+  left: 7%;
   position: absolute;
-  top: 25.5%;
+  top: 26.5%;
   font-size: 18px;
   color:#707070;
 }
@@ -253,8 +253,8 @@
 .garden-add {
   background-color: transparent;
   height: 98px;
-  left: 5.5%;
-  top: 12.5%;
+  left: 7%;
+  top: 2.5%;
   width: 75px;
   position: absolute;
   cursor: pointer;
@@ -287,7 +287,7 @@
   overflow-y: scroll;
   height: 82%;
   width: 97%;
-  left: 15.5%;
+  left: 0.5%;
   top: 11%;
   position: absolute;
   display: flex;
