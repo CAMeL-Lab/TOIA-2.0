@@ -7,9 +7,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 require('dotenv').config();
 
-const Buffer = require('buffer');
 const crypto = require('crypto');
-const mime = require('mime');
 const path = require('path');
 const {Storage} = require('@google-cloud/storage')
 
@@ -295,19 +293,29 @@ app.post('/createNewStream',(req,res)=>{
 });
 
 
-app.get('/player/:toiaIDToTalk/:toiaNameToTalk/:question',(req,res)=>{
+app.post('/player',(req,res)=>{
 
 	let gcPublicURL;
-
 	axios.get(`${process.env.DM_ROUTE}`,{
 		data:{
-			query: req.params.question,
-			avatar_id : req.params.toiaIDToTalk
+			query: req.body.params.question,
+			avatar_id : req.body.params.toiaIDToTalk
 		}
 	}).then((videoDetails)=>{
-		console.log(videoDetails);
-		console.log(videoDetails.data.id_video);
-		console.log(videoDetails.data.answer);
+
+		const config = {
+			action: 'read',
+			expires: '07-14-2022',
+		};
+
+		videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`).getSignedUrl(config, function(err, url) {
+			if (err) {
+				console.error(err);
+				return;
+			}else{
+				res.send(url);
+			}
+		});
 
 		// gcPublicURL = format(
 		// 	`https://storage.googleapis.com/${process.env.GC_BUCKET}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`
@@ -316,7 +324,14 @@ app.get('/player/:toiaIDToTalk/:toiaNameToTalk/:question',(req,res)=>{
 
 		// let videoToFetch=videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
 
-		res.sendFile(URL.createObjectURL(videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`)));
+		// console.log(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
+		// videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`)
+
+		// res.send(videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`));
+		
+	
+
+		// res.sendFile(URL.createObjectURL(videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`)));
 
 		// videoToFetch.createReadStream()
 		// 	.on('error', (err)=>{

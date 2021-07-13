@@ -113,10 +113,15 @@ function Player(){
 
       // let videoElem= <video className="player-vid" key={question} autoPlay><source src={'https://storage.googleapis.com/toia_test-wahib_mac/Accounts/Jane_2/Videos/Jane_2_15_d7ba8526aa2900b3.mp4'} type='video/mp4'></source></video>;
 
-      
-      let videoElem= <video className="player-vid" key={question} autoPlay><source src={`${env['server-url']}/player/${toiaIDToTalk}/${toiaFirstNameToTalk}/${question}`} type='video/mp4'></source></video>;
-
-      setVideo(videoElem);
+      axios.post(`${env['server-url']}/player`,{
+        params:{
+          toiaIDToTalk,
+          toiaFirstNameToTalk,
+          question
+        }
+      }).then((res)=>{
+        setVideo(<video className="player-vid" key={question} autoPlay><source src={res.data} type='video/mp4'></source></video>);
+      });
     }
 
   }
