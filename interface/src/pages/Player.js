@@ -9,6 +9,16 @@ import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import env from './env.json';
+// import {Storage} from '@google-cloud/storage';
+
+// const path = require('path');
+
+// const gc = new Storage({
+// 	keyFilename: path.join(__dirname,"../../../server/toia-capstone-2021-a17d9d7dd482.json"),
+// 	projectId:'toia-capstone-2021'
+// });
+
+// let videoStore=gc.bucket(process.env.GC_BUCKET);
 
 function Player(){
 
@@ -101,6 +111,9 @@ function Player(){
       let question = transcript[0].toUpperCase()+transcript.slice(1);
       resetTranscript();
 
+      // let videoElem= <video className="player-vid" key={question} autoPlay><source src={'https://storage.googleapis.com/toia_test-wahib_mac/Accounts/Jane_2/Videos/Jane_2_15_d7ba8526aa2900b3.mp4'} type='video/mp4'></source></video>;
+
+      
       let videoElem= <video className="player-vid" key={question} autoPlay><source src={`${env['server-url']}/player/${toiaIDToTalk}/${toiaFirstNameToTalk}/${question}`} type='video/mp4'></source></video>;
 
       setVideo(videoElem);

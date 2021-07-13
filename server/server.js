@@ -261,6 +261,39 @@ app.get('/getAvatarInfo',(req,res)=>{
 
 });
 
+app.post('/createNewStream',(req,res)=>{
+
+	console.log(req.body.params);
+
+	let privacySetting=0;
+
+	if(req.body.params.newStreamPrivacy=='private'){
+		privacySetting=1;
+	}
+
+	let query_createStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("${req.body.params.newStreamName}",${req.body.params.toiaID},${privacySetting},0,0)`
+
+	connection.query(query_createStream, (err,entry,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+
+			let query_allStreamsUpdated=`SELECT * FROM stream WHERE toia_id="${req.body.params.toiaID}";`
+
+			connection.query(query_allStreamsUpdated, (err,entries,fields)=>{
+				if (err){
+					throw err;
+				}
+				else{
+					res.send(entries);
+				}
+			});
+		}		
+	});
+
+});
+
 
 app.get('/player/:toiaIDToTalk/:toiaNameToTalk/:question',(req,res)=>{
 
@@ -279,12 +312,26 @@ app.get('/player/:toiaIDToTalk/:toiaNameToTalk/:question',(req,res)=>{
 		// gcPublicURL = format(
 		// 	`https://storage.googleapis.com/${process.env.GC_BUCKET}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`
 		//   );
+		//toia_test-wahib_mac/Accounts/Jane_2/Videos/Jane_2_15_d7ba8526aa2900b3.mp4
 
-		console.log(videoStore.file(`Accounts/${req.params.toiaNameToTalk}ds_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`).blob);
+		// let videoToFetch=videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
+
+		res.sendFile(URL.createObjectURL(videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`)));
+
+		// videoToFetch.createReadStream()
+		// 	.on('error', (err)=>{
+		// 		throw err;
+		// 	}).on('response',(res)=>{
+		// 		console.log(res);
+		// 	}).on('end',()=>{
+		// 		console.log('File streamed fully');
+		// 	}).pipe
+
+		
 
 		// https://storage.cloud.google.com/${videoStore}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}
 
-		res.send(videoStore.file(videoDetails.data.id_video));
+		//res.send(videoStore.file(videoDetails.data.id_video));
 
 		// res.send(`https://storage.cloud.google.com/${process.env.GC_BUCKET}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
 		

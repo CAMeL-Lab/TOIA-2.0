@@ -323,7 +323,7 @@ function SignUpPage() {
           <div className="signup-photo-upload signup-font-class-1" //delete button, function TBD
           >
             <form>
-              <label for="img">Select image:</label>
+              <label for="img">Upload profile picture:</label>
               <input className= "signup-photo-upload-choose signup-font-class-1" type="file" id="img" name="img" accept="image/*"/>
               <input className= "signup-photo-upload-submit signup-font-class-1" type="submit"/>
             </form>
