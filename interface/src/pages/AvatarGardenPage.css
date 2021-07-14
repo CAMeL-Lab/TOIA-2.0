@@ -97,6 +97,15 @@
   font-size: 18px;
   color: #707070;
 }
+.garden-settings-buttons{
+  display: inline;
+  position: relative;
+    left: 98%;
+    bottom: 65%;
+}
+.garden-settings-buttons button {
+  display: block;
+}
 .garden-carousel-menu{
   color: #7E7C7C;
   font-size: 18px;
@@ -196,7 +205,7 @@
   height: 100px;
 }
 .video-text{
-  left: 7%;
+  left: 8.5%;
   position: absolute;
   top: 26.5%;
   font-size: 18px;
@@ -253,7 +262,7 @@
 .garden-add {
   background-color: transparent;
   height: 98px;
-  left: 7%;
+  left: 8.5%;
   top: 2.5%;
   width: 75px;
   position: absolute;
@@ -293,6 +302,7 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  align-content: baseline;
 }
 .garden-grid > div {
   flex-basis: calc(25%);
@@ -769,8 +779,8 @@ box-shadow: 0 0 1px 3px rgb(229 229 229)
   border: transparent;
   cursor: pointer;
   position: absolute;
-  top: 20.5%;
-  left: 80%;
+  top: 105.5%;
+  /* left: 42.5%; */
   z-index: 100;
 
 }
@@ -789,8 +799,8 @@ box-shadow: 0 0 1px 3px rgb(229 229 229)
   border: transparent;
   cursor: pointer;
   position: absolute;
-  top: 23.5%;
-  left: 80.25%;
+  top: 245.5%;
+  /* left: 2.75%; */
   z-index: 100;
 
 }

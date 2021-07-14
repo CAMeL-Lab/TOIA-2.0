@@ -223,9 +223,15 @@ function AvatarGardenPage() {
         }
 
         return(
+
             <div className="garden-carousel-card" id={card.id_stream}>
                 <img src={sampleVideo} width="170" //stream thumbnail
                 />
+                <div className ="garden-settings-buttons">
+                <button onClick={(event)=> {openModal3(event)}} className="stream-settings"><i class="fa fa-cog "></i></button>
+                <button onClick ={toggleEye} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
+                </div>
+
                 <div  onClick={album_page}>
                     <h1 className="t1 garden-font-class-2" //name of user
                     >{toiaName}</h1>
@@ -238,8 +244,14 @@ function AvatarGardenPage() {
                     <p style={{marginRight: 30}}>{card.ppl}&nbsp;<i class="fa fa-users"></i></p>
                     <p style={{marginRight: 14}}>{card.heart}<i class="fa fa-heart"></i></p>
                     <p style={{marginLeft: 15}}>{card.thumbs}&nbsp;<i class="fa fa-thumbs-up"></i></p>
+
                 </div>
+
+
+
             </div>
+
+
         )
     };
 
@@ -761,8 +773,7 @@ function AvatarGardenPage() {
                 // </Carousel>
               }*/
 
-                <button onClick={(event)=> {openModal3(event)}} className="stream-settings"><i class="fa fa-cog "></i></button>
-                <button onClick ={toggleEye} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
+
 
                 <Carousel itemsToShow={1} showArrows ={false} onChange={handleSelectCurrentStream} >
                   {streamList.map(renderStream)}
