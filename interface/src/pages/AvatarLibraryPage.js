@@ -288,6 +288,11 @@ function AvatarLibraryPage() {
             width: '600px',
         }
       };
+      function placeholderSpan(){
+        return(
+          <h1>Search for a stream to talk to</h1>
+        )
+      }
 
     return (
         <div className="library-page">
@@ -439,11 +444,13 @@ function AvatarLibraryPage() {
                 </div>
             </div>
 
-
-            <input className="library-search" type="text" placeholder="&#xF002;" onChange={(event) => searchStreams(event.target.value)}/>
+            <div className = "library-page-setup">
+            <h1 className = "library-heading">TOIA Stream Library</h1>
+            <input className="library-search" type="text" placeholder='&#xF002;     Search for a stream to talk to' onChange={(event) => searchStreams(event.target.value)}/>
             <div className ="library-grid" //videos
             >
                 {allData.map(renderStream)}
+            </div>
             </div>
         </div>
     );

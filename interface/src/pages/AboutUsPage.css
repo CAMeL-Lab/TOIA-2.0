@@ -27,7 +27,7 @@
   position: relative;
   /* left: 50%; */
   top: 0%;
-  color: var(--hd-color);
+  color: black;
   margin: 0 auto;
 }
 .about-text{
