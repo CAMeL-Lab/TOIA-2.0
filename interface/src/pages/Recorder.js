@@ -259,7 +259,7 @@ function Recorder () {
 
   function garden() {
     history.push({
-        pathname: '/garden',
+        pathname: '/mytoia',
         state: {
             toiaName,
             toiaLanguage,

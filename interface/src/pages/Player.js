@@ -158,7 +158,7 @@ function Player(){
           }else {
               console.log(res.data);
               history.push({
-                  pathname: '/garden',
+                  pathname: '/mytoia',
                   state: {
                   toiaName:res.data.firstName,
                   toiaLanguage:res.data.language,
@@ -223,7 +223,7 @@ function Player(){
     function garden(e) {
       if (isLoggedIn) {
           history.push({
-          pathname: '/garden',
+          pathname: '/mytoia',
           state: {
               toiaName,
               toiaLanguage,

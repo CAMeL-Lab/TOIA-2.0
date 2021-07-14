@@ -89,7 +89,7 @@ function HomePage() {
         // setHasPasswordError(true);
       }else {
         history.push({
-          pathname: '/garden',
+          pathname: '/mytoia',
           state: {
             toiaName:res.data.firstName,
             toiaLanguage:res.data.language,
@@ -155,7 +155,7 @@ function HomePage() {
 
     if(isLoggedIn){
       history.push({
-        pathname: '/garden',
+        pathname: '/mytoia',
         state: {
           toiaName,
           toiaLanguage,
@@ -170,7 +170,7 @@ function HomePage() {
   function signup(){
     if(isLoggedIn==true){
       history.push({
-        pathname: '/garden',
+        pathname: '/mytoia',
         state: {
           toiaName,
           toiaLanguage,

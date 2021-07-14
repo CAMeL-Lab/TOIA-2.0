@@ -66,7 +66,7 @@ function AvatarViewPage() {
     function submitHandler1(e){
         e.preventDefault();
         history.push({
-            pathname: '/garden',
+            pathname: '/mytoia',
         });
     }
     
@@ -99,7 +99,7 @@ function AvatarViewPage() {
       function garden(e) {
         if (isLogin) {
           history.push({
-            pathname: '/garden',
+            pathname: '/mytoia',
           });
         }else{
           openModal(e);

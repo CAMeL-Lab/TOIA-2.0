@@ -159,7 +159,7 @@ function AvatarSettings() {
 
   function garden() {
     history.push({
-        pathname: '/garden',
+        pathname: '/mytoia',
     });
   }
 

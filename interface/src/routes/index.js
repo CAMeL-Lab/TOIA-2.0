@@ -16,7 +16,7 @@ export default function Routes() {
     <Switch>
 		<Route path="/" exact component={Home} />
         <Route path="/signup" component={SignUp} />
-		<Route path="/garden" component={AvatarGarden} />
+		<Route path="/mytoia" component={AvatarGarden} />
 		<Route path="/library" component={AvatarLibrary} />
 		<Route path="/stream" component={Settings} />
 		<Route path="/about" component={AboutUs} />

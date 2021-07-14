@@ -168,7 +168,7 @@ function EditRecorder () {
             console.log(form);
             axios.post(`${env['server-url']}/recorder`,form).then(()=>{
               history.push({
-                pathname: '/garden',
+                pathname: '/mytoia',
               });
             });
 
@@ -224,7 +224,7 @@ function EditRecorder () {
     
       function garden() {
         history.push({
-            pathname: '/garden',
+            pathname: '/mytoia',
         });
       }
      

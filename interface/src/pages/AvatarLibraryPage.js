@@ -189,7 +189,7 @@ function AvatarLibraryPage() {
           // setHasPasswordError(true);
         }else {
           history.push({
-            pathname: '/garden',
+            pathname: '/mytoia',
             state: {
               toiaName:res.data.firstName,
               toiaLanguage:res.data.language,
@@ -255,7 +255,7 @@ function AvatarLibraryPage() {
     function garden(e) {
       if (isLoggedIn) {
           history.push({
-          pathname: '/garden',
+          pathname: '/mytoia',
           state: {
               toiaName,
               toiaLanguage,

@@ -65,6 +65,7 @@ function AvatarGardenPage() {
                     toiaID: history.location.state.toiaID
                 }
             }).then((res)=>{
+                console.log(res.data);
                 setStreamList(res.data);
             });
         });
@@ -216,6 +217,11 @@ function AvatarGardenPage() {
 
     const renderStream = (card, index) => {//cards for streams
 
+        let mainStreamID=false;
+        if(card.id_stream==1){
+            mainStreamID=true;
+        }
+
         return(
             <div className="garden-carousel-card" id={card.id_stream}>
                 <img src={sampleVideo} width="170" //stream thumbnail
@@ -304,7 +310,7 @@ function AvatarGardenPage() {
 
       function garden() {
         history.push({
-            pathname: '/garden',
+            pathname: '/mytoia',
             state: {
                 toiaName,
                 toiaLanguage,
