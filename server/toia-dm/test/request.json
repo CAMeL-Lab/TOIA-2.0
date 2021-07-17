@@ -1,4 +1,5 @@
 {
-    "query" : "what do you do",
-    "avatar_id" : "1"
+    "query": "nevermind. where are you from",
+    "avatar_id": "1",
+    "stream_id": "NULL"
 } 
