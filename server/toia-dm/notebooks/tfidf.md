@@ -5,6 +5,7 @@
 
 ```python
 import sqlalchemy as db
+from sqlalchemy.sql import text
 import pandas as pd
 import numpy as np
 import numpy
@@ -24,6 +25,7 @@ NLP = spacy.load("en_core_web_lg")
 
 ```python
 avatar_id = '1'
+stream_id = '2'
 ```
 
 
@@ -33,23 +35,40 @@ sql_url = "mysql+mysqlconnector://root@localhost/toia"
 engine = db.create_engine(sql_url)
 connection = engine.connect()
 metadata = db.MetaData()
-videos = db.Table('video', metadata, autoload=True, autoload_with=engine)
+# videos = db.Table('video', metadata, autoload=True, autoload_with=engine)
 
-avatar_kb = db.select([videos]).where(
-    videos.columns.toia_id == avatar_id,
-    videos.columns.private == 0,
-    videos.columns.type.notin_(["filler", "exit"])
-)
+# avatar_kb = db.select([videos]).where(
+#     videos.columns.toia_id == avatar_id,
+#     videos.columns.private == 0,
+#     videos.columns.type.notin_(["filler", "exit"])
+# )
 
-ResultProxy = connection.execute(avatar_kb)
+statement = text(f"""SELECT stream_has_video.stream_id_stream, video.* 
+    FROM video 
+    INNER JOIN stream_has_video 
+    ON video.id_video = stream_has_video.video_id_video 
+    WHERE stream_id_stream = {stream_id}
+    AND toia_id = {avatar_id}
+    AND private = 0
+    AND type NOT IN ('filler', 'exit');""")
+
+# ResultProxy = connection.execute(avatar_kb)
+ResultProxy = connection.execute(statement)
 ResultSet = ResultProxy.fetchall()
 
 ```
 
+SQL equivalent to:
+SELECT stream_has_video.stream_id_stream, video.* 
+    FROM video 
+    INNER JOIN stream_has_video 
+    ON video.id_video = stream_has_video.video_id_video 
+    WHERE stream_id_stream = <stream_id>;
 
 ```python
 df_avatar = pd.DataFrame(ResultSet, 
              columns=[
+                 'stream_id_stream',
                  'id_video', 
                  'type', 
                  'toia_id', 
@@ -89,6 +108,7 @@ df_avatar
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>stream_id_stream</th>
       <th>id_video</th>
       <th>type</th>
       <th>toia_id</th>
@@ -104,172 +124,31 @@ df_avatar
   <tbody>
     <tr>
       <th>0</th>
-      <td>0b2</td>
+      <td>2</td>
+      <td>p7c</td>
       <td>answer</td>
       <td>1</td>
-      <td>2</td>
+      <td>19</td>
       <td>0</td>
-      <td>What is your favorite sport?</td>
-      <td>I love soccer!</td>
-      <td>en-US</td>
-      <td>2</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>a7c</td>
-      <td>answer</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>What do you study?</td>
-      <td>I study Computer Science.</td>
+      <td>What is a TOIA?</td>
+      <td>It is an applications that allow people to int...</td>
       <td>en-US</td>
       <td>10</td>
       <td>34</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>ef1</td>
+      <th>1</th>
+      <td>2</td>
+      <td>pb2</td>
       <td>answer</td>
       <td>1</td>
-      <td>1</td>
+      <td>18</td>
       <td>0</td>
-      <td>How are you?</td>
-      <td>I am fine thanks!</td>
+      <td>What is your dissertation about?</td>
+      <td>My research is about building applications lik...</td>
       <td>en-US</td>
+      <td>2</td>
       <td>5</td>
-      <td>14</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>r2a</td>
-      <td>answer</td>
-      <td>1</td>
-      <td>7</td>
-      <td>0</td>
-      <td>What do you do?</td>
-      <td>I am doing a Ph.D.</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>r2b</td>
-      <td>answer</td>
-      <td>1</td>
-      <td>8</td>
-      <td>0</td>
-      <td>How old are you?</td>
-      <td>I'm 35. Age last birthday</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>r2c</td>
-      <td>answer</td>
-      <td>1</td>
-      <td>9</td>
-      <td>0</td>
-      <td>Tell me something interesting?</td>
-      <td>I wrote a book about the ethics of artificial ...</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>r2e</td>
-      <td>greeting</td>
-      <td>1</td>
-      <td>16</td>
-      <td>0</td>
-      <td>hey</td>
-      <td>how's it going?</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>r2f</td>
-      <td>greeting</td>
-      <td>1</td>
-      <td>11</td>
-      <td>0</td>
-      <td>Hello</td>
-      <td>Hi!</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>r2h</td>
-      <td>no-answer</td>
-      <td>1</td>
-      <td>12</td>
-      <td>0</td>
-      <td></td>
-      <td>Sorry, I didn't get that</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>r2m</td>
-      <td>greeting</td>
-      <td>1</td>
-      <td>6</td>
-      <td>0</td>
-      <td>Howdy</td>
-      <td>hey, I'm all right</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>r2t</td>
-      <td>y/n-answer</td>
-      <td>1</td>
-      <td>13</td>
-      <td>0</td>
-      <td>Do you like sushi?</td>
-      <td>Yes</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>r2y</td>
-      <td>no-answer</td>
-      <td>1</td>
-      <td>15</td>
-      <td>0</td>
-      <td></td>
-      <td>I don't have an answer for that</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>r4t</td>
-      <td>y/n-answer</td>
-      <td>1</td>
-      <td>14</td>
-      <td>0</td>
-      <td>Do you like swimming?</td>
-      <td>No</td>
-      <td>en-US</td>
-      <td>4</td>
-      <td>20</td>
     </tr>
   </tbody>
 </table>
@@ -290,73 +169,19 @@ for doc in docs:
 ```
 
     --- next doc ---
-    What is your favorite sport?
+    What is a TOIA?
+    What PRON WP
+    is AUX VBZ
+    a DET DT
+    TOIA PROPN NNP
+    ? PUNCT .
+    --- next doc ---
+    What is your dissertation about?
     What PRON WP
     is AUX VBZ
     your PRON PRP$
-    favorite ADJ JJ
-    sport NOUN NN
-    ? PUNCT .
-    --- next doc ---
-    What do you study?
-    What PRON WP
-    do AUX VBP
-    you PRON PRP
-    study VERB VB
-    ? PUNCT .
-    --- next doc ---
-    How are you?
-    How ADV WRB
-    are AUX VBP
-    you PRON PRP
-    ? PUNCT .
-    --- next doc ---
-    What do you do?
-    What PRON WP
-    do AUX VBP
-    you PRON PRP
-    do VERB VB
-    ? PUNCT .
-    --- next doc ---
-    How old are you?
-    How ADV WRB
-    old ADJ JJ
-    are AUX VBP
-    you PRON PRP
-    ? PUNCT .
-    --- next doc ---
-    Tell me something interesting?
-    Tell VERB VB
-    me PRON PRP
-    something PRON NN
-    interesting ADJ JJ
-    ? PUNCT .
-    --- next doc ---
-    hey
-    hey INTJ UH
-    --- next doc ---
-    Hello
-    Hello INTJ UH
-    --- next doc ---
-    
-    --- next doc ---
-    Howdy
-    Howdy INTJ UH
-    --- next doc ---
-    Do you like sushi?
-    Do AUX VBP
-    you PRON PRP
-    like VERB VB
-    sushi NOUN NN
-    ? PUNCT .
-    --- next doc ---
-    
-    --- next doc ---
-    Do you like swimming?
-    Do AUX VBP
-    you PRON PRP
-    like VERB VB
-    swimming VERB VBG
+    dissertation NOUN NN
+    about ADP IN
     ? PUNCT .
 
 
@@ -391,14 +216,15 @@ set([token.tag_ for token in doc])
 
 
 ```python
-df_avatar[df_avatar['type'] == "greeting"].sample(n=1)['answer'].values[0]
+df_greetings = df_avatar[df_avatar['type'] == "greeting"]
+if df_greetings.shape[0] > 0:
+    df_greetings.sample(n=1)['answer'].values[0]
+else:
+    print("204 No Content: you haven't recorded greetings")
+        
 ```
 
-
-
-
-    "hey, I'm all right"
-
+    204 No Content: you haven't recorded greetings
 
 
 
@@ -417,17 +243,21 @@ def preprocess(text):
 def toia_answer(query, dataset, k=1):
     doc = NLP(query)
     # if Greeting, greet
-    if ['INTJ', 'UH'] in [[token.pos_, token.tag_] for token in doc]:
-        if dataset[dataset['type'] == "greeting"].shape[0] > 0:
+    if ['INTJ', 'UH'] in [[token.pos_, token.tag_] for token in doc]:    
+        if df_greetings.shape[0] > 0:
             answers = dataset[dataset['type'] == "greeting"].sample(n=1)
             return answers['answer'].values[0], answers['id_video'].values[0]
         else:
-            answers = dataset[dataset['type'] == "no-answer"].sample(n=1)
-            return answers['answer'].values[0], answers['id_video'].values[0], "No greetings recorded"
+            df_noanswers = dataset[dataset['type'] == "no-answer"]
+            if df_noanswers.shape[0] > 0:
+                answers = df_noanswers.sample(n=1)
+                return answers['answer'].values[0], answers['id_video'].values[0], "Record some reetings"
+            else:
+                return "You haven't recorded greetings nor no-answers", "204", "No Content"
 
     querycorpus = []
-    for i in range(0, len(df_avatar)):
-        userquestion = preprocess(df_avatar['question'][i])
+    for i in range(0, len(dataset)):
+        userquestion = preprocess(dataset['question'][i])
         querycorpus.append(userquestion)
 
     # Creating the Bag of Words model with TFIDF and calc cosine_similarity
@@ -454,9 +284,12 @@ def toia_answer(query, dataset, k=1):
     # pick the only ones left if any, and if none predict 1.
 
     if sum(sorted_freq) == 0:
-        answers = dataset[dataset['type'] == "no-answer"].sample(n=1)
-        return answers['answer'].values[0], answers['id_video'].values[0], "tfidf sim all 0"
-
+        df_noanswers = dataset[dataset['type'] == "no-answer"]
+        if df_noanswers.shape[0] > 0:
+            answers = df_noanswers.sample(n=1)
+            return answers['answer'].values[0], answers['id_video'].values[0], "tfidf all sim 0"
+        else:
+            return "You haven't recorded no-answers", "204", "No Content"
     elif sorted_freq[0] > 0.7:  #(the top sorted freq is the max)
         if sorted_freq[k-1] != sorted_freq[k] or sorted_freq[k-1] == sorted_freq[k] == 0:
             selected = related_docs_indices[:k]
@@ -474,8 +307,12 @@ def toia_answer(query, dataset, k=1):
             selected = related_docs_indices[:k][0]
             return dataset.iloc[selected]['answer'], dataset.iloc[selected]['id_video'], f"spaCy sim: {cosine_similarities[selected]}"
         else:
-            answers = dataset[dataset['type'] == "no-answer"].sample(n=1)
-            return answers['answer'].values[0], answers['id_video'].values[0], f"spaCy sim: {max(cosine_similarities)}"
+            df_noanswers = dataset[dataset['type'] == "no-answer"]
+            if df_noanswers.shape[0] > 0:
+                answers = df_noanswers.sample(n=1)
+                return answers['answer'].values[0], answers['id_video'].values[0], "spaCy sim below thr"
+            else:
+                return "You haven't recorded no-answers", "204", "No Content"
 ```
 
 
@@ -486,7 +323,7 @@ toia_answer("hola cachina", df_avatar)
 
 
 
-    ("I don't have an answer for that", 'r2y')
+    ("You haven't recorded no-answers", '204', 'No Content')
 
 
 
@@ -607,8 +444,8 @@ def toia_answer_new(query, dataset, k=1):
             return answers['answer'].values[0], answers['id_video'].values[0], "No greetings recorded"
 
     querycorpus = []
-    for i in range(0, len(df_avatar)):
-        userquestion = preprocess(df_avatar['question'][i])
+    for i in range(0, len(dataset)):
+        userquestion = preprocess(dataset['question'][i])
         querycorpus.append(userquestion)
 
     # Creating the Bag of Words model with TFIDF and calc cosine_similarity
