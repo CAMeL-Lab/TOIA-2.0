@@ -10,7 +10,7 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.stem.snowball import SnowballStemmer
 import spacy
 
-NLP = spacy.load("en_core_web_sm")
+NLP = spacy.load("en_core_web_lg")
 PS = SnowballStemmer('english')
 
 
@@ -28,12 +28,16 @@ def toia_answer(query, dataset, k=1):
     doc = NLP(query)
     # if Greeting, greet
     if ['INTJ', 'UH'] in [[token.pos_, token.tag_] for token in doc]:
-        answers = dataset[dataset['type'] == "greeting"].sample(n=1)
-        return answers['answer'].values[0], answers['id_video'].values[0]
+        if dataset[dataset['type'] == "greeting"].shape[0] > 0:
+            answers = dataset[dataset['type'] == "greeting"].sample(n=1)
+            return answers['answer'].values[0], answers['id_video'].values[0]
+        else:
+            answers = dataset[dataset['type'] == "no-answer"].sample(n=1)
+            return answers['answer'].values[0], answers['id_video'].values[0]
 
     querycorpus = []
-    for i in range(0, len(dataset)):
-        userquestion = preprocess(dataset['question'][i])
+    for i in range(0, len(df_avatar)):
+        userquestion = preprocess(df_avatar['question'][i])
         querycorpus.append(userquestion)
 
     # Creating the Bag of Words model with TFIDF and calc cosine_similarity
@@ -45,6 +49,7 @@ def toia_answer(query, dataset, k=1):
     trainingvoc_vectorizer = CountVectorizer(
         decode_error="replace", vocabulary=training_vocabulary)
     tfidf_querycorpus = TfidfVectorizer().fit_transform(querycorpus)
+
     tfidf_userquestion = transformer.fit_transform(
         trainingvoc_vectorizer.fit_transform(
             numpy.array([
@@ -63,12 +68,23 @@ def toia_answer(query, dataset, k=1):
         answers = dataset[dataset['type'] == "no-answer"].sample(n=1)
         return answers['answer'].values[0], answers['id_video'].values[0]
 
-    elif sorted_freq[k-1] != sorted_freq[k] or sorted_freq[k-1] == sorted_freq[k] == 0:
-        selected = related_docs_indices[:k]
+    elif sorted_freq[0] > 0.7:  # (the top sorted freq is the max)
+        if sorted_freq[k-1] != sorted_freq[k] or sorted_freq[k-1] == sorted_freq[k] == 0:
+            selected = related_docs_indices[:k]
+            return dataset.iloc[selected[0]]['answer'], dataset.iloc[selected[0]]['id_video']
+        else:
+            indeces = numpy.where(numpy.roll(sorted_freq, 1) != sorted_freq)
+            selected = related_docs_indices[:indeces[0][indeces[0] >= k][0]]
+            return dataset.iloc[selected[0]]['answer'], dataset.iloc[selected[0]]['id_video']
 
-        return dataset.iloc[selected[0]]['answer'], dataset.iloc[selected[0]]['id_video']
     else:
-        indeces = numpy.where(numpy.roll(sorted_freq, 1) != sorted_freq)
-        selected = related_docs_indices[:indeces[0][indeces[0] >= k][0]]
-
-        return dataset.iloc[selected[0]]['answer'], dataset.iloc[selected[0]]['id_video']
+        docs = NLP.pipe(dataset['question'].values)
+        cosine_similarities = [calculate_similarity(
+            query, doc.text) for doc in docs]
+        if max(cosine_similarities) > 0.5:
+            related_docs_indices = np.argsort(cosine_similarities)[::-1]
+            selected = related_docs_indices[:k][0]
+            return dataset.iloc[selected]['answer'], dataset.iloc[selected]['id_video']
+        else:
+            answers = dataset[dataset['type'] == "no-answer"].sample(n=1)
+            return answers['answer'].values[0], answers['id_video'].values[0]

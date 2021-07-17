@@ -46,13 +46,16 @@ def dialogue_manager():
         raw_data = request.get_json()
         query = raw_data['query']
         avatar_id = raw_data['avatar_id']
+        stream_id = raw_data['stream_id']
 
         print(query)
         print(avatar_id)
+        print(stream_id)
 
         avatar_kb = db.select([VIDEOS]).where(
             VIDEOS.columns.toia_id == avatar_id,
-            VIDEOS.columns.private == 0
+            VIDEOS.columns.private == 0,
+            VIDEOS.columns.stream_id == stream_id,
         )
 
         result_proxy = CONNECTION.execute(avatar_kb)
