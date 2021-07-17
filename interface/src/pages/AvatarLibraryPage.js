@@ -8,14 +8,6 @@ import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
-import alberto from "../images/alberto.jpeg";
-import wahib from "../images/wahib.jpg";
-import kertu from "../images/kertu.jpg";
-import erin from "../images/erin.jpeg";
-import nizar from "../images/nizar.jpg";
-import goffredo from "../images/goffredo.jpeg";
-import tyeece from "../images/Tyeece.jpg";
-import armaan from "../images/armaan.jpg";
 import env from './env.json';
 
 function AvatarLibraryPage() {
@@ -44,7 +36,6 @@ function AvatarLibraryPage() {
         dispatch2(true);
         e.preventDefault();
     }
-    //
 
     const [toiaName, setName] = useState(null);
     const [toiaLanguage, setLanguage] = useState(null);
@@ -71,11 +62,6 @@ function AvatarLibraryPage() {
     },[]);
 
     var input1, input2; //input fields for email and password
-
-    let hLight1 = 2; //variables that hold the index number of the higlighted TOIA streams
-    let hLight2 = 1;
-
-    const [viewIndex, setviewIndex] = useState(0); //this hold the index of the avater to be seen in the view pop up
 
     function goToPlayer(element){
 
@@ -182,11 +168,9 @@ function AvatarLibraryPage() {
 
       axios.post(`${env['server-url']}/login`,params).then(res=>{
         if(res.data==-1){
-            //alert('Email not found');
           alert("Incorrect e-mail address.");
         }else if(res.data==-2){
           alert("Incorrect password");
-          // setHasPasswordError(true);
         }else {
           history.push({
             pathname: '/mytoia',
@@ -268,7 +252,6 @@ function AvatarLibraryPage() {
     }
 
     function logout(){
-        //logout function needs to be implemented (wahib)
         history.push({
           pathname: '/',
         });
@@ -457,31 +440,3 @@ function AvatarLibraryPage() {
 }
 
 export default AvatarLibraryPage;
-
-  /*
-    const [avatarList, setAvatarList] = React.useState([]);
-    const [avatarCards, setAvatarCards] = React.useState('');
-
-    React.useEffect(() => {
-        axios.get('http://localhost:3000/getAllAvatars').then((res)=>{
-            setAvatarList(res.data);
-            setAvatarCards(avatarList.map(renderCard));
-        });
-    });*/
-
-
-  /*  <div className="library-highlights">
-    <div className="row" // highlighted streams
-    >
-      <div onClick={(event) => {setviewIndex(hLight1); openModal2(event)}} className="library-box border-0 column">
-
-
-      </div>
-      <div onClick={(event) => {setviewIndex(hLight2); openModal2(event)}} className="library-box border-0 column">
-
-      </div>
-    </div>
-  </div>
-  <div className="library-random">
-    <h1 className="library-text">Match me with a random TOIA</h1>
-  </div> */

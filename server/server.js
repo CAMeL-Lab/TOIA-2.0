@@ -9,12 +9,11 @@ require('dotenv').config();
 
 const crypto = require('crypto');
 const path = require('path');
-const {Storage} = require('@google-cloud/storage')
+const {Storage} = require('@google-cloud/storage');
 
 var multiparty = require('multiparty');
 
 const cors = require('cors');
-
 const axios=require('axios');
 
 //Create an 'express' instance
@@ -60,44 +59,7 @@ const gc = new Storage({
 	keyFilename: path.join(__dirname,"/toia-capstone-2021-a17d9d7dd482.json"),
 	projectId:'toia-capstone-2021'
 });
-
 let videoStore=gc.bucket(process.env.GC_BUCKET);
-
-let answerTheseQuestions=["What is your favorite sport?","What is your designation?","Where do you live?","Who is your favorite actor?"];
-let index=0;
-
-//Migrating the Margarita2019 Knowledge Base
-
-
-// let json = JSON.parse(fs.readFileSync('script.json'));
-
-
-// for(let i=0;i<json.rows.length;i++){
-
-// 	if(json.rows[i]['doc']['english-question']!='FILLER'){
-// 		let query = 'INSERT INTO video(id_video, avatar_id_avatar, idx, question, answer, type) VALUES("'+json.rows[i]['id']+'",1,'+json.rows[i]['doc']['index']+',"'+json.rows[i]['doc']['english-question']+'","'+json.rows[i]['doc']['english-answer']+'","answer");'
-		
-// 		connection.query(query,(err,result,fields)=>{
-// 			if (err) throw err;
-// 			else{delete json.rows[i];}
-// 		});
-// 	}
-// }
-
-app.get('/getAllUsersTest',(req,res)=>{
-
-	let getTest=`SELECT first_name FROM toia_user;`
-	connection.query(getTest, (err,entry,fields)=>{
-		if (err){
-			throw err;
-		}else{
-		
-			res.send(entry);
-		}
-	});
-});
-
-
 
 app.post('/createTOIA',(req,res)=>{
 
@@ -155,20 +117,16 @@ app.post('/login',(req,res)=>{
 	});
 });
 
-app.get('/getAllAvatars',(req,res)=>{
-
-	let getAvatarQuery=`SELECT name,id_avatar FROM avatar;`;
-	connection.query(getAvatarQuery, (err,entry,fields)=>{
+app.get('/getAllStreams',(req,res)=>{
+	let query_allStreams=`SELECT toia_user.id, toia_user.first_name, toia_user.last_name, stream.id_stream, stream.name, stream.likes, stream.views FROM stream LEFT JOIN toia_user ON toia_user.id = stream.toia_id WHERE stream.private=0 ORDER BY stream.name ASC;`
+	connection.query(query_allStreams, (err,entries,fields)=>{
 		if (err){
 			throw err;
 		}
 		else{
-			console.log(entry.map(avatar=>[avatar.name,avatar.id_avatar]));
-			res.send(entry.map(avatar=>[avatar.name,avatar.id_avatar]));
+			res.send(entries);
 		}
-
 	});
-			
 });
 
 app.post('/getUserVideos',(req,res)=>{
@@ -196,73 +154,8 @@ app.post('/getUserStreams',(req,res)=>{
 
 });
 
-app.get('/getAllStreams',(req,res)=>{
-	let query_allStreams=`SELECT toia_user.id, toia_user.first_name, toia_user.last_name, stream.id_stream, stream.name, stream.likes, stream.views FROM stream LEFT JOIN toia_user ON toia_user.id = stream.toia_id WHERE stream.private=0 ORDER BY stream.name ASC;`
-	connection.query(query_allStreams, (err,entries,fields)=>{
-		if (err){
-			throw err;
-		}
-		else{
-			res.send(entries);
-		}
-	});
-});
-
-app.post('/getStreamVideos', (req,res)=>{
-	let vidArr=[];
-	let query_streamVideos=`SELECT * FROM video INNER JOIN stream_has_video ON video.id_video=stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream=${req.body.params.streamID} ORDER BY idx DESC;`;
-
-	connection.query(query_streamVideos, (err,entries,fields)=>{
-		if (err){
-			throw err;
-		}
-		else{
-			res.send(entries);
-			// await entries.forEach(async (entry)=>{
-			// 	let query_videoDetails=`SELECT * FROM video WHERE id_video="${entry.video_id_video}";`
-
-			// 	await connection.query(query_videoDetails, async (err,entries,fields)=>{
-			// 		if (err){
-			// 			throw err;
-			// 		} else{
-			// 			vidArr.push(entries[0]);
-			// 			console.log(entries[0]);
-			// 			console.log(vidArr);
-			// 		}
-			// 	});
-			// });
-			// console.log('heya');
-			// console.log(vidArr);
-			// res.send(vidArr);
-		}	
-	});
-});
-
-
-app.get('/getAvatarInfo',(req,res)=>{
-	console.log('hihihi');
-	let query_avatar_info=`SELECT name,language,description FROM avatar WHERE id_avatar="${req.query.avatarID}";`;
-	connection.query(query_avatar_info, (err,entry,fields)=>{
-		if (err){
-			throw err;
-		}
-		else{
-			let avatarInfo={
-				name: entry[0].name,
-				language: entry[0].language,
-				bio: entry[0].description
-			}
-
-			res.send(avatarInfo);
-		}		
-	});
-
-});
-
 app.post('/createNewStream',(req,res)=>{
-
-	console.log(req.body.params);
-
+	
 	let privacySetting=0;
 
 	if(req.body.params.newStreamPrivacy=='private'){
@@ -292,10 +185,53 @@ app.post('/createNewStream',(req,res)=>{
 
 });
 
+app.post('/getStreamVideos', (req,res)=>{
+	let vidArr=[];
+	let query_streamVideos=`SELECT * FROM video INNER JOIN stream_has_video ON video.id_video=stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream=${req.body.params.streamID} ORDER BY idx DESC;`;
+
+	connection.query(query_streamVideos, (err,entries,fields)=>{
+		if (err){
+			throw err;
+		}
+		else{
+			res.send(entries);
+		}	
+	});
+});
+
+
+app.post('/fillerVideo',(req,res)=>{
+
+	let query_getFiller=`SELECT * FROM video WHERE toia_id=${req.body.params.toiaIDToTalk} AND type="filler";`
+
+	connection.query(query_getFiller,(err,entries,fields)=>{
+		if(err){
+			throw err;
+		}else{
+			
+			console.log(entries[Math.floor(Math.random() * entries.length)].id_video);
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+	
+			videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`).getSignedUrl(config, function(err, url) {
+				if (err) {
+					console.error(err);
+					return;
+				}else{
+					res.send(url);
+				}
+			});
+			
+		}
+	});
+});
+
 
 app.post('/player',(req,res)=>{
 
-	let gcPublicURL;
 	axios.get(`${process.env.DM_ROUTE}`,{
 		data:{
 			query: req.body.params.question,
@@ -316,75 +252,8 @@ app.post('/player',(req,res)=>{
 				res.send(url);
 			}
 		});
-
-		// gcPublicURL = format(
-		// 	`https://storage.googleapis.com/${process.env.GC_BUCKET}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`
-		//   );
-		//toia_test-wahib_mac/Accounts/Jane_2/Videos/Jane_2_15_d7ba8526aa2900b3.mp4
-
-		// let videoToFetch=videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
-
-		// console.log(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
-		// videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`)
-
-		// res.send(videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`));
-		
-	
-
-		// res.sendFile(URL.createObjectURL(videoStore.file(`Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`)));
-
-		// videoToFetch.createReadStream()
-		// 	.on('error', (err)=>{
-		// 		throw err;
-		// 	}).on('response',(res)=>{
-		// 		console.log(res);
-		// 	}).on('end',()=>{
-		// 		console.log('File streamed fully');
-		// 	}).pipe
-
-		
-
-		// https://storage.cloud.google.com/${videoStore}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}
-
-		//res.send(videoStore.file(videoDetails.data.id_video));
-
-		// res.send(`https://storage.cloud.google.com/${process.env.GC_BUCKET}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
-		
-		// res.send(`https://storage.googleapis.com/${process.env.GC_BUCKET}/Accounts/${req.params.toiaNameToTalk}_${req.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
-
-		// let answerToQuestion=videoDetails.data.answer;
-		// let query_avatar_idx=`SELECT idx FROM video WHERE avatar_id_avatar=${avatarID} AND id_video="${videoDetails.data.id_video}";`
-		// connection.query(query_avatar_idx,(err,entry,fields)=>{
-		// 	if (err){
-		// 		throw err;
-		// 	}
-		// 	else{
-		// 		let index=entry[0].idx;
-		// 		let video_file=''
-		// 		console.log(avatarName);
-		// 		if(avatarName=='Margarita'){
-		// 			video_file='margarita2019_'+index+'_'+videoDetails.data.id_video+'.mp4';
-		// 		}else{
-		// 			video_file=avatarName+videoDetails.data.id_video+'.webm';
-		// 		}
-		// 		let video_path=`./public/static/avatar_garden/${avatarName}/videos/${video_file}`;
-				
-		// 		res.sendFile(video_path, { root: __dirname });
-		// 	}
-		// });
-
 	});
 });
-
-
-app.get('/getQuestions',(req,res)=>{
-	// axios.get('http://localhost:4000/getMandatoryQuestions').then((questionArr)=>{
-	// 	console.log('yehee');
-	// 	res.send(questionArr.data.mandatoryQuestions);
-	// })
-	res.send(["What is your name?","How are you?","Where are you from?"]);
-});
-
 
 
 app.post('/recorder',async (req,res)=>{
@@ -416,11 +285,7 @@ app.post('/recorder',async (req,res)=>{
 				}else{
 					vidIndex=entry[0].maxIndex+1;
 				}
-				// await videoStore.upload(file.blob[0].path, {
-				// 	destination: `accounts/${fields.id}/Videos/${videoID}`
-				// });
-				
-				// console.log(`Video upload successful`);
+	
 				crypto.pseudoRandomBytes(32, async function (err, raw) {
 					videoID=fields.name[0]+'_'+fields.id[0]+'_'+vidIndex+'_'+(raw.toString('hex') + Date.now()).slice(0,16)+'.mp4';
 	
@@ -428,11 +293,9 @@ app.post('/recorder',async (req,res)=>{
 					await videoStore.upload(file.blob[0].path, {
 						destination: `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/${videoID}`
 					});
-					
-					console.log(`Video upload successful`);
-
 
 					let query_saveVideo = `INSERT INTO video(id_video,question,answer,type,toia_id,idx,private,language,likes,views) VALUES("${videoID}","${fields.question[0]}","${fields.answer[0]}","${fields.videoType[0]}",${fields.id[0]},${vidIndex},${isPrivate},"${fields.language[0]}",0,0);`;
+
 					connection.query(query_saveVideo, (err,entry,results)=>{
 						if (err){
 							throw err;
@@ -449,94 +312,11 @@ app.post('/recorder',async (req,res)=>{
 									}
 								});
 							});
-							// axios.post('http://localhost:5000/update_avatar',{
-							// 	question:req.body.question,
-							// 	answer:req.body.answer,
-							// 	KB_version: "1.0",
-							// 	language: "US-en",
-							// 	id_video:videoID,
-							// 	avatar_id:req.body.toiaID
-							// }).then(console.log("Data updated in Dialogue Manager"));
 						}
 					});
 
 				});
 			}		
 		});
-
-
     });
-	// form.on('part',(part)=>{
-	// 	console.log(part.id);
-	// });
-
-
-	// let question = req.body.question;
-	// let answer = req.body.answer;
-
-	// let qa_pair=question+' '+answer;
-
-	// // axios.post('http://localhost:4000/generateNextQ',{
-	// // 	qa_pair
-	// // }).then((nextQuestions)=>{
-	// // 	console.log('yehee');
-	// // 	res.send(nextQuestions.data.q[0]);
-	// // });
-	// res.send(answerTheseQuestions[index]);
-	// index=index+1;
-
-			
-	// 		let video_file=avatar.toLowerCase()+'2019_'+index+'_'+video_id+'.mp4';
-	// 		let video_path='./public/static/avatar_garden/margarita2019/videos/'+video_file;
-			
-	// 		res.sendFile(video_path, { root: __dirname });
-	// 	}
-	// });
-
-	// var avatarName = req.file.originalname.substr(0,req.file.originalname.indexOf('_'));
-	// fs.rename(__dirname + '/public/uploads/' + req.file.filename, __dirname + '/public/avatar-garden/' + '/videos/' + req.file.originalname, (err) => {
-	//   if (err) throw err;
-	//   console.log('Rename complete!');
-	// });
-	// const url = URL.createObjectURL(videoData);
-
-	// const a = document.createElement("a");
- //    a.style = "display: none";
- //    a.href = url;
- //    a.download = inputName+".mp4";
- //    a.click();
-	// const avatarName = req.params.avatar;
-	// const currLanguage = req.params.language;
-	// const question = req.params.question;
-	// const answer = req.params.answer;
-	// const videoData = req.params.videoData;
-	// const isPrivate = req.params.isPrivate
-
-
-	// let query=`SELECT COUNT(*) FROM avatar WHERE name="${avatarName}";`
-	// connection.query(query, (err,entry,fields)=>{
-	// 	if (err){
-	// 		throw err;
-	// 	}
-	// 	else{
-	// 		if(entry[0]==0){
-
-	// 			mkdirp(`./static/avatar_garden/${avatarName}`);
-	// 			mkdirp(`./static/avatar_garden/${avatarName}/videos`)
-
-	// 			fs.mkdirSync(dir);
-	// 			fs.mkdirSync(`./static/avatar_garden/${avatarName}/videos`)
-
-	//         	const url = URL.createObjectURL(videoData);
-
-	// 			const a = document.createElement("a");
-	// 	        a.style = "display: none";
-	// 	        a.href = url;
-	// 	        a.download = inputName+".mp4";
-	// 	        a.click();
-	// 			//make directory
-	// 		}
-	// 	}
-	// })
-	
 });

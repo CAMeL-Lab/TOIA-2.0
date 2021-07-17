@@ -9,16 +9,6 @@ import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import env from './env.json';
-// import {Storage} from '@google-cloud/storage';
-
-// const path = require('path');
-
-// const gc = new Storage({
-// 	keyFilename: path.join(__dirname,"../../../server/toia-capstone-2021-a17d9d7dd482.json"),
-// 	projectId:'toia-capstone-2021'
-// });
-
-// let videoStore=gc.bucket(process.env.GC_BUCKET);
 
 function Player(){
 
@@ -34,12 +24,12 @@ function Player(){
   const commands=[
     {
       command: '*',
-      callback:fetchData
+      callback: fetchData
     }
   ];
 
 
-  const { transcript, resetTranscript } = useSpeechRecognition(commands);
+  const { transcript, resetTranscript } = useSpeechRecognition({commands});
   
   const [toiaName, setName] = React.useState(null);
   const [toiaLanguage, setLanguage] = React.useState(null);
@@ -52,15 +42,18 @@ function Player(){
   const [toiaLastNameToTalk,setTOIALastNameToTalk]=useState(null);
   const [streamIdToTalk, setStreamIdToTalk]=useState(null);
   const [streamNameToTalk, setStreamNameToTalk]=useState(null);
+  const [fillerPlaying, setFillerPlaying]=useState(true);
 
   const [video,setVideo] = useState(null);
-  const [caption,setCaption] = useState(null);
+  const [question,setQuestion] = useState(null);
+  const [matched,setMatched]=useState(0);
+
 
   var input1, input2;
   let [micMute, setMicStatus]=React.useState(false);
   let [micString, setMicString]=React.useState('Mute');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if(history.location.state.toiaID!=undefined){
       setLoginState(true);
       setTOIAid(history.location.state.toiaID);
@@ -73,46 +66,51 @@ function Player(){
     setStreamIdToTalk(history.location.state.streamToTalk);
     setStreamNameToTalk(history.location.state.streamNameToTalk);
 
-    if(micMute==false){
-      SpeechRecognition.startListening({continuous:true});
-    }
+    fetchFiller();
 
-  });
+    SpeechRecognition.startListening({continuous:true});
 
-  const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-    const { open } = state
+  },[]);
 
-    function openModal(e){
-        dispatch({ type: 'open' });
-        e.preventDefault();
-    }
+  const [state, dispatch] = React.useReducer(exampleReducer, {open: false,});
+  const { open } = state;
 
-    function myChangeHandler(event){
-        event.preventDefault();
-        var name = event.target.name;
-    
-        switch(name) {
-          case "email":
-            input1 = event.target.value;
-            break;
-          case "pass":
-            input2 = event.target.value;
-            break;
-        }
-    }
+  function openModal(e){
+      dispatch({ type: 'open' });
+      e.preventDefault();
+  }
+
+  function myChangeHandler(event){
+      event.preventDefault();
+      var name = event.target.name;
+  
+      switch(name) {
+        case "email":
+          input1 = event.target.value;
+          break;
+        case "pass":
+          input2 = event.target.value;
+          break;
+      }
+  }
+
+  function continueChat(){
+    setFillerPlaying(true);
+    SpeechRecognition.startListening({continuous: true});
+    resetTranscript();
+    fetchFiller();
+  }
 
   function fetchData(){
-
-    // event.preventDefault();
   
-    // SpeechRecognition.stopListening();
-
-    if(transcript!=''){
-      let question = transcript[0].toUpperCase()+transcript.slice(1);
-      resetTranscript();
-
-      // let videoElem= <video className="player-vid" key={question} autoPlay><source src={'https://storage.googleapis.com/toia_test-wahib_mac/Accounts/Jane_2/Videos/Jane_2_15_d7ba8526aa2900b3.mp4'} type='video/mp4'></source></video>;
-
+    if(transcript==question){
+      setMatched(matched+1);
+    }
+    console.log(matched);
+    
+    if(matched>=2){
+      setFillerPlaying(false);
+      SpeechRecognition.stopListening();
       axios.post(`${env['server-url']}/player`,{
         params:{
           toiaIDToTalk,
@@ -120,25 +118,43 @@ function Player(){
           question
         }
       }).then((res)=>{
-        setVideo(<video className="player-vid" key={question} autoPlay><source src={res.data} type='video/mp4'></source></video>);
+        setVideo(<video className="player-vid" id="vidmain" key={transcript} onEnded={continueChat} autoPlay><source src={res.data} onended={fetch} type='video/mp4'></source></video>);
+        resetTranscript();
+        setMatched(0);
       });
     }
 
+    setQuestion(transcript);
   }
 
     function micStatusChange(){
       if(micMute==true){
         setMicStatus(false);
         setMicString('Mute');
-        SpeechRecognition.startListening({continuous:true});
+        SpeechRecognition.startListening();
       }else{
         SpeechRecognition.stopListening();
         setMicStatus(true);
         setMicString('Unmute');
         fetchData();
-  
       }
+    }
 
+    function fetchFiller(){
+      if(fillerPlaying){
+        axios.post(`${env['server-url']}/fillerVideo`,{
+          params: {
+            toiaIDToTalk: history.location.state.toiaToTalk,
+            toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk
+          }
+        }).then(async (res)=>{
+          let videoELem=<video muted className="player-vid" id="vidmain" key="filler" onEnded={fetchFiller} autoPlay><source src={res.data} type='video/mp4'></source></video>;
+          setVideo(videoELem);
+          document.getElementById("vidmain").load();
+          document.getElementById("vidmain").play();
+
+        });
+      }
     }
 
     function submitHandler(e){
