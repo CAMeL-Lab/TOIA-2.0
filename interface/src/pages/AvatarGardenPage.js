@@ -15,6 +15,7 @@ import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 // import Carousel,  { slidesToShowPlugin } from '@brainhubeu/react-carousel';
 // import Carousel from 'react-bootstrap/Carousel';
+import test_video from "../video/TOIA-LOGO-VID.mov"
 
 
 import '@brainhubeu/react-carousel/lib/style.css';
@@ -139,6 +140,22 @@ function AvatarGardenPage() {
         e.preventDefault();
     }
 
+    function exampleReducer5( state5, action ) { // popup while selecting video card
+        switch (action.type) {
+          case 'close':
+            return { open5: false };
+          case 'open':
+            return { open5: true };
+        }
+    }
+    const [state5, dispatch5] = React.useReducer(exampleReducer5, {open5: false,})
+    const { open5 } = state5
+
+    function openModal5(e){
+        dispatch5({ type: 'open' });
+        e.preventDefault();
+    }
+
     const [anchorEl, setAnchorEl] = useState(null); //for list of streams drop down menu when you click on move icon
     const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -254,17 +271,19 @@ function AvatarGardenPage() {
 
         )
     };
-
+    let videoPlayback = <video id="playbackVideo" width="496" height="324" autoPlay controls><source src={test_video} type='video/mp4'></source></video>;
     const renderCard = (card, index) => {//cards for videos
         return(
             <div className="row">
-                <div onClick={()=>edit(card)} className="column" style={{ backgroundImage: `url(${sampleVideo})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
+                <div onClick={(event)=> {openModal5(event)}} className="column" style={{ backgroundImage: `url(${sampleVideo})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
                 />
                 <div className="column garden-question">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
                     />
                     <h1 className="garden-name garden-font-class-2" //question
                     >{card.question}</h1>
+                    <button onClick={()=>edit(card)} className="garden-edit" //trash can
+                    ><i class="fa fa-edit"></i></button>
                     <button onClick={(event) => {cardSelected.push(videoList[index].question); openModal(event)}} className="garden-delete" //trash can
                     ><i class="fa fa-trash"></i></button>
 
@@ -720,6 +739,40 @@ function AvatarGardenPage() {
                         <h1 className="garden-font-class-2 stream-settings-text">Save</h1>
                     </div> */}
                 </Modal.Content>
+            </Modal>
+            <Modal //this is the new pop up menu
+
+            size='large'
+            style={{position: "absolute", height: "80%",width: "70%", top:"2%", alignContent:"center"}}
+            open={open5}
+            onClose={() => dispatch5({ type: 'close' })}
+            >
+                <Modal.Header className="modal-header">
+                  <div>Video entry </div>
+                  </Modal.Header>
+                <Modal.Content>
+                <div id="typeOfVideo">Video Type: Public</div>
+                <div id="questionOfVideo">Question being answered: "Q&A"</div>
+                <div id="privacyOfVideo">Privacy Settings: Public</div>
+                <div id="divider"></div>
+                {videoPlayback}
+                {/* <video id="videoRecorded"></video> */}
+                <div id="answerCorrection">The answer provided:</div>
+                <input
+                  className="modal-ans font-class-1"
+                  placeholder="Testing"
+                  value="Testing"
+                  type={"text"}
+                  // onChange={setAnswerValue}
+                />
+                {/* <div contentEditable="true" className="modal-ans font-class-1" onChange={setAnswerValue}>{answerProvided}
+                </div> */}
+                </Modal.Content>
+                <Modal.Actions>
+                <Button color='green'>
+                    <i class="fa fa-check"></i>
+                </Button>
+                </Modal.Actions>
             </Modal>
             <div className="nav-heading-bar" //Nav bar
             >

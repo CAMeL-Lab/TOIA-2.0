@@ -234,6 +234,16 @@
   top: 43%;
   left: 2%;
 }
+.garden-edit {
+  color: white;
+  font-size: 12px;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
+  position: relative;
+  top: 44.5%;
+  right: 17%;
+}
 .garden-checkbox {
   position: relative;
   left: 2%;
@@ -332,14 +342,18 @@
 .garden-name {
   color: white;
   font-size: 13.5px;
-  height: 83%;
+  /* height: 83%; */
+  /* left: 10%; */
+  /* text-align: left; */
+  height: 67%;
   width: 100%;
   overflow: auto;
   position: relative;
-  left: 10%;
+  left: 25%;
   margin-top: 10px;
   /* text-align: left; */
   word-wrap: break-word;
+  bottom: 6%;
 
 
 }
