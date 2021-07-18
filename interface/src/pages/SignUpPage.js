@@ -59,7 +59,7 @@ function SignUpPage() {
             language
           }).then((res)=>{
             history.push({
-              pathname: '/mytoiia',
+              pathname: '/mytoia',
               state: {
                 toiaName:fname,
                 toiaLanguage:language,

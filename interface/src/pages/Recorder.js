@@ -348,6 +348,7 @@ function Recorder () {
           setColor6('#e5e5e5');
           setVideoType('filler');
           setVideoTypeFormal('Filler')
+          setQuestionSelected('Filler video!');
 
         }else{
           setColor5('#e5e5e5');
