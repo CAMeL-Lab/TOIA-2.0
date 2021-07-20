@@ -1,7 +1,9 @@
 from flask import Flask, request
 import json
 import sqlalchemy as db
+from sqlalchemy.sql import text
 import pandas as pd
+import numpy as np
 import os
 from utils import preprocess, toia_answer
 from dotenv import load_dotenv
@@ -46,20 +48,27 @@ def dialogue_manager():
         raw_data = request.get_json()
         query = raw_data['query']
         avatar_id = raw_data['avatar_id']
+        stream_id = raw_data['stream_id']
 
         print(query)
         print(avatar_id)
+        print(stream_id)
 
-        avatar_kb = db.select([VIDEOS]).where(
-            VIDEOS.columns.toia_id == avatar_id,
-            VIDEOS.columns.private == 0
-        )
+        statement = text(f"""SELECT stream_has_video.stream_id_stream, video.* 
+            FROM video 
+            INNER JOIN stream_has_video 
+            ON video.id_video = stream_has_video.video_id_video 
+            WHERE stream_id_stream = {stream_id}
+            AND toia_id = {avatar_id}
+            AND private = 0
+            AND type NOT IN ('filler', 'exit');""")
 
-        result_proxy = CONNECTION.execute(avatar_kb)
+        result_proxy = CONNECTION.execute(statement)
         result_set = result_proxy.fetchall()
 
         df_avatar = pd.DataFrame(result_set,
                                  columns=[
+                                     'stream_id_stream',
                                      'id_video',
                                      'type',
                                      'toia_id',

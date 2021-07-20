@@ -15,3 +15,30 @@ INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,lik
 INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,likes,views) VALUES("r2d","filler",1,10,0,"When is your birthday?","My birthday is in September.","en-US",4,20);
 INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,likes,views) VALUES("r2f","greeting",1,11,0,"Hello","Hi!","en-US",4,20);
 INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,likes,views) VALUES("r2h","no-answer",1,12,0,"","Sorry, I didn't get that","en-US",4,20);
+INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,likes,views) VALUES("pb2","answer",1,18,0,"What is your dissertation about?","My research is about building applications like this one","en-US",2,5);
+INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,likes,views) VALUES("p7c","answer",1,19,0,"What is a TOIA?","It is an applications that allow people to interact with prerecordings of other people","en-US",10,34);
+INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,likes,views) VALUES("p8i","answer",1,20,1,"What retrieval methodology do you use?","A mix between rule based, tf-idf and semantica vectors similarity","en-US",0,2);
+
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("ef1",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("0b2",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("a7c",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("o8i",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r21",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2t",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r4t",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2y",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2e",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2m",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2a",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2b",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2c",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2d",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2f",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("r2h",1);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("pb2",2);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("p7c",2);
+INSERT INTO stream_has_video(video_id_video,stream_id_stream) VALUES("p8i",2);
+
+INSERT INTO stream(id_stream,name,toia_id,private,likes,views) VALUES(1,"all",1,0,4,20);
+INSERT INTO stream(id_stream,name,toia_id,private,likes,views) VALUES(2,"phd",1,0,4,20);
+INSERT INTO stream(id_stream,name,toia_id,private,likes,views) VALUES(3,"politics",1,1,4,20);
