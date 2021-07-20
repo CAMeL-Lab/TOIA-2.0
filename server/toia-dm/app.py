@@ -12,6 +12,7 @@ load_dotenv()
 
 if os.environ["ENVIRONMENT"]=="development":
     SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
+    print(SQL_URL)
     ENGINE = db.create_engine(SQL_URL)
 
 elif os.environ["ENVIRONMENT"]=="production":
@@ -54,14 +55,13 @@ def dialogue_manager():
         print(avatar_id)
         print(stream_id)
 
-        statement = text(f"""SELECT stream_has_video.stream_id_stream, video.* 
+        statement = text(f"""SELECT stream_has_video.stream_id_stream,video.*
             FROM video 
             INNER JOIN stream_has_video 
             ON video.id_video = stream_has_video.video_id_video 
-            WHERE stream_id_stream = {stream_id}
-            AND toia_id = {avatar_id}
-            AND private = 0
-            AND type NOT IN ('filler', 'exit');""")
+            WHERE stream_has_video.stream_id_stream = {stream_id}
+            AND video.private = 0
+            AND video.type NOT IN ('filler', 'exit');""")
 
         result_proxy = CONNECTION.execute(statement)
         result_set = result_proxy.fetchall()

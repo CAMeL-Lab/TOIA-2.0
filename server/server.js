@@ -235,7 +235,8 @@ app.post('/player',(req,res)=>{
 	axios.get(`${process.env.DM_ROUTE}`,{
 		data:{
 			query: req.body.params.question,
-			avatar_id : req.body.params.toiaIDToTalk
+			avatar_id : req.body.params.toiaIDToTalk,
+			stream_id: req.body.params.streamIdToTalk
 		}
 	}).then((videoDetails)=>{
 

@@ -115,7 +115,8 @@ function Player(){
         params:{
           toiaIDToTalk,
           toiaFirstNameToTalk,
-          question
+          question,
+          streamIdToTalk
         }
       }).then((res)=>{
         setVideo(<video className="player-vid" id="vidmain" key={transcript} onEnded={continueChat} autoPlay><source src={res.data} onended={fetch} type='video/mp4'></source></video>);
