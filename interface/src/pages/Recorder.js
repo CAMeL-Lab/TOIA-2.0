@@ -217,6 +217,22 @@ function Recorder () {
     event.preventDefault();
   }
 
+  function exampleReducer2( state2, action ) { // for account settings window
+      switch (action.type) {
+        case 'close':
+          return { open2: false };
+        case 'open':
+          return { open2: true };
+      }
+  }
+  const [state2, dispatch2] = React.useReducer(exampleReducer2, {open2: false,})
+  const { open2 } = state2
+
+  function openModal2(e){
+      dispatch2({ type: 'open' });
+      e.preventDefault();
+  }
+
   function handleClose(e){
     e.preventDefault();
     setVideoComponent(null);
@@ -429,6 +445,70 @@ function Recorder () {
     },
   };
 
+  const inlineStyleSetting = {
+      modal : {
+          height: '85vh',
+          width: '65vw',
+      }
+  };
+
+  //code for webcam for Thumbnail
+  const WebcamComponent = () => <Webcam />;
+
+const thumbnail_videoConstraints = {
+    width: 262.5,
+    height: 315,
+    facingMode: "user"
+};
+  const [image,setImage]=useState('');
+ const WebcamCapture = () => {
+
+
+    const webcamRef = React.useRef(null);
+
+
+    const capture = React.useCallback(
+        () => {
+        const imageSrc = webcamRef.current.getScreenshot();
+        setImage(imageSrc)
+        });
+
+
+    return (
+        <div className="webcam-container">
+            <div className="webcam-img">
+
+                {image == '' ? <Webcam
+                    audio={false}
+                    height={315}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    width={262.5}
+                    videoConstraints={thumbnail_videoConstraints}
+                    borderRadius = {5}
+                /> : <img src={image} />}
+            </div>
+            <div>
+                {image != '' ?
+                    <button onClick={(e) => {
+                        e.preventDefault();
+                        setImage('')
+                    }}
+                        className="webcam-btn">
+                        Retake Image</button> :
+                    <button onClick={(e) => {
+                        e.preventDefault();
+                        capture();
+                    }}
+                        className="webcam-btn">Capture</button>
+                }
+            </div>
+        </div>
+    );
+};
+
+
+
   return (
     <form className="record-page" name="form1" action="form1" >
       <Modal //this is the new pop up menu
@@ -445,6 +525,7 @@ function Recorder () {
           <div id="typeOfVideo">Video Type: {videoTypeFormal}</div>
           <div id="questionOfVideo">Question being answered: "{questionSelected}"</div>
           <div id="privacyOfVideo">Privacy Settings: {privacyText}</div>
+          <div id="video_thumbnail"><button onClick={(event)=> {openModal2(event)}}>{image=='' ? "Click to create a thumbnail!" : "Click to edit your thumbnail!"}</button></div>
           <div id="divider"></div>
           {videoPlayback}
           {/* <video id="videoRecorded"></video> */}
@@ -461,6 +542,28 @@ function Recorder () {
           </Modal.Content>
           <Modal.Actions>
           <Button color='green' inverted onClick={handleDownload}>
+              <i class="fa fa-check"></i>
+          </Button>
+          </Modal.Actions>
+      </Modal>
+      <Modal //This is the settings pop menu, that shows whenever you delete or move videos
+      size='large'
+      closeIcon={true}
+      style={inlineStyleSetting.modal}
+      open={open2}
+      onClose={() => dispatch2({ type: 'close' })}
+      >
+          <Modal.Header className="login_header">
+          <h1 className="login_welcome login-opensans-normal">Click a Thumbnail!</h1>
+          <p className="login_blurb login-montserrat-black">Add a thumnail for your recorded video</p>
+          </Modal.Header>
+          <Modal.Content>
+              <div className="thumbnail">
+              <WebcamCapture/>
+              </div>
+          </Modal.Content>
+          <Modal.Actions>
+          <Button color='green' inverted onClick={() => dispatch2({ type: 'close' })}>
               <i class="fa fa-check"></i>
           </Button>
           </Modal.Actions>

@@ -237,7 +237,7 @@ video {
   font-size: 15px;
   font-weight: 700;
   text-align: center;
-  padding: 10px;
+  padding: 5px;
 
 }
 
@@ -248,7 +248,48 @@ video {
   font-size: 15px;
   font-weight: 700;
   text-align: center;
+  padding: 0 0 5px 0;
+}
 
+#video_thumbnail {
+  text-align: center;
+}
+
+#video_thumbnail > button {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 5px;
+  border-color: rgb(229,229,229);
+  border-style: solid;
+  cursor: pointer;
+
+}
+
+.thumbnail{
+  text-align: center;
+}
+
+.webcam-img{
+  border-radius: 10px;
+}
+
+.webcam-btn{
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 5px;
+  border-color: rgb(229,229,229);
+  border-style: solid;
+  cursor: pointer;
+  position: relative;
+  top:10px;
 }
 
 #answerCorrection {
@@ -261,9 +302,10 @@ video {
   padding: 15px;;
 }
 
+
 #playbackVideo{
   text-align: center;
-  left: 19.5%;
+  left: 20.5%;
 }
 
 .modal-header {
