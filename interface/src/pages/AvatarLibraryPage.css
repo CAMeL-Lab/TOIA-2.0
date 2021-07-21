@@ -11,7 +11,7 @@
 .library-page-setup {
   position: absolute;
   top: 80px;
-  width: 1270px;
+  width: 1220px;
   height: 700px;
   left: 50px;
 }
@@ -32,7 +32,7 @@
   font-style: normal;
   font-weight: bold;
   font-size: 3rem;
-  text-align: center;
+  text-align: left;
   letter-spacing: -0.015em;
   position: relative;
   /* left: 50%; */
@@ -93,13 +93,14 @@
   padding: 5px;
   overflow-y: auto;
   height: 75%;
-  width: 84%;
-  left: 7%;
+  width: 96%;
+  left: 0%;
   top: 20%;
   position: absolute;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  padding-left: 0px;
 }
 .library-grid > div {
   flex-basis: calc(18%);
@@ -137,9 +138,9 @@
   text-align: left;
   /* top: 80px;
   width: 81vw; */
-  left: 9%;
+  /* left: 9%; */
   top: 11%;
-  width: 80%;
+  width: 96%;
   padding: 2px;
   font-size: 15px;
   margin: 5px 0;

@@ -249,7 +249,7 @@
   left: 2%;
   top: 43%;
   height: 15px;
-  width: 10px;
+  width: 20px;
   cursor: pointer;
 }
 .garden-trash {
@@ -345,14 +345,14 @@
   /* height: 83%; */
   /* left: 10%; */
   /* text-align: left; */
-  height: 67%;
+  height: 72%;
   width: 100%;
   overflow: auto;
   position: relative;
   left: 25%;
-  margin-top: 10px;
+  margin-top: 15px;
   /* text-align: left; */
-  word-wrap: break-word;
+  /* word-wrap: break-word; */
   bottom: 6%;
 
 

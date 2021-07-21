@@ -6,9 +6,9 @@ video {
 .layout {
   position: absolute;
   left: 0%;
-  top: 4.5%;
+  /* top: 4.5%; */
   border-radius: 10px;
-  width: 100%;
+  width: 96%;
   /* height: 66%; */
   /* height: 70%;
   border-radius: 5%; */
@@ -54,8 +54,8 @@ video {
 .icon {
   display: block;
   position: absolute;
-  left: 1%;
-  top: 65%;
+  left: 0.5%;
+  top: 69.5%;
 
   /* position: relative; */
   width: 48px;
@@ -63,21 +63,21 @@ video {
   background-color: transparent;
   border: 0;
   color: white;
-  font-size: 3rem;
+  font-size: 2.75rem;
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 .check {
   display: block;
   position: absolute;
-  left: 83.5%;
-  top: 65%;
+  left: 81.25%;
+  top: 69.5%;
   width: 80px;
-  font-size: 40px;
+  /* font-size: 40px; */
   z-index: 3;
   background-color: transparent;
   border: 0;
   color: var(--check-green);
-  font-size: 3rem;
+  font-size: 2.75rem;
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 
 }
@@ -193,8 +193,8 @@ video {
   width: 80%;
   /* position: relative;
   width: 40vw; */
-  top: 66.5%;
-  left: 10%;
+  top: 70.5%;
+  left: 8.5%;
   font-size: 1.5rem;
 }
 .type-q {
@@ -209,10 +209,12 @@ video {
   resize: none;
   text-align: left;
   /* top: 75%; */
-  top: 85%;
-  width: 100%;
+  top: 84.75%;
+  width: 96.25%;
   color: #707070;
   font-size: 1.5rem;
+  padding-top: 25px;
+  padding-bottom: 25px;
 }
 
 /*modal elements*/

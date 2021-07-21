@@ -280,6 +280,8 @@ function AvatarGardenPage() {
                     />
                     <h1 className="garden-name garden-font-class-2" //question
                     >{card.question}</h1>
+                    
+
                     <button onClick={()=>edit(card)} className="garden-edit" //trash can
                     ><i class="fa fa-edit"></i></button>
                     <button onClick={(event) => {cardSelected.push(videoList[index].question); openModal(event)}} className="garden-delete" //trash can
