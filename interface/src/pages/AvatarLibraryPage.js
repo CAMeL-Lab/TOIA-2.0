@@ -103,7 +103,7 @@ function AvatarLibraryPage() {
                   <h1 className="t1 garden-font-class-2" //name of user
                   >{card.first_name+' '+card.last_name}</h1>
                   <p className="t2 garden-font-class-2" //individual stream name
-                  >{card.name + " stream"}</p>
+                  ><i class="fa fa-info-circle"></i>{" "+card.name + " stream"}</p>
               </div>
               <br></br>
               <div className="garden-carousel-menu" //stats that appear under stream
