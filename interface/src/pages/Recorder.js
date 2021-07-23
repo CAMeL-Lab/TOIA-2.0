@@ -53,6 +53,7 @@ function Recorder () {
   const [listStreams, setListStreams]=useState([]);
   const [mainStreamVal, setMainStreamVal]=useState([]);
   const [videoPlayback,setVideoComponent]=useState(null);
+  const [videoThumbnail, setVideoThumbnail]=useState('');
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
   const { open } = state
@@ -146,7 +147,9 @@ function Recorder () {
     e.preventDefault();
 
     let form = new FormData();
+
     form.append('blob', recordedVideo);
+    form.append('thumb',videoThumbnail);
     form.append('id',toiaID);
     form.append('name',toiaName);
     form.append('language',toiaLanguage);
@@ -160,6 +163,7 @@ function Recorder () {
 
     resetTranscript();
     setRecordedChunks([]);
+    setVideoThumbnail('');
     dispatch({ type: 'close' });
 
     setSwitch('#e5e5e5');
@@ -460,17 +464,16 @@ const thumbnail_videoConstraints = {
     height: 315,
     facingMode: "user"
 };
-  const [image,setImage]=useState('');
+
  const WebcamCapture = () => {
 
 
     const webcamRef = React.useRef(null);
 
-
     const capture = React.useCallback(
         () => {
         const imageSrc = webcamRef.current.getScreenshot();
-        setImage(imageSrc)
+        setVideoThumbnail(imageSrc)
         });
 
 
@@ -478,7 +481,7 @@ const thumbnail_videoConstraints = {
         <div className="webcam-container">
             <div className="webcam-img">
 
-                {image == '' ? <Webcam
+                {videoThumbnail == '' ? <Webcam
                     audio={false}
                     height={315}
                     ref={webcamRef}
@@ -486,13 +489,13 @@ const thumbnail_videoConstraints = {
                     width={262.5}
                     videoConstraints={thumbnail_videoConstraints}
                     borderRadius = {5}
-                /> : <img src={image} />}
+                /> : <img src={videoThumbnail} />}
             </div>
             <div>
-                {image != '' ?
+                {videoThumbnail != '' ?
                     <button onClick={(e) => {
                         e.preventDefault();
-                        setImage('')
+                        setVideoThumbnail('');
                     }}
                         className="webcam-btn">
                         Retake Image</button> :
@@ -525,7 +528,7 @@ const thumbnail_videoConstraints = {
           <div id="typeOfVideo">Video Type: {videoTypeFormal}</div>
           <div id="questionOfVideo">Question being answered: "{questionSelected}"</div>
           <div id="privacyOfVideo">Privacy Settings: {privacyText}</div>
-          <div id="video_thumbnail"><button onClick={(event)=> {openModal2(event)}}>{image=='' ? "Click to create a thumbnail!" : "Click to edit your thumbnail!"}</button></div>
+          <div id="video_thumbnail"><button onClick={(event)=> {openModal2(event)}}>{videoThumbnail=='' ? "Click to create a thumbnail!" : "Click to edit your thumbnail!"}</button></div>
           <div id="divider"></div>
           {videoPlayback}
           {/* <video id="videoRecorded"></video> */}

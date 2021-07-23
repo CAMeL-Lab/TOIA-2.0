@@ -28,6 +28,7 @@ function SignUpPage() {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [cpass, setCPass] = useState('');
+  const [profilePic,setProfilePic] = useState();
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
   var [hasEmailError, setHasEmailError] = useState(false);
@@ -39,34 +40,28 @@ function SignUpPage() {
     e.preventDefault();
   }
 
-  function ErrorComponent_email() {
-    return <p>E-mail not found</p>
-  }
-
-  function ErrorComponent_pwd() {
-    return <p>Password not found</p>
-  }
-
   function submitHandler(event){
     event.preventDefault();
     if (pass === cpass){
-        axios.post(`${env['server-url']}/createTOIA`,
-          {
-            firstName:fname,
-            lastName:lname,
-            email,
-            pwd:pass,
-            language
-          }).then((res)=>{
-            history.push({
-              pathname: '/mytoia',
-              state: {
-                toiaName:fname,
-                toiaLanguage:language,
-                toiaID: res.data.new_toia_ID
-              }
-            });
+
+      let form = new FormData();
+      form.append('blob', profilePic);
+      form.append('firstName',fname);
+      form.append('lastName',lname);
+      form.append('email',email);
+      form.append('pwd', pass);
+      form.append('language', language);
+
+      axios.post(`${env['server-url']}/createTOIA`,form).then((res)=>{
+          history.push({
+            pathname: '/mytoia',
+            state: {
+              toiaName:fname,
+              toiaLanguage:language,
+              toiaID: res.data.new_toia_ID
+            }
           });
+        });
     }else{
       alert('Passwords need to match.');
     }
@@ -113,6 +108,17 @@ function SignUpPage() {
         input2 = event.target.value;
         break;
     }
+  }
+
+  function submitPic(event){
+    console.log('we here');
+    console.log(event.target.files[0]);
+    event.preventDefault();
+  }
+
+  function setImg(e){
+    setProfilePic(e.target.files[0]);
+    e.preventDefault();
   }
 
   function home() {
@@ -322,10 +328,10 @@ function SignUpPage() {
           />
           <div className="signup-photo-upload signup-font-class-1" //delete button, function TBD
           >
-            <form>
+            <form onSubmit={submitPic}>
               <label for="img">Upload profile picture:</label>
-              <input className= "signup-photo-upload-choose signup-font-class-1" type="file" id="img" name="img" accept="image/*"/>
-              <input className= "signup-photo-upload-submit signup-font-class-1" type="submit"/>
+              <input className= "signup-photo-upload-choose signup-font-class-1" type="file" id="img" name="img" accept="image/*" onChange={setImg}/>
+              {/* <input className= "signup-photo-upload-submit signup-font-class-1" type="submit"/> */}
             </form>
           </div>
           <input className="signup-button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>

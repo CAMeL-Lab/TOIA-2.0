@@ -97,7 +97,7 @@ function AvatarLibraryPage() {
 
       return(
           <div className="garden-carousel-card" id={card.id_stream} onClick={()=>{goToPlayer(card)}}>
-              <img src={sampleVideo} width="170" //stream thumbnail
+              <img src={card.pic} width="170" //stream thumbnail
               />
               <div>
                   <h1 className="t1 garden-font-class-2" //name of user

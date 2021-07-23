@@ -6,7 +6,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 require('dotenv').config();
-
+const stream = require('stream');
 const crypto = require('crypto');
 const path = require('path');
 const {Storage} = require('@google-cloud/storage');
@@ -15,6 +15,7 @@ var multiparty = require('multiparty');
 
 const cors = require('cors');
 const axios=require('axios');
+const { callbackify } = require('util');
 
 //Create an 'express' instance
 
@@ -63,21 +64,38 @@ let videoStore=gc.bucket(process.env.GC_BUCKET);
 
 app.post('/createTOIA',(req,res)=>{
 
-	let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${req.body.firstName}","${req.body.lastName}","${req.body.email}","${req.body.pwd}","${req.body.language}");`
-	connection.query(queryCreateTOIA, (err,entry,fields)=>{
-		if (err){
-			throw err;
-		}else{
-			let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
-			connection.query(queryAllStream, (err,stream_entry,fields)=>{
-				if (err){
-					throw err;
-				}else{
-					res.send({new_toia_ID: entry.insertId});
-				}
-			});
-		}
+
+    let form = new multiparty.Form();
+    form.parse(req, function(err, fields, file) {
+
+
+		// await videoStore.upload(file.blob[0].path, {
+		// 	destination: `Accounts/${fields.firstName[0]}_${fields.id[0]}/Videos/${videoID}`
+		// });
+
+		let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${fields.pwd[0]}","${fields.language[0]}");`
+		connection.query(queryCreateTOIA, (err,entry,responses)=>{
+			if (err){
+				throw err;
+			}else{
+				let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
+				connection.query(queryAllStream, async (err,stream_entry,field)=>{
+					if (err){
+						throw err;
+					}else{
+
+						await videoStore.upload(file.blob[0].path, {
+							destination: `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`
+						});
+
+						res.send({new_toia_ID: entry.insertId});
+					}
+				});
+			}
+		});
+
 	});
+
 });
 
 app.post('/login',(req,res)=>{
@@ -124,7 +142,38 @@ app.get('/getAllStreams',(req,res)=>{
 			throw err;
 		}
 		else{
-			res.send(entries);
+
+			console.log(entries);
+
+			let counter=0;
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+
+			function callback(){
+				res.send(entries);	
+			}
+
+		
+			entries.forEach((entry)=>{
+
+				videoStore.file(`Accounts/${entry.first_name}_${entry.id}/StreamPic/${entry.name}_${entry.id_stream}.jpg`).getSignedUrl(config, function(err, url) {
+					if (err) {
+						console.error(err);
+						return;
+					}else{
+							entry.pic=url;
+			
+							counter++;
+					
+							if(counter==entries.length){
+								callback();
+							}
+					}
+				});
+			});
 		}
 	});
 });
@@ -136,57 +185,152 @@ app.post('/getUserVideos',(req,res)=>{
 			throw err;
 		}
 		else{
-			res.send(entries);
+
+			let cnt=0;
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+
+			function callback(){
+				res.send(entries);	
+			}
+
+		
+			entries.forEach((entry)=>{
+
+				videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function(err, url) {
+					if (err) {
+						console.error(err);
+						return;
+					}else{
+							entry.pic=url;
+							cnt++;
+					
+							if(cnt==entries.length){
+								callback();
+							}
+					}
+				});
+			});
+
 		}		
 	});
 });
 
-app.post('/getUserStreams',(req,res)=>{
+app.post('/getUserStreams',async (req,res)=>{
 	let query_userStreams=`SELECT * FROM stream WHERE toia_id="${req.body.params.toiaID}";`;
-	connection.query(query_userStreams, (err,entries,fields)=>{
+	connection.query(query_userStreams, async (err,entries,fields)=>{
 		if (err){
 			throw err;
 		}
 		else{
-			res.send(entries);
+			let counter=0;
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+
+			function callback(){
+				res.send(entries);	
+			}
+
+		
+			entries.forEach((entry)=>{
+
+				videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`).getSignedUrl(config, function(err, url) {
+					if (err) {
+						console.error(err);
+						return;
+					}else{
+							entry.pic=url;
+							counter++;
+					
+							if(counter==entries.length){
+								callback();
+							}
+					}
+				});
+			});
+		
 		}		
 	});
 
 });
 
 app.post('/createNewStream',(req,res)=>{
-	
+
 	let privacySetting=0;
+    let form = new multiparty.Form();
 
-	if(req.body.params.newStreamPrivacy=='private'){
-		privacySetting=1;
-	}
-
-	let query_createStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("${req.body.params.newStreamName}",${req.body.params.toiaID},${privacySetting},0,0)`
-
-	connection.query(query_createStream, (err,entry,fields)=>{
-		if (err){
-			throw err;
+    form.parse(req, function(err, fields, file) {
+		if(fields.newStreamPrivacy[0]=='private'){
+			privacySetting=1;
 		}
-		else{
 
-			let query_allStreamsUpdated=`SELECT * FROM stream WHERE toia_id="${req.body.params.toiaID}";`
+		let query_createStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("${fields.newStreamName[0]}",${fields.toiaID[0]},${privacySetting},0,0)`
 
-			connection.query(query_allStreamsUpdated, (err,entries,fields)=>{
-				if (err){
-					throw err;
-				}
-				else{
-					res.send(entries);
-				}
-			});
-		}		
+		connection.query(query_createStream, async (err,entry,field)=>{
+			if (err){
+				throw err;
+			}
+			else{
+	
+				await videoStore.upload(file.blob[0].path, {
+					destination: `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${fields.newStreamName[0]}_${entry.insertId}.jpg`
+				});
+	
+				let query_allStreamsUpdated=`SELECT * FROM stream WHERE toia_id="${fields.toiaID[0]}";`
+	
+				connection.query(query_allStreamsUpdated, (err,entries,field)=>{
+					if (err){
+						throw err;
+					}
+					else{
+
+						let counter=0;
+
+						const config = {
+							action: 'read',
+							expires: '07-14-2022',
+						};
+			
+						function callback(){
+							res.send(entries);	
+						}
+			
+					
+						entries.forEach((streamEntry)=>{
+			
+							videoStore.file(`Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`).getSignedUrl(config, function(err, url) {
+								if (err) {
+									console.error(err);
+									return;
+								}else{
+										streamEntry.pic=url;
+						
+										counter++;
+								
+										if(counter==entries.length){
+											callback();
+										}
+								}
+							});
+						});
+
+					}
+				});
+			}		
+		});
+
+
 	});
-
 });
 
 app.post('/getStreamVideos', (req,res)=>{
-	let vidArr=[];
+
 	let query_streamVideos=`SELECT * FROM video INNER JOIN stream_has_video ON video.id_video=stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream=${req.body.params.streamID} ORDER BY idx DESC;`;
 
 	connection.query(query_streamVideos, (err,entries,fields)=>{
@@ -194,7 +338,36 @@ app.post('/getStreamVideos', (req,res)=>{
 			throw err;
 		}
 		else{
-			res.send(entries);
+
+			let cnt=0;
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+
+			function callback(){
+				res.send(entries);	
+			}
+
+		
+			entries.forEach((entry)=>{
+
+				videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function(err, url) {
+					if (err) {
+						console.error(err);
+						return;
+					}else{
+							entry.pic=url;
+							cnt++;
+					
+							if(cnt==entries.length){
+								callback();
+							}
+					}
+				});
+			});
+
 		}	
 	});
 });
@@ -288,12 +461,25 @@ app.post('/recorder',async (req,res)=>{
 				}
 	
 				crypto.pseudoRandomBytes(32, async function (err, raw) {
-					videoID=fields.name[0]+'_'+fields.id[0]+'_'+vidIndex+'_'+(raw.toString('hex') + Date.now()).slice(0,16)+'.mp4';
+					videoID=fields.name[0]+'_'+fields.id[0]+'_'+vidIndex+'_'+(raw.toString('hex') + Date.now()).slice(0,8)+'.mp4';
 	
-					
+					let bufferStream = new stream.PassThrough();
+					bufferStream.end(Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64'));
+
+					let videoThumbFile=videoStore.file(`Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/${videoID}`);
+
+					bufferStream.pipe(videoThumbFile.createWriteStream({
+						metadata: {
+						  contentType: 'image/jpeg'
+						}
+					  }))
+					  .on('error', function(err) {throw err;})
+					  .on('finish',()=>{console.log('Thumbnail uploaded!')});
+
 					await videoStore.upload(file.blob[0].path, {
 						destination: `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/${videoID}`
 					});
+
 
 					let query_saveVideo = `INSERT INTO video(id_video,question,answer,type,toia_id,idx,private,language,likes,views) VALUES("${videoID}","${fields.question[0]}","${fields.answer[0]}","${fields.videoType[0]}",${fields.id[0]},${vidIndex},${isPrivate},"${fields.language[0]}",0,0);`;
 

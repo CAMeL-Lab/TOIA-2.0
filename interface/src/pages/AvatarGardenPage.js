@@ -17,7 +17,6 @@ import {Modal, Button } from 'semantic-ui-react';
 // import Carousel from 'react-bootstrap/Carousel';
 import test_video from "../video/TOIA-LOGO-VID.mov"
 
-
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
 import env from './env.json';
@@ -39,6 +38,7 @@ function AvatarGardenPage() {
     const [newStreamName, setNewStreamName] = useState(null);
     const [newStreamPrivacy, setNewStreamPrivacy] = useState('public');
     const [newStreamBio, setNewStreamBio] = useState(null);
+    const [newStreamPic, setNewStreamPic] = useState();
 
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
@@ -56,17 +56,18 @@ function AvatarGardenPage() {
 
         axios.post(`${env['server-url']}/getUserVideos`,{
             params:{
-                toiaID: history.location.state.toiaID
+                toiaID: history.location.state.toiaID,
+                toiaName: history.location.state.toiaName
             }
         }).then((res)=>{
             setVideoList(res.data);
 
             axios.post(`${env['server-url']}/getUserStreams`,{
                 params:{
-                    toiaID: history.location.state.toiaID
+                    toiaID: history.location.state.toiaID,
+                    toiaName: history.location.state.toiaName
                 }
             }).then((res)=>{
-                console.log(res.data);
                 setStreamList(res.data);
             });
         });
@@ -172,30 +173,6 @@ function AvatarGardenPage() {
     const handleClose = () => {
         setAnchorEl(null);
     }
-    //
-
-    // var avatars = [ //This is a list that will hold the still image and name of avatar the user has created, needs to come from backend (Wahib)
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun"},
-    //     { still: sampleVideo, question: "What is your favourite sport?", album: "default business"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business personal"},
-    //     { still: sampleVideo, question: "What is your name?", album: "default business" },
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun personal"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default business"},
-    //     { still: sampleVideo, question: "How old are you?", album: "default personal"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default fun"},
-    //     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
-    //     { still: sampleVideo, question: "Where do you live?", album: "default business"},
-    //     ];
-
-    // var streams =[// This is a list of all the user streams
-    //     { still: sampleVideo, maker: toiaName, streamName: "All Stream", ppl: "8", heart:"5", thumbs: "3"},
-    //     { still: sampleVideo, maker: toiaName, streamName: "Professor Stream", ppl: "8", heart:"5", thumbs: "3"},
-    //     { still: sampleVideo, maker: toiaName, streamName: "Fun Stream", ppl: "8", heart:"5", thumbs: "3"},
-    //     { still: sampleVideo, maker: toiaName, streamName: "Abu Dhabi Stream", ppl: "8", heart:"5", thumbs: "3"},
-    // ]
 
     var settingData = [
         {name: "Nizar Habash", email:"nizar.habash@gmail.com", password:"habash123", language: "English"}
@@ -235,17 +212,21 @@ function AvatarGardenPage() {
     const renderStream = (card, index) => {//cards for streams
 
         let streamSetting;
-        if(card.id_stream!=1){
+        if(card.name!="All"){
             streamSetting= <div className ="garden-settings-buttons">
-            <button onClick={(event)=> {openModal3(event)}} className="stream-settings"><i class="fa fa-cog "></i></button>
-            <button onClick ={toggleEye} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
+            <button onClick={changeStreamSettings} className="stream-settings"><i class="fa fa-cog "></i></button>
+            <button onClick ={()=>{toggleEye(card)}} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
+            </div>;
+        }else{
+            streamSetting= <div className ="garden-settings-buttons">
+            <button onClick ={()=>{toggleEye(card)}} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
             </div>;
         }
 
         return(
 
             <div className="garden-carousel-card" id={card.id_stream}>
-                <img src={sampleVideo} width="170" //stream thumbnail
+                <img src={card.pic} width="170" //stream thumbnail
                 />
                 {streamSetting}
 
@@ -273,7 +254,7 @@ function AvatarGardenPage() {
     const renderCard = (card, index) => {//cards for videos
         return(
             <div className="row">
-                <div onClick={(event)=> {openModal5(event)}} className="column" style={{ backgroundImage: `url(${sampleVideo})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
+                <div onClick={(event)=> {openModal5(event)}} className="column" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
                 />
                 <div className="column garden-question">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
@@ -296,6 +277,8 @@ function AvatarGardenPage() {
 
         axios.post(`${env['server-url']}/getStreamVideos`,{
             params:{
+                toiaID: history.location.state.toiaID,
+                toiaName: history.location.state.toiaName,
                 streamID: currentItemObject.item.id
             }
         }).then((res)=>{
@@ -417,20 +400,26 @@ function AvatarGardenPage() {
         dispatch({ type: 'close' });
     }
 
-    function saveNewStream(e) {//this function saves all changes the user makes to the account settings
+    function setImg(e){
+        setNewStreamPic(e.target.files[0]);
         e.preventDefault();
+    }
 
-        axios.post(`${env['server-url']}/createNewStream`,{
-            params: {
-                toiaID,
-                newStreamName,
-                newStreamPrivacy,
-                newStreamBio
-            }
-        }).then((res)=>{
+    function saveNewStream(e) {//this function saves all changes the user makes to the account settings
+
+        let form = new FormData();
+        form.append('blob', newStreamPic);
+        form.append('newStreamName',newStreamName);
+        form.append('newStreamPrivacy', newStreamPrivacy);
+        form.append('newStreamBio',newStreamBio);
+        form.append('toiaID', toiaID);
+        form.append('toiaName', toiaName);
+
+        axios.post(`${env['server-url']}/createNewStream`,form).then((res)=>{
             setStreamList(res.data);
             dispatch4({ type: 'close' });
         });
+        e.preventDefault();
     }
 
     const inlineStyle = {
@@ -453,16 +442,21 @@ function AvatarGardenPage() {
     const [privacy_eye, setPrivacyEye] = useState('fa fa-eye');
     const [stream_privacy, setStreamPrivacy] = useState('Public');
 
-    function toggleEye() {
-      if(privacy_eye === "fa fa-eye"){
-        setPrivacyEye("fa fa-eye-slash");
-        setStreamPrivacy("Private")
-        console.log("work toggle eye test")
-      }else{
-        setPrivacyEye("fa fa-eye");
-        setStreamPrivacy("Public")
-        console.log("second case toggle eye test")
-      }
+    function toggleEye(card) {
+        console.log(card);
+        if(privacy_eye === "fa fa-eye"){
+            setPrivacyEye("fa fa-eye-slash");
+            setStreamPrivacy("Private")
+            console.log("work toggle eye test")
+        }else{
+            setPrivacyEye("fa fa-eye");
+            setStreamPrivacy("Public")
+            console.log("second case toggle eye test")
+        }
+    }
+
+    function changeStreamSettings(e){
+        openModal3(e);
     }
 
     return (
@@ -660,7 +654,7 @@ function AvatarGardenPage() {
                 >
                   <form>
                     <label for="img">Select image:</label>
-                    <input className= "stream-photo-upload-choose garden-font-class-2" type="file" id="img" name="img" accept="image/*"/>
+                    <input className= "stream-photo-upload-choose garden-font-class-2" type="file" id="img" name="img" accept="image/*" onChange={setImg}/>
                     <input className="stream-settings-save garden-font-class-2 stream-settings-text" onClick={saveNewStream} type="submit"/>
                   </form>
                 </div>
@@ -726,7 +720,7 @@ function AvatarGardenPage() {
                 >
                   <form>
                     <label for="img">Select image:</label>
-                    <input className= "stream-photo-upload-choose garden-font-class-2" type="file" id="img" name="img" accept="image/*"/>
+                    <input className= "stream-photo-upload-choose garden-font-class-2" type="file" id="img" name="img" accept="image/*" onChange={setImg}/>
                     <input className="stream-settings-save garden-font-class-2 stream-settings-text" onClick={saveNewStream} type="submit"/>
                   </form>
                 </div>
