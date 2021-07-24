@@ -92,9 +92,10 @@
 .library-grid {
   padding: 5px;
   overflow-y: auto;
-  height: 75%;
-  width: 96%;
-  left: 0%;
+  /* height: 75%; */
+  height: 100%;
+  width: 112.75%;
+  left: -2.5%;
   top: 20%;
   position: absolute;
   display: flex;
@@ -252,4 +253,87 @@ input[type ="text"]::placeholder {
   font-weight: 300;
   letter-spacing: -0.015em; */
 
+}
+
+.library-stream-image-sizing {
+  /* max-width:150px;
+  max-height:150px; */
+  width: 180px;
+  height: 230px;
+  border-radius:5px;
+  /* max-width: 85%; */
+  /* max-height: 85%; */
+  object-fit: cover;
+  cursor: pointer;
+}
+
+
+.library-stream-settings-name {
+  background-color: transparent;
+  height: 17px;
+  left: 24%;
+  position: absolute;
+  text-align: left;
+  top: 32%;
+  width: 78px;
+}
+.library-stream-settings-name_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 30%;
+  width: 400px;
+}
+.library-stream-settings-ln {
+  background-color: transparent;
+  height: 17px;
+  left: 20%;
+  position: absolute;
+  text-align: left;
+  top: 42%;
+  width: 78px;
+}
+.library-stream-settings-ln_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 41%;
+  width: 400px;
+}
+
+.library-stream-settings-bio {
+  background-color: transparent;
+  height: 17px;
+  left: 26.5%;
+  position: absolute;
+  text-align: left;
+  top: 52%;
+  width: 78px;
+}
+.library-stream-settings-bio_box {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 60px;
+  left: 33%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 52%;
+  width: 400px;
+  /* resize: none; */
+  resize: both;
 }

@@ -82,7 +82,7 @@ function AvatarViewPage() {
               toiaLanguage,
               toiaID
             }
-          });   
+          });
         }else{
           history.push({
             pathname: '/',
@@ -99,7 +99,7 @@ function AvatarViewPage() {
                 toiaLanguage,
                 toiaID
             }
-            });   
+            });
         }else{
             history.push({
             pathname: '/about',
@@ -116,7 +116,7 @@ function AvatarViewPage() {
                 toiaLanguage,
                 toiaID
             }
-            });   
+            });
         }else{
             history.push({
             pathname: '/library',
@@ -245,8 +245,8 @@ function AvatarViewPage() {
             </div>
             <div className = "about-team">
             <h1 className="about-heading">Meet The Team</h1>
-            <p className="about-text">The collection of researchers, both graduate and undegraduate, designers
-                and intelligent minds that came together to make TOIA possible </p>
+            {/*<p className="about-text">The collection of researchers, both graduate and undegraduate, designers
+                and intelligent minds that came together to make TOIA possible </p>*/}
             <div className ="about-grid" //videos
             >
                 {team.map(renderTeam)}

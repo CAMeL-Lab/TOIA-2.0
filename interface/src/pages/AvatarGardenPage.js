@@ -226,7 +226,7 @@ function AvatarGardenPage() {
         return(
 
             <div className="garden-carousel-card" id={card.id_stream}>
-                <img src={card.pic} width="170" //stream thumbnail
+                <img className = "stream-image-sizing" src={card.pic} width="170" //stream thumbnail
                 />
                 {streamSetting}
 
@@ -254,14 +254,14 @@ function AvatarGardenPage() {
     const renderCard = (card, index) => {//cards for videos
         return(
             <div className="row">
-                <div onClick={(event)=> {openModal5(event)}} className="column" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
+                <div onClick={(event)=> {openModal5(event)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
                 />
-                <div className="column garden-question">
+                <div className="column garden-question round-styling-second">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
                     />
                     <h1 className="garden-name garden-font-class-2" //question
                     >{card.question}</h1>
-                    
+
 
                     <button onClick={()=>edit(card)} className="garden-edit" //trash can
                     ><i class="fa fa-edit"></i></button>

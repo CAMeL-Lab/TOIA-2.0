@@ -59,9 +59,9 @@
   left:3%
 }
 .stream-heading{
-  left: 2.5%;
+  /* left: 1%; */
   position: absolute;
-  top: 12%;
+  top: 13.5%;
   font-size: 1.65rem;
 
   /* margin: 0 auto; */
@@ -213,9 +213,9 @@
 }
 
 .stream-add-text{
-  left: 22.5%;
+  left: 20.5%;
   position: absolute;
-  top: 76.5%;
+  top: 78%;
   font-size: 18px;
   color:#707070;
   /* width: 25%; */
@@ -282,9 +282,9 @@
 }
 .garden-stream {
   background-color: transparent;
-  left: 27.5%;
+  left: 25.5%;
   /* 61%; */
-  top: 66.5%;
+  top: 68%;
   /* 30%; */
   width: 70px;
   position: absolute;
@@ -356,6 +356,26 @@
   bottom: 6%;
 
 
+}
+
+
+.stream-image-sizing {
+  /* max-width:150px;
+  max-height:150px; */
+  width: 180px;
+  height: 230px;
+  border-radius:5px;
+  /* max-width: 85%; */
+  /* max-height: 85%; */
+  object-fit: cover;
+}
+
+.round-styling-first {
+  border-radius: 5px 0 0 5px;
+}
+
+.round-styling-second {
+  border-radius: 0 5px 5px 0;
 }
 
 /*searchbar*/
@@ -757,7 +777,7 @@
 .rec.rec-carousel-wrapper {
   width: 250px;
   position: relative;
-  top: 18%;
+  top: 17.5%;
   /* right:11%; */
   /* margin: 0 auto; */
   right: 17.5%;

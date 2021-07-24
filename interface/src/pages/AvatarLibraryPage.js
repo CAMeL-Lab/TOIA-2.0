@@ -30,6 +30,23 @@ function AvatarLibraryPage() {
     }
 
 
+    function exampleReducer3( state3, action ) { // for stream settings window
+        switch (action.type) {
+          case 'close':
+            return { open3: false };
+          case 'open':
+            return { open3: true };
+        }
+    }
+    const [state3, dispatch3] = React.useReducer(exampleReducer3, {open3: false,})
+    const { open3 } = state3
+
+    function openModal3(e){
+        dispatch3({ type: 'open' });
+        e.preventDefault();
+    }
+
+
     const [open2, dispatch2] = useState(false);// this is to open the view pop up
 
     function openModal2(e){
@@ -96,14 +113,14 @@ function AvatarLibraryPage() {
     const renderStream = (card, index) => {//cards for streams
 
       return(
-          <div className="garden-carousel-card" id={card.id_stream} onClick={()=>{goToPlayer(card)}}>
-              <img src={card.pic} width="170" //stream thumbnail
+          <div className="garden-carousel-card" id={card.id_stream} >
+              <img onClick={()=>{goToPlayer(card)}} src={card.pic} className="library-stream-image-sizing" //stream thumbnail
               />
               <div>
                   <h1 className="t1 garden-font-class-2" //name of user
                   >{card.first_name+' '+card.last_name}</h1>
                   <p className="t2 garden-font-class-2" //individual stream name
-                  ><i class="fa fa-info-circle"></i>{" "+card.name + " stream"}</p>
+                  ><button onClick = {openModal3} style ={{backgroundColor: "transparent", border: "transparent", cursor: "pointer"}}><i class="fa fa-info-circle"></i></button>{" "+card.name + " stream"}</p>
               </div>
               <br></br>
               <div className="garden-carousel-menu" //stats that appear under stream
@@ -276,6 +293,12 @@ function AvatarLibraryPage() {
           <h1>Search for a stream to talk to</h1>
         )
       }
+      const inlineStyleSetting = {
+          modal : {
+              height: '70vh',
+              width: '50vw',
+          }
+      };
 
     return (
         <div className="library-page">
@@ -406,6 +429,43 @@ function AvatarLibraryPage() {
                   </select>
                   <div className="library-view-button"><img src={submitButton}/></div>
                 </Modal.Content>
+             </Modal>
+             <Modal //This is the stream settings pop menu
+             size='large'
+             closeIcon={true}
+             style={inlineStyleSetting.modal}
+             open={open3}
+             onClose={() => dispatch3({ type: 'close' })}
+             >
+                 <Modal.Header className="login_header">
+                 <h1 className="login_welcome login-opensans-normal">All Stream </h1>
+                 <p className="login_blurb login-montserrat-black">Here is the following information about your stream</p>
+                 </Modal.Header>
+                 <Modal.Content>
+                     <div className="library-stream-settings-name garden-font-class-2"  //the name input field
+                     >Name: </div>
+                     <p
+                         className="library-stream-settings-name_box garden-font-class-2"
+                     >
+                     Stream Name </p>
+
+                     <div className="library-stream-settings-ln garden-font-class-2"
+                     >Language: </div>
+                     <p
+                         className="library-stream-settings-ln_box garden-font-class-2"
+                     >
+                     Stream Language </p>
+
+                     <div className="library-stream-settings-bio garden-font-class-2" //the language input field
+                     >Bio: </div>
+
+                     <p
+                         className="library-stream-settings-bio_box garden-font-class-2"
+                     > Stream Bio
+                     </p>
+
+
+                 </Modal.Content>
              </Modal>
              <div className="nav-heading-bar" //nav bar
              >
