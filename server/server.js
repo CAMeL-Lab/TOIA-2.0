@@ -117,7 +117,7 @@ app.post('/login',(req,res)=>{
 						throw err;
 					}
 					else{
-						console.log(entry);
+						
 						if(entry[0].password==req.body.pwd){
 							let userData={
 								toia_id:entry[0].id,
@@ -142,8 +142,6 @@ app.get('/getAllStreams',(req,res)=>{
 			throw err;
 		}
 		else{
-
-			console.log(entries);
 
 			let counter=0;
 
@@ -364,7 +362,7 @@ app.post('/getStreamVideos', (req,res)=>{
 				callback();
 			}
 
-			
+
 			entries.forEach((entry)=>{
 
 				videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function(err, url) {
@@ -383,6 +381,49 @@ app.post('/getStreamVideos', (req,res)=>{
 			});
 
 		}	
+	});
+});
+
+app.post('/getVideoPlayback',(req,res)=>{
+	
+	let query_getTOIAInfo=`SELECT * FROM video INNER JOIN toia_user ON video.toia_id=toia_user.id WHERE video.id_video="${req.body.params.playbackVideoID}"`;
+	
+	connection.query(query_getTOIAInfo,(err,entries,fields)=>{
+		if(err){
+			throw err;
+		}else{
+			console.log(entries);
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+	
+			videoStore.file(`Accounts/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`).getSignedUrl(config, function(err, url) {
+				if (err) {
+					console.error(err);
+					return;
+				}else{
+					let vidPrivacy;
+
+					if(entries[0].private==0){
+						vidPrivacy='Public';
+					}else{
+						vidPrivacy='Private';
+					}
+
+					let dataObj={
+						videoURL: url,
+						videoType: entries[0].type,
+						videoQuestion: entries[0].question,
+						videoAnswer: entries[0].answer,
+						videoPrivacy: vidPrivacy
+					}
+
+					res.send(dataObj);
+				}
+			});
+		}
 	});
 });
 

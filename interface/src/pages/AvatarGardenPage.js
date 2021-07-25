@@ -40,6 +40,12 @@ function AvatarGardenPage() {
     const [newStreamBio, setNewStreamBio] = useState(null);
     const [newStreamPic, setNewStreamPic] = useState();
 
+    const [playbackVideo, setPlaybackVideo]=useState(null);
+    const [playbackVideoType, setPlaybackVideoType]=useState(null);
+    const [playbackVideoQuestion, setPlaybackVideoQuestion]=useState(null);
+    const [playbackVideoAnswer, setPlaybackVideoAnswer]=useState(null);
+    const [playbackVideoPrivacy, setPlaybackVideoPrivacy]=useState(null);
+
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -157,6 +163,22 @@ function AvatarGardenPage() {
         e.preventDefault();
     }
 
+    function openPlayback(e,card){
+        axios.post(`${env['server-url']}/getVideoPlayback`,{
+            params:{
+                playbackVideoID: card.id_video,
+                playbackTOIAId: card.toia_id
+            }
+        }).then((res)=>{
+            setPlaybackVideo(res.data.videoURL);
+            setPlaybackVideoType(res.data.videoType.charAt(0).toUpperCase() + res.data.videoType.slice(1));
+            setPlaybackVideoQuestion(res.data.videoQuestion);
+            setPlaybackVideoAnswer(res.data.videoAnswer);
+            setPlaybackVideoPrivacy(res.data.videoPrivacy);
+            openModal5(e);
+        });
+    }
+
     const [anchorEl, setAnchorEl] = useState(null); //for list of streams drop down menu when you click on move icon
     const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -250,11 +272,11 @@ function AvatarGardenPage() {
 
         )
     };
-    let videoPlayback = <video id="playbackVideo" width="496" height="324" autoPlay controls><source src={test_video} type='video/mp4'></source></video>;
+    let videoPlayback = <video id="playbackVideo" width="496" height="324" autoPlay controls><source src={playbackVideo} type='video/mp4'></source></video>;
     const renderCard = (card, index) => {//cards for videos
         return(
             <div className="row">
-                <div onClick={(event)=> {openModal5(event)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
+                <div onClick={(e)=>{openPlayback(e,card)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
                 />
                 <div className="column garden-question round-styling-second">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
@@ -745,17 +767,16 @@ function AvatarGardenPage() {
                   <div>Video entry </div>
                   </Modal.Header>
                 <Modal.Content>
-                <div id="typeOfVideo">Video Type: Public</div>
-                <div id="questionOfVideo">Question being answered: "Q&A"</div>
-                <div id="privacyOfVideo">Privacy Settings: Public</div>
+                <div id="typeOfVideo">Video Type: {playbackVideoType}</div>
+                <div id="questionOfVideo">Question being answered: "{playbackVideoQuestion}"</div>
+                <div id="privacyOfVideo">Privacy Settings: {playbackVideoPrivacy}</div>
                 <div id="divider"></div>
                 {videoPlayback}
                 {/* <video id="videoRecorded"></video> */}
                 <div id="answerCorrection">The answer provided:</div>
                 <input
                   className="modal-ans font-class-1"
-                  placeholder="Testing"
-                  value="Testing"
+                  value={playbackVideoAnswer}
                   type={"text"}
                   // onChange={setAnswerValue}
                 />
