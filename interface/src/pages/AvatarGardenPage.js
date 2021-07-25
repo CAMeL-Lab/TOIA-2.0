@@ -864,7 +864,7 @@ function AvatarGardenPage() {
                 <div className ="garden-grid" // videos
                 >
                 <div onClick={add}><img className="garden-add" src={addButton} // add video button
-                /></div>
+                /><h1 className="video-text garden-font-class-3">Add Video</h1></div>
                     {videoList.map(renderCard)}
                 </div>
                 <div className="garden-hidden" style={{display: displayItem}} // hidden menu that appears when video is selected
@@ -895,7 +895,7 @@ function AvatarGardenPage() {
                     </div>
                 </div>
 
-                <h1 className="video-text garden-font-class-3">Add Video</h1>
+                {/*<h1 className="video-text garden-font-class-3">Add Video</h1>*/}
             </div>
         </div>
     );
