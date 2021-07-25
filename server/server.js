@@ -179,12 +179,14 @@ app.get('/getAllStreams',(req,res)=>{
 });
 
 app.post('/getUserVideos',(req,res)=>{
+	console.log("request received");
 	let query_userVideos=`SELECT * FROM video WHERE toia_id="${req.body.params.toiaID}" ORDER BY idx DESC;`;
 	connection.query(query_userVideos, (err,entries,fields)=>{
 		if (err){
 			throw err;
 		}
 		else{
+			console.log(entries);
 
 			let cnt=0;
 
@@ -194,7 +196,12 @@ app.post('/getUserVideos',(req,res)=>{
 			};
 
 			function callback(){
+				console.log(entries);
 				res.send(entries);	
+			}
+
+			if(cnt==entries.length){
+				callback();
 			}
 
 		
@@ -220,6 +227,7 @@ app.post('/getUserVideos',(req,res)=>{
 });
 
 app.post('/getUserStreams',async (req,res)=>{
+	console.log('request received');
 	let query_userStreams=`SELECT * FROM stream WHERE toia_id="${req.body.params.toiaID}";`;
 	connection.query(query_userStreams, async (err,entries,fields)=>{
 		if (err){
@@ -234,6 +242,7 @@ app.post('/getUserStreams',async (req,res)=>{
 			};
 
 			function callback(){
+				console.log(entries);
 				res.send(entries);	
 			}
 
@@ -350,7 +359,12 @@ app.post('/getStreamVideos', (req,res)=>{
 				res.send(entries);	
 			}
 
-		
+
+			if(cnt==entries.length){
+				callback();
+			}
+
+			
 			entries.forEach((entry)=>{
 
 				videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function(err, url) {
