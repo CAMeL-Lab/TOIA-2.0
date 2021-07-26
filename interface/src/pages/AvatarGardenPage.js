@@ -1,6 +1,6 @@
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Fuse from "fuse.js";
 import Carousel from 'react-elastic-carousel'
 import styled from "styled-components";
@@ -24,6 +24,7 @@ import './AvatarGardenPage.css';
 import wahib from "../images/wahib.jpg";
 import kertu from "../images/kertu.jpg";
 import erin from "../images/erin.jpeg";
+// import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 var cardSelected = [];//the videos selected to be edited or deleted
 
@@ -251,11 +252,46 @@ function AvatarGardenPage() {
         )
     };
     let videoPlayback = <video id="playbackVideo" width="496" height="324" autoPlay controls><source src={test_video} type='video/mp4'></source></video>;
+    // const ffmpeg = createFFmpeg({ log: true });
+    //
+    // const [ready, setReady] = useState(false);
+    // const [video, setVideo] = useState();
+    // const [gif, setGif] = useState();
+    //
+    //
+    // const load = async () => {
+    //   await ffmpeg.load();
+    //   setReady(true);
+    // };
+    //
+    // useEffect(() => {
+    //   load();
+    // }, []);
+    //
+    // const convertToGif = async () => {
+    //   ffmpeg.FS("writeFile", "video1.mp4", await fetchFile(test_video));
+    //   await ffmpeg.run(
+    //     "-i",
+    //     "video1.mp4",
+    //     "-t",
+    //     "2.5",
+    //     "-f",
+    //     "gif",
+    //     "out.gif"
+    //   );
+    //   const data = ffmpeg.FS("readFile", "out.gif");
+    //   const url = URL.createObjectURL(
+    //     new Blob([data.buffer], { type: "image/gif" })
+    //   );
+    //   setGif(url);
+    //
+    // };
+
     const renderCard = (card, index) => {//cards for videos
         return(
             <div className="row">
                 <div onClick={(event)=> {openModal5(event)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
-                />
+                ></div>
                 <div className="column garden-question round-styling-second">
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
                     />

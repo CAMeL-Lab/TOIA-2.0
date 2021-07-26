@@ -12,6 +12,8 @@ import { Multiselect } from 'multiselect-react-dropdown';
 import Switch from "react-switch";
 import env from './env.json';
 // import { Navbar, NavItem, NavDropdown, MenuItem, Nav, Container } from 'react-bootstrap';
+// import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
+import test_video from "../video/TOIA-LOGO-VID.mov"
 
 const videoConstraints = {
   width: 720,
@@ -510,6 +512,40 @@ const thumbnail_videoConstraints = {
     );
 };
 
+// const ffmpeg = createFFmpeg({ log: true });
+//
+// const [ready, setReady] = useState(false);
+// const [video, setVideo] = useState();
+// const [gif, setGif] = useState();
+//
+//
+// const load = async () => {
+//   await ffmpeg.load();
+//   setReady(true);
+// };
+//
+// useEffect(() => {
+//   load();
+// }, []);
+//
+// const convertToGif = async () => {
+//   ffmpeg.FS("writeFile", "video1.mp4", await fetchFile(test_video));
+//   await ffmpeg.run(
+//     "-i",
+//     "video1.mp4",
+//     "-t",
+//     "2.5",
+//     "-f",
+//     "gif",
+//     "out.gif"
+//   );
+//   const data = ffmpeg.FS("readFile", "out.gif");
+//   const url = URL.createObjectURL(
+//     new Blob([data.buffer], { type: "image/gif" })
+//   );
+//   setGif(url);
+//
+// };
 
 
   return (
