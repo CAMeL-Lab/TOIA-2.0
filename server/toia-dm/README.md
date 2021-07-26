@@ -19,12 +19,22 @@ brew install mysql
 Start MySql and launch mysql prompt. On Mac:
 ```bash
 mysql.server start
-mysql -uroot
+mysql_secure_installation
+```
+(follow the steps, nice way to install sql the secure way and can decide if you want to use password or not for root)
+```bash
+mysql -u root -p
+#omit p if didn't setup password
 ```
 Source db schema file:
 ```bash
-mysql.server startsource data/toia_db.sql
+mysql -u root -p < data/toia_db.sql
 ```
+You may need to run again
+```bash
+mysql -u root -p
+```
+
 Use toia db, and add some dummy data:
 ```bash
 use toia
@@ -47,10 +57,14 @@ Test using GET request to /dialogue_manager route, send json with body like belo
 } 
 ```
 
-Can do in command line using curl, or using postman (screenshot below)
+Can do in command line using curl, or using postman (screenshot below). Curl has a bug that I haven't figured out yet. It gives a 400 bad request error. Use Postman for now.
 ```bash
 curl -X GET -d @test/request.json -H "Content-Type: application/json" http://127.0.0.1:5000/dialogue_manager
 ```
 
 ![alt text](https://github.com/AMChierici/toia-dm/blob/main/test/img/postman.png "Postman screenshot")
 
+When you finish, remember to turn MySQL off:
+```bash
+mysql.server stop
+```
