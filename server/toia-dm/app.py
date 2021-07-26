@@ -74,11 +74,12 @@ def dialogue_manager():
                                      'likes',
                                      'views',
                                  ])
+        df_greetings = df_avatar[df_avatar['type'] == "greeting"]
 
         if query is None:
             return 'Please enter a query', 400
 
-        response = toia_answer(query, df_avatar)
+        response = toia_answer(query, df_avatar, df_greetings)
 
         answer = response[0]
         id_video = response[1]
