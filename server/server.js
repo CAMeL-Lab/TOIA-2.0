@@ -23,10 +23,10 @@ const app = express();
 const server = app.listen(process.env.PORT || 3001, () => console.log('Server is listening!'));
  
 app.use(express.urlencoded({extended: true}));
-app.use(cors());
 app.use(express.json());
 
 app.use(express.static('./public'));
+app.use(cors());
 
 let config;
 let connection;
@@ -62,7 +62,7 @@ const gc = new Storage({
 });
 let videoStore=gc.bucket(process.env.GC_BUCKET);
 
-app.post('/createTOIA',(req,res)=>{
+app.post('/createTOIA',cors(),(req,res)=>{
 
 
     let form = new multiparty.Form();
@@ -98,7 +98,7 @@ app.post('/createTOIA',(req,res)=>{
 
 });
 
-app.post('/login',(req,res)=>{
+app.post('/login',cors(),(req,res)=>{
 
 	let query_checkEmailExists=`SELECT COUNT(*) AS cnt FROM toia_user WHERE email="${req.body.email}";`
 
@@ -135,7 +135,7 @@ app.post('/login',(req,res)=>{
 	});
 });
 
-app.get('/getAllStreams',(req,res)=>{
+app.get('/getAllStreams',cors(),(req,res)=>{
 	let query_allStreams=`SELECT toia_user.id, toia_user.first_name, toia_user.last_name, stream.id_stream, stream.name, stream.likes, stream.views FROM stream LEFT JOIN toia_user ON toia_user.id = stream.toia_id WHERE stream.private=0 ORDER BY stream.name ASC;`
 	connection.query(query_allStreams, (err,entries,fields)=>{
 		if (err){
@@ -176,7 +176,7 @@ app.get('/getAllStreams',(req,res)=>{
 	});
 });
 
-app.post('/getUserVideos',(req,res)=>{
+app.post('/getUserVideos',cors(),(req,res)=>{
 	console.log("request received");
 	let query_userVideos=`SELECT * FROM video WHERE toia_id="${req.body.params.toiaID}" ORDER BY idx DESC;`;
 	connection.query(query_userVideos, (err,entries,fields)=>{
@@ -224,7 +224,7 @@ app.post('/getUserVideos',(req,res)=>{
 	});
 });
 
-app.post('/getUserStreams',async (req,res)=>{
+app.post('/getUserStreams',cors(),async (req,res)=>{
 	console.log('request received');
 	let query_userStreams=`SELECT * FROM stream WHERE toia_id="${req.body.params.toiaID}";`;
 	connection.query(query_userStreams, async (err,entries,fields)=>{
@@ -267,7 +267,7 @@ app.post('/getUserStreams',async (req,res)=>{
 
 });
 
-app.post('/createNewStream',(req,res)=>{
+app.post('/createNewStream',cors(),(req,res)=>{
 
 	let privacySetting=0;
     let form = new multiparty.Form();
@@ -336,7 +336,7 @@ app.post('/createNewStream',(req,res)=>{
 	});
 });
 
-app.post('/getStreamVideos', (req,res)=>{
+app.post('/getStreamVideos', cors(),(req,res)=>{
 
 	let query_streamVideos=`SELECT * FROM video INNER JOIN stream_has_video ON video.id_video=stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream=${req.body.params.streamID} ORDER BY idx DESC;`;
 
@@ -384,7 +384,7 @@ app.post('/getStreamVideos', (req,res)=>{
 	});
 });
 
-app.post('/getVideoPlayback',(req,res)=>{
+app.post('/getVideoPlayback',cors(),(req,res)=>{
 	
 	let query_getTOIAInfo=`SELECT * FROM video INNER JOIN toia_user ON video.toia_id=toia_user.id WHERE video.id_video="${req.body.params.playbackVideoID}"`;
 	
@@ -428,7 +428,7 @@ app.post('/getVideoPlayback',(req,res)=>{
 });
 
 
-app.post('/fillerVideo',(req,res)=>{
+app.post('/fillerVideo',cors(),(req,res)=>{
 
 	let query_getFiller=`SELECT * FROM video WHERE toia_id=${req.body.params.toiaIDToTalk} AND type="filler";`
 
@@ -458,7 +458,7 @@ app.post('/fillerVideo',(req,res)=>{
 });
 
 
-app.post('/player',(req,res)=>{
+app.post('/player',cors(),(req,res)=>{
 
 	axios.get(`${process.env.DM_ROUTE}`,{
 		data:{
@@ -485,7 +485,7 @@ app.post('/player',(req,res)=>{
 });
 
 
-app.post('/recorder',async (req,res)=>{
+app.post('/recorder',cors(),async (req,res)=>{
 	
 	let isPrivate;
 	let vidIndex;
