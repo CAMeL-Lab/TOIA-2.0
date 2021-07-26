@@ -364,8 +364,9 @@ function AvatarGardenPage() {
 
     /*navigations to pages from buttons*/
     function edit(video) {
+        console.log(video);
         history.push({
-          pathname: '/editrecorder',
+          pathname: '/recorder',
           state: {
             toiaName,
             toiaLanguage,
@@ -814,8 +815,8 @@ function AvatarGardenPage() {
               // >Here are your All stream videos!</h4>
             }
 
-            <h1 className="garden-notifications garden-font-class-3 " //welcome message
-            >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1>
+            {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
+            >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
               <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
             </div>
             <div className="section1">

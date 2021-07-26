@@ -55,6 +55,16 @@ function Recorder () {
   const [videoPlayback,setVideoComponent]=useState(null);
   const [videoThumbnail, setVideoThumbnail]=useState('');
 
+  const [editVideoID,setEditVideoID]=useState('');
+
+  const videoTypes={
+    'greeting':'Hello!',
+    'exit':'Bye!',
+    'answer':'Answer',
+    'y/n-answer':'Yes/No!',
+    'filler':'Filler'
+  }
+
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
   const { open } = state
 
@@ -91,6 +101,13 @@ function Recorder () {
     setName(history.location.state.toiaName);
     setLanguage(history.location.state.toiaLanguage);
     setTOIAid(history.location.state.toiaID);
+
+    if(history.location.state.videoID!=null){
+      let videoTypeEdit=history.location.state.videoType;
+      setVideoType(videoTypeEdit);
+      setVideoTypeFormal(videoTypes.videoTypeEdit);
+      setQuestionSelected(history.location.state.videoType);
+    }
 
     axios.post(`${env['server-url']}/getUserStreams`,{
       params:{
