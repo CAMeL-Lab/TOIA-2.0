@@ -10,7 +10,15 @@ cd toia-dm
 Install Conda environment using
 ```bash
 conda env create -f toia_dm.yml
+conda activate ds_toia
 ```
+And, for environment managers different than conda, use:
+```bash
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+```
+(P.S. to create requirements.txt, first create virtual environment with venv, then manually install dependancies neede with pip. Porting from conda doesn't work at all)
 
 Install MySql. On Mac:
 ```bash
