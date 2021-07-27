@@ -51,6 +51,7 @@ function SignUpPage() {
       form.append('email',email);
       form.append('pwd', pass);
       form.append('language', language);
+      console.log(form);
       axios.post(`${env['server-url']}/createTOIA`,form).then((res)=>{
           console.log(`Account created successfully ${res.data}`);
           history.push({

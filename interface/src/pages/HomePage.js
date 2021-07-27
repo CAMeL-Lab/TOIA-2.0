@@ -81,6 +81,8 @@ function HomePage() {
     }
 
     axios.post(`${env['server-url']}/login`,params).then(res=>{
+      console.log("Response successfully received!");
+      console.log(res.data);
       if(res.data==-1){
           //alert('Email not found');
         alert("Incorrect e-mail address.");
