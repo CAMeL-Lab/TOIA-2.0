@@ -109,6 +109,8 @@ function Player(){
     console.log(matched);
     
     if(matched>=2){
+      console.log("we here");
+      setMatched(0);
       setFillerPlaying(false);
       SpeechRecognition.stopListening();
       axios.post(`${env['server-url']}/player`,{
