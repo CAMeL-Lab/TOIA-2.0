@@ -1,6 +1,6 @@
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Fuse from "fuse.js";
 import Carousel from 'react-elastic-carousel'
 import styled from "styled-components";
@@ -24,6 +24,7 @@ import './AvatarGardenPage.css';
 import wahib from "../images/wahib.jpg";
 import kertu from "../images/kertu.jpg";
 import erin from "../images/erin.jpeg";
+// import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 var cardSelected = [];//the videos selected to be edited or deleted
 

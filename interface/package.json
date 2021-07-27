@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@brainhubeu/react-carousel": "^2.0.4",
+    "@ffmpeg/core": "^0.9.0",
+    "@ffmpeg/ffmpeg": "^0.9.8",
     "@google-cloud/storage": "^5.8.5",
     "@material-ui/core": "^4.11.3",
     "@testing-library/jest-dom": "^5.11.6",
