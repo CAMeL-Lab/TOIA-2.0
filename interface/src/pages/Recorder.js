@@ -116,6 +116,7 @@ function Recorder () {
           toiaID: history.location.state.toiaID
       }
     }).then((res)=>{
+      console.log(res.data);
       let streamsReceived=[];
       console.log("got daata");
       res.data.forEach((stream)=>{
@@ -125,6 +126,11 @@ function Recorder () {
       setListStreams([streamsReceived[0]]);
       setMainStreamVal([streamsReceived[0]]);
     });
+
+    console.log(history.location.state.toiaName);
+    console.log(history.location.state.toiaLanguage);
+    console.log(history.location.state.toiaID);
+
 
   },[]);
 
