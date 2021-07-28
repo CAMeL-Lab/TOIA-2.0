@@ -45,7 +45,7 @@ if(process.env.ENVIRONMENT=='production'){
 	connection = mysql.createConnection(config);
 
 }else if(process.env.ENVIRONMENT=='development'){
-
+	console.log('wohoo');
 	connection = mysql.createConnection({
 		host: process.env.DB_HOST,
 		user: process.env.DB_USERNAME,
@@ -460,6 +460,8 @@ app.post('/fillerVideo',cors(),(req,res)=>{
 
 app.post('/player',cors(),(req,res)=>{
 
+	console.log(req.body.params);
+
 	axios.get(`${process.env.DM_ROUTE}`,{
 		data:{
 			query: req.body.params.question,
@@ -467,6 +469,8 @@ app.post('/player',cors(),(req,res)=>{
 			stream_id: req.body.params.streamIdToTalk
 		}
 	}).then((videoDetails)=>{
+
+		console.log(videoDetails.data);
 
 		const config = {
 			action: 'read',
