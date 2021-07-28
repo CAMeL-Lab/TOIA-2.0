@@ -17,7 +17,7 @@ function Player(){
         case 'close':
           return { open: false };
         case 'open':
-          return { open: true }; 
+          return { open: true };
       }
   }
 
@@ -30,7 +30,7 @@ function Player(){
 
 
   const { transcript, resetTranscript } = useSpeechRecognition({commands});
-  
+
   const [toiaName, setName] = React.useState(null);
   const [toiaLanguage, setLanguage] = React.useState(null);
   const [interactionLanguage,setInteractionLanguage] = useState(null);
@@ -83,7 +83,7 @@ function Player(){
   function myChangeHandler(event){
       event.preventDefault();
       var name = event.target.name;
-  
+
       switch(name) {
         case "email":
           input1 = event.target.value;
@@ -102,12 +102,12 @@ function Player(){
   }
 
   function fetchData(){
-  
+
     if(transcript==question){
       setMatched(matched+1);
     }
     console.log(matched);
-    
+
     if(matched>=2){
       setFillerPlaying(false);
       SpeechRecognition.stopListening();
@@ -195,14 +195,14 @@ function Player(){
             toiaLanguage,
             toiaID
           }
-        });   
+        });
       }else{
         history.push({
           pathname: '/',
         });
       }
     }
-    
+
     function about() {
       if(isLoggedIn){
           history.push({
@@ -212,7 +212,7 @@ function Player(){
               toiaLanguage,
               toiaID
           }
-          });   
+          });
       }else{
           history.push({
           pathname: '/about',
@@ -229,14 +229,14 @@ function Player(){
               toiaLanguage,
               toiaID
           }
-          });   
+          });
       }else{
           history.push({
           pathname: '/library',
           });
       }
     }
-  
+
     function garden(e) {
       if (isLoggedIn) {
           history.push({
@@ -258,7 +258,7 @@ function Player(){
            pathname: '/',
          });
     }
-   
+
    function signup(){
       history.push({
         pathname: '/signup',
@@ -277,7 +277,7 @@ function Player(){
       <Modal //this is the new pop up menu
           size='large'
           style={inlineStyle.modal}
-          open={open} 
+          open={open}
           onClose={() => dispatch({ type: 'close' })}
       >
               <Modal.Header className="login_header">
@@ -332,7 +332,8 @@ function Player(){
         {/* <button onClick={()=>{SpeechRecognition.startListening({ continuous: true })}}>Start</button>
         <button onClick={fetchData}>Stop</button>
         <button onClick={resetTranscript}>Reset</button> */}
-        <button onClick={micStatusChange}>{micString}</button>
+        <button className = "mute-button" onClick={micStatusChange}>{micString}</button>
+        <button className = "skip-end-button" >Skip to End</button>
 
       </div>
     </div>
@@ -340,4 +341,3 @@ function Player(){
 }
 
 export default Player;
-
