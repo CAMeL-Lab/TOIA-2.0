@@ -1,7 +1,6 @@
 from flask import Flask, request
 import json
 import sqlalchemy as db
-import sqlalchemy
 from sqlalchemy.sql import text
 from google.cloud.sql.connector import connector
 import pymysql
@@ -38,7 +37,7 @@ elif os.environ.get("ENVIRONMENT")=="production":
         )
         return conn
 
-    ENGINE = sqlalchemy.create_engine(
+    ENGINE = db.create_engine(
         "mysql+pymysql://",
         creator=getconn,
     )
@@ -73,6 +72,9 @@ app = Flask(__name__)
 def dialogue_manager():
 
     if request.method == 'GET':
+        print(request)
+        print(request.get_json())
+
         raw_data = request.get_json()
         query = raw_data['query']
         avatar_id = raw_data['avatar_id']

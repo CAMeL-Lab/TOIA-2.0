@@ -113,6 +113,7 @@ function Player(){
       setMatched(0);
       setFillerPlaying(false);
       SpeechRecognition.stopListening();
+      console.log(question);
       axios.post(`${env['server-url']}/player`,{
         params:{
           toiaIDToTalk,
