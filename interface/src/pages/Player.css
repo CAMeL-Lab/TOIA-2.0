@@ -22,39 +22,40 @@
 .player-group {
   background-color: transparent;
   height: 700px;
-  left: 9%;
+  left: 50px;
   position: absolute;
-  top: 10%;
-  width: 1200px;
+  top: 80px;
+  width: 1180px;
 }
 .player-vid {
   background-color: transparent;
-  left: 0px;
+  left: 14%;
   position: absolute;
-  top: 16%;
-  width: 83vw;
-  height: 70vh;
+  top: 12.5%;
+  width: 73.5%;
+  height: 68%;
+  border-radius: 5px;
 }
 
 /*text*/
 .player-name {
   background-color: transparent;
   height: 50px;
-  left: 13%;
+  left: 21.5%;
   position: absolute;
   text-align: center;
   top: 0px;
-  width: 60vw;
+  width: 60%;
 }
 .player-lang {
   background-color: transparent;
   display: block;
   height: 29px;
-  left: 32%;
+  left: 36.5%;
   position: absolute;
   text-align: center;
   top: 7%;
-  width: 30vw;
+  width: 30%;
 }
 
 /*fonts*/
@@ -73,4 +74,17 @@
   font-style: normal;
   font-weight: 700;
   letter-spacing: -0.54px;
+}
+
+
+.mute-button {
+  position: absolute;
+  top: 82%;
+  left: 45%;
+}
+
+.skip-end-button {
+  position: absolute;
+  top: 82%;
+  left: 54%;
 }
