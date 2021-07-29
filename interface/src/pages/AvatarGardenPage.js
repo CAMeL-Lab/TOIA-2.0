@@ -24,6 +24,7 @@ import './AvatarGardenPage.css';
 import wahib from "../images/wahib.jpg";
 import kertu from "../images/kertu.jpg";
 import erin from "../images/erin.jpeg";
+import { Card } from '@material-ui/core';
 // import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 var cardSelected = [];//the videos selected to be edited or deleted
@@ -35,6 +36,7 @@ function AvatarGardenPage() {
     const [toiaID, setTOIAid] = useState(null);
     const [videoList,setVideoList]=useState([]);
     const [streamList,setStreamList]=useState([]);
+    const [suggestedQsList,setSuggestedQsList]=useState([]);
 
     const [newStreamName, setNewStreamName] = useState(null);
     const [newStreamPrivacy, setNewStreamPrivacy] = useState('public');
@@ -76,6 +78,14 @@ function AvatarGardenPage() {
                 }
             }).then((res)=>{
                 setStreamList(res.data);
+
+                axios.post(`${env['server-url']}/getUserSuggestedQs`,{
+                    params:{
+                        toiaID: history.location.state.toiaID
+                    }
+                }).then((res)=>{
+                    setSuggestedQsList(res.data);
+                });
             });
         });
 
@@ -177,6 +187,26 @@ function AvatarGardenPage() {
             setPlaybackVideoAnswer(res.data.videoAnswer);
             setPlaybackVideoPrivacy(res.data.videoPrivacy);
             openModal5(e);
+        });
+    }
+
+    function openSuggestion(e,card){
+
+        axios.post(`${env['server-url']}/removeSuggestedQ`,{
+            params:{
+                suggestedQID: card.id_question
+            }
+        }).then((res)=>{
+            history.push({
+                pathname: '/recorder',
+                state: {
+                    toiaName,
+                    toiaLanguage,
+                    toiaID,
+                    suggestedQuestion: card.question
+                  }
+            });
+
         });
     }
 
@@ -294,6 +324,19 @@ function AvatarGardenPage() {
         )
     };
 
+    const renderSuggestedQsCard = (card,index)=>{
+        return(
+            <div className="row" id={card.id_question}>
+                <div onClick={(e)=>{openSuggestion(e,card)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
+                />
+                <div className="column garden-question round-styling-second">
+                    <h1 className="garden-name garden-font-class-5" //question
+                    style = {{marginTop: "10px"}}>{card.question}</h1>
+                </div>
+            </div>
+        )
+    }
+
     function handleSelectCurrentStream(currentItemObject,currentPageIndex){
 
         axios.post(`${env['server-url']}/getStreamVideos`,{
@@ -372,8 +415,8 @@ function AvatarGardenPage() {
             toiaID,
             videoID: video.id_video,
             videoType: video.type,
-            question: video.question,
-            answer: video.answer
+            videoQuestion: video.question,
+            videoAnswer: video.answer
           }
         });
 
@@ -886,6 +929,7 @@ function AvatarGardenPage() {
                 >
                 <div onClick={add}><img className="garden-add" src={addButton} // add video button
                 /><h1 className="video-text garden-font-class-3">Add Video</h1></div>
+                    {suggestedQsList.map(renderSuggestedQsCard)}
                     {videoList.map(renderCard)}
                 </div>
                 <div className="garden-hidden" style={{display: displayItem}} // hidden menu that appears when video is selected
