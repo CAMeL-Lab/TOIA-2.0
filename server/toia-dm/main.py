@@ -14,18 +14,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-@app.route('/')
-
-def index():
-
-    result = {
-        'answer': 'I am great',
-        'id_video': 'Nawaz_31_18_13a37ce6.mp4'
-    }
-
-    json.dumps(result)
-    return result
-
 
 @app.route('/dialogue_manager', methods=['GET'])
 

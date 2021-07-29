@@ -110,6 +110,12 @@ function Recorder () {
       setVideoTypeFormal(videoTypes.videoTypeEdit);
       setQuestionSelected(history.location.state.videoType);
     }
+    console.log(history.location.state.suggestedQuestion);
+    if(history.location.state.suggestedQuestion!=null){
+      console.log('party');
+      setQuestionSelected(history.location.state.suggestedQuestion);
+      document.getElementById('video-text-box').value=history.location.state.suggestedQuestion;
+    }
 
     axios.post(`${env['server-url']}/getUserStreams`,{
       params:{

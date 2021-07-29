@@ -16,6 +16,7 @@ var multiparty = require('multiparty');
 const cors = require('cors');
 const axios=require('axios');
 const { callbackify } = require('util');
+const { ENETUNREACH } = require('constants');
 
 //Create an 'express' instance
 
@@ -64,6 +65,8 @@ let videoStore=gc.bucket(process.env.GC_BUCKET);
 
 app.post('/createTOIA',cors(),(req,res)=>{
 
+	let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?'];
+	let inserted=0;
 
     let form = new multiparty.Form();
     form.parse(req, function(err, fields, file) {
@@ -88,7 +91,20 @@ app.post('/createTOIA',cors(),(req,res)=>{
 							destination: `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`
 						});
 
-						res.send({new_toia_ID: entry.insertId});
+						suggestions.forEach((suggestedQ)=>{
+							let queryAddQs=`INSERT INTO question_suggestions(question, priority, toia_id) VALUES("${suggestedQ}",1,${entry.insertId});`
+							connection.query(queryAddQs,(err,responsiveness,answerreceived)=>{
+								if(err){
+									throw err;
+								}else{
+									inserted++;
+									
+									if(inserted==suggestions.length){
+										res.send({new_toia_ID: entry.insertId});
+									}
+								}
+							});
+						});
 					}
 				});
 			}
@@ -174,6 +190,59 @@ app.get('/getAllStreams',cors(),(req,res)=>{
 			});
 		}
 	});
+});
+
+app.post('/getUserSuggestedQs',cors(),(req,res)=>{
+
+	let query_fetchSuggestions=`SELECT id_question, question FROM question_suggestions WHERE toia_id="${req.body.params.toiaID}" ORDER BY id_question ASC;`
+	connection.query(query_fetchSuggestions, (err,entries,fields)=>{
+		if(err){
+			throw err;
+		}else{
+
+			let count=0;
+
+			const config = {
+				action: 'read',
+				expires: '07-14-2022',
+			};
+
+			function callback(){
+				res.send(entries);	
+			}
+
+			entries.forEach((entry)=>{
+
+				videoStore.file(`Placeholder/questionmark.png`).getSignedUrl(config, function(err, url) {
+					if (err) {
+						console.error(err);
+						return;
+					}else{
+							entry.pic=url;
+			
+							count++;
+					
+							if(count==entries.length){
+								callback();
+							}
+					}
+				});
+			});
+		}
+	});
+});
+
+app.post('/removeSuggestedQ',cors(),(req,res)=>{
+
+	let query_removeSuggestedQ=`DELETE FROM question_suggestions WHERE id_question="${req.body.params.suggestedQID}";`
+	connection.query(query_removeSuggestedQ, (err,entries,fields)=>{
+		if(err){
+			throw err;
+		}else{
+			res.send('Deleted successfully!');
+		}
+	});
+
 });
 
 app.post('/getUserVideos',cors(),(req,res)=>{
@@ -457,13 +526,12 @@ app.post('/fillerVideo',cors(),(req,res)=>{
 	});
 });
 
-
 app.post('/player',cors(),(req,res)=>{
 
 	console.log(req.body.params);
 
-	axios.get(`${process.env.DM_ROUTE}`,{
-		data:{
+	axios.post(`${process.env.DM_ROUTE}`,{
+		params:{
 			query: req.body.params.question,
 			avatar_id : req.body.params.toiaIDToTalk,
 			stream_id: req.body.params.streamIdToTalk
