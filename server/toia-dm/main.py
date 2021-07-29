@@ -12,42 +12,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+if os.environ.get("ENVIRONMENT")=="development":
+    SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
 
+    ENGINE = db.create_engine(SQL_URL)
+
+elif os.environ.get("ENVIRONMENT")=="production":
+
+    ENGINE=db.create_engine("{dbconnection}://{dbusername}:{dbpassword}@/{dbname}?unix_socket=/cloudsql/{dbinstancename}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbname=os.environ.get("DB_DATABASE"),dbinstancename=os.environ.get("DB_INSTANCE_CONNECTION_NAME")))
+
+CONNECTION = ENGINE.connect()
+METADATA = db.MetaData()
+VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
+
+print("Connected successfully!")
+
+app = Flask(__name__)
 
 @app.route('/dialogue_manager', methods=['POST'])
 
 def dialogue_manager():
-
-    if os.environ.get("ENVIRONMENT")=="development":
-        SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
-
-        ENGINE = db.create_engine(SQL_URL)
-
-    elif os.environ.get("ENVIRONMENT")=="production":
-
-        ENGINE=db.create_engine("{dbconnection}://{dbusername}:{dbpassword}@/{dbname}?unix_socket=/cloudsql/{dbinstancename}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbname=os.environ.get("DB_DATABASE"),dbinstancename=os.environ.get("DB_INSTANCE_CONNECTION_NAME")))
-
-        # def getconn() -> pymysql.connections.Connection:
-        #     conn: pymysql.connections.Connection = connector.connect(
-        #         os.environ.get("DB_INSTANCE_CONNECTION_NAME"),
-        #         "pymysql",
-        #         user=os.environ.get("DB_USERNAME"),
-        #         password=os.environ.get("DB_PASSWORD"),
-        #         db=os.environ.get("DB_DATABASE")
-        #     )
-        #     return conn
-
-        # ENGINE = db.create_engine(
-        #     "mysql+pymysql://",
-        #     creator=getconn,
-        # )
-
-    CONNECTION = ENGINE.connect()
-    METADATA = db.MetaData()
-    VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
-
-    print("Connected successfully!")
 
     if request.method == 'POST':
 
@@ -79,11 +63,13 @@ def dialogue_manager():
                                      'likes',
                                      'views',
                                  ])
+        
+        df_greetings = df_avatar[df_avatar['type'] == "greeting"]
 
         if query is None:
             return 'Please enter a query', 400
 
-        response = toia_answer(query, df_avatar)
+        response = toia_answer(query, df_avatar, df_greetings)
 
         answer = response[0]
         id_video = response[1]

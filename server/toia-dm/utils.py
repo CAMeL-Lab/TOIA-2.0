@@ -49,7 +49,7 @@ def calculate_similarity(text1, text2):
 
 
 
-def toia_answer(query, dataset, k=1):
+def toia_answer(query, dataset, df_greetings, k=1):
     doc = NLP(query)
     # if Greeting, greet
     if ['INTJ', 'UH'] in [[token.pos_, token.tag_] for token in doc]:    
