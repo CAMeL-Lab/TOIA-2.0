@@ -255,7 +255,7 @@ function AvatarViewPage() {
             With TOIA, you can create an online stream from the comfort of your home and connect with millions of people, anywhere in the world, anytime in the future.
             <br/>
             <br/>
-            TOIA is a project created at New York Univeristy Abu Dhabi’s Camel Lab.</p>
+            TOIA is a project created at <a href="https://nyuad.nyu.edu/en/">New York Univeristy Abu Dhabi’s</a> <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html">Camel Lab.</a></p>
             <img src={toia_logo} className = "toiaImage"/>
             <div className = "reference-links">
             <a href="#grid" className = "reference-item">Meet the Team</a>
@@ -302,12 +302,12 @@ function AvatarViewPage() {
 
 
 
-          {  // <div className = "logos">
-            // <a href="https://nyuad.nyu.edu/en/"><img src={nyuad} className = "nyuadImage"/></a>
-            // <a href="https://github.com/nizarhabash1/TOIA-NYUAD"><i className="fa fa-github gitImage"></i></a>
-            // <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel} className = "camelImage"/></a>
-            // </div>
-          }
+            <div className = "logos">
+            <a href="https://nyuad.nyu.edu/en/"><img src={nyuad} className = "nyuadImage"/></a>
+
+            <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel} className = "camelImage"/></a>
+            </div>
+
 
 
 
