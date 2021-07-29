@@ -12,64 +12,52 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-if os.environ.get("ENVIRONMENT")=="development":
-    SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
-
-    ENGINE = db.create_engine(SQL_URL)
-
-elif os.environ.get("ENVIRONMENT")=="production":
-
-    # conn = connector.connect(
-    #     os.environ.get("DB_INSTANCE_CONNECTION_NAME"),
-    #     "pymysql",
-    #     user=os.environ.get("DB_USERNAME"),
-    #     password=os.environ.get("DB_PASSWORD"),
-    #     db=os.environ.get("DB_DATABASE")
-    # )
-
-    def getconn() -> pymysql.connections.Connection:
-        conn: pymysql.connections.Connection = connector.connect(
-            os.environ.get("DB_INSTANCE_CONNECTION_NAME"),
-            "pymysql",
-            user=os.environ.get("DB_USERNAME"),
-            password=os.environ.get("DB_PASSWORD"),
-            db=os.environ.get("DB_DATABASE")
-        )
-        return conn
-
-    ENGINE = db.create_engine(
-        "mysql+pymysql://",
-        creator=getconn,
-    )
-
-    # ENGINE = sqlalchemy.create_engine(
-    #     # Equivalent URL:
-    #     # mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_path>/<cloud_sql_instance_name>
-    #     sqlalchemy.engine.url.URL.create(
-    #         drivername=os.environ.get("DB_CONNECTION"),
-    #         username=os.environ.get("DB_USERNAME"),  # e.g. "my-database-user"
-    #         password=os.environ.get("DB_PASSWORD"),  # e.g. "my-database-password"
-    #         database=os.environ.get("DB_DATABASE"),  # e.g. "my-database-name"
-    #         query={
-    #             "unix_socket": "/cloudsql/{}".format(
-    #                 "/cloudsql",  # e.g. "/cloudsql"
-    #                 os.environ.get("DB_INSTANCE_CONNECTION_NAME"))  # i.e "<PROJECT-NAME>:<INSTANCE-REGION>:<INSTANCE-NAME>"
-    #         }
-    #     )
-    # )
-
-
-CONNECTION = ENGINE.connect()
-METADATA = db.MetaData()
-VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
-
-
 app = Flask(__name__)
+
+@app.route('/')
+
+def index():
+
+    result = {
+        'answer': 'I am great',
+        'id_video': 'Nawaz_31_18_13a37ce6.mp4'
+    }
+
+    json.dumps(result)
+    return result
 
 
 @app.route('/dialogue_manager', methods=['GET'])
 
 def dialogue_manager():
+
+    if os.environ.get("ENVIRONMENT")=="development":
+        SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
+
+        ENGINE = db.create_engine(SQL_URL)
+
+    elif os.environ.get("ENVIRONMENT")=="production":
+
+        def getconn() -> pymysql.connections.Connection:
+            conn: pymysql.connections.Connection = connector.connect(
+                os.environ.get("DB_INSTANCE_CONNECTION_NAME"),
+                "pymysql",
+                user=os.environ.get("DB_USERNAME"),
+                password=os.environ.get("DB_PASSWORD"),
+                db=os.environ.get("DB_DATABASE")
+            )
+            return conn
+
+        ENGINE = db.create_engine(
+            "mysql+pymysql://",
+            creator=getconn,
+        )
+
+    CONNECTION = ENGINE.connect()
+    METADATA = db.MetaData()
+    VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
+
+    print("Connected successfully!")
 
     if request.method == 'GET':
         print(request)
