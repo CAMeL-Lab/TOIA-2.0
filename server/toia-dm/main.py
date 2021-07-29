@@ -15,7 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 
 
-@app.route('/dialogue_manager', methods=['GET'])
+@app.route('/dialogue_manager', methods=['POST'])
 
 def dialogue_manager():
 
@@ -26,20 +26,22 @@ def dialogue_manager():
 
     elif os.environ.get("ENVIRONMENT")=="production":
 
-        def getconn() -> pymysql.connections.Connection:
-            conn: pymysql.connections.Connection = connector.connect(
-                os.environ.get("DB_INSTANCE_CONNECTION_NAME"),
-                "pymysql",
-                user=os.environ.get("DB_USERNAME"),
-                password=os.environ.get("DB_PASSWORD"),
-                db=os.environ.get("DB_DATABASE")
-            )
-            return conn
+        ENGINE=db.create_engine("{dbconnection}://{dbusername}:{dbpassword}@/{dbname}?unix_socket=/cloudsql/{dbinstancename}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbname=os.environ.get("DB_DATABASE"),dbinstancename=os.environ.get("DB_INSTANCE_CONNECTION_NAME")))
 
-        ENGINE = db.create_engine(
-            "mysql+pymysql://",
-            creator=getconn,
-        )
+        # def getconn() -> pymysql.connections.Connection:
+        #     conn: pymysql.connections.Connection = connector.connect(
+        #         os.environ.get("DB_INSTANCE_CONNECTION_NAME"),
+        #         "pymysql",
+        #         user=os.environ.get("DB_USERNAME"),
+        #         password=os.environ.get("DB_PASSWORD"),
+        #         db=os.environ.get("DB_DATABASE")
+        #     )
+        #     return conn
+
+        # ENGINE = db.create_engine(
+        #     "mysql+pymysql://",
+        #     creator=getconn,
+        # )
 
     CONNECTION = ENGINE.connect()
     METADATA = db.MetaData()
@@ -47,11 +49,9 @@ def dialogue_manager():
 
     print("Connected successfully!")
 
-    if request.method == 'GET':
-        print(request)
-        print(request.get_json())
+    if request.method == 'POST':
 
-        raw_data = request.get_json()
+        raw_data = request.get_json()['params']
         query = raw_data['query']
         avatar_id = raw_data['avatar_id']
         stream_id = raw_data['stream_id']

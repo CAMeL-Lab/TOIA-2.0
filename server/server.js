@@ -65,7 +65,7 @@ let videoStore=gc.bucket(process.env.GC_BUCKET);
 
 app.post('/createTOIA',cors(),(req,res)=>{
 
-	let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?'];
+	let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
 	let inserted=0;
 
     let form = new multiparty.Form();
@@ -194,7 +194,7 @@ app.get('/getAllStreams',cors(),(req,res)=>{
 
 app.post('/getUserSuggestedQs',cors(),(req,res)=>{
 
-	let query_fetchSuggestions=`SELECT id_question, question FROM question_suggestions WHERE toia_id="${req.body.params.toiaID}" ORDER BY id_question ASC;`
+	let query_fetchSuggestions=`SELECT id_question, question FROM question_suggestions WHERE toia_id="${req.body.params.toiaID}" ORDER BY id_question ASC LIMIT 5;`
 	connection.query(query_fetchSuggestions, (err,entries,fields)=>{
 		if(err){
 			throw err;
@@ -536,6 +536,7 @@ app.post('/player',cors(),(req,res)=>{
 			avatar_id : req.body.params.toiaIDToTalk,
 			stream_id: req.body.params.streamIdToTalk
 		}
+		
 	}).then((videoDetails)=>{
 
 		console.log(videoDetails.data);
