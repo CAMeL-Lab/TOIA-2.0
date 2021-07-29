@@ -49,7 +49,8 @@
 }
 .nav-toia_icon {
   top: 0%;
-  left: 2.85%;
+  /* left: 2.85%; */
+  left: 40px;
   position: absolute;
   font-size: 28.4444px;
   line-height: 39px;
@@ -91,7 +92,7 @@
   justify-content: center;
   letter-spacing: -0.015em;
   height: 40px;
-  width: 120px;
+  width: 130px;
   border-radius: 3px;
   cursor: pointer;
   color: white;
@@ -109,7 +110,7 @@
   justify-content: center;
   letter-spacing: -0.015em;
   height: 40px;
-  width: 120px;
+  width: 145px;
   border-radius: 3px;
   cursor: pointer;
   color: white;
@@ -231,8 +232,8 @@
 }
 
 /*universal text*/
-.app-montserrat-black {
-  color: black;
+.app-monsterrat-black {
+  /* color: black; */
   font-family: "Montserrat", Helvetica, Arial, serif;
   font-style: normal;
 }

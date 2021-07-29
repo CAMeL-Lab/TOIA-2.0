@@ -280,12 +280,10 @@ function AvatarGardenPage() {
                 <div onClick={(e)=>{openPlayback(e,card)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
                 />
                 <div className="column garden-question round-styling-second">
+                    <h1 className="garden-name garden-font-class-5" //question
+                    style = {{marginTop: "10px"}}>{card.question}</h1>
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
                     />
-                    <h1 className="garden-name garden-font-class-2" //question
-                    >{card.question}</h1>
-
-
                     <button onClick={()=>edit(card)} className="garden-edit" //trash can
                     ><i class="fa fa-edit"></i></button>
                     <button onClick={(event) => {cardSelected.push(videoList[index].question); openModal(event)}} className="garden-delete" //trash can
@@ -882,7 +880,7 @@ function AvatarGardenPage() {
 
             </div>
             <div className="section2">
-                <input className="garden-search garden-search-text" type="text" placeholder="&#xF002;   Here are your All Stream videos" onChange={(event) => searchData(event.target.value)} // search bar
+                <input className="garden-search garden-search-text" type="text" placeholder="&#xF002;   " onChange={(event) => searchData(event.target.value)} // search bar
                 />
                 <div className ="garden-grid" // videos
                 >

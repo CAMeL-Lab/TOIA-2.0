@@ -11,9 +11,9 @@
 .library-page-setup {
   position: absolute;
   top: 80px;
-  width: 1220px;
+  width: 1200px;
   height: 700px;
-  left: 50px;
+  left: 40px;
 }
 .library-box:hover {
   transform: scale(1.05);
@@ -94,7 +94,7 @@
   overflow-y: auto;
   /* height: 75%; */
   height: 100%;
-  width: 112.75%;
+  width: 117.5%;
   left: -2.5%;
   top: 20%;
   position: absolute;
@@ -141,7 +141,7 @@
   width: 81vw; */
   /* left: 9%; */
   top: 11%;
-  width: 96%;
+  width: 100%;
   padding: 2px;
   font-size: 15px;
   margin: 5px 0;

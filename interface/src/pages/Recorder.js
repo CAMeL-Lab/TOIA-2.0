@@ -576,7 +576,7 @@ const thumbnail_videoConstraints = {
       <Modal //this is the new pop up menu
 
       size='large'
-      style={{position: "absolute", height: "80%",width: "70%", top:"2%", alignContent:"center"}}
+      style={{position: "absolute", height: "80%",width: "896px", top:"1.5%", alignContent:"center"}}
       open={open}
       onClose={handleClose}
       >
@@ -603,8 +603,13 @@ const thumbnail_videoConstraints = {
           </div> */}
           </Modal.Content>
           <Modal.Actions>
-          <Button color='green' inverted onClick={handleDownload}>
-              <i class="fa fa-check"></i>
+          <Button color='red' inverted onClick={handleClose} style ={{position: "relative", bottom: "4px"}}>
+              {/*<i class="fa fa-check"></i>*/}
+              <p>Discard</p>
+          </Button>
+          <Button color='green' inverted onClick={handleDownload} style ={{position: "relative", bottom: "4px"}}>
+              {/*<i class="fa fa-check"></i>*/}
+              <p>Save and Re-record</p>
           </Button>
           </Modal.Actions>
       </Modal>
@@ -627,6 +632,7 @@ const thumbnail_videoConstraints = {
           <Modal.Actions>
           <Button color='green' inverted onClick={() => dispatch2({ type: 'close' })}>
               <i class="fa fa-check"></i>
+
           </Button>
           </Modal.Actions>
       </Modal>

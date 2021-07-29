@@ -19,7 +19,7 @@ import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
 import axios from 'axios';
 import env from './env.json';
-
+import toia_logo from "../images/TOIA_Logo.png";
 
 function AvatarViewPage() {
 
@@ -49,14 +49,14 @@ function AvatarViewPage() {
 
     var team =[// This is a list of all members names and their accompanying pictures
 
-        { still: alberto, member: "Alberto C."},
-        { still: tyeece, member: "Tyeece H."},
-        { still: wahib, member: "Wahib K."},
-        { still: kertu, member: "Kertu K."},
-        { still: armaan, member: "Armaan A."},
-        { still: goffredo, member: "Goffredo P."},
-        { still: erin, member: "Erin C."},
-        { still: nizar, member: "Nizar H."},
+        { still: alberto, member: "Alberto Chierici"},
+        { still: tyeece, member: "Tyeece Hensley"},
+        { still: wahib, member: "Wahib Kamran"},
+        { still: kertu, member: "Kertu Koss"},
+        { still: armaan, member: "Armaan Agrawal"},
+        { still: erin, member: "Erin Collins"},
+        { still: goffredo, member: "Goffredo Puccetti"},
+        { still: nizar, member: "Nizar Habash"},
 
     ]
 
@@ -244,31 +244,44 @@ function AvatarViewPage() {
                 </div>
             </div>
             <div className = "about-team">
-            <h1 className="about-heading">Meet The Team</h1>
-            {/*<p className="about-text">The collection of researchers, both graduate and undegraduate, designers
-                and intelligent minds that came together to make TOIA possible </p>*/}
+            {/*<h1 className="about-heading">Meet The Team</h1>*/}
+            <h1 className="about-heading">TOIA ... Communication reimagined</h1>
+            <p className="about-text">Imagine being able to share your story with your great grandchildren. <br/>
+            Imagine being able to interview for thousands of jobs simultaneously.
+            <br/>
+            <br/>
+            TOIAs are interactive applications that allow communication across time and space.
+            <br/>
+            With TOIA, you can create an online stream from the comfort of your home and connect with millions of people, anywhere in the world, anytime in the future.
+            <br/>
+            <br/>
+            TOIA is a project created at New York Univeristy Abu Dhabi’s Camel Lab.</p>
+            <img src={toia_logo} className = "toiaImage"/>
+            <div className = "reference-links">
+            <a href="#grid" className = "reference-item">Meet the Team</a>
+            <a href="#scholarly" className = "reference-item">Publications</a>
+            <a href="https://github.com/wahibkamran/TOIA-2.0" className = "reference-item">Github Repo</a>
+            </div>
+            </div>
+
+            <div id = "grid">
+            <h1 className="grid-heading">The TOIA Team</h1>
             <div className ="about-grid" //videos
             >
                 {team.map(renderTeam)}
             </div>
             </div>
 
-            <div className = "logos">
-            <a href="https://nyuad.nyu.edu/en/"><img src={nyuad} className = "nyuadImage"/></a>
-            <a href="https://github.com/nizarhabash1/TOIA-NYUAD"><i className="fa fa-github gitImage"></i></a>
-            <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel} className = "camelImage"/></a>
-            </div>
 
-
-            <div className = "publications">
+            <div id = "scholarly">
             <p className="publication-links">Publication Links </p>
-            <ul>
+            <ul className = "publications">
                 <li>
                 Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,
                 SIGdial, April 2021 <a href={sigDail}>[PDF]</a>
 
                 </li>
-                <li >
+                <li>
                 Nizar Habash and Alberto Chierchi, A View From the Crowd: Evaluation Challenges for Time-Offset Interaction Applications,
                 Association for Computational Linguistics, April 2021, <a href="https://www.aclweb.org/anthology/2021.humeval-1.9.pdf">[PDF]</a>
                 <a href="https://www.aclweb.org/anthology/2021.humeval-1.9.bib">[BIB]</a>
@@ -286,6 +299,17 @@ function AvatarViewPage() {
             </ul>
 
             </div>
+
+
+
+          {  // <div className = "logos">
+            // <a href="https://nyuad.nyu.edu/en/"><img src={nyuad} className = "nyuadImage"/></a>
+            // <a href="https://github.com/nizarhabash1/TOIA-NYUAD"><i className="fa fa-github gitImage"></i></a>
+            // <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel} className = "camelImage"/></a>
+            // </div>
+          }
+
+
 
         </div>
 

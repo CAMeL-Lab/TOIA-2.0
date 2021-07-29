@@ -1,6 +1,6 @@
 .player {
   background-color: white;
-  height: 100vh;
+  height: 100%;
   margin: 0px;
   min-height: 700px;
   min-width: 1440px;
@@ -20,19 +20,25 @@
   cursor: pointer;
 }
 .player-group {
-  background-color: transparent;
+  /* background-color: transparent;
   height: 700px;
   left: 50px;
   position: absolute;
   top: 80px;
-  width: 1180px;
+  width: 1180px; */
+  background-color: transparent;
+  height: 700px;
+  left: 40px;
+  position: absolute;
+  top: 80px;
+  width: 1200px;
 }
 .player-vid {
   background-color: transparent;
-  left: 14%;
+  left: 15%;
   position: absolute;
   top: 12.5%;
-  width: 73.5%;
+  width: 70%;
   height: 68%;
   border-radius: 5px;
 }
@@ -41,21 +47,23 @@
 .player-name {
   background-color: transparent;
   height: 50px;
-  left: 21.5%;
+  /* left: 21.5%; */
   position: absolute;
   text-align: center;
   top: 0px;
-  width: 60%;
+  /* width: 60%; */
+  width: 100%;
 }
 .player-lang {
   background-color: transparent;
   display: block;
   height: 29px;
-  left: 36.5%;
+  /* left: 36.5%; */
   position: absolute;
   text-align: center;
   top: 7%;
-  width: 30%;
+  /* width: 30%; */
+  width: 100%;
 }
 
 /*fonts*/
@@ -80,11 +88,15 @@
 .mute-button {
   position: absolute;
   top: 82%;
-  left: 45%;
+  left: 40%;
+  width: 8%;
+  height: 25px;
 }
 
 .skip-end-button {
   position: absolute;
   top: 82%;
-  left: 54%;
+  left: 52%;
+  width: 8%;
+  height: 25px;
 }
