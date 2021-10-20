@@ -89,7 +89,7 @@ srsly==2.4.1
 stevedore==3.3.0
 tabulate==0.8.7
 terminado==0.10.1
-thinc==8.0.4
+thinc==8.0.8
 threadpoolctl==2.2.0
 toml==0.10.2
 tomlkit==0.7.2
