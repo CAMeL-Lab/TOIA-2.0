@@ -69,97 +69,150 @@ const gc = new Storage({
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
+if (process.env.ENVIRONMENT == 'development'){
+    app.post('/createTOIA', cors(), (req, res, next) => {
+        let suggestions = ['Record a filler video!', 'Record a greeting!', 'Where are you from?', 'Do you have any hobbies?', 'Do you have any siblings?', 'What is your favorite food?', 'What is your life goal?', 'What is the most exciting place you have been to?', 'Do you have any pets?', 'What is your favorite movie?'];
+        let inserted = 0;
 
-app.post('/createTOIA', cors(), (req, res, next) => {
-    let suggestions = ['Record a filler video!', 'Record a greeting!', 'Where are you from?', 'Do you have any hobbies?', 'Do you have any siblings?', 'What is your favorite food?', 'What is your life goal?', 'What is the most exciting place you have been to?', 'Do you have any pets?', 'What is your favorite movie?'];
-    let inserted = 0;
+        // Temporary location to store the user display picture
+        const tempFileName = "newUserAvatar3907.jpg";
+        const tempFileLocation = 'tmp_avatar/';
+        const storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+                cb(null, tempFileLocation)
+            },
+            filename: function (req, file, cb) {
+                cb(null, tempFileName)
+            }
+        })
 
-    // Temporary location to store the user display picture
-    const tempFileName = "newUserAvatar3907.jpg";
-    const tempFileLocation = 'tmp_avatar/';
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, tempFileLocation)
-        },
-        filename: function (req, file, cb) {
-            cb(null, tempFileName)
-        }
-    })
+        const uploadStreamPhoto = multer({storage: storage}).single('blob');
+        uploadStreamPhoto(req, res, function (error) {
+            if (error) {
+                console.log(error);
+                res.sendStatus(500);
+            }
 
-    const uploadStreamPhoto = multer({storage: storage}).single('blob');
-    uploadStreamPhoto(req, res, function (error) {
-        if (error) {
-            console.log(error);
-            res.sendStatus(500);
-        }
-
-        let queryCreateTOIA = `INSERT INTO toia_user(first_name, last_name, email, password, language)
+            let queryCreateTOIA = `INSERT INTO toia_user(first_name, last_name, email, password, language)
                                VALUES ("${req.body.firstName}", "${req.body.lastName}", "${req.body.email}",
                                        "${req.body.pwd}", "${req.body.language}");`
-        connection.query(queryCreateTOIA, (err, entry, responses) => {
-            if (err) {
-                throw err;
-            } else {
-                let queryAllStream = `INSERT INTO stream(name, toia_id, private, likes, views)
+            connection.query(queryCreateTOIA, (err, entry, responses) => {
+                if (err) {
+                    throw err;
+                } else {
+                    let queryAllStream = `INSERT INTO stream(name, toia_id, private, likes, views)
                                       VALUES ("All", ${entry.insertId}, 0, 0, 0);`
-                connection.query(queryAllStream, async (err, stream_entry, field) => {
-                    if (err) {
-                        throw err;
-                    } else {
+                    connection.query(queryAllStream, async (err, stream_entry, field) => {
+                        if (err) {
+                            throw err;
+                        } else {
 
-                        let fileRealDest = `Accounts/${req.body.firstName}_${entry.insertId}/StreamPic/`
-                        let fileName = `All_${stream_entry.insertId}.jpg`;
+                            let fileRealDest = `Accounts/${req.body.firstName}_${entry.insertId}/StreamPic/`
+                            let fileName = `All_${stream_entry.insertId}.jpg`;
 
-                        if (customFunctions.isEmptyObject(req.file)) {
-                            suggestions.forEach((suggestedQ) => {
-                                let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
+                            if (customFunctions.isEmptyObject(req.file)) {
+                                suggestions.forEach((suggestedQ) => {
+                                    let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
                                                   VALUES ("${suggestedQ}", 1, ${entry.insertId});`
-                                connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
-                                    if (err) {
+                                    connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
+                                        if (err) {
+                                            throw err;
+                                        } else {
+                                            inserted++;
+
+                                            if (inserted === suggestions.length) {
+                                                res.send({new_toia_ID: entry.insertId});
+                                            }
+                                        }
+                                    });
+                                });
+                            } else {
+                                fs.rename(tempFileLocation + tempFileName, tempFileLocation + fileName, () => {
+                                    // send Absolute file path
+                                    customFunctions.moveFile(__dirname + '/' + tempFileLocation, __dirname + '/' + fileRealDest, fileName).then(
+                                        () => {
+                                            suggestions.forEach((suggestedQ) => {
+                                                let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
+                                                              VALUES ("${suggestedQ}", 1, ${entry.insertId});`
+                                                connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
+                                                    if (err) {
+                                                        throw err;
+                                                    } else {
+                                                        inserted++;
+
+                                                        if (inserted === suggestions.length) {
+                                                            res.send({new_toia_ID: entry.insertId});
+                                                        }
+                                                    }
+                                                });
+                                            });
+                                        },
+                                        error => {
+                                            console.log(error);
+                                            res.send("Something went wrong!");
+                                        }
+                                    );
+                                })
+                            }
+                        }
+                    });
+                }
+            });
+        })
+    });
+
+} else {
+    app.post('/createTOIA',cors(),(req,res)=>{
+
+        let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
+        let inserted=0;
+
+        let form = new multiparty.Form();
+        form.parse(req, function(err, fields, file) {
+
+
+            // await videoStore.upload(file.blob[0].path, {
+            // 	destination: `Accounts/${fields.firstName[0]}_${fields.id[0]}/Videos/${videoID}`
+            // });
+
+            let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${fields.pwd[0]}","${fields.language[0]}");`
+            connection.query(queryCreateTOIA, (err,entry,responses)=>{
+                if (err){
+                    throw err;
+                }else{
+                    let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
+                    connection.query(queryAllStream, async (err,stream_entry,field)=>{
+                        if (err){
+                            throw err;
+                        }else{
+
+                            await videoStore.upload(file.blob[0].path, {
+                                destination: `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`
+                            });
+
+                            suggestions.forEach((suggestedQ)=>{
+                                let queryAddQs=`INSERT INTO question_suggestions(question, priority, toia_id) VALUES("${suggestedQ}",1,${entry.insertId});`
+                                connection.query(queryAddQs,(err,responsiveness,answerreceived)=>{
+                                    if(err){
                                         throw err;
-                                    } else {
+                                    }else{
                                         inserted++;
 
-                                        if (inserted === suggestions.length) {
+                                        if(inserted==suggestions.length){
                                             res.send({new_toia_ID: entry.insertId});
                                         }
                                     }
                                 });
                             });
-                        } else {
-                            fs.rename(tempFileLocation + tempFileName, tempFileLocation + fileName, () => {
-                                // send Absolute file path
-                                customFunctions.moveFile(__dirname + '/' + tempFileLocation, __dirname + '/' + fileRealDest, fileName).then(
-                                    () => {
-                                        suggestions.forEach((suggestedQ) => {
-                                            let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
-                                                              VALUES ("${suggestedQ}", 1, ${entry.insertId});`
-                                            connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
-                                                if (err) {
-                                                    throw err;
-                                                } else {
-                                                    inserted++;
-
-                                                    if (inserted === suggestions.length) {
-                                                        res.send({new_toia_ID: entry.insertId});
-                                                    }
-                                                }
-                                            });
-                                        });
-                                    },
-                                    error => {
-                                        console.log(error);
-                                        res.send("Something went wrong!");
-                                    }
-                                );
-                            })
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
+
         });
-    })
-});
+
+    });
+}
 
 app.post('/login', cors(), (req, res) => {
 
