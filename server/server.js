@@ -63,32 +63,41 @@ if (process.env.ENVIRONMENT == 'production') {
     connection.connect();
 }
 
+// if on development, server static files
+var dir = path.join(__dirname, 'Accounts/');
+if (process.env.ENVIRONMENT == "development"){
+    app.use(express.static(dir));
+}
+
 const gc = new Storage({
     keyFilename: path.join(__dirname, "/toia-capstone-2021-a17d9d7dd482.json"),
     projectId: 'toia-capstone-2021'
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
+// User registration: Use local storage for storing display picture when in development mode
 if (process.env.ENVIRONMENT == 'development'){
     app.post('/createTOIA', cors(), (req, res, next) => {
         let suggestions = ['Record a filler video!', 'Record a greeting!', 'Where are you from?', 'Do you have any hobbies?', 'Do you have any siblings?', 'What is your favorite food?', 'What is your life goal?', 'What is the most exciting place you have been to?', 'Do you have any pets?', 'What is your favorite movie?'];
         let inserted = 0;
 
-        // Temporary location to store the user display picture
-        const tempFileName = "newUserAvatar3907.jpg";
+        // Temporary location to store user's display picture
+        const tempFileName = "newUserAvatar" + Math.floor(Math.random() * 1000) + ".jpg"; // create a random name
         const tempFileLocation = 'tmp_avatar/';
+
         const storage = multer.diskStorage({
             destination: function (req, file, cb) {
-                cb(null, tempFileLocation)
+                cb(null, tempFileLocation) // temp location
             },
             filename: function (req, file, cb) {
-                cb(null, tempFileName)
+                cb(null, tempFileName) // temp file name
             }
         })
 
         const uploadStreamPhoto = multer({storage: storage}).single('blob');
         uploadStreamPhoto(req, res, function (error) {
             if (error) {
+                // error handling
                 console.log(error);
                 res.sendStatus(500);
             }
@@ -107,10 +116,13 @@ if (process.env.ENVIRONMENT == 'development'){
                             throw err;
                         } else {
 
+                            // actual file name and destination for user's display picture
                             let fileRealDest = `Accounts/${req.body.firstName}_${entry.insertId}/StreamPic/`
                             let fileName = `All_${stream_entry.insertId}.jpg`;
 
+                            // User may or may not upload a file when registering. If they don't we skip the upload part
                             if (customFunctions.isEmptyObject(req.file)) {
+                                // If user hasn't uploaded a display picture
                                 suggestions.forEach((suggestedQ) => {
                                     let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
                                                   VALUES ("${suggestedQ}", 1, ${entry.insertId});`
@@ -127,10 +139,14 @@ if (process.env.ENVIRONMENT == 'development'){
                                     });
                                 });
                             } else {
+                                // If user has uploaded a display picture
+                                // rename the uploaded file at temp location to match the actual file name
                                 fs.rename(tempFileLocation + tempFileName, tempFileLocation + fileName, () => {
-                                    // send Absolute file path
+                                    // move the renamed file from temp location to the actual destination where display pictures are saved.
+                                    // Note: send Absolute file path to the function below
                                     customFunctions.moveFile(__dirname + '/' + tempFileLocation, __dirname + '/' + fileRealDest, fileName).then(
                                         () => {
+                                            // move file was successful
                                             suggestions.forEach((suggestedQ) => {
                                                 let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
                                                               VALUES ("${suggestedQ}", 1, ${entry.insertId});`
@@ -148,6 +164,8 @@ if (process.env.ENVIRONMENT == 'development'){
                                             });
                                         },
                                         error => {
+                                            // moving file failed. send an error message
+                                            // TODO: handle the error differently. If this error is caused, questions aren't added to question_suggestions table and user id isn't returned.
                                             console.log(error);
                                             res.send("Something went wrong!");
                                         }
@@ -160,8 +178,8 @@ if (process.env.ENVIRONMENT == 'development'){
             });
         })
     });
-
 } else {
+    // For development, use gcloud
     app.post('/createTOIA',cors(),(req,res)=>{
 
         let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
@@ -412,7 +430,6 @@ app.post('/getUserVideos', cors(), (req, res) => {
 });
 
 app.post('/getUserStreams', cors(), async (req, res) => {
-    console.log('request received');
     let query_userStreams = `SELECT *
                              FROM stream
                              WHERE toia_id = "${req.body.params.toiaID}";`;
@@ -428,13 +445,18 @@ app.post('/getUserStreams', cors(), async (req, res) => {
             };
 
             function callback() {
-                console.log(entries);
                 res.send(entries);
             }
 
-
             entries.forEach((entry) => {
+                // send local storage image when in development
+                if (process.env.ENVIRONMENT == "development"){
+                    entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
+                    callback();
+                    return;
+                }
 
+                // send gcloud image when in production
                 videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
