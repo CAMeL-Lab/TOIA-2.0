@@ -64,9 +64,11 @@ if (process.env.ENVIRONMENT == 'production') {
 }
 
 // if on development, server static files
-var dir = path.join(__dirname, 'Accounts/');
+var localAccountsDir = path.join(__dirname, 'Accounts/');
+var localAssetsDir = path.join(__dirname, 'assets/');
 if (process.env.ENVIRONMENT == "development"){
-    app.use(express.static(dir));
+    app.use(express.static(localAccountsDir));
+    app.use(express.static(localAssetsDir));
 }
 
 const gc = new Storage({
@@ -210,6 +212,17 @@ app.get('/getAllStreams', cors(), (req, res) => {
 
             entries.forEach((entry) => {
 
+                // send local storage image when in development
+                if (process.env.ENVIRONMENT == "development"){
+                    entry.pic = `/${entry.first_name}_${entry.id}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
+                    counter++;
+
+                    if (counter == entries.length) {
+                        callback();
+                    }
+                    return;
+                }
+
                 videoStore.file(`Accounts/${entry.first_name}_${entry.id}/StreamPic/${entry.name}_${entry.id_stream}.jpg`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
@@ -252,6 +265,17 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
             }
 
             entries.forEach((entry) => {
+
+                // send local storage image when in development
+                if (process.env.ENVIRONMENT == "development"){
+                    entry.pic = `/Placeholder/questionmark.jpg`;
+                    count++;
+
+                    if (count == entries.length) {
+                        callback();
+                    }
+                    return;
+                }
 
                 videoStore.file(`Placeholder/questionmark.png`).getSignedUrl(config, function (err, url) {
                     if (err) {
@@ -317,6 +341,17 @@ app.post('/getUserVideos', cors(), (req, res) => {
 
             entries.forEach((entry) => {
 
+                // send local storage image when in development
+                if (process.env.ENVIRONMENT == "development"){
+                    entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
+                    cnt++;
+
+                    if (cnt == entries.length) {
+                        callback();
+                    }
+                    return;
+                }
+
                 videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
@@ -359,7 +394,11 @@ app.post('/getUserStreams', cors(), async (req, res) => {
                 // send local storage image when in development
                 if (process.env.ENVIRONMENT == "development"){
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
-                    callback();
+                    counter++;
+
+                    if (counter == entries.length) {
+                        callback();
+                    }
                     return;
                 }
 
@@ -510,6 +549,17 @@ app.post('/getStreamVideos', cors(), (req, res) => {
 
             entries.forEach((entry) => {
 
+                // send local storage image when in development
+                if (process.env.ENVIRONMENT == "development"){
+                    entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
+                    cnt++;
+
+                    if (cnt == entries.length) {
+                        callback();
+                    }
+                    return;
+                }
+
                 videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
@@ -547,6 +597,28 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
                 expires: '07-14-2022',
             };
 
+            if (process.env.ENVIRONMENT == "development"){
+                let vidPrivacy;
+                let url = `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`;
+
+                if (entries[0].private == 0) {
+                    vidPrivacy = 'Public';
+                } else {
+                    vidPrivacy = 'Private';
+                }
+
+                let dataObj = {
+                    videoURL: url,
+                    videoType: entries[0].type,
+                    videoQuestion: entries[0].question,
+                    videoAnswer: entries[0].answer,
+                    videoPrivacy: vidPrivacy
+                }
+
+                res.send(dataObj);
+                return;
+            }
+
             videoStore.file(`Accounts/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`).getSignedUrl(config, function (err, url) {
                 if (err) {
                     console.error(err);
@@ -575,7 +647,6 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
     });
 });
 
-
 app.post('/fillerVideo', cors(), (req, res) => {
 
     let query_getFiller = `SELECT *
@@ -587,13 +658,21 @@ app.post('/fillerVideo', cors(), (req, res) => {
         if (err) {
             throw err;
         } else {
-
+            if (entries.length == 0) {
+                res.send("No Videos");
+                return;
+            }
             console.log(entries[Math.floor(Math.random() * entries.length)].id_video);
 
             const config = {
                 action: 'read',
                 expires: '07-14-2022',
             };
+
+            if (process.env.ENVIRONMENT == "development"){
+                res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`);
+                return;
+            }
 
             videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`).getSignedUrl(config, function (err, url) {
                 if (err) {
@@ -603,7 +682,6 @@ app.post('/fillerVideo', cors(), (req, res) => {
                     res.send(url);
                 }
             });
-
         }
     });
 });
@@ -628,6 +706,11 @@ app.post('/player', cors(), (req, res) => {
             expires: '07-14-2022',
         };
 
+        if (process.env.ENVIRONMENT == "development"){
+            res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
+            return;
+        }
+
         videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`).getSignedUrl(config, function (err, url) {
             if (err) {
                 console.error(err);
@@ -638,7 +721,6 @@ app.post('/player', cors(), (req, res) => {
         });
     });
 });
-
 
 app.post('/recorder', cors(), async (req, res) => {
 
@@ -676,23 +758,51 @@ app.post('/recorder', cors(), async (req, res) => {
                     let bufferStream = new stream.PassThrough();
                     bufferStream.end(Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64'));
 
-                    let videoThumbFile = videoStore.file(`Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/${videoID}`);
-
-                    bufferStream.pipe(videoThumbFile.createWriteStream({
-                        metadata: {
-                            contentType: 'image/jpeg'
-                        }
-                    }))
-                        .on('error', function (err) {
-                            throw err;
-                        })
-                        .on('finish', () => {
-                            console.log('Thumbnail uploaded!')
+                    if (process.env.ENVIRONMENT == "development"){
+                        let thumbDest = `Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/`;
+                        let thumbName = videoID + ".jpg";
+                        mkdirp(thumbDest).then((error) => {
+                            var buf = Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64');
+                            fs.writeFile(thumbDest + thumbName, buf, (error) => {
+                                if (error){
+                                    console.log(error);
+                                }
+                            });
                         });
+                    } else {
+                        let videoThumbFile = videoStore.file(`Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/${videoID}`);
 
-                    await videoStore.upload(file.blob[0].path, {
-                        destination: `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/${videoID}`
-                    });
+                        bufferStream.pipe(videoThumbFile.createWriteStream({
+                            metadata: {
+                                contentType: 'image/jpeg'
+                            }
+                        }))
+                            .on('error', function (err) {
+                                throw err;
+                            })
+                            .on('finish', () => {
+                                console.log('Thumbnail uploaded!')
+                            });
+                    }
+
+
+                    // save file to local storage during development
+                    if (process.env.ENVIRONMENT == "development"){
+                        let dest = `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/`;
+                        let destFileName = videoID;
+                        mkdirp(dest).then(() => {
+                            fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                                if (error){
+                                    console.log(error);
+                                }
+                            });
+                        });
+                    } else {
+                        // save file to google cloud when in production
+                        await videoStore.upload(file.blob[0].path, {
+                            destination: `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/${videoID}`
+                        });
+                    }
 
 
                     let query_saveVideo = `INSERT INTO video(id_video, question, answer, type, toia_id, idx, private,
@@ -715,12 +825,12 @@ app.post('/recorder', cors(), async (req, res) => {
                                         throw err;
                                     } else {
                                         console.log(`Video linked to stream "${streamToLink.name}"`);
+                                        res.sendStatus(200);
                                     }
                                 });
                             });
                         }
                     });
-
                 });
             }
         });
