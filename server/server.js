@@ -75,162 +75,71 @@ const gc = new Storage({
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
-// User registration: Use local storage for storing display picture when in development mode
-if (process.env.ENVIRONMENT == 'development'){
-    app.post('/createTOIA', cors(), (req, res, next) => {
-        let suggestions = ['Record a filler video!', 'Record a greeting!', 'Where are you from?', 'Do you have any hobbies?', 'Do you have any siblings?', 'What is your favorite food?', 'What is your life goal?', 'What is the most exciting place you have been to?', 'Do you have any pets?', 'What is your favorite movie?'];
-        let inserted = 0;
+// For development, use gcloud
+app.post('/createTOIA',cors(),(req,res)=>{
+    let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
+    let inserted=0;
 
-        // Temporary location to store user's display picture
-        const tempFileName = "newUserAvatar" + Math.floor(Math.random() * 1000) + ".jpg"; // create a random name
-        const tempFileLocation = 'tmp_avatar/';
-
-        const storage = multer.diskStorage({
-            destination: function (req, file, cb) {
-                cb(null, tempFileLocation) // temp location
-            },
-            filename: function (req, file, cb) {
-                cb(null, tempFileName) // temp file name
-            }
-        })
-
-        const uploadStreamPhoto = multer({storage: storage}).single('blob');
-        uploadStreamPhoto(req, res, function (error) {
-            if (error) {
-                // error handling
-                console.log(error);
-                res.sendStatus(500);
-            }
-
-            let queryCreateTOIA = `INSERT INTO toia_user(first_name, last_name, email, password, language)
-                               VALUES ("${req.body.firstName}", "${req.body.lastName}", "${req.body.email}",
-                                       "${req.body.pwd}", "${req.body.language}");`
-            connection.query(queryCreateTOIA, (err, entry, responses) => {
-                if (err) {
-                    throw err;
-                } else {
-                    let queryAllStream = `INSERT INTO stream(name, toia_id, private, likes, views)
-                                      VALUES ("All", ${entry.insertId}, 0, 0, 0);`
-                    connection.query(queryAllStream, async (err, stream_entry, field) => {
-                        if (err) {
-                            throw err;
-                        } else {
-
-                            // actual file name and destination for user's display picture
-                            let fileRealDest = `Accounts/${req.body.firstName}_${entry.insertId}/StreamPic/`
-                            let fileName = `All_${stream_entry.insertId}.jpg`;
-
-                            // User may or may not upload a file when registering. If they don't we skip the upload part
-                            if (customFunctions.isEmptyObject(req.file)) {
-                                // If user hasn't uploaded a display picture
-                                suggestions.forEach((suggestedQ) => {
-                                    let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
-                                                  VALUES ("${suggestedQ}", 1, ${entry.insertId});`
-                                    connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
-                                        if (err) {
-                                            throw err;
-                                        } else {
-                                            inserted++;
-
-                                            if (inserted === suggestions.length) {
-                                                res.send({new_toia_ID: entry.insertId});
-                                            }
-                                        }
-                                    });
-                                });
-                            } else {
-                                // If user has uploaded a display picture
-                                // rename the uploaded file at temp location to match the actual file name
-                                fs.rename(tempFileLocation + tempFileName, tempFileLocation + fileName, () => {
-                                    // move the renamed file from temp location to the actual destination where display pictures are saved.
-                                    // Note: send Absolute file path to the function below
-                                    customFunctions.moveFile(__dirname + '/' + tempFileLocation, __dirname + '/' + fileRealDest, fileName).then(
-                                        () => {
-                                            // move file was successful
-                                            suggestions.forEach((suggestedQ) => {
-                                                let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id)
-                                                              VALUES ("${suggestedQ}", 1, ${entry.insertId});`
-                                                connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
-                                                    if (err) {
-                                                        throw err;
-                                                    } else {
-                                                        inserted++;
-
-                                                        if (inserted === suggestions.length) {
-                                                            res.send({new_toia_ID: entry.insertId});
-                                                        }
-                                                    }
-                                                });
-                                            });
-                                        },
-                                        error => {
-                                            // moving file failed. send an error message
-                                            // TODO: handle the error differently. If this error is caused, questions aren't added to question_suggestions table and user id isn't returned.
-                                            console.log(error);
-                                            res.send("Something went wrong!");
-                                        }
-                                    );
-                                })
-                            }
-                        }
-                    });
-                }
-            });
-        })
-    });
-} else {
-    // For development, use gcloud
-    app.post('/createTOIA',cors(),(req,res)=>{
-
-        let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
-        let inserted=0;
-
-        let form = new multiparty.Form();
-        form.parse(req, function(err, fields, file) {
+    let form = new multiparty.Form();
+    form.parse(req, function(err, fields, file) {
 
 
-            // await videoStore.upload(file.blob[0].path, {
-            // 	destination: `Accounts/${fields.firstName[0]}_${fields.id[0]}/Videos/${videoID}`
-            // });
+        // await videoStore.upload(file.blob[0].path, {
+        // 	destination: `Accounts/${fields.firstName[0]}_${fields.id[0]}/Videos/${videoID}`
+        // });
 
-            let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${fields.pwd[0]}","${fields.language[0]}");`
-            connection.query(queryCreateTOIA, (err,entry,responses)=>{
-                if (err){
-                    throw err;
-                }else{
-                    let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
-                    connection.query(queryAllStream, async (err,stream_entry,field)=>{
-                        if (err){
-                            throw err;
-                        }else{
+        let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${fields.pwd[0]}","${fields.language[0]}");`
+        connection.query(queryCreateTOIA, (err,entry,responses)=>{
+            if (err){
+                throw err;
+            }else{
+                let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
+                connection.query(queryAllStream, async (err,stream_entry,field)=>{
+                    if (err){
+                        throw err;
+                    }else{
 
-                            await videoStore.upload(file.blob[0].path, {
-                                destination: `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`
-                            });
-
-                            suggestions.forEach((suggestedQ)=>{
-                                let queryAddQs=`INSERT INTO question_suggestions(question, priority, toia_id) VALUES("${suggestedQ}",1,${entry.insertId});`
-                                connection.query(queryAddQs,(err,responsiveness,answerreceived)=>{
-                                    if(err){
-                                        throw err;
-                                    }else{
-                                        inserted++;
-
-                                        if(inserted==suggestions.length){
-                                            res.send({new_toia_ID: entry.insertId});
-                                        }
+                        // save file to local storage during development
+                        if (process.env.ENVIRONMENT == "development"){
+                            let dest = `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/`;
+                            let destFileName = `All_${stream_entry.insertId}.jpg`;
+                            mkdirp(dest).then(() => {
+                                fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                                    if (error){
+                                        console.log(error);
                                     }
                                 });
                             });
+                        } else {
+                            // save file to google cloud when in production
+                            await videoStore.upload(file.blob[0].path, {
+                                destination: `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`
+                            });
                         }
-                    });
-                }
-            });
 
+                        suggestions.forEach((suggestedQ)=>{
+                            let queryAddQs=`INSERT INTO question_suggestions(question, priority, toia_id) VALUES("${suggestedQ}",1,${entry.insertId});`
+                            connection.query(queryAddQs,(err,responsiveness,answerreceived)=>{
+                                if(err){
+                                    throw err;
+                                }else{
+                                    inserted++;
+
+                                    if(inserted==suggestions.length){
+                                        res.send({new_toia_ID: entry.insertId});
+                                    }
+                                }
+                            });
+                        });
+                    }
+                });
+            }
         });
 
     });
-}
+
+});
+
 
 app.post('/login', cors(), (req, res) => {
 
@@ -380,7 +289,6 @@ app.post('/removeSuggestedQ', cors(), (req, res) => {
 });
 
 app.post('/getUserVideos', cors(), (req, res) => {
-    console.log("request received");
     let query_userVideos = `SELECT *
                             FROM video
                             WHERE toia_id = "${req.body.params.toiaID}"
@@ -495,9 +403,22 @@ app.post('/createNewStream', cors(), (req, res) => {
                 throw err;
             } else {
 
-                await videoStore.upload(file.blob[0].path, {
-                    destination: `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${fields.newStreamName[0]}_${entry.insertId}.jpg`
-                });
+                // save file to local storage during development
+                if (process.env.ENVIRONMENT == "development"){
+                    let dest = `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/`;
+                    let destFileName = `${fields.newStreamName[0]}_${entry.insertId}.jpg`;
+                    mkdirp(dest).then(() => {
+                        fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                            if (error){
+                                console.log(error);
+                            }
+                        });
+                    });
+                } else {
+                    await videoStore.upload(file.blob[0].path, {
+                        destination: `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${fields.newStreamName[0]}_${entry.insertId}.jpg`
+                    });
+                }
 
                 let query_allStreamsUpdated = `SELECT *
                                                FROM stream
@@ -521,6 +442,17 @@ app.post('/createNewStream', cors(), (req, res) => {
 
 
                         entries.forEach((streamEntry) => {
+
+                            // send local storage image when in development
+                            if (process.env.ENVIRONMENT == "development"){
+                                streamEntry.pic = `/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`;
+                                counter++;
+
+                                if (counter == entries.length) {
+                                    callback();
+                                }
+                                return;
+                            }
 
                             videoStore.file(`Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`).getSignedUrl(config, function (err, url) {
                                 if (err) {
@@ -794,8 +726,4 @@ app.post('/recorder', cors(), async (req, res) => {
             }
         });
     });
-});
-
-app.get('/test', (req, res) => {
-    res.send("Hello world");
 });

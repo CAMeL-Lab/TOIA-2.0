@@ -9,7 +9,8 @@ module.exports = {
             return true;
         }
     },
-    moveFile: function (originalPath, newPath, fileName) {
+    moveFile: function (originalPath, newPath, fileName, newFileName=null) {
+        if (newFileName == null) newFileName = fileName;
         return new Promise(function (resolve, reject) {
             mkdirp(newPath).then(() => {
                 fs.readFile(originalPath + fileName, function (err, fileContent) {
@@ -17,7 +18,7 @@ module.exports = {
                         reject(err);
                         throw err;
                     }
-                    fs.writeFile(newPath + fileName, fileContent, function (err) {
+                    fs.writeFile(newPath + newFileName, fileContent, function (err) {
                         if (err) {
                             reject(err);
                             throw err;
