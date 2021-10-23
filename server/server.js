@@ -75,7 +75,6 @@ const gc = new Storage({
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
-// For development, use gcloud
 app.post('/createTOIA',cors(),(req,res)=>{
     let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
     let inserted=0;
