@@ -1,0 +1,276 @@
+video {
+  display: inline;
+  position: relative;
+}
+.edit-layout {
+  position: relative;
+  left: 39%;
+  top: 25%;
+  border-radius: 10px;
+}
+.edit-record-page {
+  background-color: white;
+  height: 100vh;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+.edit-font-class-1 {
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+}
+.edit-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
+}
+.edit-title {
+  background-color: transparent;
+  height: auto;
+  left: 37%;
+  position: absolute;
+  text-align: center;
+  top: 3%;
+  width: 350px;
+}
+
+/*Icons*/
+.edit-icon {
+  display: block;
+  position: absolute;
+  left: 39%;
+  top: 61.5%;
+  width: 48px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0;
+  color: rgb(240, 16, 16);
+}
+.edit-check {
+  display: block;
+  position: absolute;
+  left: 84%;
+  top: 60%;
+  width: 80px;
+  font-size: 40px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0;
+  color: var(--check-green);
+}
+
+/*Side Buttons*/
+.side-bar {
+  /* height: 80vh; */
+  /* height: 600px;
+  width: 30vw;
+  top: 12%;
+  left: 3%;
+  position: absolute; */
+  height: 600px;
+  width: 450px;
+  /* top: 120px; */
+  top: 80px;
+  left: 50px;
+  position: absolute;
+
+}
+.side-button {
+  /* height: 6vh;
+  width: 12vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease-out; */
+  height: 10%;
+  width: 35%;
+  /* display: inline-block; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 15px 5px 0; */
+  border-radius: 15px;
+  cursor: pointer;
+    /* transition: all 0.2s ease-out; */
+  text-align: center;
+}
+.b1 {
+  position: absolute;
+  /* top: 20%; */
+  top: 15%;
+  left: 0%;
+}
+.b2 {
+  position: absolute;
+  /* top: 30%;
+  left: 0%; */
+  top: 15%;
+  left: 50%;
+}
+.b3 {
+  position: absolute;
+  /* top: 30%;
+  left: 50%; */
+  top: 30%;
+  left: 0%;
+}
+.b4 {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+}
+.b5 {
+  position: absolute;
+  top: 45%;
+  left: 0%;
+}
+
+.b6 {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+}
+/* .b2 {
+  position: absolute;
+  top: 0%;
+  left: 59%;
+}
+.b3 {
+  position: absolute;
+  top: 10%;
+  left: 0%;
+}
+.b4 {
+  position: absolute;
+  top: 10%;
+  left: 59%;
+}
+.b5 {
+  position: absolute;
+  top: 20%;
+  left: 0%;
+} */
+.public {
+  height: 10%;
+  width: 85%;
+  display: flex;
+  align-items: center;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  position: absolute;
+  padding-left: 15%;
+  /* top: 40%; */
+  top: 68%;
+  left: 0%;
+}
+.switch {
+  position: absolute;
+  left: 47%;
+}
+.select {
+  position: absolute;
+  /* top: 60%; */
+  top: 85%;
+  left: 0%;
+  width: 85%;
+  font-size: 1.5rem;
+}
+.divider1 {
+  position: absolute;
+  top: 60%;
+  left: 0%;
+  width: 85%;
+  border: 3px solid rgba(229, 229, 229);
+  border-radius: 5px;
+}
+.divider2 {
+  position: absolute;
+  top: 52%;
+  left: 5%;
+  width: 90%;
+  border: 4px solid rgba(194, 195, 196, 0.16);
+  border-radius: 5px;
+}
+
+/*Questions and text field*/
+.edit-type-q {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 39%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 75%;
+  width: 53vw;
+  color: #707070;
+}
+.speech {
+  color: #000000;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 45%;
+  width: 40vw;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: center;
+  top: 62%;
+  overflow: auto;
+}
+
+/*modal elements*/
+.edit-modal-header {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 25px;
+  font-weight: 700;
+  height: auto;
+  text-align: center;
+}
+.edit-modal-text {
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+  height: auto;
+  text-align: center;
+}
+.edit-modal-ans {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 200px;
+  padding: 5px;
+  resize: none;
+  text-align: left;
+  width: 750px;
+}
+
+/*Animations*/
+
+:root {
+  --black: rgba(0, 0, 0, 0.75);
+  --robins-egg-blue: rgba(34, 214, 214, 0.1);
+  --robins-blue: rgba(34, 214, 214, 1);
+  --mist-gray: rgba(196, 196, 196, 1);
+  --check-green: rgba(106, 226, 62, 1);
+}

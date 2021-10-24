@@ -1,0 +1,124 @@
+.home-page {
+  background-color: white;
+  height: 800px;
+  margin: 0px;
+  /* min-height: 700px;
+  min-width: 1440px; */
+  position: relative;
+  width: 1270px;
+}
+
+/*animation*/
+.home-animate-enter {
+  animation: home-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+}
+@keyframes home-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+.home-signup:hover {
+  transform: scale(1.1);
+}
+
+/*button and icons*/
+.home-signup {
+  background-color: transparent;
+  height: 70px;
+  left: 0px;
+  pointer-events: auto;
+  position: absolute;
+  top: 350px;
+  transition: all 0.2s ease-out;
+  width: 450px;
+  cursor: pointer;
+}
+.home-login {
+  background-color: transparent;
+  height: 70px;
+  left: 230px;
+  pointer-events: auto;
+  position: absolute;
+  top: 350px;
+  transition: all 0.2s ease-out;
+  width: 203px;
+}
+.home-sample-videos {
+  background-color: transparent;
+  height: 568px;
+  left: 80px;
+  position: absolute;
+  top: 13%;
+  width: 493px;
+  opacity: 0;
+}
+
+/*text and font*/
+.home-welcome-text {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: -0.54px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: 232px;
+  font-size: 36px;
+  font-weight: 600;
+}
+.home-toia {
+  background-color: transparent;
+  height: auto;
+  left: 25%;
+  letter-spacing: 6px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 30px;
+  width: 316px;
+  font-size: 120px;
+}
+.home-des {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: -0.38px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 200px;
+  width: 404px;
+  font-size: 25px;
+  font-weight: 500;
+}
+.home-montserrat-black {
+  color: var(--t-color);
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+}
+.home-opensans-normal {
+  font-family: "Open Sans", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: bold;
+}
+
+/*layout and elements*/
+.home-overlap-group {
+  background-color: transparent;
+  height: 162px;
+  left: 58%;
+  position: absolute;
+  top: 20%;
+  width: 316px;
+}
+
+/*colors*/
+:root {
+  --desert-storm: rgba(248, 248, 248, 1);
+}

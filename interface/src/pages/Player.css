@@ -1,0 +1,102 @@
+.player {
+  background-color: white;
+  height: 100%;
+  margin: 0px;
+  min-height: 700px;
+  min-width: 1440px;
+  position: relative;
+  width: 100%;
+}
+
+/*elements and icons*/
+.player-back_icon {
+  background-color: transparent;
+  height: 30px;
+  left: 2%;
+  top: 2%;
+  width: 30px;
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.player-group {
+  /* background-color: transparent;
+  height: 700px;
+  left: 50px;
+  position: absolute;
+  top: 80px;
+  width: 1180px; */
+  background-color: transparent;
+  height: 700px;
+  left: 40px;
+  position: absolute;
+  top: 80px;
+  width: 1200px;
+}
+.player-vid {
+  background-color: transparent;
+  left: 15%;
+  position: absolute;
+  top: 12.5%;
+  width: 70%;
+  height: 68%;
+  border-radius: 5px;
+}
+
+/*text*/
+.player-name {
+  background-color: transparent;
+  height: 50px;
+  /* left: 21.5%; */
+  position: absolute;
+  text-align: center;
+  top: 0px;
+  /* width: 60%; */
+  width: 100%;
+}
+.player-lang {
+  background-color: transparent;
+  display: block;
+  height: 29px;
+  /* left: 36.5%; */
+  position: absolute;
+  text-align: center;
+  top: 7%;
+  /* width: 30%; */
+  width: 100%;
+}
+
+/*fonts*/
+.player-font-class-2 {
+  color: black;
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.18px;
+}
+.player-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.54px;
+}
+
+
+.mute-button {
+  position: absolute;
+  top: 82%;
+  left: 40%;
+  width: 8%;
+  height: 25px;
+}
+
+.skip-end-button {
+  position: absolute;
+  top: 82%;
+  left: 52%;
+  width: 8%;
+  height: 25px;
+}

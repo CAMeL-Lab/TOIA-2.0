@@ -1,0 +1,209 @@
+.signup-page {
+  background-color: white;
+  height: 800px;
+  margin: 50px;
+  min-height: 800px;
+  min-width: 1270px;
+  position: relative;
+  width: 100%;
+}
+
+.signup-button:hover {
+  transform: scale(1.1);
+}
+.signup-animate-enter {
+  animation: signup-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
+  display: block;
+  opacity: 0;
+  transform: translate(0, 25px);
+}
+@keyframes signup-animate-enter-frames {
+  from {
+    opacity: 0;
+    transform: translate(0, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+/*button and elements*/
+.signup-button {
+  background-color: transparent;
+  position: absolute;
+  height: 70px;
+  top: 90%;
+  left: 31%;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+  width: 203px;
+}
+.signup-group {
+  background-color: transparent;
+  height: 560px;
+  left: 320px;
+  position: absolute;
+  top: 50px;
+  width: 512px;
+}
+
+/*text and textboxes*/
+.signup-title {
+  background-color: transparent;
+  height: auto;
+  left: 31%;
+  position: absolute;
+  top: 0%;
+}
+.signup_text {
+  background-color: transparent;
+  height: auto;
+  left: 5%;
+  position: absolute;
+  text-align: center;
+  top: 13%;
+  opacity: 0.75;
+}
+.signup-fname {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 23%;
+  width: 245px;
+}
+.signup-lname {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 57%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 23%;
+  width: 279px;
+}
+.signup-email {
+  background-color:rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 34%;
+  width: 570px;
+}
+.signup-language {
+  background-color: transparent;
+  height: 17px;
+  left: 0px;
+  position: absolute;
+  text-align: left;
+  top: 46%;
+  width: 78px;
+}
+.signup-lang {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 83px;
+  padding: 5px 5px 5px 2px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 45%;
+  width: 487px;
+}
+.signup-pass {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 56%;
+  width: 570px;
+}
+.signup-pass1 {
+  background-color:rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 31px;
+  left: 0px;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  top: 67%;
+  width: 570px;
+}
+
+/*Alignment and Fonts*/
+.signup-font-class-1 {
+  color: var(--black);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.21px;
+}
+.signup-font-class-2 {
+  color: var(--black);
+  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
+  font-size: 1.35rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.signup-font-class-3 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/*Photo Upload */
+.signup-photo-upload {
+  background-color: transparent;
+  height: 17px;
+  left: 0px;
+  position: absolute;
+  text-align: left;
+  top: 78%;
+  width: 570px;
+}
+
+.signup-photo-upload-choose {
+  position: absolute;
+  text-align: left;
+  left: 30%;
+  bottom: -30%;
+}
+
+.signup-photo-upload-submit {
+  position: absolute;
+  text-align: left;
+  left: 88%;
+  bottom: -30%;
+}
+
+/*Colours*/
+:root {
+  --black: rgba(0, 0, 0, 0.75);
+}
