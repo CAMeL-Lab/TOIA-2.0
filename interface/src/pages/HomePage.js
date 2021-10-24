@@ -246,7 +246,7 @@ function HomePage() {
           Talk To TOIA
         </div>
         <div onClick={garden} className="nav-my_icon app-monsterrat-black">
-          My Profile
+          My TOIA
         </div>
         <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
           {isLoggedIn ? 'Logout' : 'Login'}
