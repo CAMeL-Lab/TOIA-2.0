@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `toia`.`toia_user` (
   `last_name` VARCHAR(32) NOT NULL,
   `language` VARCHAR(45) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(16) NOT NULL,
+  `password` VARCHAR(500) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `idaavatar_UNIQUE` (`id` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC));
