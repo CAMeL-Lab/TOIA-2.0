@@ -12,6 +12,7 @@ const path = require('path');
 const {Storage} = require('@google-cloud/storage');
 const multer = require('multer')
 const upload = multer();
+const bcrypt = require('bcrypt');
 var multiparty = require('multiparty');
 
 const cors = require('cors');
@@ -19,7 +20,12 @@ const axios = require('axios');
 const {callbackify} = require('util');
 const {ENETUNREACH} = require('constants');
 
+const {hash, pwdCheck} = require('./password_encryption');
+
 //Create an 'express' instance
+
+// setting up the salt rounds for bcrypt
+const saltRounds = 12;
 
 
 const app = express();
@@ -77,19 +83,21 @@ const gc = new Storage({
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
-app.post('/createTOIA',cors(),(req,res)=>{
+app.post('/createTOIA',cors(), (req,res)=>{
     let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
     let inserted=0;
 
     let form = new multiparty.Form();
-    form.parse(req, function(err, fields, file) {
+    form.parse(req, async function(err, fields, file) {
 
 
         // await videoStore.upload(file.blob[0].path, {
         // 	destination: `Accounts/${fields.firstName[0]}_${fields.id[0]}/Videos/${videoID}`
         // });
-
-        let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${fields.pwd[0]}","${fields.language[0]}");`
+		// hashing the password before saving
+		const hashedPwd = await bcrypt.hash(fields.pwd[0], saltRounds);
+		//console.log(hashedPwd);
+        let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${hashedPwd}","${fields.language[0]}");`
         connection.query(queryCreateTOIA, (err,entry,responses)=>{
             if (err){
                 throw err;
@@ -159,12 +167,13 @@ app.post('/login', cors(), (req, res) => {
                                                   FROM toia_user
                                                   WHERE email = "${req.body.email}";`
 
-                connection.query(query_checkPasswordCorrect, (err, entry, fields) => {
+                connection.query(query_checkPasswordCorrect, async (err, entry, fields) => {
                     if (err) {
                         throw err;
                     } else {
-
-                        if (entry[0].password == req.body.pwd) {
+						// checking for password validity
+						const isValidPassword = await bcrypt.compare(req.body.pwd, entry[0].password);
+                        if (isValidPassword) {
                             let userData = {
                                 toia_id: entry[0].id,
                                 firstName: entry[0].first_name,
