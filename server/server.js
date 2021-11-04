@@ -28,6 +28,9 @@ const {hash, pwdCheck} = require('./password_encryption');
 const saltRounds = 12;
 
 
+//Create an 'express' instance
+
+
 const app = express();
 const server = app.listen(process.env.PORT || 3001, () => console.log('Server is listening!'));
 
@@ -72,7 +75,7 @@ if (process.env.ENVIRONMENT == 'production') {
 // if on development, server static files
 var localAccountsDir = path.join(__dirname, 'Accounts/');
 var localAssetsDir = path.join(__dirname, 'assets/');
-if (process.env.ENVIRONMENT == "development"){
+if (process.env.ENVIRONMENT == "development") {
     app.use(express.static(localAccountsDir));
     app.use(express.static(localAssetsDir));
 }
@@ -83,12 +86,50 @@ const gc = new Storage({
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
-app.post('/createTOIA',cors(), (req,res)=>{
-    let suggestions=['Record a filler video!','Record a greeting!','Where are you from?','Do you have any hobbies?','Do you have any siblings?','What is your favorite food?','What is your life goal?','What is the most exciting place you have been to?','Do you have any pets?','What is your favorite movie?'];
-    let inserted=0;
+app.post('/createTOIA', cors(), (req, res) => {
+    let suggestions = [
+        {
+            "question": 'Record a filler video!',
+            "type": "filler"
+        },
+        {
+            "question": 'Record a greeting!',
+            "type": "greeting"
+        },
+        {
+            "question": 'Where are you from?',
+            "type": "answer"
+        },
+        {
+            "question": 'Do you have any hobbies?',
+            "type": "answer"
+        },
+        {
+            "question": 'What is your favorite food?',
+            "type": "answer"
+        },
+        {
+            "question": 'Do you have any siblings?',
+            "type": "answer"
+        },
+        {
+            "question": 'What is the most exciting place you have been to?',
+            "type": "answer"
+        },
+        {
+            "question": 'Do you have any pets?',
+            "type": "answer"
+        },
+        {
+            "question": 'What is your favorite movie?',
+            "type": "answer"
+        }
+    ]
+
+    let inserted = 0;
 
     let form = new multiparty.Form();
-    form.parse(req, async function(err, fields, file) {
+    form.parse(req, function (err, fields, file) {
 
 
         // await videoStore.upload(file.blob[0].path, {
@@ -114,7 +155,7 @@ app.post('/createTOIA',cors(), (req,res)=>{
                             let destFileName = `All_${stream_entry.insertId}.jpg`;
                             mkdirp(dest).then(() => {
                                 fs.rename(file.blob[0].path, dest + destFileName, (error) => {
-                                    if (error){
+                                    if (error) {
                                         console.log(error);
                                     }
                                 });
@@ -126,15 +167,17 @@ app.post('/createTOIA',cors(), (req,res)=>{
                             });
                         }
 
-                        suggestions.forEach((suggestedQ)=>{
-                            let queryAddQs=`INSERT INTO question_suggestions(question, priority, toia_id) VALUES("${suggestedQ}",1,${entry.insertId});`
-                            connection.query(queryAddQs,(err,responsiveness,answerreceived)=>{
-                                if(err){
+                        suggestions.forEach((suggestedQ) => {
+                            let ques = suggestedQ["question"];
+                            let type = suggestedQ["type"];
+                            let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id, type) VALUES("${ques}",1,${entry.insertId}, "${type}");`
+                            connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
+                                if (err) {
                                     throw err;
-                                }else{
+                                } else {
                                     inserted++;
 
-                                    if(inserted==suggestions.length){
+                                    if (inserted == suggestions.length) {
                                         res.send({new_toia_ID: entry.insertId});
                                     }
                                 }
@@ -222,7 +265,7 @@ app.get('/getAllStreams', cors(), (req, res) => {
             entries.forEach((entry) => {
 
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development"){
+                if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/${entry.first_name}_${entry.id}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
                     counter++;
 
@@ -253,7 +296,7 @@ app.get('/getAllStreams', cors(), (req, res) => {
 
 app.post('/getUserSuggestedQs', cors(), (req, res) => {
 
-    let query_fetchSuggestions = `SELECT id_question, question
+    let query_fetchSuggestions = `SELECT id_question, question, type
                                   FROM question_suggestions
                                   WHERE toia_id = "${req.body.params.toiaID}"
                                   ORDER BY id_question ASC LIMIT 5;`
@@ -276,7 +319,7 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
             entries.forEach((entry) => {
 
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development"){
+                if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/Placeholder/questionmark.jpg`;
                     count++;
 
@@ -329,7 +372,6 @@ app.post('/getUserVideos', cors(), (req, res) => {
         if (err) {
             throw err;
         } else {
-            console.log(entries);
 
             let cnt = 0;
 
@@ -339,7 +381,6 @@ app.post('/getUserVideos', cors(), (req, res) => {
             };
 
             function callback() {
-                console.log(entries);
                 res.send(entries);
             }
 
@@ -351,7 +392,7 @@ app.post('/getUserVideos', cors(), (req, res) => {
             entries.forEach((entry) => {
 
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development"){
+                if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
                     cnt++;
 
@@ -401,7 +442,7 @@ app.post('/getUserStreams', cors(), async (req, res) => {
 
             entries.forEach((entry) => {
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development"){
+                if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
                     counter++;
 
@@ -451,12 +492,12 @@ app.post('/createNewStream', cors(), (req, res) => {
             } else {
 
                 // save file to local storage during development
-                if (process.env.ENVIRONMENT == "development"){
+                if (process.env.ENVIRONMENT == "development") {
                     let dest = `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/`;
                     let destFileName = `${fields.newStreamName[0]}_${entry.insertId}.jpg`;
                     mkdirp(dest).then(() => {
                         fs.rename(file.blob[0].path, dest + destFileName, (error) => {
-                            if (error){
+                            if (error) {
                                 console.log(error);
                             }
                         });
@@ -491,7 +532,7 @@ app.post('/createNewStream', cors(), (req, res) => {
                         entries.forEach((streamEntry) => {
 
                             // send local storage image when in development
-                            if (process.env.ENVIRONMENT == "development"){
+                            if (process.env.ENVIRONMENT == "development") {
                                 streamEntry.pic = `/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`;
                                 counter++;
 
@@ -559,7 +600,7 @@ app.post('/getStreamVideos', cors(), (req, res) => {
             entries.forEach((entry) => {
 
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development"){
+                if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
                     cnt++;
 
@@ -599,14 +640,13 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
         if (err) {
             throw err;
         } else {
-            console.log(entries);
 
             const config = {
                 action: 'read',
                 expires: '07-14-2022',
             };
 
-            if (process.env.ENVIRONMENT == "development"){
+            if (process.env.ENVIRONMENT == "development") {
                 let vidPrivacy;
                 let url = `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`;
 
@@ -671,14 +711,13 @@ app.post('/fillerVideo', cors(), (req, res) => {
                 res.send("No Videos");
                 return;
             }
-            console.log(entries[Math.floor(Math.random() * entries.length)].id_video);
 
             const config = {
                 action: 'read',
                 expires: '07-14-2022',
             };
 
-            if (process.env.ENVIRONMENT == "development"){
+            if (process.env.ENVIRONMENT == "development") {
                 res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`);
                 return;
             }
@@ -697,8 +736,6 @@ app.post('/fillerVideo', cors(), (req, res) => {
 
 app.post('/player', cors(), (req, res) => {
 
-    console.log(req.body.params);
-
     axios.post(`${process.env.DM_ROUTE}`, {
         params: {
             query: req.body.params.question,
@@ -708,14 +745,12 @@ app.post('/player', cors(), (req, res) => {
 
     }).then((videoDetails) => {
 
-        console.log(videoDetails.data);
-
         const config = {
             action: 'read',
             expires: '07-14-2022',
         };
 
-        if (process.env.ENVIRONMENT == "development"){
+        if (process.env.ENVIRONMENT == "development") {
             res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
             return;
         }
@@ -739,11 +774,12 @@ app.post('/recorder', cors(), async (req, res) => {
 
     let form = new multiparty.Form();
     form.parse(req, function (err, fields, file) {
-
         if (fields.private[0] == 'false') {
             isPrivate = 0;
-        } else {
+        } else if (fields.private[0] == 'true') {
             isPrivate = 1;
+        } else {
+            throw new Error("Invalid value for field 'private'");
         }
 
         videoStreams = JSON.parse(fields.streams[0]);
@@ -767,13 +803,13 @@ app.post('/recorder', cors(), async (req, res) => {
                     let bufferStream = new stream.PassThrough();
                     bufferStream.end(Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64'));
 
-                    if (process.env.ENVIRONMENT == "development"){
+                    if (process.env.ENVIRONMENT == "development") {
                         let thumbDest = `Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/`;
                         let thumbName = videoID + ".jpg";
                         mkdirp(thumbDest).then((error) => {
                             var buf = Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64');
                             fs.writeFile(thumbDest + thumbName, buf, (error) => {
-                                if (error){
+                                if (error) {
                                     console.log(error);
                                 }
                             });
@@ -796,12 +832,12 @@ app.post('/recorder', cors(), async (req, res) => {
 
 
                     // save file to local storage during development
-                    if (process.env.ENVIRONMENT == "development"){
+                    if (process.env.ENVIRONMENT == "development") {
                         let dest = `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/`;
                         let destFileName = videoID;
                         mkdirp(dest).then(() => {
                             fs.rename(file.blob[0].path, dest + destFileName, (error) => {
-                                if (error){
+                                if (error) {
                                     console.log(error);
                                 }
                             });
@@ -834,10 +870,10 @@ app.post('/recorder', cors(), async (req, res) => {
                                         throw err;
                                     } else {
                                         console.log(`Video linked to stream "${streamToLink.name}"`);
-                                        res.sendStatus(200);
                                     }
                                 });
                             });
+                            res.send("Success");
                         }
                     });
                 });

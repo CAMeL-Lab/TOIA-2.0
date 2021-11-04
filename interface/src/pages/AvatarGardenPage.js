@@ -198,7 +198,7 @@ function AvatarGardenPage() {
             }
         }).then((res)=>{
             history.push({
-                pathname: '/recorder',
+                pathname: '/recorder?type='+card.type,
                 state: {
                     toiaName,
                     toiaLanguage,
@@ -228,7 +228,7 @@ function AvatarGardenPage() {
     }
 
     var settingData = [
-        {name: "Nizar Habash", email:"nizar.habash@gmail.com", password:"habash123", language: "English"}
+        {name: "", email:"", password:"", language: ""}
     ]
     // var streamData =[//Holds info on the stream
     //   {name: "Fun Stream", privacy: "Public", language: "English", bio:"This is my fun album"}

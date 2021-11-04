@@ -1,1 +1,8 @@
-server/node_modules/
+/node_modules
+/public
+.env
+package-lock.json
+*.DS_Store
+# toia-capstone-2021-a17d9d7dd482.json
+/.idea
+/Accounts
