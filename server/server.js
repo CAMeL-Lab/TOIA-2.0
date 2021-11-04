@@ -4,7 +4,7 @@ const express = require('express');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2');
+const mysql = require('mysql');
 require('dotenv').config();
 const stream = require('stream');
 const crypto = require('crypto');
@@ -86,7 +86,7 @@ const gc = new Storage({
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
-app.post('/createTOIA', cors(), (req, res) => {
+app.post('/createTOIA', cors(), async (req, res) => {
     let suggestions = [
         {
             "question": 'Record a filler video!',
@@ -129,7 +129,7 @@ app.post('/createTOIA', cors(), (req, res) => {
     let inserted = 0;
 
     let form = new multiparty.Form();
-    form.parse(req, function (err, fields, file) {
+    form.parse(req, async function (err, fields, file) {
 
 
         // await videoStore.upload(file.blob[0].path, {
