@@ -54,7 +54,7 @@ INSERT INTO video(id_video,type,toia_id,idx,private,question,answer,language,lik
 
 And run Flask app:
 ```bash
-python src/app.py
+python main.py
 ```
 
 Test using GET request to /dialogue_manager route, send json with body like below:
