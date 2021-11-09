@@ -1,0 +1,44 @@
+[
+    {
+        "type": "greeting",
+        "displayText":"Hello!",
+        "toolTip": "Video type for initial greetings",
+        "toolTipExample": "Hi!, Hello!, Marhaba!, Nihao!",
+        "auto_question": true
+    },
+    {
+        "type": "exit",
+        "displayText":"Bye!",
+        "toolTip": "Video type for farewell greetings",
+        "toolTipExample": "Bye!, Goodbye!, Maa Salama!, Sayonara!",
+        "auto_question": true
+    },
+    {
+        "type": "answer",
+        "displayText":"Answer",
+        "toolTip": "Video type for content answers to questions",
+        "toolTipExample": "I love Pizza; My name is Mary.",
+        "auto_question": false
+    },
+    {
+        "type": "no-answer",
+        "displayText":"What",
+        "toolTip": "Video type for requests for more information",
+        "toolTipExample": "I did not get that; sorry, can you repeat?; please elaborate?; huh?; You can ask me about my family, my job, and my artwork...",
+        "auto_question": true
+    },
+    {
+        "type": "y/n-answer",
+        "displayText":"Yes/No!",
+        "toolTip": "Video type for positive/negative answers",
+        "toolTipExample": "Yes!, Right!, Yep!, No!, Never!",
+        "auto_question": false
+    },
+    {
+        "type": "filler",
+        "displayText":"Filler Video!",
+        "toolTip": "Video type for filler videos that will be used when waiting for the conversant to ask a question",
+        "toolTipExample": "nodding head, smiling, brushing hair, sipping coffee, scratching nose, checking phone, ...",
+        "auto_question": true
+    }
+]
