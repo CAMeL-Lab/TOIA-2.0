@@ -1,14 +1,16 @@
-from flask import Flask, request
 import json
+from pydantic.errors import DictError
 import sqlalchemy as db
 from sqlalchemy.sql import text
 from google.cloud.sql.connector import connector
-import pymysql
 import pandas as pd
 import numpy as np
 import os
-from utils import preprocess, toia_answer
+from utils import toia_answer, NLP, PS
 from dotenv import load_dotenv
+import uvicorn
+from fastapi import FastAPI
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -27,62 +29,67 @@ VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
 
 print("Connected successfully!")
 
-app = Flask(__name__)
-
-@app.route('/dialogue_manager', methods=['POST'])
-
-def dialogue_manager():
-
-    if request.method == 'POST':
-
-        raw_data = request.get_json()['params']
-        query = raw_data['query']
-        avatar_id = raw_data['avatar_id']
-        stream_id = raw_data['stream_id']
-
-        print(query)
-        print(avatar_id)
-        print(stream_id)
-
-        statement = text("SELECT stream_has_video.stream_id_stream,video.* FROM video INNER JOIN stream_has_video ON video.id_video = stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream = :streamID AND video.private = 0 AND video.type NOT IN ('filler', 'exit');")
-
-        result_proxy = CONNECTION.execute(statement,streamID=stream_id)
-        result_set = result_proxy.fetchall()
-
-        df_avatar = pd.DataFrame(result_set,
-                                 columns=[
-                                     'stream_id_stream',
-                                     'id_video',
-                                     'type',
-                                     'toia_id',
-                                     'idx',
-                                     'private',
-                                     'question',
-                                     'answer',
-                                     'language',
-                                     'likes',
-                                     'views',
-                                 ])
-        
-        df_greetings = df_avatar[df_avatar['type'] == "greeting"]
-
-        if query is None:
-            return 'Please enter a query', 400
-
-        response = toia_answer(query, df_avatar, df_greetings)
-
-        answer = response[0]
-        id_video = response[1]
-
-        result = {
-            'answer': answer,
-            'id_video': id_video
-
-        }
-
-        json.dumps(result)
-        return result
+app = FastAPI()
 
 
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+class QuestionInput(BaseModel):
+    query: str
+    avatar_id: str
+    stream_id: str
+
+class DMpayload(BaseModel):  #I know this nesting is stupid --- correct this later in the nodejs backend when defining the payload there
+    params: QuestionInput
+
+@app.post("/dialogue_manager")
+def dialogue_manager(payload: DMpayload):
+    raw_payload = payload.params
+    
+    query = raw_payload.query
+    avatar_id = raw_payload.avatar_id
+    stream_id = raw_payload.stream_id
+
+    print(query)
+    print(avatar_id)
+    print(stream_id)
+
+    statement = text("SELECT stream_has_video.stream_id_stream,video.* FROM video INNER JOIN stream_has_video ON video.id_video = stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream = :streamID AND video.private = 0 AND video.type NOT IN ('filler', 'exit');")
+
+    result_proxy = CONNECTION.execute(statement,streamID=stream_id)
+    result_set = result_proxy.fetchall()
+
+    df_avatar = pd.DataFrame(result_set,
+                                columns=[
+                                    'stream_id_stream',
+                                    'id_video',
+                                    'type',
+                                    'toia_id',
+                                    'idx',
+                                    'private',
+                                    'question',
+                                    'answer',
+                                    'language',
+                                    'likes',
+                                    'views',
+                                ])
+    
+    df_greetings = df_avatar[df_avatar['type'] == "greeting"]
+
+    if query is None:
+        return 'Please enter a query', 400
+
+    response = toia_answer(query, df_avatar, df_greetings)
+
+    answer = response[0]
+    id_video = response[1]
+
+    result = {
+        'answer': answer,
+        'id_video': id_video
+    }
+
+    json.dumps(result)
+    return result
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080)
