@@ -1,5 +1,10 @@
 *.DS_Store
+interface/node_modules/
+server/node_modules/
 /node_modules
 package-lock.json
-server/.idea/misc.xml
+server/toia-capstone-2021-dc5b358c68c2.json
+server/toia-capstone-2021-a17d9d7dd482.json
+server/toia-dm/toia-capstone-2021-1b8f8a91c797.json
+server/toia-dm/.vscode/
 server/.env
