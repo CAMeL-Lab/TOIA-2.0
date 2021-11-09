@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `toia`.`question_suggestions` (
   `question` MEDIUMTEXT NOT NULL,
   `priority` FLOAT NOT NULL,
   `toia_id` INT NOT NULL,
+  `type` ENUM('filler', 'greeting', 'answer', 'exit', 'no-answer', 'y/n-answer') NOT NULL,
   PRIMARY KEY (`id_question`),
   UNIQUE INDEX `id_question_UNIQUE` (`id_question` ASC),
   INDEX `fk_question_suggestions_avatar1_idx` (`toia_id` ASC),
