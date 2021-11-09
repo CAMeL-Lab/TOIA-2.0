@@ -81,7 +81,7 @@ if (process.env.ENVIRONMENT == "development") {
 }
 
 const gc = new Storage({
-    keyFilename: path.join(__dirname, "/toia-capstone-2021-a17d9d7dd482.json"),
+    keyFilename: path.join(__dirname, "/toia-capstone-2021-dc5b358c68c2.json"),
     projectId: 'toia-capstone-2021'
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
