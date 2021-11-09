@@ -83,8 +83,17 @@ if (process.env.ENVIRONMENT == "development") {
 }
 
 const gc = new Storage({
+<<<<<<< HEAD
+<<<<<<< HEAD
+	keyFilename: path.join(__dirname,"/toia-capstone-2021-dc5b358c68c2.json"),
+=======
+	keyFilename: path.join(__dirname,"/toia-capstone-2021-a17d9d7dd482.json"),
+>>>>>>> 444d549 (Fixed the google cloud bucket error)
+	projectId:'toia-capstone-2021'
+=======
     keyFilename: path.join(__dirname, "/toia-capstone-2021-a17d9d7dd482.json"),
     projectId: 'toia-capstone-2021'
+>>>>>>> d94a8ec (Implemented bcrypt encryption for password)
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
