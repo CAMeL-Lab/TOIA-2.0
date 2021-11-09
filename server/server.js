@@ -4,7 +4,7 @@ const express = require('express');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 require('dotenv').config();
 const stream = require('stream');
 const crypto = require('crypto');
