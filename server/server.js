@@ -23,6 +23,8 @@ const {ENETUNREACH} = require('constants');
 
 const {hash, pwdCheck} = require('./password_encryption');
 
+const Tracker = require('./tracker/tracker');
+
 //Create an 'express' instance
 
 // setting up the salt rounds for bcrypt
@@ -882,3 +884,5 @@ app.post('/recorder', cors(), async (req, res) => {
         });
     });
 });
+
+app.use('/tracker', Tracker);
