@@ -8,7 +8,6 @@ const mysql = require('mysql2');
 require('dotenv').config();
 const stream = require('stream');
 const crypto = require('crypto');
-const bcrypt = require('bcrypt');
 const path = require('path');
 const {Storage} = require('@google-cloud/storage');
 const multer = require('multer')
