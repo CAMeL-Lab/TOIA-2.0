@@ -126,6 +126,17 @@ CREATE TABLE IF NOT EXISTS `toia`.`stream_has_video` (
     ON UPDATE NO ACTION);
 
 
+DROP TABLE IF EXISTS `tracker`;
+CREATE TABLE `tracker` (
+  `track_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `activity` varchar(45) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `end_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`track_id`),
+  UNIQUE KEY `track_id_UNIQUE` (`track_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
