@@ -206,7 +206,6 @@ function AvatarGardenPage() {
                     suggestedQuestion: card.question
                   }
             });
-
         });
     }
 
