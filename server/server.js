@@ -884,4 +884,19 @@ app.post('/recorder', cors(), async (req, res) => {
     });
 });
 
+//getting user data to populate settings 
+app.post('/getUserData', cors(), (req, res) =>{
+    let query_getUserData = `SELECT *
+                                FROM toia_user
+                                WHERE id = "${req.body.params.toiaID}";`
+    connection.query(query_getUserData, (err, entries, fields) => {
+        if (err){
+            throw err;
+        } 
+        console.log("user data sent!")
+        res.send(Object.values(entries))
+        
+    })
+})
+
 app.use('/tracker', Tracker);
