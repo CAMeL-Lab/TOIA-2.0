@@ -1,0 +1,37 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+certifi = "==2020.12.5"
+chardet = "==4.0.0"
+click = "==7.1.2"
+filelock = "==3.0.12"
+future = "==0.18.2"
+gunicorn = "==20.0.4"
+idna = "==2.10"
+itsdangerous = "==1.1.0"
+joblib = "==1.0.0"
+nltk = "==3.5"
+numpy = "==1.19.5"
+pyparsing = "==2.4.7"
+regex = "==2020.11.13"
+requests = "==2.25.1"
+sacremoses = "==0.0.43"
+six = "==1.15.0"
+tokenizers = "==0.9.4"
+torch = {version = "==1.6.0", file = "https://download.pytorch.org/whl/cpu/torch-1.6.0-cp38-none-macosx_10_9_x86_64.whl"}
+tqdm = "==4.55.1"
+transformers = "==4.1.1"
+urllib3 = "==1.26.2"
+Flask = "==1.1.2"
+Jinja2 = "==2.11.2"
+MarkupSafe = "==1.1.1"
+Pillow = "==8.1.0"
+Werkzeug = "==1.0.1"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
