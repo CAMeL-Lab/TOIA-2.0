@@ -9,3 +9,4 @@ server/toia-dm/toia-capstone-2021-1b8f8a91c797.json
 server/toia-dm/.vscode/
 server/.env
 server/Accounts/
+package-lock.json
