@@ -10,3 +10,4 @@ server/toia-dm/.vscode/
 server/.env
 server/Accounts/
 server/package-lock.json
+server/q_api/notebooks/.ipynb_checkpoints
