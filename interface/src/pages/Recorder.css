@@ -476,3 +476,15 @@ video {
 .tooltipExample {
   font-style: italic;
 }
+
+/* question suggestions modal */
+.questionSuggestionsWrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.questionSuggestionsWrapper > div{
+  margin: 10px;
+}

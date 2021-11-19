@@ -6,9 +6,11 @@ import Webcam from "react-webcam";
 import axios from 'axios';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 import history from '../services/history';
-import {Modal, Button} from 'semantic-ui-react';
+import {Button, Icon, Image, Modal} from 'semantic-ui-react';
 import {Multiselect} from 'multiselect-react-dropdown';
 import Switch from "react-switch";
+import {renderSuggestedQsCard} from './AvatarGardenPage';
+import CheckMarkIcon from '../icons/check-mark-success1.webp';
 import env from './env.json';
 import videoTypesJSON from '../configs/VideoTypes.json';
 
@@ -17,7 +19,38 @@ const videoConstraints = {
     height: 405,
     facingMode: "user"
 };
+// Post recording, question suggestion modal
+function ModalQSuggestion (props) {
+    return (
+        <Modal
+            open={props.active}
+            onClose={() => props.setActive(false)}
+            onOpen={() => props.setActive(true)}
+            trigger={<Button>Question Suggestion Modal</Button>}
+        >
+            <Modal.Header>Successful! Your TOIA has been saved.</Modal.Header>
+            <Modal.Content image scrolling>
+                <Image size='medium' src={CheckMarkIcon} wrapped />
 
+                <Modal.Description>
+                    <p>
+                        Try one of these...
+                    </p>
+                    <div className={"questionSuggestionsWrapper"}>
+                        {props.suggestedQuestions.map((card, index) => {
+                            return renderSuggestedQsCard(card, index, props.onCardClickFunct)
+                        })}
+                    </div>
+                </Modal.Description>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button onClick={() => {props.modalCloseCallbackFunc();}} primary>
+                    Show My Recordings
+                </Button>
+            </Modal.Actions>
+        </Modal>
+    )
+}
 
 function Recorder() {
 
@@ -55,6 +88,9 @@ function Recorder() {
     const [mainStreamVal, setMainStreamVal] = useState([]);
     const [videoPlayback, setVideoComponent] = useState(null);
     const [videoThumbnail, setVideoThumbnail] = useState('');
+    const [isQSuggestionActive, setQSuggestionActive] = useState(false);
+    const [suggestedQsList,setSuggestedQsList]=useState([]);
+    const [waitingServerResponse, setWaitingServerResponse] = useState(false);
 
     const [editVideoID, setEditVideoID] = useState('');
 
@@ -102,6 +138,19 @@ function Recorder() {
         });
     }, []);
 
+    const loadSuggestedQuestions = () => {
+        return new Promise(((resolve, reject) => {
+            axios.post(`${env['server-url']}/getUserSuggestedQs`,{
+                params: {
+                    toiaID: history.location.state.toiaID
+                }
+            }).then((res) => {
+                setSuggestedQsList(res.data);
+                resolve();
+            });
+        }))
+    }
+
     const handleStartCaptureClick = React.useCallback((e) => {
         resetTranscript();
         setRecordedChunks([]);
@@ -137,6 +186,7 @@ function Recorder() {
 
     function handleDownload(e) {
         e.preventDefault();
+        setWaitingServerResponse(true);
 
         let form = new FormData();
         form.append("apple", "ball");
@@ -167,7 +217,11 @@ function Recorder() {
 
             setQuestionSelected(null);
             document.getElementById('video-text-box').value = "";
-            navigateToMyTOIA();
+
+            loadSuggestedQuestions().then(() => {
+                setWaitingServerResponse(false);
+                setQSuggestionActive(true);
+            });
         }).catch(err => {
             console.log(err);
         })
@@ -197,6 +251,24 @@ function Recorder() {
             }
         }
         event.preventDefault();
+    }
+
+    function openSuggestion(e,card){
+        axios.post(`${env['server-url']}/removeSuggestedQ`,{
+            params:{
+                suggestedQID: card.id_question
+            }
+        }).then((res)=>{
+            history.push({
+                pathname: '/recorder?type='+card.type,
+                state: {
+                    toiaName,
+                    toiaLanguage,
+                    toiaID,
+                    suggestedQuestion: card.question
+                }
+            });
+        });
     }
 
     function exampleReducer2(state2, action) { // for account settings window
@@ -481,7 +553,7 @@ function Recorder() {
                         <p>Discard</p>
                     </Button>
                     <Button color='green' inverted onClick={handleDownload}
-                            style={{position: "relative", bottom: "4px"}}>
+                            style={{position: "relative", bottom: "4px"}} loading={waitingServerResponse}>
                         {/*<i className="fa fa-check"></i>*/}
                         <p>Save</p>
                     </Button>
@@ -510,6 +582,8 @@ function Recorder() {
                     </Button>
                 </Modal.Actions>
             </Modal>
+
+            <ModalQSuggestion active={isQSuggestionActive} setActive={setQSuggestionActive} suggestedQuestions={suggestedQsList} onCardClickFunct={openSuggestion} modalCloseCallbackFunc={navigateToMyTOIA}/>
 
             <div className="nav-heading-bar">
                 <div onClick={navigateToHome} className="nav-toia_icon app-opensans-normal">
