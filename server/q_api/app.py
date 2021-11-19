@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, request, render_template, url_for
 import os
 import argparse
@@ -67,12 +68,16 @@ def generateNextQ():
 
     print("Received body", body)
     text=body['qa_pair']
+    callback_url = None
+    if 'callback_url' in body:
+        callback_url = body['callback_url']
 
     storage.append(text)
 
+    question = ''
     if len(starters) > 0: 
         print("SENDING STARTER")
-        return {"q":starters.pop()}
+        question = starters.pop()
 
     else: 
 
@@ -107,7 +112,18 @@ def generateNextQ():
 
         print (bert_filtered_qs)
 
-        return {"q":bert_filtered_qs[-1][1]}
+        question = bert_filtered_qs[-1][1]
+
+    if callback_url is not None:
+        requests.post(callback_url, json={"q": question})
+        # try:
+        #
+        # except:
+        #     # ignore silently.
+        #     pass
+
+
+    return {"q":question}
 
 
 

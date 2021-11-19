@@ -23,7 +23,7 @@ const {ENETUNREACH} = require('constants');
 const {hash, pwdCheck} = require('./password_encryption');
 
 const Tracker = require('./tracker/tracker');
-
+const {isValidUser, saveSuggestedQuestion} = require('./helper/user_mgmt');
 //Create an 'express' instance
 
 // setting up the salt rounds for bcrypt
@@ -43,8 +43,8 @@ app.use(express.static('./public'));
 app.use(cors());
 
 // import custom functions
-const customFunctions = require("./misc/custom-functions.js");
 const {resolveNaptr} = require('dns');
+const {reject} = require("bcrypt/promises");
 
 let config;
 let connection;
@@ -137,22 +137,22 @@ app.post('/createTOIA', cors(), async (req, res) => {
         // await videoStore.upload(file.blob[0].path, {
         // 	destination: `Accounts/${fields.firstName[0]}_${fields.id[0]}/Videos/${videoID}`
         // });
-		// hashing the password before saving
-		const hashedPwd = await bcrypt.hash(fields.pwd[0], saltRounds);
-		//console.log(hashedPwd);
-        let queryCreateTOIA=`INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${hashedPwd}","${fields.language[0]}");`
-        connection.query(queryCreateTOIA, (err,entry,responses)=>{
-            if (err){
+        // hashing the password before saving
+        const hashedPwd = await bcrypt.hash(fields.pwd[0], saltRounds);
+        //console.log(hashedPwd);
+        let queryCreateTOIA = `INSERT INTO toia_user(first_name, last_name, email, password, language) VALUES("${fields.firstName[0]}","${fields.lastName[0]}","${fields.email[0]}","${hashedPwd}","${fields.language[0]}");`
+        connection.query(queryCreateTOIA, (err, entry, responses) => {
+            if (err) {
                 throw err;
-            }else{
-                let queryAllStream=`INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
-                connection.query(queryAllStream, async (err,stream_entry,field)=>{
-                    if (err){
+            } else {
+                let queryAllStream = `INSERT INTO stream(name, toia_id, private, likes, views) VALUES("All",${entry.insertId},0,0,0);`
+                connection.query(queryAllStream, async (err, stream_entry, field) => {
+                    if (err) {
                         throw err;
-                    }else{
+                    } else {
 
                         // save file to local storage during development
-                        if (process.env.ENVIRONMENT == "development"){
+                        if (process.env.ENVIRONMENT == "development") {
                             let dest = `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/`;
                             let destFileName = `All_${stream_entry.insertId}.jpg`;
                             mkdirp(dest).then(() => {
@@ -216,8 +216,8 @@ app.post('/login', cors(), (req, res) => {
                     if (err) {
                         throw err;
                     } else {
-						// checking for password validity
-						const isValidPassword = await bcrypt.compare(req.body.pwd, entry[0].password);
+                        // checking for password validity
+                        const isValidPassword = await bcrypt.compare(req.body.pwd, entry[0].password);
                         if (isValidPassword) {
                             let userData = {
                                 toia_id: entry[0].id,
@@ -301,7 +301,7 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
     let query_fetchSuggestions = `SELECT id_question, question, type
                                   FROM question_suggestions
                                   WHERE toia_id = "${req.body.params.toiaID}"
-                                  ORDER BY id_question ASC LIMIT 5;`
+                                  ORDER BY RAND() ASC LIMIT 5;`
     connection.query(query_fetchSuggestions, (err, entries, fields) => {
         if (err) {
             throw err;
@@ -769,7 +769,6 @@ app.post('/player', cors(), (req, res) => {
 });
 
 app.post('/recorder', cors(), async (req, res) => {
-
     let isPrivate;
     let vidIndex;
     let videoStreams;
@@ -800,12 +799,13 @@ app.post('/recorder', cors(), async (req, res) => {
                 }
 
                 crypto.pseudoRandomBytes(32, async function (err, raw) {
-                    videoID = fields.name[0] + '_' + fields.id[0] + '_' + vidIndex + '_' + (raw.toString('hex') + Date.now()).slice(0, 8) + '.mp4';
+                    let videoID = fields.name[0] + '_' + fields.id[0] + '_' + vidIndex + '_' + (raw.toString('hex') + Date.now()).slice(0, 8) + '.mp4';
 
                     let bufferStream = new stream.PassThrough();
                     bufferStream.end(Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64'));
 
                     if (process.env.ENVIRONMENT == "development") {
+                        // Save thumbnail
                         let thumbDest = `Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/`;
                         let thumbName = videoID + ".jpg";
                         mkdirp(thumbDest).then((error) => {
@@ -875,6 +875,13 @@ app.post('/recorder', cors(), async (req, res) => {
                                     }
                                 });
                             });
+
+                            // Generate suggested video
+                            axios.post(`${process.env.Q_API_ROUTE}`, {
+                                qa_pair:fields.question[0] + " " + fields.answer[0],
+                                callback_url:req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
+                            });
+
                             res.send("Success");
                         }
                     });
@@ -883,5 +890,76 @@ app.post('/recorder', cors(), async (req, res) => {
         });
     });
 });
+
+app.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
+    const query_fetchSuggestions = `SELECT id_question, question, type
+                                  FROM question_suggestions
+                                  WHERE toia_id = ?
+                                  ORDER BY id_question DESC LIMIT 1;`;
+    connection.query(query_fetchSuggestions, [req.body.params.toiaID], (err, entries) => {
+        if (err) throw err;
+        if (entries.length === 0) {
+            res.sendStatus(404);
+            return;
+        }
+
+        let count = 0;
+
+        const config = {
+            action: 'read',
+            expires: '07-14-2022',
+        };
+
+        function callback() {
+            res.send(entries[0]);
+        }
+
+        entries.forEach((entry) => {
+
+            // send local storage image when in development
+            if (process.env.ENVIRONMENT === "development") {
+                entry.pic = `/Placeholder/questionmark.jpg`;
+                count++;
+
+                if (count === entries.length) {
+                    callback();
+                }
+                return;
+            }
+
+            videoStore.file(`Placeholder/questionmark.png`).getSignedUrl(config, function (err, url) {
+                if (err) {
+                    throw err;
+                } else {
+                    entry.pic = url;
+
+                    count++;
+
+                    if (count === entries.length) {
+                        callback();
+                    }
+                }
+            });
+        });
+    })
+});
+
+app.post('/saveSuggestedQuestion/:user_id', (req, res) => {
+    const user_id = req.params.user_id;
+    isValidUser(user_id).then((success) => {
+        if (req.body.q === undefined) {
+            res.sendStatus(400);
+            return;
+        }
+        saveSuggestedQuestion(user_id, req.body.q).then(() => {
+            res.sendStatus(200);
+        }, () => {
+            res.sendStatus(500);
+        })
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(500);
+    })
+})
 
 app.use('/tracker', Tracker);

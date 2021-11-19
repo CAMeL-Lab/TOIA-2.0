@@ -29,6 +29,21 @@ import { Card } from '@material-ui/core';
 
 var cardSelected = [];//the videos selected to be edited or deleted
 
+
+export const renderSuggestedQsCard = (card, index, onClickFunc)=>{
+    return(
+        <div className="row" id={card.id_question}>
+            <div onClick={(e)=>{onClickFunc(e,card)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
+            />
+            <div className="column garden-question round-styling-second">
+                <h1 className="garden-name garden-font-class-5" //question
+                    style = {{marginTop: "10px"}}>{card.question}</h1>
+            </div>
+        </div>
+    )
+}
+
+
 function AvatarGardenPage() {
 
     const [toiaName, setName] = useState(null);
@@ -191,7 +206,6 @@ function AvatarGardenPage() {
     }
 
     function openSuggestion(e,card){
-
         axios.post(`${env['server-url']}/removeSuggestedQ`,{
             params:{
                 suggestedQID: card.id_question
@@ -322,19 +336,6 @@ function AvatarGardenPage() {
             </div>
         )
     };
-
-    const renderSuggestedQsCard = (card,index)=>{
-        return(
-            <div className="row" id={card.id_question}>
-                <div onClick={(e)=>{openSuggestion(e,card)}} className="column round-styling-first" style={{ backgroundImage: `url(${card.pic})`, cursor: `pointer`, backgroundSize: "132px 138.6px"}} //video thumbnail
-                />
-                <div className="column garden-question round-styling-second">
-                    <h1 className="garden-name garden-font-class-5" //question
-                    style = {{marginTop: "10px"}}>{card.question}</h1>
-                </div>
-            </div>
-        )
-    }
 
     function handleSelectCurrentStream(currentItemObject,currentPageIndex){
 
@@ -928,7 +929,9 @@ function AvatarGardenPage() {
                 >
                 <div onClick={add}><img className="garden-add" src={addButton} // add video button
                 /><h1 className="video-text garden-font-class-3">Add Video</h1></div>
-                    {suggestedQsList.map(renderSuggestedQsCard)}
+                    {suggestedQsList.map((card, index) => {
+                        return renderSuggestedQsCard(card, index, openSuggestion);
+                    })}
                     {videoList.map(renderCard)}
                 </div>
                 <div className="garden-hidden" style={{display: displayItem}} // hidden menu that appears when video is selected
