@@ -8,6 +8,7 @@ import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition'
 import history from '../services/history';
 import {Button, Icon, Image, Modal} from 'semantic-ui-react';
 import {Multiselect} from 'multiselect-react-dropdown';
+import {default as EditCreateMultiSelect} from "editable-creatable-multiselect";
 import Switch from "react-switch";
 import {renderSuggestedQsCard} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
@@ -21,6 +22,9 @@ const videoConstraints = {
 };
 // Post recording, question suggestion modal
 function ModalQSuggestion (props) {
+
+    const suggestedQs = props.suggestedQuestions.slice(0, 5);
+
     return (
         <Modal
             open={props.active}
@@ -34,10 +38,15 @@ function ModalQSuggestion (props) {
 
                 <Modal.Description>
                     <p>
-                        Try one of these...
+                        Here are some suggestions...
                     </p>
                     <div className={"questionSuggestionsWrapper"}>
-                        {props.suggestedQuestions.map((card, index) => {
+                        <div className="row positive-relative add-video-box" onClick={() => {props.onAddVideoCallback()}}>
+                            <img className="garden-add add-video-image" src="/static/media/add-button.11fe26c1.svg" alt={"image"} />
+                            <h1 className="video-text garden-font-class-3 add-video-text">Add Video</h1>
+                        </div>
+
+                        {suggestedQs.map((card, index) => {
                             return renderSuggestedQsCard(card, index, props.onCardClickFunct)
                         })}
                     </div>
@@ -78,7 +87,7 @@ function Recorder() {
     const [recordedVideo, setRecordedVideo] = useState();
     const [videoType, setVideoType] = useState(null);
     const [videoTypeFormal, setVideoTypeFormal] = useState(null);
-    const [questionSelected, setQuestionSelected] = useState("");
+    const [questionsSelected, setQuestionsSelected] = useState([]);
     const [autoSelectionQuestion, setAutoSelectionQuestion] = useState(false);
     const [answerProvided, setAnswerProvided] = useState("");
     const [isPrivate, setPrivacySetting] = useState(false);
@@ -88,11 +97,10 @@ function Recorder() {
     const [mainStreamVal, setMainStreamVal] = useState([]);
     const [videoPlayback, setVideoComponent] = useState(null);
     const [videoThumbnail, setVideoThumbnail] = useState('');
-    const [isQSuggestionActive, setQSuggestionActive] = useState(false);
-    const [suggestedQsList,setSuggestedQsList]=useState([]);
+    const [suggestedQsListCopy,setSuggestedQsListCopy]=useState([]);
+    const [suggestedQsListOrig, setSuggestedQsListOrig] = useState([]);
     const [waitingServerResponse, setWaitingServerResponse] = useState(false);
-
-    const [editVideoID, setEditVideoID] = useState('');
+    const [questionSuggestionModalActive, setQuestionSuggestionModalActive] = useState(false);
 
     const backgroundActiveColor = "#B1F7B0";
     const backgroundDefaultColor = "#e5e5e5";
@@ -116,11 +124,10 @@ function Recorder() {
             let videoTypeEdit = history.location.state.videoType;
             setVideoType(videoTypeEdit);
             setVideoTypeFormal(videoTypesJSON.videoTypeEdit);
-            setQuestionSelected(history.location.state.videoType);
+            setQuestionsSelected([...questionsSelected, {question:history.location.state.videoType}]);
         }
         if (history.location.state.suggestedQuestion != null) {
-            setQuestionSelected(history.location.state.suggestedQuestion);
-            document.getElementById('video-text-box').value = history.location.state.suggestedQuestion;
+            setQuestionsSelected([...questionsSelected, {question:history.location.state.suggestedQuestion}]);
         }
 
         axios.post(`${env['server-url']}/getUserStreams`, {
@@ -136,6 +143,8 @@ function Recorder() {
             setListStreams([streamsReceived[0]]);
             setMainStreamVal([streamsReceived[0]]);
         });
+
+        loadSuggestedQuestions();
     }, []);
 
     const loadSuggestedQuestions = () => {
@@ -145,7 +154,8 @@ function Recorder() {
                     toiaID: history.location.state.toiaID
                 }
             }).then((res) => {
-                setSuggestedQsList(res.data);
+                setSuggestedQsListCopy(res.data);
+                setSuggestedQsListOrig(res.data);
                 resolve();
             });
         }))
@@ -186,17 +196,18 @@ function Recorder() {
 
     function handleDownload(e) {
         e.preventDefault();
+        let questionsList = questionsSelected.map(questionObj => {
+            return questionObj.question
+        });
         setWaitingServerResponse(true);
 
         let form = new FormData();
-        form.append("apple", "ball");
-
         form.append('blob', recordedVideo);
         form.append('thumb', videoThumbnail);
         form.append('id', toiaID);
         form.append('name', toiaName);
         form.append('language', toiaLanguage);
-        form.append('question', questionSelected);
+        form.append('questions', JSON.stringify(questionsList));
         form.append('answer', answerProvided);
         form.append('videoType', videoType);
         form.append('private', isPrivate.toString());
@@ -215,20 +226,17 @@ function Recorder() {
             setVideoType(null);
             setVideoTypeFormal(null);
 
-            setQuestionSelected(null);
-            document.getElementById('video-text-box').value = "";
+            setQuestionsSelected([]);
 
-            loadSuggestedQuestions().then(() => {
-                setWaitingServerResponse(false);
-                setQSuggestionActive(true);
-            });
+            setWaitingServerResponse(false);
+            setQuestionSuggestionModalActive(true);
         }).catch(err => {
             console.log(err);
         })
     };
 
     function openModal(event) {
-        if (questionSelected == null) {
+        if (questionsSelected.length === 0) {
             alert("Please choose a question before submitting your response.");
         } else if (videoType == null) {
             alert("Please choose a video type before submitting your response.");
@@ -344,16 +352,12 @@ function Recorder() {
         let queryParams = new URLSearchParams(window.location.search);
         let vidType = queryParams.get('type'); // video type
         if (vidType == null)return;
-        Object.keys(videoTypesJSON).map((entry, index) => {
+        for (const entry of Object.keys(videoTypesJSON)){
             if (videoTypesJSON[entry].type === vidType) {
                 setVideoType(vidType);
                 setVideoTypeFormal(videoTypesJSON[entry].displayText);
             }
-        });
-    }
-
-    function setQuestionValue(event) {
-        setQuestionSelected(event.target.value);
+        }
     }
 
     function setAnswerValue(event) {
@@ -400,6 +404,10 @@ function Recorder() {
             width: '65vw',
         }
     };
+
+    const reset = () => {
+        window.location.reload();
+    }
 
     //code for webcam for Thumbnail
     const WebcamComponent = () => <Webcam/>;
@@ -470,10 +478,10 @@ function Recorder() {
         setVideoTypeFormal(videoTypesJSON[typeIndex].displayText);
         if (videoTypesJSON[typeIndex].auto_question){
             setAutoSelectionQuestion(true);
-            setQuestionSelected(videoTypesJSON[typeIndex].displayText);
+            setQuestionsSelected([...questionsSelected, {question: videoTypesJSON[typeIndex].displayText}]);
         } else {
             if (autoSelectionQuestion){
-                setQuestionSelected("");
+                setQuestionsSelected([]);
             }
             setAutoSelectionQuestion(false);
         }
@@ -513,7 +521,7 @@ function Recorder() {
     }
 
     return (
-        <form className="record-page" name="form1" action="form1">
+        <div className="record-page" name="form1" action="form1">
             <Modal //this is the new pop up menu
 
                 size='large'
@@ -526,7 +534,6 @@ function Recorder() {
                 </Modal.Header>
                 <Modal.Content>
                     <div id="typeOfVideo">Video Type: {videoTypeFormal}</div>
-                    <div id="questionOfVideo">Question being answered: "{questionSelected}"</div>
                     <div id="privacyOfVideo">Privacy Settings: {privacyText}</div>
                     <div id="video_thumbnail">
                         <button onClick={(event) => {
@@ -544,6 +551,21 @@ function Recorder() {
                         type={"text"}
                         onChange={setAnswerValue}
                     />
+                    <div className={"question-label-modal"}>Questions being answered: </div>
+                    <div className={"question-selection-box question-modal-input"}>
+                        <EditCreateMultiSelect
+                            suggestions={suggestedQsListCopy}
+                            selectedItems={questionsSelected}
+                            updateSuggestions={(newList, added, removed) => {
+                                setSuggestedQsListCopy(newList);
+                            }}
+                            updateSelectedItems={(newList, added, removed, isCreated) => {
+                                setQuestionsSelected(newList)
+                            }}
+                            maxDisplayedItems={5}
+                            placeholder={"Type your own question"}
+                            displayField={"question"}/>
+                    </div>
                     {/* <div contentEditable="true" className="modal-ans font-class-1" onChange={setAnswerValue}>{answerProvided}
           </div> */}
                 </Modal.Content>
@@ -583,7 +605,7 @@ function Recorder() {
                 </Modal.Actions>
             </Modal>
 
-            <ModalQSuggestion active={isQSuggestionActive} setActive={setQSuggestionActive} suggestedQuestions={suggestedQsList} onCardClickFunct={openSuggestion} modalCloseCallbackFunc={navigateToMyTOIA}/>
+            <ModalQSuggestion active={questionSuggestionModalActive} setActive={setQuestionSuggestionModalActive} suggestedQuestions={suggestedQsListOrig} onCardClickFunct={openSuggestion} modalCloseCallbackFunc={navigateToMyTOIA} onAddVideoCallback={reset}/>
 
             <div className="nav-heading-bar">
                 <div onClick={navigateToHome} className="nav-toia_icon app-opensans-normal">
@@ -648,42 +670,49 @@ function Recorder() {
                     </div>
                 </div>
                 <div className="Video-Layout">
-                    <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true}
-                            videoConstraints={videoConstraints}/>
-                    {capturing ? (
-                        <button className="icon tooltip" onClick={handleStopCaptureClick}><i className="fa fa-stop"></i>
-                            <span className="camera_tooltip">
+                        <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true}
+                                videoConstraints={videoConstraints}/>
+                        {capturing ? (
+                            <button className="icon tooltip" onClick={handleStopCaptureClick}><i className="fa fa-stop"></i>
+                                <span className="camera_tooltip">
           Click to stop recording
           </span>
-                        </button>
-                    ) : (
-                        <button className="icon tooltip" onClick={handleStartCaptureClick}><i
-                            className="fa fa-video-camera"></i>
-                            <span className="camera_tooltip">
+                            </button>
+                        ) : (
+                            <button className="icon tooltip" onClick={handleStartCaptureClick}>
+                                <i className="fa fa-video-camera"></i>
+                                <span className="camera_tooltip">
           Click to start/restart recording
           </span>
-                        </button>
-                    )}
-                    {recordedChunks.length > 0 && (
-                        <button className="check tooltip" onClick={openModal}><i className="fa fa-check"></i>
-                            <span className="check_tooltip">
+                            </button>
+                        )}
+                        {recordedChunks.length > 0 && (
+                            <button className="check tooltip" onClick={openModal}><i className="fa fa-check"></i>
+                                <span className="check_tooltip">
           Save Video
           </span>
-                        </button>
-                    )}
-                    <p className="recorder-speech">{transcript}</p>
-                    <input
-                        className="type-q font-class-1"
-                        placeholder={"Type your own question"}
-                        value={questionSelected}
-                        id="video-text-box"
-                        type={"text"}
-                        onChange={setQuestionValue}
-                    />
+                            </button>
+                        )}
+                        <p className="recorder-speech">{transcript}</p>
+
+                    <div className="font-class-1 question-selection-box question-recorder-page-input">
+                        <EditCreateMultiSelect
+                            suggestions={suggestedQsListCopy}
+                            selectedItems={questionsSelected}
+                            updateSuggestions={(newList, added, removed) => {
+                                    setSuggestedQsListCopy(newList);
+                            }}
+                            updateSelectedItems={(newList, added, removed, isCreated) => {
+                                setQuestionsSelected(newList)
+                            }}
+                            placeholder={"Type your own question"}
+                            maxDisplayedItems={5}
+                            displayField={"question"}/>
+                    </div>
                 </div>
 
             </div>
-        </form>
+        </div>
     );
 }
 

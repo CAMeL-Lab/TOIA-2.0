@@ -23,7 +23,7 @@ const {ENETUNREACH} = require('constants');
 const {hash, pwdCheck} = require('./password_encryption');
 
 const Tracker = require('./tracker/tracker');
-const {isValidUser, saveSuggestedQuestion} = require('./helper/user_mgmt');
+const {isValidUser, saveSuggestedQuestion, parseQuestionsFromString, generateStringFromQuestions} = require('./helper/user_mgmt');
 //Create an 'express' instance
 
 // setting up the salt rounds for bcrypt
@@ -297,12 +297,25 @@ app.get('/getAllStreams', cors(), (req, res) => {
 });
 
 app.post('/getUserSuggestedQs', cors(), (req, res) => {
+    let limitQuestions = 0;
 
     let query_fetchSuggestions = `SELECT id_question, question, type
                                   FROM question_suggestions
-                                  WHERE toia_id = "${req.body.params.toiaID}"
-                                  ORDER BY RAND() ASC LIMIT 5;`
-    connection.query(query_fetchSuggestions, (err, entries, fields) => {
+                                  WHERE toia_id = ?
+                                  ORDER BY RAND() ASC;`
+    let query_params = [req.body.params.toiaID];
+
+    if (req.body.params.limit !== undefined){
+        limitQuestions = req.body.params.limit;
+        query_fetchSuggestions = `SELECT id_question, question, type
+                                  FROM question_suggestions
+                                  WHERE toia_id = ?
+                                  ORDER BY RAND() ASC LIMIT ?;`
+        query_params = [req.body.params.toiaID, limitQuestions];
+    }
+
+
+    connection.query(query_fetchSuggestions, query_params, (err, entries, fields) => {
         if (err) {
             throw err;
         } else {
@@ -392,7 +405,7 @@ app.post('/getUserVideos', cors(), (req, res) => {
 
 
             entries.forEach((entry) => {
-
+                entry.questions = parseQuestionsFromString(entry.question);
                 // send local storage image when in development
                 if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
@@ -600,7 +613,7 @@ app.post('/getStreamVideos', cors(), (req, res) => {
 
 
             entries.forEach((entry) => {
-
+                entry.questions = parseQuestionsFromString(entry.question)
                 // send local storage image when in development
                 if (process.env.ENVIRONMENT == "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
@@ -663,7 +676,8 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
                     videoType: entries[0].type,
                     videoQuestion: entries[0].question,
                     videoAnswer: entries[0].answer,
-                    videoPrivacy: vidPrivacy
+                    videoPrivacy: vidPrivacy,
+                    videoQuestions: parseQuestionsFromString(entries[0].question)
                 }
 
                 res.send(dataObj);
@@ -688,7 +702,8 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
                         videoType: entries[0].type,
                         videoQuestion: entries[0].question,
                         videoAnswer: entries[0].answer,
-                        videoPrivacy: vidPrivacy
+                        videoPrivacy: vidPrivacy,
+                        videoQuestions: parseQuestionsFromString(entries[0].question)
                     }
 
                     res.send(dataObj);
@@ -775,6 +790,10 @@ app.post('/recorder', cors(), async (req, res) => {
 
     let form = new multiparty.Form();
     form.parse(req, function (err, fields, file) {
+        let answer = fields.answer[0].trim();
+        // Append the answer with '.' if necessary
+        if (answer.slice(-1) !== '.' && answer.slice(-1) !== '!' && answer.slice(-1) !== '?') answer = answer + ".";
+
         if (fields.private[0] == 'false') {
             isPrivate = 0;
         } else if (fields.private[0] == 'true') {
@@ -784,6 +803,7 @@ app.post('/recorder', cors(), async (req, res) => {
         }
 
         videoStreams = JSON.parse(fields.streams[0]);
+        let questions = JSON.parse(fields.questions[0]);
 
         let query_getNextIndex = `SELECT MAX(idx) AS maxIndex
                                   FROM video;`;
@@ -854,7 +874,7 @@ app.post('/recorder', cors(), async (req, res) => {
 
                     let query_saveVideo = `INSERT INTO video(id_video, question, answer, type, toia_id, idx, private,
                                                              language, likes, views)
-                                           VALUES ("${videoID}", "${fields.question[0]}", "${fields.answer[0]}",
+                                           VALUES ("${videoID}", "${generateStringFromQuestions(questions)}", "${fields.answer[0]}",
                                                    "${fields.videoType[0]}", ${fields.id[0]}, ${vidIndex}, ${isPrivate},
                                                    "${fields.language[0]}", 0, 0);`;
 
@@ -878,7 +898,7 @@ app.post('/recorder', cors(), async (req, res) => {
 
                             // Generate suggested video
                             axios.post(`${process.env.Q_API_ROUTE}`, {
-                                qa_pair:fields.question[0] + " " + fields.answer[0],
+                                qa_pair:questions[0] + " " + fields.answer[0],
                                 callback_url:req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
                             });
 

@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const {QuestionDelimiter} = require('./config');
 
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -41,4 +42,21 @@ module.exports.saveSuggestedQuestion = function (userId, question, type='answer'
             }
         });
     }))
+}
+
+module.exports.parseQuestionsFromString = function (questionSting) {
+    return questionSting.split(QuestionDelimiter);
+}
+
+module.exports.generateStringFromQuestions = function (questions) {
+    let result = "";
+    for (let i = 0; i < questions.length; i++){
+        let question = questions[i];
+        if (i !== (questions.length - 1)){
+            result = result + question + QuestionDelimiter ;
+        } else {
+            result = result + question;
+        }
+    }
+    return result;
 }
