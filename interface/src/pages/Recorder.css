@@ -485,6 +485,78 @@ video {
   justify-content: space-evenly;
 }
 
+.positive-relative{
+  position: relative;
+}
+
 .questionSuggestionsWrapper > div{
-  margin: 10px;
+  margin: 5px;
+  width: 210px;
+}
+
+.questionSuggestionsWrapper > div .column{
+  margin-bottom: 0;
+}
+
+.questionSuggestionsWrapper .add-video-box{
+  background: #fbfbfb;
+  border: solid 1px #e5e5e5;
+  border-radius: 6px;
+}
+
+.questionSuggestionsWrapper .add-video-text{
+  text-align: center;
+  top: 65%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.questionSuggestionsWrapper .add-video-image{
+  transform: translate(-50%, -50%);
+  left:50%;
+  top:40%;
+}
+
+/* Question selector box */
+.question-selection-box{
+  background-color: rgba(126, 124, 124, 0.1);
+  border-radius: 3px;
+  text-align: left;
+  color: #707070;
+  font-size: 1.5rem;
+  border: solid 1px #d5d5d5;
+}
+.question-selection-box.question-recorder-page-input{
+   left: 0;
+   position: absolute;
+   resize: none;
+   top: 84.75%;
+   width: 96.25%;
+}
+.question-selection-box.question-modal-input {
+  margin-top:20px;
+}
+.question-selection-box .multiselect-inner-wrapper{
+  border:none;
+}
+.question-selection-box input{
+  background: rgb(255 255 255 / 0%);
+}
+.question-selection-box .multiselect-inner-wrapper .multiselect-selected-item{
+  background: #00587a;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-size: 1.25rem;
+}
+.question-selection-box .multiselect-inner-wrapper .multiselect-selected-item .remove-btn{
+  font-family: "Times New Roman", Times, serif;
+}
+.question-label-modal{
+  margin-top: 20px;
+  color: black;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
 }
