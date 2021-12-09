@@ -502,6 +502,7 @@ video {
   background: #fbfbfb;
   border: solid 1px #e5e5e5;
   border-radius: 6px;
+  height: 130px;
 }
 
 .questionSuggestionsWrapper .add-video-text{
@@ -559,4 +560,17 @@ video {
   font-size: 15px;
   font-weight: 700;
   text-align: center;
+}
+.edit-input-field > input{
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-size: 1.25rem;
+  padding: 6px;
+  border: none !important;
+}
+.edit-input-field > input:focus{
+  outline: none;
+}
+.edit-popup-wrapper{
+  border: solid 1px #bfbfbf;
+  border-radius: 4px;
 }

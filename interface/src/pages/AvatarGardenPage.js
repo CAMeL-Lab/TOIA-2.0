@@ -206,20 +206,15 @@ function AvatarGardenPage() {
     }
 
     function openSuggestion(e,card){
-        axios.post(`${env['server-url']}/removeSuggestedQ`,{
-            params:{
-                suggestedQID: card.id_question
-            }
-        }).then((res)=>{
-            history.push({
-                pathname: '/recorder?type='+card.type,
-                state: {
-                    toiaName,
-                    toiaLanguage,
-                    toiaID,
-                    suggestedQuestion: card.question
-                  }
-            });
+        history.push({
+            pathname: '/recorder?type='+card.type,
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID,
+                suggestedQuestion: card.question,
+                id_question: card.id_question
+              }
         });
     }
 
@@ -280,12 +275,12 @@ function AvatarGardenPage() {
         let streamSetting;
         if(card.name!="All"){
             streamSetting= <div className ="garden-settings-buttons">
-            <button onClick={changeStreamSettings} className="stream-settings"><i class="fa fa-cog "></i></button>
-            <button onClick ={()=>{toggleEye(card)}} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
+            <button onClick={changeStreamSettings} className="stream-settings"><i className="fa fa-cog "></i></button>
+            <button onClick ={()=>{toggleEye(card)}} className="stream-private"><i className={privacy_eye} aria-hidden="true"></i></button>
             </div>;
         }else{
             streamSetting= <div className ="garden-settings-buttons">
-            <button onClick ={()=>{toggleEye(card)}} className="stream-private"><i class={privacy_eye} aria-hidden="true"></i></button>
+            <button onClick ={()=>{toggleEye(card)}} className="stream-private"><i className={privacy_eye} aria-hidden="true"></i></button>
             </div>;
         }
 
@@ -305,9 +300,9 @@ function AvatarGardenPage() {
                 <br></br>
                 <div className="garden-carousel-menu" //stats that appear under stream
                 >
-                    <p style={{marginRight: 30}}>{card.ppl}&nbsp;<i class="fa fa-users"></i></p>
-                    <p style={{marginRight: 14}}>{card.heart}<i class="fa fa-heart"></i></p>
-                    <p style={{marginLeft: 15}}>{card.thumbs}&nbsp;<i class="fa fa-thumbs-up"></i></p>
+                    <p style={{marginRight: 30}}>{card.ppl}&nbsp;<i className="fa fa-users"></i></p>
+                    <p style={{marginRight: 14}}>{card.heart}<i className="fa fa-heart"></i></p>
+                    <p style={{marginLeft: 15}}>{card.thumbs}&nbsp;<i className="fa fa-thumbs-up"></i></p>
 
                 </div>
 
@@ -328,9 +323,9 @@ function AvatarGardenPage() {
                     <input className="garden-checkbox" type="checkbox" onClick={(event) => handleClick(event, index)} //checkbox
                     />
                     <button onClick={()=>edit(card)} className="garden-edit" //trash can
-                    ><i class="fa fa-edit"></i></button>
+                    ><i className="fa fa-edit"></i></button>
                     <button onClick={(event) => {cardSelected.push(videoList[index].question); openModal(event)}} className="garden-delete" //trash can
-                    ><i class="fa fa-trash"></i></button>
+                    ><i className="fa fa-trash"></i></button>
 
                 </div>
             </div>
@@ -539,7 +534,7 @@ function AvatarGardenPage() {
                 </Modal.Header>
                 <Modal.Actions>
                 <Button color='green' inverted onClick={groupSelect}>
-                    <i class="fa fa-check"></i>
+                    <i className="fa fa-check"></i>
                 </Button>
                 </Modal.Actions>
             </Modal>
@@ -828,7 +823,7 @@ function AvatarGardenPage() {
                 </Modal.Content>
                 <Modal.Actions>
                 <Button color='green'>
-                    <i class="fa fa-check"></i>
+                    <i className="fa fa-check"></i>
                 </Button>
                 </Modal.Actions>
             </Modal>
@@ -859,7 +854,7 @@ function AvatarGardenPage() {
 
             {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
             >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
-              <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
+              <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i className="fa fa-cog"></i></button>
             </div>
             <div className="section1">
 
@@ -929,7 +924,7 @@ function AvatarGardenPage() {
                 >
                 <div onClick={add}><img className="garden-add" src={addButton} // add video button
                 /><h1 className="video-text garden-font-class-3">Add Video</h1></div>
-                    {suggestedQsList.map((card, index) => {
+                    {suggestedQsList?.map((card, index) => {
                         return renderSuggestedQsCard(card, index, openSuggestion);
                     })}
                     {videoList.map(renderCard)}

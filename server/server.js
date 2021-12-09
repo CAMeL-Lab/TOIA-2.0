@@ -319,6 +319,10 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
         if (err) {
             throw err;
         } else {
+            if (entries.length === 0){
+                res.send([]);
+                return;
+            }
 
             let count = 0;
 
@@ -803,7 +807,10 @@ app.post('/recorder', cors(), async (req, res) => {
         }
 
         videoStreams = JSON.parse(fields.streams[0]);
-        let questions = JSON.parse(fields.questions[0]);
+        let questionsObj = JSON.parse(fields.questions[0]);
+        let questions = questionsObj.map((q) => {
+            return q.question;
+        });
 
         let query_getNextIndex = `SELECT MAX(idx) AS maxIndex
                                   FROM video;`;
@@ -895,6 +902,18 @@ app.post('/recorder', cors(), async (req, res) => {
                                     }
                                 });
                             });
+
+                            // Remove questions from question suggestion
+                            for (const q of questionsObj){
+                                let removeQuery = `DELETE FROM question_suggestions WHERE id_question=?`;
+                                if (q.hasOwnProperty('id_question') && q.id_question >= 0){
+                                    connection.query(removeQuery, [q.id_question], (err) => {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                    });
+                                }
+                            }
 
                             // Generate suggested video
                             axios.post(`${process.env.Q_API_ROUTE}`, {
