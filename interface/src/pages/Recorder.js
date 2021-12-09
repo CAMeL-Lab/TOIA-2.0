@@ -38,7 +38,7 @@ function ModalQSuggestion (props) {
 
                 <Modal.Description>
                     <p>
-                        Here are some suggestions...
+                        {(suggestedQs.length !== 0? "Here are some suggestions...":"No suggestions.")}
                     </p>
                     <div className={"questionSuggestionsWrapper"}>
                         <div className="row positive-relative add-video-box" onClick={() => {props.onAddVideoCallback()}}>
@@ -46,7 +46,7 @@ function ModalQSuggestion (props) {
                             <h1 className="video-text garden-font-class-3 add-video-text">Add Video</h1>
                         </div>
 
-                        {suggestedQs.map((card, index) => {
+                        {suggestedQs?.map((card, index) => {
                             return renderSuggestedQsCard(card, index, props.onCardClickFunct)
                         })}
                     </div>
@@ -127,7 +127,11 @@ function Recorder() {
             setQuestionsSelected([...questionsSelected, {question:history.location.state.videoType}]);
         }
         if (history.location.state.suggestedQuestion != null) {
-            setQuestionsSelected([...questionsSelected, {question:history.location.state.suggestedQuestion}]);
+            let q = {question:history.location.state.suggestedQuestion};
+            if (history.location.state.id_question){
+                q = {...q, id_question:history.location.state.id_question};
+            }
+            setQuestionsSelected([...questionsSelected, q]);
         }
 
         axios.post(`${env['server-url']}/getUserStreams`, {
@@ -147,7 +151,7 @@ function Recorder() {
         loadSuggestedQuestions();
     }, []);
 
-    const loadSuggestedQuestions = () => {
+    const loadSuggestedQuestions = React.useCallback(() => {
         return new Promise(((resolve, reject) => {
             axios.post(`${env['server-url']}/getUserSuggestedQs`,{
                 params: {
@@ -159,7 +163,7 @@ function Recorder() {
                 resolve();
             });
         }))
-    }
+    }, [setSuggestedQsListOrig, setSuggestedQsListCopy]);
 
     const handleStartCaptureClick = React.useCallback((e) => {
         resetTranscript();
@@ -196,9 +200,7 @@ function Recorder() {
 
     function handleDownload(e) {
         e.preventDefault();
-        let questionsList = questionsSelected.map(questionObj => {
-            return questionObj.question
-        });
+
         setWaitingServerResponse(true);
 
         let form = new FormData();
@@ -207,7 +209,7 @@ function Recorder() {
         form.append('id', toiaID);
         form.append('name', toiaName);
         form.append('language', toiaLanguage);
-        form.append('questions', JSON.stringify(questionsList));
+        form.append('questions', JSON.stringify(questionsSelected));
         form.append('answer', answerProvided);
         form.append('videoType', videoType);
         form.append('private', isPrivate.toString());
@@ -227,9 +229,13 @@ function Recorder() {
             setVideoTypeFormal(null);
 
             setQuestionsSelected([]);
+            setSuggestedQsListCopy([]);
+            setSuggestedQsListOrig([]);
 
-            setWaitingServerResponse(false);
-            setQuestionSuggestionModalActive(true);
+            loadSuggestedQuestions().then(() => {
+                setWaitingServerResponse(false);
+                setQuestionSuggestionModalActive(true);
+            })
         }).catch(err => {
             console.log(err);
         })
@@ -262,20 +268,15 @@ function Recorder() {
     }
 
     function openSuggestion(e,card){
-        axios.post(`${env['server-url']}/removeSuggestedQ`,{
-            params:{
-                suggestedQID: card.id_question
+        history.push({
+            pathname: '/recorder?type='+card.type,
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID,
+                suggestedQuestion: card.question,
+                id_question: card.id_question
             }
-        }).then((res)=>{
-            history.push({
-                pathname: '/recorder?type='+card.type,
-                state: {
-                    toiaName,
-                    toiaLanguage,
-                    toiaID,
-                    suggestedQuestion: card.question
-                }
-            });
         });
     }
 
@@ -406,7 +407,14 @@ function Recorder() {
     };
 
     const reset = () => {
-        window.location.reload();
+        history.push({
+            pathname: '/recorder',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID,
+            }
+        });
     }
 
     //code for webcam for Thumbnail
@@ -556,15 +564,14 @@ function Recorder() {
                         <EditCreateMultiSelect
                             suggestions={suggestedQsListCopy}
                             selectedItems={questionsSelected}
-                            updateSuggestions={(newList, added, removed) => {
-                                setSuggestedQsListCopy(newList);
+                            updateSuggestions={(response) => {
                             }}
-                            updateSelectedItems={(newList, added, removed, isCreated) => {
-                                setQuestionsSelected(newList)
+                            updateSelectedItems={(response) => {
                             }}
                             maxDisplayedItems={5}
                             placeholder={"Type your own question"}
-                            displayField={"question"}/>
+                            displayField={"question"}
+                            disabled={true}/>
                     </div>
                     {/* <div contentEditable="true" className="modal-ans font-class-1" onChange={setAnswerValue}>{answerProvided}
           </div> */}
@@ -699,11 +706,14 @@ function Recorder() {
                         <EditCreateMultiSelect
                             suggestions={suggestedQsListCopy}
                             selectedItems={questionsSelected}
-                            updateSuggestions={(newList, added, removed) => {
-                                    setSuggestedQsListCopy(newList);
+                            updateSuggestions={(response) => {
+                                setSuggestedQsListCopy(response.list);
                             }}
-                            updateSelectedItems={(newList, added, removed, isCreated) => {
-                                setQuestionsSelected(newList)
+                            updateSelectedItems={(response) => {
+                                setQuestionsSelected(response.list)
+                                if (response.removedItem){
+                                    setSuggestedQsListCopy([...suggestedQsListCopy, response.removedItem])
+                                }
                             }}
                             placeholder={"Type your own question"}
                             maxDisplayedItems={5}
