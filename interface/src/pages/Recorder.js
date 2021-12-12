@@ -14,6 +14,7 @@ import {renderSuggestedQsCard} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
 import env from './env.json';
 import videoTypesJSON from '../configs/VideoTypes.json';
+import addButton from "../icons/add-button.svg";
 
 const videoConstraints = {
     width: 720,
@@ -42,7 +43,7 @@ function ModalQSuggestion (props) {
                     </p>
                     <div className={"questionSuggestionsWrapper"}>
                         <div className="row positive-relative add-video-box" onClick={() => {props.onAddVideoCallback()}}>
-                            <img className="garden-add add-video-image" src="/static/media/add-button.11fe26c1.svg" alt={"image"} />
+                            <img className="garden-add add-video-image" src={addButton} alt={"image"} />
                             <h1 className="video-text garden-font-class-3 add-video-text">Add Video</h1>
                         </div>
 
