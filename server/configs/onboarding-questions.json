@@ -1,0 +1,47 @@
+[
+  {
+    "question": "Record a filler video!",
+    "type": "filler",
+    "priority": 2
+  },
+  {
+    "question": "Record a greeting!",
+    "type": "greeting",
+    "priority": 3
+  },
+  {
+    "question": "Where are you from?",
+    "type": "answer",
+    "priority": 4
+  },
+  {
+    "question": "Do you have any hobbies?",
+    "type": "answer",
+    "priority": 5
+  },
+  {
+    "question": "What is your favorite food?",
+    "type": "answer",
+    "priority": 6
+  },
+  {
+    "question": "Do you have any siblings?",
+    "type": "answer",
+    "priority": 7
+  },
+  {
+    "question": "What is the most exciting place you have been to?",
+    "type": "answer",
+    "priority": 2
+  },
+  {
+    "question": "Do you have any pets?",
+    "type": "answer",
+    "priority": 8
+  },
+  {
+    "question": "What is your favorite movie?",
+    "type": "answer",
+    "priority": 9
+  }
+]

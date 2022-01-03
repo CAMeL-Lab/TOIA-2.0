@@ -24,7 +24,8 @@ const {hash, pwdCheck} = require('./password_encryption');
 
 const Tracker = require('./tracker/tracker');
 const {isValidUser, saveSuggestedQuestion, parseQuestionsFromString, generateStringFromQuestions} = require('./helper/user_mgmt');
-//Create an 'express' instance
+
+const onboardingQuestions = require("./configs/onboarding-questions.json");
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -89,44 +90,7 @@ const gc = new Storage({
 let videoStore = gc.bucket(process.env.GC_BUCKET);
 
 app.post('/createTOIA', cors(), async (req, res) => {
-    let suggestions = [
-        {
-            "question": 'Record a filler video!',
-            "type": "filler"
-        },
-        {
-            "question": 'Record a greeting!',
-            "type": "greeting"
-        },
-        {
-            "question": 'Where are you from?',
-            "type": "answer"
-        },
-        {
-            "question": 'Do you have any hobbies?',
-            "type": "answer"
-        },
-        {
-            "question": 'What is your favorite food?',
-            "type": "answer"
-        },
-        {
-            "question": 'Do you have any siblings?',
-            "type": "answer"
-        },
-        {
-            "question": 'What is the most exciting place you have been to?',
-            "type": "answer"
-        },
-        {
-            "question": 'Do you have any pets?',
-            "type": "answer"
-        },
-        {
-            "question": 'What is your favorite movie?',
-            "type": "answer"
-        }
-    ]
+    let suggestions = onboardingQuestions;
 
     let inserted = 0;
 
@@ -152,7 +116,7 @@ app.post('/createTOIA', cors(), async (req, res) => {
                     } else {
 
                         // save file to local storage during development
-                        if (process.env.ENVIRONMENT == "development") {
+                        if (process.env.ENVIRONMENT === "development") {
                             let dest = `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/`;
                             let destFileName = `All_${stream_entry.insertId}.jpg`;
                             mkdirp(dest).then(() => {
@@ -172,14 +136,15 @@ app.post('/createTOIA', cors(), async (req, res) => {
                         suggestions.forEach((suggestedQ) => {
                             let ques = suggestedQ["question"];
                             let type = suggestedQ["type"];
-                            let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id, type) VALUES("${ques}",1,${entry.insertId}, "${type}");`
-                            connection.query(queryAddQs, (err, responsiveness, answerreceived) => {
+                            let priority = suggestedQ["priority"];
+                            let queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id, type) VALUES("${ques}",${priority},${entry.insertId}, "${type}");`
+                            connection.query(queryAddQs, (err, responsiveness) => {
                                 if (err) {
                                     throw err;
                                 } else {
                                     inserted++;
 
-                                    if (inserted == suggestions.length) {
+                                    if (inserted === suggestions.length) {
                                         res.send({new_toia_ID: entry.insertId});
                                     }
                                 }
@@ -299,18 +264,18 @@ app.get('/getAllStreams', cors(), (req, res) => {
 app.post('/getUserSuggestedQs', cors(), (req, res) => {
     let limitQuestions = 0;
 
-    let query_fetchSuggestions = `SELECT id_question, question, type
+    let query_fetchSuggestions = `SELECT id_question, question, type, priority
                                   FROM question_suggestions
                                   WHERE toia_id = ?
-                                  ORDER BY RAND() ASC;`
+                                  ORDER BY priority DESC;`
     let query_params = [req.body.params.toiaID];
 
     if (req.body.params.limit !== undefined){
         limitQuestions = req.body.params.limit;
-        query_fetchSuggestions = `SELECT id_question, question, type
+        query_fetchSuggestions = `SELECT id_question, question, type, priority
                                   FROM question_suggestions
                                   WHERE toia_id = ?
-                                  ORDER BY RAND() ASC LIMIT ?;`
+                                  ORDER BY priority DESC LIMIT ?;`
         query_params = [req.body.params.toiaID, limitQuestions];
     }
 
@@ -338,11 +303,11 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
             entries.forEach((entry) => {
 
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development") {
+                if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/Placeholder/questionmark.jpg`;
                     count++;
 
-                    if (count == entries.length) {
+                    if (count === entries.length) {
                         callback();
                     }
                     return;
@@ -357,7 +322,7 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
 
                         count++;
 
-                        if (count == entries.length) {
+                        if (count === entries.length) {
                             callback();
                         }
                     }
