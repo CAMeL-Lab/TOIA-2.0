@@ -51,7 +51,7 @@ let config;
 let connection;
 
 //Connect to CloudSQL database for Production
-if (process.env.ENVIRONMENT == 'production') {
+if (process.env.ENVIRONMENT === 'production') {
 
     config = {
         user: process.env.DB_USERNAME,
@@ -63,7 +63,7 @@ if (process.env.ENVIRONMENT == 'production') {
 
     connection = mysql.createConnection(config);
 
-} else if (process.env.ENVIRONMENT == 'development') {
+} else if (process.env.ENVIRONMENT === 'development') {
     console.log('wohoo');
     connection = mysql.createConnection({
         host: process.env.DB_HOST,
@@ -78,7 +78,7 @@ if (process.env.ENVIRONMENT == 'production') {
 // if on development, server static files
 var localAccountsDir = path.join(__dirname, 'Accounts/');
 var localAssetsDir = path.join(__dirname, 'assets/');
-if (process.env.ENVIRONMENT == "development") {
+if (process.env.ENVIRONMENT === "development") {
     app.use(express.static(localAccountsDir));
     app.use(express.static(localAssetsDir));
 }
@@ -170,7 +170,7 @@ app.post('/login', cors(), (req, res) => {
         if (err) {
             throw err;
         } else {
-            if (entry[0].cnt == 0) {
+            if (entry[0].cnt === 0) {
                 res.send("-1");
             } else {
                 let query_checkPasswordCorrect = `SELECT *
@@ -232,11 +232,11 @@ app.get('/getAllStreams', cors(), (req, res) => {
             entries.forEach((entry) => {
 
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development") {
+                if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/${entry.first_name}_${entry.id}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
                     counter++;
 
-                    if (counter == entries.length) {
+                    if (counter === entries.length) {
                         callback();
                     }
                     return;
@@ -251,7 +251,7 @@ app.get('/getAllStreams', cors(), (req, res) => {
 
                         counter++;
 
-                        if (counter == entries.length) {
+                        if (counter === entries.length) {
                             callback();
                         }
                     }
@@ -316,7 +316,6 @@ app.post('/getUserSuggestedQs', cors(), (req, res) => {
                 videoStore.file(`Placeholder/questionmark.png`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
-                        return;
                     } else {
                         entry.pic = url;
 
@@ -337,7 +336,7 @@ app.post('/removeSuggestedQ', cors(), (req, res) => {
     let query_removeSuggestedQ = `DELETE
                                   FROM question_suggestions
                                   WHERE id_question = "${req.body.params.suggestedQID}";`
-    connection.query(query_removeSuggestedQ, (err, entries, fields) => {
+    connection.query(query_removeSuggestedQ, (err) => {
         if (err) {
             throw err;
         } else {
@@ -352,7 +351,7 @@ app.post('/getUserVideos', cors(), (req, res) => {
                             FROM video
                             WHERE toia_id = "${req.body.params.toiaID}"
                             ORDER BY idx DESC;`;
-    connection.query(query_userVideos, (err, entries, fields) => {
+    connection.query(query_userVideos, (err, entries) => {
         if (err) {
             throw err;
         } else {
@@ -368,7 +367,7 @@ app.post('/getUserVideos', cors(), (req, res) => {
                 res.send(entries);
             }
 
-            if (cnt == entries.length) {
+            if (cnt === entries.length) {
                 callback();
             }
 
@@ -376,11 +375,11 @@ app.post('/getUserVideos', cors(), (req, res) => {
             entries.forEach((entry) => {
                 entry.questions = parseQuestionsFromString(entry.question);
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development") {
+                if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
                     cnt++;
 
-                    if (cnt == entries.length) {
+                    if (cnt === entries.length) {
                         callback();
                     }
                     return;
@@ -389,12 +388,12 @@ app.post('/getUserVideos', cors(), (req, res) => {
                 videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
-                        return;
+
                     } else {
                         entry.pic = url;
                         cnt++;
 
-                        if (cnt == entries.length) {
+                        if (cnt === entries.length) {
                             callback();
                         }
                     }
@@ -426,11 +425,11 @@ app.post('/getUserStreams', cors(), async (req, res) => {
 
             entries.forEach((entry) => {
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development") {
+                if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
                     counter++;
 
-                    if (counter == entries.length) {
+                    if (counter === entries.length) {
                         callback();
                     }
                     return;
@@ -440,12 +439,11 @@ app.post('/getUserStreams', cors(), async (req, res) => {
                 videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
-                        return;
                     } else {
                         entry.pic = url;
                         counter++;
 
-                        if (counter == entries.length) {
+                        if (counter === entries.length) {
                             callback();
                         }
                     }
@@ -463,7 +461,7 @@ app.post('/createNewStream', cors(), (req, res) => {
     let form = new multiparty.Form();
 
     form.parse(req, function (err, fields, file) {
-        if (fields.newStreamPrivacy[0] == 'private') {
+        if (fields.newStreamPrivacy[0] === 'private') {
             privacySetting = 1;
         }
 
@@ -476,7 +474,7 @@ app.post('/createNewStream', cors(), (req, res) => {
             } else {
 
                 // save file to local storage during development
-                if (process.env.ENVIRONMENT == "development") {
+                if (process.env.ENVIRONMENT === "development") {
                     let dest = `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/`;
                     let destFileName = `${fields.newStreamName[0]}_${entry.insertId}.jpg`;
                     mkdirp(dest).then(() => {
@@ -516,11 +514,11 @@ app.post('/createNewStream', cors(), (req, res) => {
                         entries.forEach((streamEntry) => {
 
                             // send local storage image when in development
-                            if (process.env.ENVIRONMENT == "development") {
+                            if (process.env.ENVIRONMENT === "development") {
                                 streamEntry.pic = `/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`;
                                 counter++;
 
-                                if (counter == entries.length) {
+                                if (counter === entries.length) {
                                     callback();
                                 }
                                 return;
@@ -529,13 +527,12 @@ app.post('/createNewStream', cors(), (req, res) => {
                             videoStore.file(`Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`).getSignedUrl(config, function (err, url) {
                                 if (err) {
                                     console.error(err);
-                                    return;
                                 } else {
                                     streamEntry.pic = url;
 
                                     counter++;
 
-                                    if (counter == entries.length) {
+                                    if (counter === entries.length) {
                                         callback();
                                     }
                                 }
@@ -576,7 +573,7 @@ app.post('/getStreamVideos', cors(), (req, res) => {
             }
 
 
-            if (cnt == entries.length) {
+            if (cnt === entries.length) {
                 callback();
             }
 
@@ -584,11 +581,11 @@ app.post('/getStreamVideos', cors(), (req, res) => {
             entries.forEach((entry) => {
                 entry.questions = parseQuestionsFromString(entry.question)
                 // send local storage image when in development
-                if (process.env.ENVIRONMENT == "development") {
+                if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video + ".jpg"}`;
                     cnt++;
 
-                    if (cnt == entries.length) {
+                    if (cnt === entries.length) {
                         callback();
                     }
                     return;
@@ -597,12 +594,11 @@ app.post('/getStreamVideos', cors(), (req, res) => {
                 videoStore.file(`Accounts/${req.body.params.toiaName}_${req.body.params.toiaID}/VideoThumb/${entry.id_video}`).getSignedUrl(config, function (err, url) {
                     if (err) {
                         console.error(err);
-                        return;
                     } else {
                         entry.pic = url;
                         cnt++;
 
-                        if (cnt == entries.length) {
+                        if (cnt === entries.length) {
                             callback();
                         }
                     }
@@ -630,11 +626,11 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
                 expires: '07-14-2022',
             };
 
-            if (process.env.ENVIRONMENT == "development") {
+            if (process.env.ENVIRONMENT === "development") {
                 let vidPrivacy;
                 let url = `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`;
 
-                if (entries[0].private == 0) {
+                if (entries[0].private === 0) {
                     vidPrivacy = 'Public';
                 } else {
                     vidPrivacy = 'Private';
@@ -656,11 +652,10 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
             videoStore.file(`Accounts/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`).getSignedUrl(config, function (err, url) {
                 if (err) {
                     console.error(err);
-                    return;
                 } else {
                     let vidPrivacy;
 
-                    if (entries[0].private == 0) {
+                    if (entries[0].private === 0) {
                         vidPrivacy = 'Public';
                     } else {
                         vidPrivacy = 'Private';
@@ -693,7 +688,7 @@ app.post('/fillerVideo', cors(), (req, res) => {
         if (err) {
             throw err;
         } else {
-            if (entries.length == 0) {
+            if (entries.length === 0) {
                 res.send("No Videos");
                 return;
             }
@@ -703,7 +698,7 @@ app.post('/fillerVideo', cors(), (req, res) => {
                 expires: '07-14-2022',
             };
 
-            if (process.env.ENVIRONMENT == "development") {
+            if (process.env.ENVIRONMENT === "development") {
                 res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`);
                 return;
             }
@@ -736,7 +731,7 @@ app.post('/player', cors(), (req, res) => {
             expires: '07-14-2022',
         };
 
-        if (process.env.ENVIRONMENT == "development") {
+        if (process.env.ENVIRONMENT === "development") {
             res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
             return;
         }
@@ -763,9 +758,9 @@ app.post('/recorder', cors(), async (req, res) => {
         // Append the answer with '.' if necessary
         if (answer.slice(-1) !== '.' && answer.slice(-1) !== '!' && answer.slice(-1) !== '?') answer = answer + ".";
 
-        if (fields.private[0] == 'false') {
+        if (fields.private[0] === 'false') {
             isPrivate = 0;
-        } else if (fields.private[0] == 'true') {
+        } else if (fields.private[0] === 'true') {
             isPrivate = 1;
         } else {
             throw new Error("Invalid value for field 'private'");
@@ -796,7 +791,7 @@ app.post('/recorder', cors(), async (req, res) => {
                     let bufferStream = new stream.PassThrough();
                     bufferStream.end(Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64'));
 
-                    if (process.env.ENVIRONMENT == "development") {
+                    if (process.env.ENVIRONMENT === "development") {
                         // Save thumbnail
                         let thumbDest = `Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/`;
                         let thumbName = videoID + ".jpg";
@@ -826,7 +821,7 @@ app.post('/recorder', cors(), async (req, res) => {
 
 
                     // save file to local storage during development
-                    if (process.env.ENVIRONMENT == "development") {
+                    if (process.env.ENVIRONMENT === "development") {
                         let dest = `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/`;
                         let destFileName = videoID;
                         mkdirp(dest).then(() => {
