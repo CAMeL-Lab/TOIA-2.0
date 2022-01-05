@@ -1,47 +1,80 @@
 [
   {
-    "question": "Record a filler video!",
+    "question": "Record a filler video (e.g., record yourself staring the camera for 10-15 seconds)",
     "type": "filler",
-    "priority": 2
+    "priority": 0,
+    "trigger_suggester": false
   },
   {
-    "question": "Record a greeting!",
+    "question": "Record another filler video (e.g., adjust your hair for 10 seconds)",
+    "type": "filler",
+    "priority": 1,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Record one more filler video (e.g., drink a cup of coffee or tea)",
+    "type": "filler",
+    "priority": 2,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Say: I don't have an answer to that right now.",
+    "type": "no-answer",
+    "priority": 3,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Say: Sorry, I didn't record answers to that question.",
+    "type": "no-answer",
+    "priority": 4,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Say: Can you try rephrasing the question?",
+    "type": "no-answer",
+    "priority": 5,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Record a greeting (e.g., hello, hi)",
     "type": "greeting",
-    "priority": 3
+    "priority": 6,
+    "trigger_suggester": false
   },
   {
-    "question": "Where are you from?",
-    "type": "answer",
-    "priority": 4
+    "question": "Record a goodbye (or end of conversation sentence)",
+    "type": "exit",
+    "priority": 7,
+    "trigger_suggester": false
   },
   {
-    "question": "Do you have any hobbies?",
+    "question": "What is your name?",
     "type": "answer",
-    "priority": 5
+    "priority": 8,
+    "trigger_suggester": true
   },
   {
-    "question": "What is your favorite food?",
+    "question": "Where and when were you born?",
     "type": "answer",
-    "priority": 6
+    "priority": 9,
+    "trigger_suggester": true
   },
   {
-    "question": "Do you have any siblings?",
+    "question": "What do you do for a living?",
     "type": "answer",
-    "priority": 7
+    "priority": 10,
+    "trigger_suggester": true
   },
   {
-    "question": "What is the most exciting place you have been to?",
-    "type": "answer",
-    "priority": 2
+    "question": "Type as many questions as you'd like to answer: Yes, and record yourself saying Yes",
+    "type": "y/n-answer",
+    "priority": 11,
+    "trigger_suggester": false
   },
   {
-    "question": "Do you have any pets?",
-    "type": "answer",
-    "priority": 8
-  },
-  {
-    "question": "What is your favorite movie?",
-    "type": "answer",
-    "priority": 9
+    "question": "Type as many questions as you'd like to answer: No, and record yourself saying No",
+    "type": "y/n-answer",
+    "priority": 12,
+    "trigger_suggester": false
   }
 ]
