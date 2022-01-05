@@ -27,7 +27,7 @@ module.exports.isValidUser = function (userId) {
     }))
 }
 
-module.exports.saveSuggestedQuestion = function (userId, question, type='answer', priority=1) {
+module.exports.saveSuggestedQuestion = function (userId, question, type='answer', priority=0) {
     return new Promise(((resolve, reject) => {
         const queryAddQs = `INSERT INTO question_suggestions(question, priority, toia_id, type) VALUES(?, ?, ?, ?);`
         connection.query(queryAddQs, [question, priority, userId, type],(err, result, fields) => {
