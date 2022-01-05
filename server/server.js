@@ -875,7 +875,7 @@ app.post('/recorder', cors(), async (req, res) => {
                                 }
                             }
 
-                            // Generate suggested video
+                            // Generate suggested questions
                             axios.post(`${process.env.Q_API_ROUTE}`, {
                                 qa_pair:questions[0] + " " + fields.answer[0],
                                 callback_url:req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
