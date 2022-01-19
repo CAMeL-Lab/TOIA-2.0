@@ -12,14 +12,14 @@ const user = {
     email: 'someone1249@example.com',
     pwd: 123,
     language: 'English',
-    profile_pic: "C:\\Users\\Acer\\Desktop\\anime.jpg",
-    video:"C:\\Users\\Acer\\Downloads\\SampleVideo_1280x720_1mb.mp4",
+    profile_pic: "C:\\Users\\Acer\\Desktop\\anime.jpg", // PATH to any image file
+    video:"C:\\Users\\Acer\\Downloads\\SampleVideo_1280x720_1mb.mp4", // Path to any video file
     videoType:'greeting'
 };
 
 const stream = {
     name: "Cool Stream",
-    display_pic: "C:\\Users\\Acer\\Desktop\\anime.jpg",
+    display_pic: "C:\\Users\\Acer\\Desktop\\anime.jpg",  // PATH to any image file
     privacy: "public"
 };
 
@@ -270,8 +270,7 @@ describe('POST /recorder', () => {
     })
 })
 
-// Suggestions once again
-// TODO: Onboarding and suggestion logic is flawed.
+// TODO: Add further tests
 
 afterAll(() => {
     connection.end();
