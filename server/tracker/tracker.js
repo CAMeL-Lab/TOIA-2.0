@@ -1,21 +1,13 @@
 const router = require('express').Router();
 const assert = require('assert');
-const mysql = require('mysql');
 var moment = require('moment');
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
-});
-
-connection.connect();
+const connection = require('../configs/db-connection');
 
 const tableName = 'tracker';
 
 const start = (req, res) => {
-    if (req.method != "POST") {
+    if (req.method !== "POST") {
         console.log("Error: Tracker Can't Run Without POST Request");
         res.status(500).send("Error: Tracker Can't Run Without POST Request");
     } else {
@@ -30,7 +22,7 @@ const start = (req, res) => {
 }
 
 const end = (req, res) => {
-    if (req.method != "POST") {
+    if (req.method !== "POST") {
         console.log("Error: Tracker Can't Run Without POST Request");
         res.status(500).send("Error: Tracker Can't Run Without POST Request");
     } else {
@@ -41,7 +33,7 @@ const end = (req, res) => {
 
                 connection.query(query, (err,entry)=>{
                     if (err) throw new Error(err);
-                    assert(entry.affectedRows == 1);
+                    assert(entry.affectedRows === 1);
                     res.status(200).send("Updated!");
                 });
             } else {
@@ -54,7 +46,7 @@ const end = (req, res) => {
 }
 
 const notify = (req, res) => {
-    if (req.method != "POST") {
+    if (req.method !== "POST") {
         console.log("Error: Tracker Can't Run Without POST Request");
         res.status(500).send("Error: Tracker Can't Run Without POST Request");
     } else {
@@ -85,7 +77,7 @@ const getActivity = (track_id) => {
     return new Promise(((resolve, reject) => {
         connection.query(query, (error, entries) => {
             if (error) throw new Error(error);
-            if (entries.length == 1) {
+            if (entries.length === 1) {
                 resolve(entries[0]);
             } else {
                 reject("No such activity");

@@ -53,15 +53,19 @@ function SignUpPage() {
       form.append('language', language);
       console.log(form);
       axios.post(`${env['server-url']}/createTOIA`,form).then((res)=>{
-          console.log(`Account created successfully ${res.data}`);
-          history.push({
-            pathname: '/mytoia',
-            state: {
-              toiaName:fname,
-              toiaLanguage:language,
-              toiaID: res.data.new_toia_ID
-            }
-          });
+          if (res.status === 200){
+              console.log(`Account created successfully ${res.data}`);
+              history.push({
+                  pathname: '/mytoia',
+                  state: {
+                      toiaName:fname,
+                      toiaLanguage:language,
+                      toiaID: res.data.new_toia_ID
+                  }
+              });
+          } else if (res.status === 400) {
+              alert("Email already exists!");
+          }
         });
     }else{
       alert('Passwords need to match.');
