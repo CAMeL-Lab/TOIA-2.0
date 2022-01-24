@@ -20,19 +20,42 @@ const axios = require('axios');
 const {callbackify} = require('util');
 const {ENETUNREACH} = require('constants');
 
+//google speech to text 
+const recorder = require('node-record-lpcm16');
+const speech = require('@google-cloud/speech');
+
+// Creates a client
+const client = new speech.SpeechClient();
+
 const {hash, pwdCheck} = require('./password_encryption');
+
+const compression = require('compression')
 
 const Tracker = require('./tracker/tracker');
 
-//Create an 'express' instance
+//const {transcribeAudio, recognizeStream, responseChunks} = require('./speech_to_text/speech_to_text')
+const speech_to_text = require('./speech_to_text/speech_to_text');
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
 
+// main recording parameters
+const encoding = 'LINEAR16';
+const sampleRateHertz = 16000;
+const languageCode = 'en-US';
+
+let recording = null;
+let recognizeStream;
+
+let streamingLimit = 210000; // 3.5 sec
+let timeout;
+
+
+// chucks of transcript from speech to text
+let responseChunks = [];
+
 
 //Create an 'express' instance
-
-
 const app = express();
 const server = app.listen(process.env.PORT || 3001, () => console.log('Server is listening!'));
 
@@ -40,6 +63,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 app.use(express.static('./public'));
+app.use(compression())
 app.use(cors());
 
 // import custom functions
@@ -74,6 +98,7 @@ if (process.env.ENVIRONMENT == 'production') {
     connection.connect();
 }
 
+
 // if on development, server static files
 var localAccountsDir = path.join(__dirname, 'Accounts/');
 var localAssetsDir = path.join(__dirname, 'assets/');
@@ -87,6 +112,98 @@ const gc = new Storage({
     projectId: 'toia-capstone-2021'
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
+
+// functions for google speech to text api
+//####################################################
+// Create a recognize stream
+let streamStarted = true;
+async function createStream(req, res){
+    recognizeStream = await client
+    .streamingRecognize(speech_to_text.request)
+    .on('error', console.error)
+    .on('data', async (data) =>{
+        if(!streamStarted) return;
+        //speechCallback(data);
+        process.stdout.write(
+        data.results[0] && data.results[0].alternatives[0]
+        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+        : '\n\nReached transcription time limit, press Ctrl+C\n'
+    ) 
+        await responseChunks.push(`${data.results[0].alternatives[0].transcript}`);
+        
+        if(req.body.params && req.body.params.fromRecorder === false){
+
+            let response = "";
+            let noSpaces = [];
+            //console.log(responseChunks)
+            responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+
+            let uniqueChars = [...new Set(noSpaces)];
+            //console.log("set elements: ", uniqueChars);
+        await uniqueChars.forEach(elem => response +=  (elem + " ")); //res.write(elem));
+        res.send(response);
+        console.log("response sent: ", response);
+        FinishTrancription();
+        return;
+        
+        }
+        }
+    );
+    timeout = setTimeout(restartStream, streamingLimit);
+    }
+
+async function transcribeAudio(req, res){
+    responseChunks = []
+    console.log("transcribeAudio called")
+    createStream(req, res);
+    //console.log(recorder)
+    recording = recorder
+    .record({
+    sampleRateHertz: sampleRateHertz,
+    threshold: 0,
+    verbose: false,
+    recordProgram: 'rec', // Try also "arecord" or "sox"
+    silence: '1000.0',
+    })
+    recording.stream()
+        .on('error', console.error)
+        .pipe(recognizeStream);
+
+    // Restart stream when streamingLimit expires
+    //setTimeout(createStream, streamingLimit);
+    return;
+    
+}
+
+function speechCallback(stream, incoming_which_stream) {
+    let stdoutText = stream.results[0].alternatives[0].transcript;
+    console.log(stdoutText);
+}
+
+function restartStream() {
+    if (recognizeStream) {
+        recognizeStream.removeListener('data', speechCallback);
+        recognizeStream.destroy();
+        recognizeStream = null;
+        console.log("restarted successfully!")
+    }
+}
+
+//function for reinstantiating recorder
+function FinishTrancription() {
+    try {
+      console.log("Ending...")
+      recording.stop();
+      //recognizeStream.end();
+      //recognizeStream.removeListener();
+      //recognizeStream = null;
+    }
+    catch (exception_var) {
+      console.log("No recording on going");
+    }
+  
+  }
+//########################################
 
 app.post('/createTOIA', cors(), async (req, res) => {
     let suggestions = [
@@ -737,10 +854,10 @@ app.post('/fillerVideo', cors(), (req, res) => {
 });
 
 app.post('/player', cors(), (req, res) => {
-
+    console.log("player question= ", req.body.params.question.current, req.body.params);
     axios.post(`${process.env.DM_ROUTE}`, {
         params: {
-            query: req.body.params.question,
+            query: req.body.params.question.current,
             avatar_id: req.body.params.toiaIDToTalk,
             stream_id: req.body.params.streamIdToTalk
         }
@@ -753,6 +870,11 @@ app.post('/player', cors(), (req, res) => {
         };
 
         if (process.env.ENVIRONMENT == "development") {
+            console.log(videoDetails.data.id_video)
+            if (videoDetails.data.id_video === "204"){
+                res.send("error")
+                return;
+            }
             res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
             return;
         }
@@ -760,11 +882,16 @@ app.post('/player', cors(), (req, res) => {
         videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`).getSignedUrl(config, function (err, url) {
             if (err) {
                 console.error(err);
+                //res.send("error");
                 return;
             } else {
                 res.send(url);
+                return;
             }
         });
+    }).catch((err) => {
+        res.send("error");
+        console.log("from dm error")
     });
 });
 
@@ -883,5 +1010,65 @@ app.post('/recorder', cors(), async (req, res) => {
         });
     });
 });
+
+//getting user data to populate settings 
+app.post('/getUserData', cors(), (req, res) =>{
+    let query_getUserData = `SELECT *
+                                FROM toia_user
+                                WHERE id = "${req.body.params.toiaID}";`
+    connection.query(query_getUserData, (err, entries, fields) => {
+        if (err){
+            throw err;
+        } 
+        console.log("user data sent!")
+        res.send(Object.values(entries))
+        
+    })
+})
+
+app.post('/transcribeAudio', cors(), async (req, res)=>{
+    // transcribing audio
+    streamStarted = true;
+
+    FinishTrancription()
+    await createStream(req, res);
+    
+    await transcribeAudio(req, res);
+
+    //setTimeout(FinishTrancription, 200);
+    
+    //res.end();
+    return;
+})
+
+// transcription for frontend
+// app.post('/getTranscribedAudio', cors(), async (req, res)=>{
+//     // transcribing audio
+//     streamStarted = true;
+//     FinishTrancription()
+    
+//     await createStream(req, res);
+//     await transcribeAudio(req, res);
+//     console.log("frontend: ", responseChunks)
+    
+//     //return;
+    
+// })
+
+app.post('/endTranscription', cors(), async (req, res)=>{
+    FinishTrancription();
+    //console.log("returned responses: ", speech_to_text.returnResponses())
+    let response = "";
+    let noSpaces = [];
+    //console.log(responseChunks)
+    responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+
+    let uniqueChars = [...new Set(noSpaces)];
+    //console.log("set elements: ", uniqueChars);
+    await uniqueChars.forEach(elem => response +=  (elem + " ")); //res.write(elem));
+    //console.log("response: ", response);
+    
+    return res.send(response);//res.end() 
+})
 
 app.use('/tracker', Tracker);
