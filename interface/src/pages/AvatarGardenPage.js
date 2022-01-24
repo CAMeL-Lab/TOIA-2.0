@@ -49,6 +49,10 @@ function AvatarGardenPage() {
     const [playbackVideoAnswer, setPlaybackVideoAnswer]=useState(null);
     const [playbackVideoPrivacy, setPlaybackVideoPrivacy]=useState(null);
 
+    const [currentUserFullname, setCurrentUserFullname]=useState(null);
+    const [currentUserLanguage, setCurrentUserLanguage]=useState(null);
+    const [currentUserEmail, setCurrentUserEmail]=useState(null);
+
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -209,6 +213,19 @@ function AvatarGardenPage() {
         });
     }
 
+    // querying the database for user data
+    function getUserData(){
+        axios.post(`${env['server-url']}/getUserData`, {
+            params:{
+                toiaID: history.location.state.toiaID,
+            }
+        }).then((res)=>{
+            setCurrentUserFullname(res.data[0].first_name + " "+ res.data[0].last_name);
+            setCurrentUserLanguage(res.data[0].language);
+            setCurrentUserEmail(res.data[0].email);
+        })
+    }
+
     const [anchorEl, setAnchorEl] = useState(null); //for list of streams drop down menu when you click on move icon
     const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -225,9 +242,9 @@ function AvatarGardenPage() {
     const handleClose = () => {
         setAnchorEl(null);
     }
-
+   
     var settingData = [
-        {name: "", email:"", password:"", language: ""}
+        {name: `${currentUserFullname}`, email: `${currentUserEmail}`, password:"", language: `${currentUserLanguage}`}
     ]
     // var streamData =[//Holds info on the stream
     //   {name: "Fun Stream", privacy: "Public", language: "English", bio:"This is my fun album"}
@@ -858,7 +875,7 @@ function AvatarGardenPage() {
 
             {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
             >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
-              <button  onClick={(event)=> {openModal2(event)}} className="garden-settings"><i class="fa fa-cog"></i></button>
+              <button  onClick={(event)=> {openModal2(event); getUserData()}} className="garden-settings"><i class="fa fa-cog"></i></button>
             </div>
             <div className="section1">
 
