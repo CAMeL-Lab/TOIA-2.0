@@ -802,15 +802,13 @@ app.post('/recorder', cors(), async (req, res) => {
                             for (const streamToLink of videoStreams) {
                                 await linkStreamVideoQuestion(streamToLink.id, videoID, q_id, fields.videoType[0]);
                             }
+
+                            //Generate suggested questions
+                            axios.post(`${process.env.Q_API_ROUTE}`, {
+                                qa_pair: q.question + " " + answer,
+                                callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
+                            });
                         }
-
-
-                        // TODO: Setup QAPI
-                        // Generate suggested questions
-                        // axios.post(`${process.env.Q_API_ROUTE}`, {
-                        //     qa_pair: questions[0] + " " + fields.answer[0],
-                        //     callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
-                        // });
 
                         res.send("Success");
                     }
