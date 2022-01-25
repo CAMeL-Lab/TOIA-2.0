@@ -52,7 +52,10 @@ def dialogue_manager(payload: DMpayload):
     print(avatar_id)
     print(stream_id)
 
-    statement = text("SELECT stream_has_video.stream_id_stream,video.* FROM video INNER JOIN stream_has_video ON video.id_video = stream_has_video.video_id_video WHERE stream_has_video.stream_id_stream = :streamID AND video.private = 0 AND video.type NOT IN ('filler', 'exit');")
+    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.* FROM video
+                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
+                            INNER JOIN questions ON questions.id = videos_questions_streams.id_question
+                            WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND videos_questions_streams.type NOT IN ('filler', 'exit');""")
 
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
     result_set = result_proxy.fetchall()
@@ -60,12 +63,12 @@ def dialogue_manager(payload: DMpayload):
     df_avatar = pd.DataFrame(result_set,
                                 columns=[
                                     'stream_id_stream',
-                                    'id_video',
                                     'type',
+                                    'question',
+                                    'id_video',
                                     'toia_id',
                                     'idx',
                                     'private',
-                                    'question',
                                     'answer',
                                     'language',
                                     'likes',
@@ -92,4 +95,4 @@ def dialogue_manager(payload: DMpayload):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="localhost", port=8080)

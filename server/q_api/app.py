@@ -3,13 +3,13 @@ from flask import Flask, request, render_template, url_for
 import os
 import argparse
 import random
-import os 
+import os
 import re
-import json 
+import json
 import linecache
 from transformers import pipeline, set_seed
 from transformers import BertTokenizer, BertForNextSentencePrediction
-import nltk 
+import nltk
 from nltk import tokenize
 import ssl
 import torch
@@ -41,10 +41,10 @@ generator = pipeline('text-generation', model='gpt2')
 
 @app.route('/')
 def show_page():
-    return render_template("index.html") 
+    return render_template("index.html")
 
 @app.route('/getTrial')
-def hello(): 
+def hello():
     return "Successful getTrial"
 
 @app.route('/postTrial', methods = ['POST'])
@@ -56,8 +56,8 @@ def test():
 def return3Questions():
     return {"mandatoryQuestions": ["How are you?", "What is your name?", "Where are you from?"]}
 
-    #add priority, add label? 
-      
+    #add priority, add label?
+
 @app.route('/generateNextQ',  methods = ['POST'])
 def generateNextQ():
 
@@ -75,24 +75,24 @@ def generateNextQ():
     storage.append(text)
 
     question = ''
-    if len(starters) > 0: 
+    if len(starters) > 0:
         print("SENDING STARTER")
         question = starters.pop()
 
-    else: 
+    else:
 
         text = " ".join(storage[-2:])
         q = generator(text, num_return_sequences=3,max_length=50+len(text))
 
-        #all generated examples 
+        #all generated examples
         allGenerations = ""
         for i in range(3):
             allGenerations = allGenerations +" "+ q[i]['generated_text'][len(text)-4:]
-        
-        #Separating all the sentences... 
+
+        #Separating all the sentences...
         sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
 
-        #Filter out questions 
+        #Filter out questions
         questionsList = []
         for sentence in sentenceList :
             if "?" in sentence:
@@ -112,15 +112,11 @@ def generateNextQ():
 
         print (bert_filtered_qs)
 
+        # TODO: Fix issue -> List index out of range
         question = bert_filtered_qs[-1][1]
 
     if callback_url is not None:
         requests.post(callback_url, json={"q": question})
-        # try:
-        #
-        # except:
-        #     # ignore silently.
-        #     pass
 
 
     return {"q":question}
@@ -128,7 +124,6 @@ def generateNextQ():
 
 
 
-    
 
 
-    
+

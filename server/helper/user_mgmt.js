@@ -28,7 +28,6 @@ module.exports.isValidUser = function (userId) {
     }))
 }
 
-// TODO: Add additional function, addQuestionIfNew
 async function addQuestionIfNew(question, suggested_type, onboarding=0, priority=100, trigger_suggester=1){
     return new Promise((resolve => {
         let query = `SELECT * FROM questions WHERE question = ? AND onboarding = 0 LIMIT 1`;
