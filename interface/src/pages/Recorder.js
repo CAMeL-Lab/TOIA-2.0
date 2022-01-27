@@ -111,6 +111,10 @@ function Recorder() {
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
 
+    const [transcribedAudio, setTranscribedAudio] = useState("");
+
+    const [editVideoID, setEditVideoID] = useState('');
+
     const backgroundActiveColor = "#B1F7B0";
     const backgroundDefaultColor = "#e5e5e5";
 
@@ -298,9 +302,24 @@ function Recorder() {
     }
 
     const handleStartCaptureClick = React.useCallback((e) => {
+        // start call  here
         resetTranscript();
         setRecordedChunks([]);
-        SpeechRecognition.startListening({continuous: true});
+        setTranscribedAudio("")
+        //SpeechRecognition.startListening({continuous: true});
+
+        // requesting the server to start listening
+        axios.post(`${env['server-url']}/transcribeAudio`, {
+            params: {
+                toiaID: history.location.state.toiaID,
+                fromRecorder: true
+            }
+        }).then((res)=>{
+            setTranscribedAudio(res.data);
+            return;
+        })
+
+        // sending request to server
         setCapturing(true);
         mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
             mimeType: "video/webm"
@@ -324,7 +343,17 @@ function Recorder() {
 
     const handleStopCaptureClick = React.useCallback((e) => {
 
-        SpeechRecognition.stopListening();
+        // end call here 
+        //SpeechRecognition.stopListening();
+        // requesting the server to stop listening
+        axios.post(`${env['server-url']}/endTranscription`, {
+            params: {
+                toiaID: history.location.state.toiaID
+            }
+        }).then((res)=>{
+            setTranscribedAudio(res.data);
+            return;
+        })
         mediaRecorderRef.current.stop();
         setCapturing(false);
         e.preventDefault();
@@ -522,7 +551,7 @@ function Recorder() {
                 </video>;
                 setVideoComponent(videoElem);
                 // document.getElementById("videoRecorded").src = window.URL.createObjectURL(blob);
-                setAnswerProvided(transcript);
+                setAnswerProvided(transcribedAudio);
                 dispatch({type: 'open'});
             } else {
                 alert("Please record a video clip before submitting your response.");
@@ -537,7 +566,7 @@ function Recorder() {
                 type: "video/webm"
             });
             setRecordedVideo(blob);
-            setAnswerProvided(transcript);
+            setAnswerProvided(transcribedAudio);
             setViewingRecordedVideo(true);
         }
     }
@@ -1091,6 +1120,24 @@ function Recorder() {
                             displayField={"question"}
                             disabled={pendingOnBoardingQs.length !== 0}/>
                     </div>
+// =======
+//                     {recordedChunks.length > 0 && (
+//                         <button className="check tooltip" onClick={openModal}><i className="fa fa-check"></i>
+//                             <span className="check_tooltip">
+//           Save Video
+//           </span>
+//                         </button>
+//                     )}
+//                     <p className="recorder-speech">{transcribedAudio}</p>
+//                     <input
+//                         className="type-q font-class-1"
+//                         placeholder={"Type your own question"}
+//                         value={questionSelected}
+//                         id="video-text-box"
+//                         type={"text"}
+//                         onChange={setQuestionValue}
+//                     />
+// >>>>>>> master
                 </div>
 
             </div>

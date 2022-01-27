@@ -29,7 +29,7 @@ function Player(){
   ];
 
 
-  const { transcript, resetTranscript } = useSpeechRecognition({commands});
+  //const { transcript, resetTranscript } = useSpeechRecognition({commands});
 
   const [toiaName, setName] = React.useState(null);
   const [toiaLanguage, setLanguage] = React.useState(null);
@@ -45,8 +45,14 @@ function Player(){
   const [fillerPlaying, setFillerPlaying]=useState(true);
 
   const [video,setVideo] = useState(null);
-  const [question,setQuestion] = useState(null);
-  const [matched,setMatched]=useState(0);
+
+  //const [question,setQuestion] = useState(null);
+  //const [matched,setMatched]=useState(0);
+
+  //const [transcribedAudio, setTranscribedAudio] = useState("");
+
+  const transcribedAudio = React.useRef(null);
+  const question = React.useRef(null);
 
 
   var input1, input2;
@@ -60,6 +66,7 @@ function Player(){
       setName(history.location.state.toiaName);
       setLanguage(history.location.state.toiaLanguage);
     }
+    
     setTOIAIdToTalk(history.location.state.toiaToTalk);
     setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
     setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
@@ -67,8 +74,8 @@ function Player(){
     setStreamNameToTalk(history.location.state.streamNameToTalk);
 
     fetchFiller();
-
-    SpeechRecognition.startListening({continuous:true});
+    //SpeechRecognition.startListening({continuous:true});
+    continueChat();
 
   },[]);
 
@@ -93,43 +100,91 @@ function Player(){
           break;
       }
   }
+  var cont = false;
+  let cancelToken;
+
+  //const controller = new AbortController();
 
   function continueChat(){
+    if (typeof cancelToken != typeof undefined) {
+      endTranscription()
+      cancelToken.cancel("Operation canceled due to new request.")
+    }
+
+    cancelToken = axios.CancelToken.source()
     setFillerPlaying(true);
-    SpeechRecognition.startListening({continuous: true});
-    resetTranscript();
-    fetchFiller();
+    
+    // requesting the server to start listening
+    console.log("request sent")
+    axios.post(`${env['server-url']}/transcribeAudio`, {
+      params: {
+          toiaID: history.location.state.toiaID,
+          fromRecorder: false
+      }
+    }, { cancelToken: cancelToken.token }).then((res)=>{
+      transcribedAudio.current=res.data;
+      //setTranscribedAudio(newData);
+      //setQuestion(res.data);
+      question.current = res.data;
+      console.log("transcribed audio in res.data= ", transcribedAudio.current);
+      console.log("question = ", question.current);
+      fetchData();
+      return;
+    }).catch((err) =>{
+      console.log(err)
+    })
+
   }
 
   function fetchData(){
-
-    if(transcript==question){
-      setMatched(matched+1);
-    }
-    console.log(matched);
-
-    if(matched>=2){
-      console.log("we here");
-      setMatched(0);
-      setFillerPlaying(false);
-      SpeechRecognition.stopListening();
-      console.log(question);
+      //continueChat();
+      //fetchFiller();
+      //fetchFiller();
+      console.log("transcribedAudio in fetch data", transcribedAudio.current);
+      console.log("question in current", question.current)
+      if(question.current==null || question==""){
+        setFillerPlaying(true);
+        fetchFiller();
+      }
+      else{
+        //endTranscription();
       axios.post(`${env['server-url']}/player`,{
         params:{
-          toiaIDToTalk,
-          toiaFirstNameToTalk,
+          toiaIDToTalk: history.location.state.toiaToTalk,
+          toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
           question,
-          streamIdToTalk
+          streamIdToTalk: history.location.state.streamToTalk
         }
       }).then((res)=>{
-        setVideo(<video className="player-vid" id="vidmain" key={transcript} onEnded={continueChat} autoPlay><source src={res.data} onended={fetch} type='video/mp4'></source></video>);
-        resetTranscript();
-        setMatched(0);
-      });
+        console.log("this is res.data: ", res.data);
+        if (res.data === "error"){
+          setFillerPlaying(true);
+          fetchFiller();
+          //continueChat();
+        } else{
+          setFillerPlaying(false);
+        setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={fetchFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
+        console.log("video here")
+        //resetTranscript();
+        //setTranscribedAudio("")
+        //continueChat();
+        //fetchFiller();
+      }});
     }
-
-    setQuestion(transcript);
   }
+
+  function endTranscription(){
+
+    axios.post(`${env['server-url']}/endTranscription`, {
+      params: {
+          toiaID: history.location.state.toiaID
+      }
+    }).then((res)=>{
+      console.log("transcription ended!")
+      return;
+    })
+  }
+
 
     function micStatusChange(){
       if(micMute==true){
@@ -152,11 +207,28 @@ function Player(){
             toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk
           }
         }).then(async (res)=>{
+          console.log("filler playing again here")
+          
           let videoELem=<video muted className="player-vid" id="vidmain" key="filler" onEnded={fetchFiller} autoPlay><source src={res.data} type='video/mp4'></source></video>;
           setVideo(videoELem);
           document.getElementById("vidmain").load();
-          document.getElementById("vidmain").play();
+          const playPromise = document.getElementById("vidmain").play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(_ => {
+                // Automatic playback started!
+                // Show playing UI.
+                console.log("audio played auto");
+              })
+              .catch(error => {
+                // Auto-play was prevented
+                // Show paused UI.
+                console.log("playback prevented");
 
+                fetchFiller();
+              });
+          }
+          continueChat();
         });
       }
     }
@@ -204,6 +276,7 @@ function Player(){
           pathname: '/',
         });
       }
+      endTranscription();
     }
 
     function about() {
@@ -221,6 +294,7 @@ function Player(){
           pathname: '/about',
           });
       }
+      endTranscription();
     }
 
     function library() {
@@ -238,6 +312,7 @@ function Player(){
           pathname: '/library',
           });
       }
+      endTranscription();
     }
 
     function garden(e) {
@@ -253,6 +328,7 @@ function Player(){
       }else{
           openModal(e);
       }
+      endTranscription();
     }
 
    function logout(){
@@ -260,12 +336,14 @@ function Player(){
        history.push({
            pathname: '/',
          });
+         endTranscription();
     }
 
    function signup(){
       history.push({
         pathname: '/signup',
       });
+      endTranscription();
     }
 
    const inlineStyle = {
@@ -335,10 +413,25 @@ function Player(){
         {/* <button onClick={()=>{SpeechRecognition.startListening({ continuous: true })}}>Start</button>
         <button onClick={fetchData}>Stop</button>
         <button onClick={resetTranscript}>Reset</button> */}
+        
         <button className = "mute-button" onClick={micStatusChange}>{micString}</button>
-        <button className = "skip-end-button" >Skip to End</button>
+        
+        <button className = "skip-end-button" >Skip to End </button>
+
+        <div>
+        <input
+              className="type-q font-class-1"
+              placeholder={"Transcript"}
+              value={transcribedAudio.current || ''}
+              id="video-text-box"
+              type={"text"}
+              //onChange={setQuestionValue}
+          />
 
       </div>
+
+      </div>
+      
     </div>
   )
 }
