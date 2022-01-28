@@ -174,6 +174,17 @@ const getStreamInfo = (id) => {
     }))
 }
 
+const shouldTriggerSuggester = (id_question) => {
+    return new Promise((resolve => {
+        let query = `SELECT id FROM questions WHERE trigger_suggester = 1 AND id = ?`;
+        connection.query(query, [id_question], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 1) resolve(true);
+            resolve(false);
+        })
+    }));
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -183,3 +194,4 @@ module.exports.isOnBoardingQuestion = isOnBoardingQuestion;
 module.exports.isRecorded = isRecorded;
 module.exports.getQuestionInfo = getQuestionInfo;
 module.exports.getStreamInfo = getStreamInfo;
+module.exports.shouldTriggerSuggester = shouldTriggerSuggester;
