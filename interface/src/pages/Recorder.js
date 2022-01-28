@@ -1120,24 +1120,24 @@ function Recorder() {
                             displayField={"question"}
                             disabled={pendingOnBoardingQs.length !== 0}/>
                     </div>
-// =======
-//                     {recordedChunks.length > 0 && (
-//                         <button className="check tooltip" onClick={openModal}><i className="fa fa-check"></i>
-//                             <span className="check_tooltip">
-//           Save Video
-//           </span>
-//                         </button>
-//                     )}
-//                     <p className="recorder-speech">{transcribedAudio}</p>
-//                     <input
-//                         className="type-q font-class-1"
-//                         placeholder={"Type your own question"}
-//                         value={questionSelected}
-//                         id="video-text-box"
-//                         type={"text"}
-//                         onChange={setQuestionValue}
-//                     />
-// >>>>>>> master
+{/*// */}
+{/*//                     {recordedChunks.length > 0 && (*/}
+{/*//                         <button className="check tooltip" onClick={openModal}><i className="fa fa-check"></i>*/}
+{/*//                             <span className="check_tooltip">*/}
+{/*//           Save Video*/}
+{/*//           </span>*/}
+{/*//                         </button>*/}
+{/*//                     )}*/}
+{/*//                     <p className="recorder-speech">{transcribedAudio}</p>*/}
+{/*//                     <input*/}
+{/*//                         className="type-q font-class-1"*/}
+{/*//                         placeholder={"Type your own question"}*/}
+{/*//                         value={questionSelected}*/}
+{/*//                         id="video-text-box"*/}
+{/*//                         type={"text"}*/}
+{/*//                         onChange={setQuestionValue}*/}
+{/*//                     />*/}
+{/*// >>>>>>> master*/}
                 </div>
 
             </div>

@@ -37,8 +37,9 @@ export const renderSuggestedQsCard = (card, index, onClickFunc) => {
 
 export const RecordAVideoCard = ({onClick, isDisabled}) => {
     return (
-        <div data-tooltip={(isDisabled)?"Please record the required ones first":undefined} data-inverted="" onClick={onClick}>
-            <div className={"ui red card " + ((isDisabled)? "cursor-disabled":"cursor-pointer")}>
+        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted=""
+             onClick={onClick}>
+            <div className={"ui red card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
                 <div className="image">
                     <img alt=""
                          src={addButton}/>
@@ -73,7 +74,7 @@ export const OnBoardingQCard = ({data, onClick}) => {
 export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) => {
     return (
         <div data-tooltip="Please record the required ones first" data-inverted="">
-            <div className={"ui grey card " + ((isDisabled)? "cursor-disabled":"cursor-pointer")}>
+            <div className={"ui grey card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
                 <div className="content" onClick={onClick}>
                     <div className="description two-line-ellipsis">
                         {data.question}
@@ -85,7 +86,8 @@ export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) =>
                             <i className="edit icon"/>
                             Edit
                         </button>
-                        <button className="ui labeled icon button basic brown tiny" disabled={isDisabled} onClick={onDelete}>
+                        <button className="ui labeled icon button basic brown tiny" disabled={isDisabled}
+                                onClick={onDelete}>
                             Delete
                             <i className="trash arrow icon"/>
                         </button>
@@ -147,9 +149,9 @@ function AvatarGardenPage() {
 
     const [showVideoDeletePopup, setShowVideoDeletePopup] = useState(false);
     const [questionBeingDeleted, setQuestionBeingDeleted] = useState(null);
-    const [currentUserFullname, setCurrentUserFullname]=useState(null);
-    const [currentUserLanguage, setCurrentUserLanguage]=useState(null);
-    const [currentUserEmail, setCurrentUserEmail]=useState(null);
+    const [currentUserFullname, setCurrentUserFullname] = useState(null);
+    const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
+    const [currentUserEmail, setCurrentUserEmail] = useState(null);
 
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
@@ -173,7 +175,7 @@ function AvatarGardenPage() {
         fetchSuggestedQuestions();
     }, []);
 
-    function fetchStreamList(){
+    function fetchStreamList() {
         return new Promise(((resolve) => {
             axios.post(`${env['server-url']}/getUserStreams`, {
                 params: {
@@ -187,12 +189,12 @@ function AvatarGardenPage() {
         }))
     }
 
-    function fetchOnBoardingQuestions(){
+    function fetchOnBoardingQuestions() {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `${env['server-url']}/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
-            if (response.status === 200){
+            if (response.status === 200) {
                 setPendingOnBoardingQs(response.data);
             } else {
                 alert("Something went wrong!");
@@ -202,12 +204,12 @@ function AvatarGardenPage() {
         });
     }
 
-    function fetchSuggestedQuestions(){
+    function fetchSuggestedQuestions() {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `${env['server-url']}/questions/suggestions/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
-            if (response.status === 200){
+            if (response.status === 200) {
                 setSuggestedQsList(response.data);
             } else {
                 console.log(response);
@@ -217,12 +219,12 @@ function AvatarGardenPage() {
         });
     }
 
-    function fetchRecordedQuestions(streamID){
+    function fetchRecordedQuestions(streamID) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `${env['server-url']}/questions/answered/${toiaID}/${streamID}`};
 
         axios.request(options).then(function (response) {
-            if (response.status === 200){
+            if (response.status === 200) {
                 setRecordedQsList(response.data);
             }
         }).catch(function (error) {
@@ -346,13 +348,13 @@ function AvatarGardenPage() {
     }
 
     // querying the database for user data
-    function getUserData(){
+    function getUserData() {
         axios.post(`${env['server-url']}/getUserData`, {
-            params:{
+            params: {
                 toiaID: history.location.state.toiaID,
             }
-        }).then((res)=>{
-            setCurrentUserFullname(res.data[0].first_name + " "+ res.data[0].last_name);
+        }).then((res) => {
+            setCurrentUserFullname(res.data[0].first_name + " " + res.data[0].last_name);
             setCurrentUserLanguage(res.data[0].language);
             setCurrentUserEmail(res.data[0].email);
         })
@@ -384,8 +386,8 @@ function AvatarGardenPage() {
         };
 
         axios.request(options).then(function (response) {
-            if (response.status === 200){
-                if (currentStream){
+            if (response.status === 200) {
+                if (currentStream) {
                     fetchRecordedQuestions(currentStream.id_stream);
                 }
                 setShowVideoDeletePopup(false);
@@ -399,9 +401,10 @@ function AvatarGardenPage() {
 
     var settingData = [
         {name: "", email: "", password: "", language: ""}
-   
+    ]
+
     var settingData = [
-        {name: `${currentUserFullname}`, email: `${currentUserEmail}`, password:"", language: `${currentUserLanguage}`}
+        {name: `${currentUserFullname}`, email: `${currentUserEmail}`, password: "", language: `${currentUserLanguage}`}
     ]
 
     const [displayItem, setDisplayItem] = useState('none')
@@ -878,7 +881,9 @@ function AvatarGardenPage() {
                 size='large'
                 style={{position: "absolute", height: "80%", width: "70%", top: "2%", alignContent: "center"}}
                 open={isPlaybackActive}
-                onClose={() => {setPlaybackActive(false);}}
+                onClose={() => {
+                    setPlaybackActive(false);
+                }}
             >
                 <Modal.Header className="modal-header">
                     <div>Video entry</div>
@@ -896,11 +901,14 @@ function AvatarGardenPage() {
                         className="modal-ans font-class-1"
                         value={playbackVideoAnswer}
                         type={"text"}
-                        onChange={() => {}}
+                        onChange={() => {
+                        }}
                     />
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button color='green' onClick={()=>{setPlaybackActive(false);}}>
+                    <Button color='green' onClick={() => {
+                        setPlaybackActive(false);
+                    }}>
                         <i className="fa fa-check"/>
                     </Button>
                 </Modal.Actions>
@@ -927,9 +935,12 @@ function AvatarGardenPage() {
                 <h1 className="garden-title garden-font-class-1 " //welcome message
                 >Hi {toiaName}</h1>
 
-            {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
+                {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
             >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
-              <button  onClick={(event)=> {openModal2(event); getUserData()}} className="garden-settings"><i class="fa fa-cog"></i></button>
+                <button onClick={(event) => {
+                    openModal2(event);
+                    getUserData()
+                }} className="garden-settings"><i class="fa fa-cog"></i></button>
             </div>
             <div className="section1">
 
@@ -954,21 +965,40 @@ function AvatarGardenPage() {
                     <div className="cards-wrapper ui">
                         <div className="ui cards">
                             <RecordAVideoCard onClick={add} isDisabled={pendingOnBoardingQs.length !== 0}/>
-                            {pendingOnBoardingQs.map((q, index) => {return(<OnBoardingQCard data={q} onClick={(e) => {openSuggestion(e, q)}} key={index}/>)})}
-                            {suggestedQsList.map((q, index) => {return (<SuggestedQCard data={q} onClick={(e) => {openSuggestion(e, q)}} isDisabled={pendingOnBoardingQs.length !== 0} key={index}/>)})}
-                            {recordedQsList.map((q, index) => {return (<RecordedQCard
-                                                                                    data={q}
-                                                                                    onClick={(e) => {openPlayback(e, q)}}
-                                                                                    key={index}
-                                                                                    onEdit={() => {handleEditRecordedVideoClick(q)}}
-                                                                                    onDelete={() => {setQuestionBeingDeleted(q); setShowVideoDeletePopup(true);}}/>)})}
+                            {pendingOnBoardingQs.map((q, index) => {
+                                return (<OnBoardingQCard data={q} onClick={(e) => {
+                                    openSuggestion(e, q)
+                                }} key={index}/>)
+                            })}
+                            {suggestedQsList.map((q, index) => {
+                                return (<SuggestedQCard data={q} onClick={(e) => {
+                                    openSuggestion(e, q)
+                                }} isDisabled={pendingOnBoardingQs.length !== 0} key={index}/>)
+                            })}
+                            {recordedQsList.map((q, index) => {
+                                return (<RecordedQCard
+                                    data={q}
+                                    onClick={(e) => {
+                                        openPlayback(e, q)
+                                    }}
+                                    key={index}
+                                    onEdit={() => {
+                                        handleEditRecordedVideoClick(q)
+                                    }}
+                                    onDelete={() => {
+                                        setQuestionBeingDeleted(q);
+                                        setShowVideoDeletePopup(true);
+                                    }}/>)
+                            })}
                         </div>
                     </div>
                 </div>
 
                 <Confirm
                     open={showVideoDeletePopup}
-                    onCancel={() => {setShowVideoDeletePopup(false)}}
+                    onCancel={() => {
+                        setShowVideoDeletePopup(false)
+                    }}
                     onConfirm={handleDeleteVideo}
                 />
 
@@ -998,7 +1028,7 @@ function AvatarGardenPage() {
                                 <MenuItem selected={index === selectedIndex}
                                           onClick={(event) => handleMenuClose(event, index)}
                                           key={index}
-                                        >{option.streamName}</MenuItem>
+                                >{option.streamName}</MenuItem>
                             ))}
                         </Menu>
                     </div>
