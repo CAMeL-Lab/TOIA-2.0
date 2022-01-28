@@ -14,19 +14,12 @@ var multiparty = require('multiparty');
 
 const cors = require('cors');
 const axios = require('axios');
-
-const {callbackify} = require('util');
-const {ENETUNREACH} = require('constants');
-
-//google speech to text 
+//google speech to text
 const recorder = require('node-record-lpcm16');
 const speech = require('@google-cloud/speech');
 
 // Creates a client
 const client = new speech.SpeechClient();
-
-const {hash, pwdCheck} = require('./password_encryption');
-
 const compression = require('compression')
 
 const Tracker = require('./tracker/tracker');
@@ -112,13 +105,13 @@ async function createStream(req, res){
 
             let uniqueChars = [...new Set(noSpaces)];
             //console.log("set elements: ", uniqueChars);
-        await uniqueChars.forEach(elem => response +=  (elem + " ")); //res.write(elem));
-        res.send(response);
-        console.log("response sent: ", response);
-        FinishTrancription();
-        return;
-        
-        }
+            await uniqueChars.forEach(elem => response +=  (elem + " ")); //res.write(elem));
+            res.send(response);
+            console.log("response sent: ", response);
+            FinishTrancription();
+            return;
+
+            }
         }
     );
     timeout = setTimeout(restartStream, streamingLimit);
@@ -143,7 +136,7 @@ async function transcribeAudio(req, res){
 
     // Restart stream when streamingLimit expires
     //setTimeout(createStream, streamingLimit);
-    return;
+
     
 }
 
@@ -752,7 +745,7 @@ app.post('/player', cors(), (req, res) => {
         };
 
 
-        if (process.env.ENVIRONMENT == "development") {
+        if (process.env.ENVIRONMENT === "development") {
             console.log(videoDetails.data.id_video)
             if (videoDetails.data.id_video === "204"){
                 res.send("error")
@@ -765,15 +758,13 @@ app.post('/player', cors(), (req, res) => {
         videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`).getSignedUrl(config, function (err, url) {
             if (err) {
                 console.error(err);
-
             } else {
                 res.send(url);
-                return;
             }
         });
     }).catch((err) => {
         res.send("error");
-        console.log("from dm error")
+        console.log(err)
     });
 });
 
