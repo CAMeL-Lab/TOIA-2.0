@@ -26,7 +26,7 @@ const Tracker = require('./tracker/tracker');
 const {
     isValidUser, saveSuggestedQuestion,
     addQuestion, isSuggestedQuestion, emailExists, linkStreamVideoQuestion, suggestionSetPending, isOnBoardingQuestion,
-    isRecorded, getQuestionInfo, getStreamInfo
+    isRecorded, getQuestionInfo, getStreamInfo, shouldTriggerSuggester
 } = require('./helper/user_mgmt');
 
 const connection = require('./configs/db-connection');
@@ -935,10 +935,15 @@ app.post('/recorder', cors(), async (req, res) => {
                             }
 
                             //Generate suggested questions
-                            axios.post(`${process.env.Q_API_ROUTE}`, {
-                                qa_pair: q.question + " " + answer,
-                                callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
-                            });
+                            if (await shouldTriggerSuggester(q_id) && (fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true')) {
+                                axios.post(`${process.env.Q_API_ROUTE}`, {
+                                    qa_pair: q.question + " " + answer,
+                                    callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
+                                }).catch(function (error) {
+                                    console.log("=============== Error with Q_API ============")
+                                    console.log(error);
+                                });
+                            }
                         }
 
                         res.send("Success");
