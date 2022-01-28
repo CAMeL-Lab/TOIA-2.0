@@ -347,9 +347,7 @@
   align-content: baseline;
 }
 .garden-grid > div {
-  flex-basis: calc(25%);
-    padding-left: 10.2px;
-    padding-right: 10.2px;
+    padding: 10.2px;
 }
 .column {
   float: left;
@@ -918,4 +916,60 @@ box-shadow: 0 0 1px 3px rgb(229 229 229)
   color: white;
   padding: 10px 0px 0px 10px;
   font-weight: 550
+}
+
+.cards-wrapper .card {
+  width: 226px !important;
+  height: 120px !important;
+  margin: 5px !important;
+}
+
+.cards-wrapper .card .image {
+  height: 84px !important;
+}
+
+.cards-wrapper .card img {
+  height: 100% !important;
+  padding: 10px;
+}
+
+.two-line-ellipsis {
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.three-line-ellipsis {
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.bg-toia-theme {
+  --bs-bg-opacity: 1;
+  background-color: #00587a !important;
+}
+
+.text-white {
+  color: white !important;
+}
+
+.text-red {
+  color: red;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-disabled {
+  cursor: not-allowed;
+}
+
+.text-center {
+  text-align: center;
 }

@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "jest --detectOpenHandles",
+    "start": "node app.js"
   },
   "server": "nodemon index.js --ignore './client/'",
   "author": "",
@@ -33,6 +33,9 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "jest": "^27.4.7",
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
   }
 }

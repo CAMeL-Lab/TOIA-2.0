@@ -1,0 +1,80 @@
+[
+  {
+    "question": "Record a filler video (e.g., record yourself staring the camera for 10-15 seconds)",
+    "type": "filler",
+    "priority": 0,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Record another filler video (e.g., adjust your hair for 10 seconds)",
+    "type": "filler",
+    "priority": 1,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Record one more filler video (e.g., drink a cup of coffee or tea)",
+    "type": "filler",
+    "priority": 2,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Say: I don't have an answer to that right now.",
+    "type": "no-answer",
+    "priority": 3,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Say: Sorry, I didn't record answers to that question.",
+    "type": "no-answer",
+    "priority": 4,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Say: Can you try rephrasing the question?",
+    "type": "no-answer",
+    "priority": 5,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Record a greeting (e.g., hello, hi)",
+    "type": "greeting",
+    "priority": 6,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Record a goodbye (or end of conversation sentence)",
+    "type": "exit",
+    "priority": 7,
+    "trigger_suggester": false
+  },
+  {
+    "question": "What is your name?",
+    "type": "answer",
+    "priority": 8,
+    "trigger_suggester": true
+  },
+  {
+    "question": "Where and when were you born?",
+    "type": "answer",
+    "priority": 9,
+    "trigger_suggester": true
+  },
+  {
+    "question": "What do you do for a living?",
+    "type": "answer",
+    "priority": 10,
+    "trigger_suggester": true
+  },
+  {
+    "question": "Type as many questions as you'd like to answer: Yes, and record yourself saying Yes",
+    "type": "y/n-answer",
+    "priority": 11,
+    "trigger_suggester": false
+  },
+  {
+    "question": "Type as many questions as you'd like to answer: No, and record yourself saying No",
+    "type": "y/n-answer",
+    "priority": 12,
+    "trigger_suggester": false
+  }
+]
