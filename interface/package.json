@@ -12,6 +12,7 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.2.2",
     "axios": "^0.21.0",
+    "editable-creatable-multiselect": "^2.0.5",
     "ffmpeg": "0.0.4",
     "firebase": "^8.6.8",
     "fuse.js": "^6.4.6",
