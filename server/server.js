@@ -26,7 +26,8 @@ const Tracker = require('./tracker/tracker');
 const {
     isValidUser, saveSuggestedQuestion,
     addQuestion, isSuggestedQuestion, emailExists, linkStreamVideoQuestion, suggestionSetPending, isOnBoardingQuestion,
-    isRecorded, getQuestionInfo, getStreamInfo, shouldTriggerSuggester
+    isRecorded, getQuestionInfo, getStreamInfo, shouldTriggerSuggester, getQuestionType, updateSuggestedQuestion,
+    deleteSuggestionEntry
 } = require('./helper/user_mgmt');
 
 const connection = require('./configs/db-connection');
@@ -82,7 +83,8 @@ let videoStore = gc.bucket(process.env.GC_BUCKET);
 //####################################################
 // Create a recognize stream
 let streamStarted = true;
-async function createStream(req, res){
+
+async function createStream(req, res) {
     recognizeStream = await client
     .streamingRecognize(speech_to_text.request)
     .on('error', console.error)
@@ -117,7 +119,7 @@ async function createStream(req, res){
     timeout = setTimeout(restartStream, streamingLimit);
     }
 
-async function transcribeAudio(req, res){
+async function transcribeAudio(req, res) {
     responseChunks = []
     console.log("transcribeAudio called")
     createStream(req, res);
@@ -137,7 +139,7 @@ async function transcribeAudio(req, res){
     // Restart stream when streamingLimit expires
     //setTimeout(createStream, streamingLimit);
 
-    
+
 }
 
 function speechCallback(stream, incoming_which_stream) {
@@ -535,7 +537,7 @@ app.post('/createNewStream', cors(), (req, res) => {
     let form = new multiparty.Form();
 
     form.parse(req, function (err, fields, file) {
-        if (fields.newStreamName[0] === 'All'){
+        if (fields.newStreamName[0] === 'All') {
             res.status(400).send("Stream With Name 'All' Already Exists");
             return;
         }
@@ -747,7 +749,7 @@ app.post('/player', cors(), (req, res) => {
 
         if (process.env.ENVIRONMENT === "development") {
             console.log(videoDetails.data.id_video)
-            if (videoDetails.data.id_video === "204"){
+            if (videoDetails.data.id_video === "204") {
                 res.send("error")
                 return;
             }
@@ -772,19 +774,19 @@ app.post('/player', cors(), (req, res) => {
 app.use('/recorder', cors(), async (req, res, next) => {
     const form = new multiparty.Form();
 
-    form.parse(req,  (err, fields, file) => {
+    form.parse(req, (err, fields, file) => {
         req.fields = fields;
         req.file = file;
 
         // TODO: Delete files
-        if (fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true'){
-            if (!fields.hasOwnProperty('save_as_new')){
+        if (fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true') {
+            if (!fields.hasOwnProperty('save_as_new')) {
                 res.status(400).send("Field 'save_as_new' not defined!");
             } else {
-                if (fields.save_as_new[0] === 'true'){
+                if (fields.save_as_new[0] === 'true') {
                     next();
                 } else {
-                    if (!fields.hasOwnProperty('old_video_id') || !fields.hasOwnProperty('old_video_type')){
+                    if (!fields.hasOwnProperty('old_video_id') || !fields.hasOwnProperty('old_video_type')) {
                         res.status(400).send("Old Video ID & Type Not Provided!");
                     } else {
                         const oldVideoID = fields.old_video_id;
@@ -913,7 +915,7 @@ app.post('/recorder', cors(), async (req, res) => {
                             let q_id = q.id_question || -1;
                             let questionInfo = await getQuestionInfo(q_id);
 
-                            if (questionInfo && questionInfo.question !== q.question){
+                            if (questionInfo && questionInfo.question !== q.question) {
                                 q_id = -1;
                             }
 
@@ -1027,6 +1029,48 @@ app.post('/saveSuggestedQuestion/:user_id', (req, res) => {
     })
 })
 
+app.post('/questions/suggestions/:user_id/edit', async (req, res) => {
+    const user_id = req.params.user_id || null;
+    const question_id = req.body.question_id || null;
+    const question_new_value = req.body.new_value || null;
+
+    if (!user_id || !question_id || !question_new_value) {
+        res.sendStatus(400);
+        return;
+    }
+
+    isValidUser(user_id).then(async () => {
+        try{
+            const response = await updateSuggestedQuestion(user_id, question_id, question_new_value);
+            res.send(response);
+        } catch (e) {
+            console.log(e);
+            res.sendStatus(400);
+        }
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    });
+})
+
+app.post('/questions/suggestions/:user_id/discard', async (req, res) => {
+    const user_id = req.params.user_id || null;
+    const question_id = req.body.question_id || null;
+
+    if (!user_id || !question_id) {
+        res.sendStatus(400);
+        return;
+    }
+
+    isValidUser(user_id).then(async () => {
+        await suggestionSetPending(question_id, user_id, false);
+        res.send("OK");
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
+});
+
 app.get('/questions/onboarding/:user_id/pending', (req, res) => {
     const user_id = req.params.user_id;
     isValidUser(user_id).then(() => {
@@ -1075,15 +1119,15 @@ app.get('/questions/suggestions/:user_id/pending', (req, res) => {
 
 app.post('/questions/answered/delete', (req, res) => {
     const user_id = req.body.user_id || null;
-    const ques_id = req.body.question_id  || null;
+    const ques_id = req.body.question_id || null;
     const video_id = req.body.video_id || null;
 
-    if (!user_id || !ques_id || !video_id){
+    if (!user_id || !ques_id || !video_id) {
         res.sendStatus(400);
         return;
     }
 
-    isValidUser(user_id).then(()=>{
+    isValidUser(user_id).then(() => {
         let query = `DELETE FROM videos_questions_streams WHERE id_video = ? AND id_question = ? AND id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
         connection.query(query, [video_id, ques_id, user_id], (err, result) => {
             if (err) throw err;
@@ -1205,13 +1249,13 @@ app.post('/transcribeAudio', cors(), async (req, res)=>{
 //     // transcribing audio
 //     streamStarted = true;
 //     FinishTrancription()
-    
+
 //     await createStream(req, res);
 //     await transcribeAudio(req, res);
 //     console.log("frontend: ", responseChunks)
-    
+
 //     //return;
-    
+
 // })
 
 app.post('/endTranscription', cors(), async (req, res)=>{
