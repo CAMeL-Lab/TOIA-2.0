@@ -9,7 +9,7 @@ import addButton from "../icons/add-button.svg";
 import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
-import {Modal, Button, Confirm} from 'semantic-ui-react';
+import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
 
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
@@ -73,7 +73,7 @@ export const OnBoardingQCard = ({data, onClick}) => {
 
 export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) => {
     return (
-        <div data-tooltip="Please record the required ones first" data-inverted="">
+        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
             <div className={"ui grey card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
                 <div className="content" onClick={onClick}>
                     <div className="description two-line-ellipsis">
@@ -153,6 +153,10 @@ function AvatarGardenPage() {
     const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
     const [currentUserEmail, setCurrentUserEmail] = useState(null);
 
+    const [isEditSuggestionModalActive, setIsEditSuggestionModalActive] = useState(false);
+    const [currentlyEditingSuggestion, setCurrentlyEditingSuggestion] = useState(undefined);
+    const [waitingServerResponse, setWaitingServerReponse] = useState(false);
+    const [suggestionNewValue, setSuggestionNewValue] = useState('');
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -399,6 +403,50 @@ function AvatarGardenPage() {
         });
     }
 
+    const handleDeleteSuggestion = (card) => {
+        const options = {
+            method: 'POST',
+            url: `/questions/suggestions/${toiaID}/discard`,
+            headers: {'Content-Type': 'application/json'},
+            data: {question_id: card.id}
+        };
+
+        axios.request(options).then(function (response) {
+            if (response.status === 200) {
+                fetchSuggestedQuestions();
+            } else {
+                console.log(response);
+            }
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+
+    const onEditSuggestion = () => {
+        setWaitingServerReponse(true);
+
+        const options = {
+            method: 'POST',
+            url: `/questions/suggestions/${toiaID}/edit`,
+            headers: {'Content-Type': 'application/json'},
+            data: {question_id: currentlyEditingSuggestion.id, new_value: suggestionNewValue}
+        };
+
+        axios.request(options).then(function (response) {
+            if (response.status === 200) {
+                setWaitingServerReponse(false);
+                setIsEditSuggestionModalActive(false);
+                setCurrentlyEditingSuggestion(null);
+                setSuggestionNewValue('');
+                fetchSuggestedQuestions();
+            } else {
+                console.error(response);
+            }
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+
     var settingData = [
         {name: "", email: "", password: "", language: ""}
     ]
@@ -408,6 +456,47 @@ function AvatarGardenPage() {
     ]
 
     const [displayItem, setDisplayItem] = useState('none')
+
+    const EditSuggestionModal = () => {
+        return (
+            <Modal
+                onClose={() => {
+                    if (!waitingServerResponse) {
+                        setIsEditSuggestionModalActive(false)
+                    }
+                }}
+                open={isEditSuggestionModalActive}
+            >
+                <Modal.Header>Edit Suggestion</Modal.Header>
+                <Modal.Content>
+                    <Input fluid
+                           placeholder='Type something...'
+                           disabled={waitingServerResponse}
+                           onChange={(e) => {
+                               setSuggestionNewValue(e.target.value);
+                           }}
+                           value={suggestionNewValue}/>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button
+                        color='black'
+                        disabled={waitingServerResponse}
+                        onClick={() => setIsEditSuggestionModalActive(false)}>
+                        Cancel
+                    </Button>
+                    <Button
+                        disabled={waitingServerResponse}
+                        loading={waitingServerResponse}
+                        content="Update"
+                        labelPosition='right'
+                        icon='checkmark'
+                        onClick={onEditSuggestion}
+                        positive
+                    />
+                </Modal.Actions>
+            </Modal>
+        )
+    }
 
     const renderStream = (card, index) => {//cards for streams
 
@@ -913,6 +1002,7 @@ function AvatarGardenPage() {
                     </Button>
                 </Modal.Actions>
             </Modal>
+
             <div className="nav-heading-bar" //Nav bar
             >
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">
@@ -940,7 +1030,7 @@ function AvatarGardenPage() {
                 <button onClick={(event) => {
                     openModal2(event);
                     getUserData()
-                }} className="garden-settings"><i class="fa fa-cog"></i></button>
+                }} className="garden-settings"><i className="fa fa-cog"/></button>
             </div>
             <div className="section1">
 
@@ -953,7 +1043,7 @@ function AvatarGardenPage() {
                 <div onClick={(event) => {
                     openModal4(event)
                 }}><img className="garden-stream" src={addButton} // add stream button
-                /></div>
+                        alt={""}/></div>
                 <h1 className="stream-add-text garden-font-class-3">Add Stream</h1>
 
             </div>
@@ -965,37 +1055,61 @@ function AvatarGardenPage() {
                     <div className="cards-wrapper ui">
                         <div className="ui cards">
                             <RecordAVideoCard onClick={add} isDisabled={pendingOnBoardingQs.length !== 0}/>
+
                             {pendingOnBoardingQs.map((q, index) => {
-                                return (<OnBoardingQCard data={q} onClick={(e) => {
-                                    openSuggestion(e, q)
-                                }} key={index}/>)
+                                return (
+                                    <OnBoardingQCard data={q}
+                                                     onClick={(e) => {
+                                                         openSuggestion(e, q)
+                                                     }}
+                                                     key={index}/>
+                                )
                             })}
+
                             {suggestedQsList.map((q, index) => {
-                                return (<SuggestedQCard data={q} onClick={(e) => {
-                                    openSuggestion(e, q)
-                                }} isDisabled={pendingOnBoardingQs.length !== 0} key={index}/>)
+                                return (
+                                    <SuggestedQCard data={q}
+                                                    onClick={(e) => {
+                                                        openSuggestion(e, q)
+                                                    }}
+                                                    isDisabled={pendingOnBoardingQs.length !== 0}
+                                                    onEdit={() => {
+                                                        setSuggestionNewValue(q.question);
+                                                        setCurrentlyEditingSuggestion(q);
+                                                        setIsEditSuggestionModalActive(true);
+                                                    }}
+                                                    onDelete={() => {handleDeleteSuggestion(q)}}
+                                                    key={index}/>
+                                )
                             })}
+
                             {recordedQsList.map((q, index) => {
-                                return (<RecordedQCard
-                                    data={q}
-                                    onClick={(e) => {
-                                        openPlayback(e, q)
-                                    }}
-                                    key={index}
-                                    onEdit={() => {
-                                        handleEditRecordedVideoClick(q)
-                                    }}
-                                    onDelete={() => {
-                                        setQuestionBeingDeleted(q);
-                                        setShowVideoDeletePopup(true);
-                                    }}/>)
+                                return (
+                                    <RecordedQCard data={q}
+                                                   onClick={(e) => {
+                                                       openPlayback(e, q)
+                                                   }}
+                                                   key={index}
+                                                   onEdit={() => {
+                                                       handleEditRecordedVideoClick(q)
+                                                   }}
+                                                   onDelete={() => {
+                                                       setQuestionBeingDeleted(q);
+                                                       setShowVideoDeletePopup(true);
+                                                   }}/>
+                                )
                             })}
                         </div>
                     </div>
                 </div>
 
+                {EditSuggestionModal()}
+
                 <Confirm
                     open={showVideoDeletePopup}
+                    header={"Confirm Deletion"}
+                    content={"This action is irreversible."}
+                    confirmButton={"Delete"}
                     onCancel={() => {
                         setShowVideoDeletePopup(false)
                     }}
