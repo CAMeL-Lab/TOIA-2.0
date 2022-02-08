@@ -18,8 +18,12 @@ const axios = require('axios');
 const recorder = require('node-record-lpcm16');
 const speech = require('@google-cloud/speech');
 
+
+const speech_to_text = require('./speech_to_text/speech_to_text');
 // Creates a client
-const client = new speech.SpeechClient();
+const client = new speech.SpeechClient({
+    clientConfig: speech_to_text.clientConfig,
+});
 const compression = require('compression')
 
 const Tracker = require('./tracker/tracker');
@@ -31,7 +35,8 @@ const {
 
 const connection = require('./configs/db-connection');
 //const {transcribeAudio, recognizeStream, responseChunks} = require('./speech_to_text/speech_to_text')
-const speech_to_text = require('./speech_to_text/speech_to_text');
+
+const { restart } = require('nodemon');
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -85,7 +90,12 @@ let streamStarted = true;
 async function createStream(req, res){
     recognizeStream = await client
     .streamingRecognize(speech_to_text.request)
-    .on('error', console.error)
+    .on('error', err =>{
+        console.log("error code: ", err.code)
+        console.log("error, gRPC unvailable")
+        FinishTrancription();
+        restartStream();
+    })
     .on('data', async (data) =>{
         if(!streamStarted) return;
         //speechCallback(data);
@@ -128,7 +138,7 @@ async function transcribeAudio(req, res){
     threshold: 0,
     verbose: false,
     recordProgram: 'rec', // Try also "arecord" or "sox"
-    silence: '1000.0',
+    silence: '50000.0',
     })
     recording.stream()
         .on('error', console.error)
@@ -152,6 +162,7 @@ function restartStream() {
         recognizeStream = null;
         console.log("restarted successfully!")
     }
+    createStream();
 }
 
 //function for reinstantiating recorder

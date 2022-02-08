@@ -33,6 +33,22 @@ const request = {
     interimResults: false, // If you want interim results, set this to true
 };
 
+// config of the client object
+const clientConfig = {
+  interfaces: {
+    'google.cloud.speech.v1p1beta1.Speech': {
+      retry_codes: {
+        idempotent: ["DEADLINE_EXCEEDED", "UNAVAILABLE"] 
+      },
+      "methods": {
+        "Recognize": {},
+        "LongRunningRecognize": {},
+        "StreamingRecognize": {}
+      }
+    }
+  }
+}
+
 
 // // Create a recognize stream
 // function createStream(){
@@ -89,5 +105,6 @@ const request = {
 // module.exports.createStream = createStream;
 // module.exports.returnResponses = returnResponses;
 module.exports.request = request;
+module.exports.clientConfig = clientConfig;
 
 
