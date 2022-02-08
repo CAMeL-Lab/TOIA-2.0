@@ -75,9 +75,15 @@ async function linkSuggestedQuestionUser(userId, quesId, isPending = 1) {
     }));
 }
 
-module.exports.saveSuggestedQuestion = async function (userId, question, suggested_type = 'answer', priority = 100) {
+const saveSuggestedQuestion = async function (userId, question, suggested_type = 'answer', priority = 100) {
     let quesId = await addQuestion(question, suggested_type, 0, priority, 1);
-    return linkSuggestedQuestionUser(userId, quesId);
+    return new Promise((resolve, reject) => {
+        linkSuggestedQuestionUser(userId, quesId).then(() => {
+            resolve(quesId);
+        }).catch(() => {
+            reject();
+        })
+    })
 }
 
 module.exports.videoGetAllQuestions = function (videoId) {
@@ -185,6 +191,63 @@ const shouldTriggerSuggester = (id_question) => {
     }));
 }
 
+const getQuestionType = (id_question) => {
+    return new Promise((resolve => {
+        let query = "SELECT suggested_type FROM questions WHERE id = ?";
+        connection.query(query, [id_question], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 1) resolve(entry[0].suggested_type);
+            resolve(undefined);
+        });
+    }));
+}
+
+const deleteSuggestionEntry = (user_id, id_question) => {
+    return new Promise((resolve => {
+        let query = `DELETE FROM question_suggestions WHERE id_question = ? AND toia_id = ?`;
+        connection.query(query, [id_question, user_id], (err) => {
+            if (err) throw err;
+            resolve();
+        })
+    }));
+}
+
+const updateSuggestedQuestion = (user_id, id_question, new_value) => {
+    return new Promise(async (resolve, reject) => {
+        if (await isSuggestedQuestion(id_question, user_id)) {
+            let query = `SELECT * FROM question_suggestions WHERE id_question = ?`;
+            connection.query(query, [id_question], async (err, entries) => {
+                if (err) throw err;
+                if (entries.length === 1) {
+                    let query_update = `UPDATE questions SET question = ? WHERE id = ?`;
+                    connection.query(query_update, [new_value, id_question], (err) => {
+                        if (err) throw err;
+                        resolve({
+                            question_id: id_question,
+                            user_id: user_id,
+                            question: new_value
+                        });
+                    })
+                } else {
+                    // DO NOT update existing record! Same suggestion for multiple user. Add new record.
+                    await deleteSuggestionEntry(user_id, id_question);
+
+                    let old_question_type = await getQuestionType(id_question);
+                    saveSuggestedQuestion(user_id, new_value, old_question_type).then((new_q_id) => {
+                        resolve({
+                            question_id: new_q_id,
+                            user_id: user_id,
+                            question: new_value
+                        })
+                    });
+                }
+            })
+        } else {
+            reject({"error": "Provided user id and suggested question id pair doesn't exist."})
+        }
+    })
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -195,3 +258,7 @@ module.exports.isRecorded = isRecorded;
 module.exports.getQuestionInfo = getQuestionInfo;
 module.exports.getStreamInfo = getStreamInfo;
 module.exports.shouldTriggerSuggester = shouldTriggerSuggester;
+module.exports.saveSuggestedQuestion = saveSuggestedQuestion;
+module.exports.getQuestionType = getQuestionType;
+module.exports.deleteSuggestionEntry = deleteSuggestionEntry;
+module.exports.updateSuggestedQuestion = updateSuggestedQuestion;
