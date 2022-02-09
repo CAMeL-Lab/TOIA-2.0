@@ -55,8 +55,8 @@ let streamingLimit = 210000; // 3.5 sec
 let timeout;
 
 
-// chucks of transcript from speech to text
-let responseChunks = [];
+// restarting stream after interval
+timeout = setInterval(restartStream, streamingLimit);
 
 
 //Create an 'express' instance
@@ -68,6 +68,11 @@ app.use(express.json());
 app.use(express.static('./public'));
 app.use(compression())
 app.use(cors());
+
+
+// chucks of transcript from speech to text
+// setting as local to each 
+app.locals.responseChunks = [];
 
 
 // if on development, server static files
@@ -106,14 +111,14 @@ async function createStream(req, res) {
         ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
         : '\n\nReached transcription time limit, press Ctrl+C\n'
     ) 
-        await responseChunks.push(`${data.results[0].alternatives[0].transcript}`);
+        await app.locals.responseChunks.push(`${data.results[0].alternatives[0].transcript}`);
         
         if(req.body.params && req.body.params.fromRecorder === false){
 
             let response = "";
             let noSpaces = [];
             //console.log(responseChunks)
-            responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+            app.locals.responseChunks.forEach(elem => noSpaces.push(elem.trim()))
 
             let uniqueChars = [...new Set(noSpaces)];
             //console.log("set elements: ", uniqueChars);
@@ -126,11 +131,11 @@ async function createStream(req, res) {
             }
         }
     );
-    timeout = setTimeout(restartStream, streamingLimit);
+    
     }
 
 async function transcribeAudio(req, res) {
-    responseChunks = []
+    app.locals.responseChunks = []
     console.log("transcribeAudio called")
     createStream(req, res);
     //console.log(recorder)
@@ -1275,7 +1280,7 @@ app.post('/endTranscription', cors(), async (req, res)=>{
     let response = "";
     let noSpaces = [];
     //console.log(responseChunks)
-    responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+    app.locals.responseChunks.forEach(elem => noSpaces.push(elem.trim()))
 
     let uniqueChars = [...new Set(noSpaces)];
     //console.log("set elements: ", uniqueChars);
