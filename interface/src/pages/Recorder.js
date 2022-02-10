@@ -113,6 +113,7 @@ function Recorder() {
 
     const [transcribedAudio, setTranscribedAudio] = useState("");
 
+
     const [editVideoID, setEditVideoID] = useState('');
 
     const backgroundActiveColor = "#B1F7B0";
@@ -1049,7 +1050,7 @@ function Recorder() {
                                     <i className="fa fa-check"/>
                                 </button>
                             )}
-                            <p className="recorder-speech">{transcript}</p>
+                            <p className="recorder-speech">{transcribedAudio}</p>
                         </div>
                     ) : (
                         <div className="video-layout-player-box">
@@ -1088,7 +1089,7 @@ function Recorder() {
                             <div className="video-layout-player-bottom">
                                 <TextArea
                                     placeholder={"Type video transcript here!"}
-                                    value={answerProvided}
+                                    value={transcribedAudio}
                                     onChange={(e) => {
                                         setAnswerProvided(e.target.value)
                                     }}/>
