@@ -18,8 +18,12 @@ const axios = require('axios');
 const recorder = require('node-record-lpcm16');
 const speech = require('@google-cloud/speech');
 
+
+const speech_to_text = require('./speech_to_text/speech_to_text');
 // Creates a client
-const client = new speech.SpeechClient();
+const client = new speech.SpeechClient({
+    clientConfig: speech_to_text.clientConfig,
+});
 const compression = require('compression')
 
 const Tracker = require('./tracker/tracker');
@@ -32,7 +36,8 @@ const {
 
 const connection = require('./configs/db-connection');
 //const {transcribeAudio, recognizeStream, responseChunks} = require('./speech_to_text/speech_to_text')
-const speech_to_text = require('./speech_to_text/speech_to_text');
+
+const { restart } = require('nodemon');
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -50,8 +55,8 @@ let streamingLimit = 210000; // 3.5 sec
 let timeout;
 
 
-// chucks of transcript from speech to text
-let responseChunks = [];
+// restarting stream after interval
+timeout = setInterval(restartStream, streamingLimit);
 
 
 //Create an 'express' instance
@@ -63,6 +68,11 @@ app.use(express.json());
 app.use(express.static('./public'));
 app.use(compression())
 app.use(cors());
+
+
+// chucks of transcript from speech to text
+// setting as local to each 
+app.locals.responseChunks = [];
 
 
 // if on development, server static files
@@ -87,7 +97,12 @@ let streamStarted = true;
 async function createStream(req, res) {
     recognizeStream = await client
     .streamingRecognize(speech_to_text.request)
-    .on('error', console.error)
+    .on('error', err =>{
+        console.log("error code: ", err.code)
+        console.log("error, gRPC unvailable")
+        FinishTrancription();
+        restartStream();
+    })
     .on('data', async (data) =>{
         if(!streamStarted) return;
         //speechCallback(data);
@@ -96,14 +111,14 @@ async function createStream(req, res) {
         ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
         : '\n\nReached transcription time limit, press Ctrl+C\n'
     ) 
-        await responseChunks.push(`${data.results[0].alternatives[0].transcript}`);
+        await app.locals.responseChunks.push(`${data.results[0].alternatives[0].transcript}`);
         
         if(req.body.params && req.body.params.fromRecorder === false){
 
             let response = "";
             let noSpaces = [];
             //console.log(responseChunks)
-            responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+            app.locals.responseChunks.forEach(elem => noSpaces.push(elem.trim()))
 
             let uniqueChars = [...new Set(noSpaces)];
             //console.log("set elements: ", uniqueChars);
@@ -116,11 +131,11 @@ async function createStream(req, res) {
             }
         }
     );
-    timeout = setTimeout(restartStream, streamingLimit);
+    
     }
 
 async function transcribeAudio(req, res) {
-    responseChunks = []
+    app.locals.responseChunks = []
     console.log("transcribeAudio called")
     createStream(req, res);
     //console.log(recorder)
@@ -130,7 +145,7 @@ async function transcribeAudio(req, res) {
     threshold: 0,
     verbose: false,
     recordProgram: 'rec', // Try also "arecord" or "sox"
-    silence: '1000.0',
+    silence: '50000.0',
     })
     recording.stream()
         .on('error', console.error)
@@ -154,6 +169,7 @@ function restartStream() {
         recognizeStream = null;
         console.log("restarted successfully!")
     }
+    createStream();
 }
 
 //function for reinstantiating recorder
@@ -1264,7 +1280,7 @@ app.post('/endTranscription', cors(), async (req, res)=>{
     let response = "";
     let noSpaces = [];
     //console.log(responseChunks)
-    responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+    app.locals.responseChunks.forEach(elem => noSpaces.push(elem.trim()))
 
     let uniqueChars = [...new Set(noSpaces)];
     //console.log("set elements: ", uniqueChars);
