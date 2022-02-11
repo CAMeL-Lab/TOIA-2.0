@@ -953,7 +953,7 @@ app.post('/recorder', cors(), async (req, res) => {
                             }
 
                             //Generate suggested questions
-                            if (await shouldTriggerSuggester(q_id) && (fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true')) {
+                            if (await shouldTriggerSuggester(q_id) && !(fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true')) {
                                 axios.post(`${process.env.Q_API_ROUTE}`, {
                                     qa_pair: q.question + " " + answer,
                                     callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
