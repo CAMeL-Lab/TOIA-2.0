@@ -1045,7 +1045,10 @@ function Recorder() {
                                 </button>
                             )}
                             {recordedChunks.length > 0 && (
-                                <button className="recorder-check-btn check tooltip cursor-pointer" onClick={openModal}
+                                <button className="recorder-check-btn check tooltip cursor-pointer"
+                                        onClick={() => {
+                                            togglePreviewBox()
+                                        }}
                                         data-tooltip="Save Video">
                                     <i className="fa fa-check"/>
                                 </button>
@@ -1091,6 +1094,7 @@ function Recorder() {
                                     placeholder={"Type video transcript here!"}
                                     value={transcribedAudio}
                                     onChange={(e) => {
+                                        setTranscribedAudio(e.target.value);
                                         setAnswerProvided(e.target.value)
                                     }}/>
                             </div>
