@@ -1,0 +1,49 @@
+version: "3"
+services:
+  mysql:
+    build: server/mysql
+    command: --default-authentication-plugin=mysql_native_password --secure-file-priv=""
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
+
+  phpMyAdmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin
+    restart: on-failure
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_ARBITRARY=1
+
+  express-api:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: server
+    restart: on-failure
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+    container_name: express-api
+    env_file:
+      - ./.env
+      - ./server/.env
+
+  react-ui:
+    depends_on:
+      - mysql
+    build: interface
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+      - ./interface/.env

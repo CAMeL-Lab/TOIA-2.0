@@ -8,7 +8,6 @@ import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import env from './env.json';
 
 function Player(){
 
@@ -116,7 +115,7 @@ function Player(){
     
     // requesting the server to start listening
     console.log("request sent")
-    axios.post(`${env['server-url']}/transcribeAudio`, {
+    axios.post(`/transcribeAudio`, {
       params: {
           toiaID: history.location.state.toiaID,
           fromRecorder: false
@@ -148,7 +147,7 @@ function Player(){
       }
       else{
         //endTranscription();
-      axios.post(`${env['server-url']}/player`,{
+      axios.post(`/player`,{
         params:{
           toiaIDToTalk: history.location.state.toiaToTalk,
           toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
@@ -175,7 +174,7 @@ function Player(){
 
   function endTranscription(){
 
-    axios.post(`${env['server-url']}/endTranscription`, {
+    axios.post(`/endTranscription`, {
       params: {
           toiaID: history.location.state.toiaID
       }
@@ -201,7 +200,7 @@ function Player(){
 
     function fetchFiller(){
       if(fillerPlaying){
-        axios.post(`${env['server-url']}/fillerVideo`,{
+        axios.post(`/fillerVideo`,{
           params: {
             toiaIDToTalk: history.location.state.toiaToTalk,
             toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk
@@ -241,7 +240,7 @@ function Player(){
           pwd:input2
       }
 
-      axios.post(`${env['server-url']}/login`,params).then(res=>{
+      axios.post(`/login`,params).then(res=>{
           if(res.data==-1){
               //alert('Email not found');
               alert("Incorrect e-mail address.");
