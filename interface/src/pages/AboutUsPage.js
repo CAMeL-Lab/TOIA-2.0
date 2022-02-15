@@ -18,7 +18,6 @@ import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
 import axios from 'axios';
-import env from './env.json';
 import toia_logo from "../images/TOIA_Logo.png";
 
 function AvatarViewPage() {
@@ -161,7 +160,7 @@ function AvatarViewPage() {
             pwd:input2
         }
 
-        axios.post(`${env['server-url']}/login`,params).then(res=>{
+        axios.post(`/login`,params).then(res=>{
             if(res.data==-1){
                 //alert('Email not found');
                 alert("Incorrect e-mail address.");

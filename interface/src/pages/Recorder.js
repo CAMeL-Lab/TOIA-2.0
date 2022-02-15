@@ -12,7 +12,6 @@ import {default as EditCreateMultiSelect} from "editable-creatable-multiselect";
 import Switch from "react-switch";
 import {RecordAVideoCard, OnBoardingQCard} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
-import env from './env.json';
 import videoTypesJSON from '../configs/VideoTypes.json';
 
 const videoConstraints = {
@@ -156,7 +155,7 @@ function Recorder() {
 
     const loadUserStreams = () => {
         return new Promise((resolve => {
-            axios.post(`${env['server-url']}/getUserStreams`, {
+            axios.post(`/getUserStreams`, {
                 params: {
                     toiaID: history.location.state.toiaID
                 }
@@ -172,7 +171,7 @@ function Recorder() {
 
     const loadSuggestedQuestions = React.useCallback(() => {
         return new Promise(((resolve) => {
-            axios.post(`${env['server-url']}/getUserSuggestedQs`, {
+            axios.post(`/getUserSuggestedQs`, {
                 params: {
                     toiaID: history.location.state.toiaID
                 }
@@ -186,7 +185,7 @@ function Recorder() {
 
     function fetchOnBoardingQuestions() {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `${env['server-url']}/questions/onboarding/${toiaID}/pending`};
+        const options = {method: 'GET', url: `/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
@@ -265,7 +264,7 @@ function Recorder() {
         return new Promise(((resolve, reject) => {
             const options = {
                 method: 'GET',
-                url: `${env['server-url']}/videos/${history.location.state.toiaID}/`,
+                url: `/videos/${history.location.state.toiaID}/`,
                 params: {video_id: video_id, type: type}
             };
 
@@ -285,7 +284,7 @@ function Recorder() {
         return new Promise((resolve => {
             const options = {
                 method: 'POST',
-                url: `${env['server-url']}/getVideoPlayback`,
+                url: `/getVideoPlayback`,
                 headers: {'Content-Type': 'application/json'},
                 data: {params: {playbackVideoID: video_id}}
             };
@@ -310,7 +309,7 @@ function Recorder() {
         //SpeechRecognition.startListening({continuous: true});
 
         // requesting the server to start listening
-        axios.post(`${env['server-url']}/transcribeAudio`, {
+        axios.post(`/transcribeAudio`, {
             params: {
                 toiaID: history.location.state.toiaID,
                 fromRecorder: true
@@ -322,9 +321,17 @@ function Recorder() {
 
         // sending request to server
         setCapturing(true);
-        mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-            mimeType: "video/webm"
-        });
+
+        try {
+            mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+                mimeType: "video/webm"
+            });
+        } catch (e) {
+            mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+                mimeType: "video/mp4"
+            });
+        }
+
         mediaRecorderRef.current.addEventListener(
             "dataavailable",
             handleDataAvailable
@@ -347,7 +354,7 @@ function Recorder() {
         // end call here 
         //SpeechRecognition.stopListening();
         // requesting the server to stop listening
-        axios.post(`${env['server-url']}/endTranscription`, {
+        axios.post(`/endTranscription`, {
             params: {
                 toiaID: history.location.state.toiaID
             }
@@ -406,7 +413,7 @@ function Recorder() {
         // form.append('private', isPrivate.toString());
         // form.append('streams', JSON.stringify(listStreams));
         //
-        // axios.post(`${env['server-url']}/recorder`, form, {
+        // axios.post(`/recorder`, form, {
         //     headers: {
         //         "Content-type": "multipart/form-data"
         //     },
@@ -445,7 +452,7 @@ function Recorder() {
                 form.append('old_video_type', old_video_type);
             }
 
-            axios.post(`${env['server-url']}/recorder`, form, {
+            axios.post(`/recorder`, form, {
                 headers: {
                     "Content-type": "multipart/form-data"
                 },

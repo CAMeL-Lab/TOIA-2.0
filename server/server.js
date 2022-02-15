@@ -4,7 +4,7 @@ const mkdirp = require('mkdirp');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 require('mysql2');
-require('dotenv').config();
+require('dotenv').config({path: '../.env'})
 const stream = require('stream');
 const crypto = require('crypto');
 const path = require('path');
@@ -88,6 +88,15 @@ const gc = new Storage({
     projectId: 'toia-capstone-2021'
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
+
+// Load on-boarding questions
+let force_load_onboard_questions = false;
+for (let i = 0; i < process.argv.length; i++) {
+    if (process.argv[i] === "--force-onboard"){
+        force_load_onboard_questions = true;
+    }
+}
+require('./configs/setup-database')(connection, force_load_onboard_questions);
 
 // functions for google speech to text api
 //####################################################

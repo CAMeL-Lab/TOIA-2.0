@@ -13,7 +13,6 @@ import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
 
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
-import env from './env.json';
 import './AvatarGardenPage.css';
 
 export const renderSuggestedQsCard = (card, index, onClickFunc) => {
@@ -181,7 +180,7 @@ function AvatarGardenPage() {
 
     function fetchStreamList() {
         return new Promise(((resolve) => {
-            axios.post(`${env['server-url']}/getUserStreams`, {
+            axios.post(`/getUserStreams`, {
                 params: {
                     toiaID: history.location.state.toiaID,
                     toiaName: history.location.state.toiaName
@@ -195,7 +194,7 @@ function AvatarGardenPage() {
 
     function fetchOnBoardingQuestions() {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `${env['server-url']}/questions/onboarding/${toiaID}/pending`};
+        const options = {method: 'GET', url: `/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
@@ -210,7 +209,7 @@ function AvatarGardenPage() {
 
     function fetchSuggestedQuestions() {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `${env['server-url']}/questions/suggestions/${toiaID}/pending`};
+        const options = {method: 'GET', url: `/questions/suggestions/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
@@ -225,7 +224,7 @@ function AvatarGardenPage() {
 
     function fetchRecordedQuestions(streamID) {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `${env['server-url']}/questions/answered/${toiaID}/${streamID}`};
+        const options = {method: 'GET', url: `/questions/answered/${toiaID}/${streamID}`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
@@ -321,7 +320,7 @@ function AvatarGardenPage() {
 
     function openPlayback(e, card) {
         e.stopPropagation();
-        axios.post(`${env['server-url']}/getVideoPlayback`, {
+        axios.post(`/getVideoPlayback`, {
             params: {
                 playbackVideoID: card.id_video,
                 playbackTOIAId: history.location.state.toiaID
@@ -353,7 +352,7 @@ function AvatarGardenPage() {
 
     // querying the database for user data
     function getUserData() {
-        axios.post(`${env['server-url']}/getUserData`, {
+        axios.post(`/getUserData`, {
             params: {
                 toiaID: history.location.state.toiaID,
             }
@@ -384,7 +383,7 @@ function AvatarGardenPage() {
     const handleDeleteVideo = () => {
         const options = {
             method: 'POST',
-            url: `${env['server-url']}/questions/answered/delete`,
+            url: `/questions/answered/delete`,
             headers: {'Content-Type': 'application/json'},
             data: {user_id: toiaID, question_id: questionBeingDeleted.id, video_id: questionBeingDeleted.id_video}
         };
@@ -654,7 +653,7 @@ function AvatarGardenPage() {
         form.append('toiaID', toiaID);
         form.append('toiaName', toiaName);
 
-        axios.post(`${env['server-url']}/createNewStream`, form).then((res) => {
+        axios.post(`/createNewStream`, form).then((res) => {
             setStreamList(res.data);
             dispatch4({type: 'close'});
         });
