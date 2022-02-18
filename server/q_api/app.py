@@ -116,8 +116,10 @@ def generateNextQ():
         question = bert_filtered_qs[-1][1]
 
     if callback_url is not None:
-        requests.post(callback_url, json={"q": question})
-
+        try:
+            requests.post(callback_url, json={"q": question})
+        except:
+            print("Error when sending suggestions to server. Is the server running?")
 
     return {"q":question}
 
