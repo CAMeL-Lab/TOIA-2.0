@@ -1,3 +1,3 @@
-const app = require('./server');
+const httpServer = require('./server');
 
-const server = app.listen(process.env.PORT || 3001, () => console.log('Server is listening!'));
+const server = httpServer.listen(process.env.PORT || 3001, () => console.log('Server is listening!'));
