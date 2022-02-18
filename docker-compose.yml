@@ -22,6 +22,11 @@ services:
     environment:
       - PMA_ARBITRARY=1
 
+  q_api:
+    build: server/q_api
+    ports:
+      - "5000:5000"
+
   express-api:
     depends_on:
       mysql:
