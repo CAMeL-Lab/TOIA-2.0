@@ -113,8 +113,11 @@ def generateNextQ():
         print (bert_filtered_qs)
 
         # TODO: Fix issue -> List index out of range
-        question = bert_filtered_qs[-1][1]
-
+        try:
+            question = bert_filtered_qs[-1][1]
+        except:
+            print(bert_filtered_qs)
+            question = ""
     if callback_url is not None:
         try:
             requests.post(callback_url, json={"q": question})
