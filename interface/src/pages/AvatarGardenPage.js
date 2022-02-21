@@ -36,14 +36,21 @@ export const renderSuggestedQsCard = (card, index, onClickFunc) => {
 
 export const RecordAVideoCard = ({onClick, isDisabled}) => {
     return (
-        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted=""
-             onClick={onClick}>
+        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined}
+             data-inverted=""
+             onClick={(e) => {
+                 if (!isDisabled) onClick(e);
+             }}>
             <div className={"ui red card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
                 <div className="image">
                     <img alt=""
                          src={addButton}/>
 
-                    <button className="ui bottom attached button fluid" disabled={isDisabled} onClick={onClick}>
+                    <button className="ui bottom attached button fluid"
+                            disabled={isDisabled}
+                            onClick={(e) => {
+                                if (!isDisabled) onClick(e);
+                            }}>
                         Add new video
                     </button>
                 </div>

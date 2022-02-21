@@ -109,6 +109,8 @@ function Recorder() {
     const [isEditing, setIsEditing] = useState(false);
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
+    const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
+    const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
 
     const [transcribedAudio, setTranscribedAudio] = useState("");
 
@@ -130,6 +132,9 @@ function Recorder() {
         setName(history.location.state.toiaName);
         setLanguage(history.location.state.toiaLanguage);
         setTOIAid(history.location.state.toiaID);
+
+        // Tracker
+        setRecordStartTimestamp(+ new Date());
 
         if (history.location.state.isEditing){
             InitializeEditingMode();
@@ -191,7 +196,12 @@ function Recorder() {
             if (response.status === 200) {
                 setPendingOnBoardingQs(response.data);
                 if (response.data.length !== 0 && !history.location.state.question_obj) {
-                    alert("Please record the required videos before creating new ones!");
+                    if (!history.location.state.isEditing){
+                        alert("Please record the required videos before creating new ones!");
+                    } else {
+                        alert("You cannot edit videos before recording the required ones!");
+                    }
+
                     navigateToMyTOIA();
                 }
             } else {
@@ -209,6 +219,9 @@ function Recorder() {
         setWaitingServerResponse(true);
 
         if (type && video_id) {
+            // Fetch on-boarding questions
+            fetchOnBoardingQuestions();
+
             // Load all streams
             loadUserStreams().then((userAllStreams) => {
                 setAllStreams(userAllStreams);
@@ -400,40 +413,12 @@ function Recorder() {
             alert("Something went wrong!")
             console.log(err);
         })
-
-        // let form = new FormData();
-        // form.append('blob', recordedVideo);
-        // form.append('thumb', videoThumbnail);
-        // form.append('id', toiaID);
-        // form.append('name', toiaName);
-        // form.append('language', toiaLanguage);
-        // form.append('questions', JSON.stringify(questionsSelected));
-        // form.append('answer', answerProvided);
-        // form.append('videoType', videoType);
-        // form.append('private', isPrivate.toString());
-        // form.append('streams', JSON.stringify(listStreams));
-        //
-        // axios.post(`/recorder`, form, {
-        //     headers: {
-        //         "Content-type": "multipart/form-data"
-        //     },
-        // }).then(res => {
-        //     if (res.status === 200) {
-        //
-        //     } else {
-        //         setWaitingServerResponse(false);
-        //         alert("Something went wrong!")
-        //         console.log(res.data);
-        //     }
-        // }).catch(err => {
-        //     setWaitingServerResponse(false);
-        //     alert("Something went wrong!");
-        //     console.log(err);
-        // })
     }
 
     const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type='') => {
         return new Promise(((resolve, reject) => {
+            let endTimestamp = + new Date();
+
             let form = new FormData();
             form.append('blob', recordedVideo);
             form.append('thumb', videoThumbnail);
@@ -445,6 +430,11 @@ function Recorder() {
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
+
+            form.append('start_time', recordStartTimestamp);
+            form.append('end_time', endTimestamp);
+            setRecordEndTimestamp(endTimestamp);
+
             if (is_editing){
                 form.append('is_editing', true);
                 form.append('save_as_new', save_as_new.toString());

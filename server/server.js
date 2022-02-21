@@ -26,18 +26,18 @@ const client = new speech.SpeechClient({
 });
 const compression = require('compression')
 
-const Tracker = require('./tracker/tracker');
 const {
     isValidUser, saveSuggestedQuestion,
     addQuestion, isSuggestedQuestion, emailExists, linkStreamVideoQuestion, suggestionSetPending, isOnBoardingQuestion,
     isRecorded, getQuestionInfo, getStreamInfo, shouldTriggerSuggester, getQuestionType, updateSuggestedQuestion,
-    deleteSuggestionEntry
+    deleteSuggestionEntry, isEditing, isSaveAsNew
 } = require('./helper/user_mgmt');
 
 const connection = require('./configs/db-connection');
 //const {transcribeAudio, recognizeStream, responseChunks} = require('./speech_to_text/speech_to_text')
 
 const { restart } = require('nodemon');
+const {TrackRecordVideo, TrackEditVideo} = require("./tracker/tracker");
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -804,27 +804,23 @@ app.use('/recorder', cors(), async (req, res, next) => {
         req.file = file;
 
         // TODO: Delete files
-        if (fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true') {
-            if (!fields.hasOwnProperty('save_as_new')) {
-                res.status(400).send("Field 'save_as_new' not defined!");
+        if (isEditing(req)) {
+            if (isSaveAsNew(req)) {
+                next();
             } else {
-                if (fields.save_as_new[0] === 'true') {
-                    next();
+                if (!fields.hasOwnProperty('old_video_id') || !fields.hasOwnProperty('old_video_type')) {
+                    res.status(400).send("Old Video ID or Type Not Provided!");
                 } else {
-                    if (!fields.hasOwnProperty('old_video_id') || !fields.hasOwnProperty('old_video_type')) {
-                        res.status(400).send("Old Video ID & Type Not Provided!");
-                    } else {
-                        const oldVideoID = fields.old_video_id;
-                        const oldType = fields.old_video_type;
-                        const userId = fields.id[0];
+                    const oldVideoID = fields.old_video_id;
+                    const oldType = fields.old_video_type;
+                    const userId = fields.id[0];
 
-                        let query = `DELETE FROM videos_questions_streams WHERE id_video = ? AND type = ? AND id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
-                        connection.query(query, [oldVideoID, oldType, userId], async (err, result) => {
-                            if (err) throw err;
-                            console.log("Deleted old entries!");
-                            next();
-                        })
-                    }
+                    let query = `DELETE FROM videos_questions_streams WHERE id_video = ? AND type = ? AND id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
+                    connection.query(query, [oldVideoID, oldType, userId], async (err, result) => {
+                        if (err) throw err;
+                        console.log("Deleted old entries!");
+                        next();
+                    })
                 }
             }
         } else {
@@ -962,7 +958,7 @@ app.post('/recorder', cors(), async (req, res) => {
                             }
 
                             //Generate suggested questions
-                            if (await shouldTriggerSuggester(q_id) && !(fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true')) {
+                            if (await shouldTriggerSuggester(q_id) && !isEditing(req)) {
                                 axios.post(`${process.env.Q_API_ROUTE}`, {
                                     qa_pair: q.question + " " + answer,
                                     callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
@@ -971,6 +967,23 @@ app.post('/recorder', cors(), async (req, res) => {
                                     console.log(error);
                                 });
                             }
+                        }
+
+                        // Track
+                        if (fields.hasOwnProperty('start_time') && fields.hasOwnProperty('end_time')){
+                            let start_time = fields.start_time;
+                            let end_time = fields.end_time;
+                            if (isEditing(req)){
+                                if (isSaveAsNew(req)){
+                                    await TrackRecordVideo(fields.id[0], start_time, end_time, videoID);
+                                } else {
+                                    await TrackEditVideo(fields.id[0], start_time, end_time, videoID, fields.old_video_id);
+                                }
+                            } else {
+                                await TrackRecordVideo(fields.id[0], start_time, end_time, videoID);
+                            }
+                        } else {
+                            console.log("Untracked recording!");
                         }
 
                         res.send("Success");
@@ -1298,7 +1311,5 @@ app.post('/endTranscription', cors(), async (req, res)=>{
     
     return res.send(response);//res.end() 
 })
-
-app.use('/tracker', Tracker);
 
 module.exports = app;
