@@ -14,6 +14,9 @@ import {RecordAVideoCard, OnBoardingQCard} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
 import env from './env.json';
 import videoTypesJSON from '../configs/VideoTypes.json';
+import io from 'socket.io-client';
+import speechToTextUtils from "../transcription_utils";
+
 
 const videoConstraints = {
     width: 720,
@@ -21,6 +24,33 @@ const videoConstraints = {
     facingMode: "user"
 };
 
+const downsampleBuffer = function(buffer, sampleRate, outSampleRate) {
+    if (outSampleRate == sampleRate) {
+        return buffer;
+      }
+      if (outSampleRate > sampleRate) {
+        throw 'downsampling rate show be smaller than original sample rate';
+      }
+      var sampleRateRatio = sampleRate / outSampleRate;
+      var newLength = Math.round(buffer.length / sampleRateRatio);
+      var result = new Int16Array(newLength);
+      var offsetResult = 0;
+      var offsetBuffer = 0;
+      while (offsetResult < result.length) {
+        var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+        var accum = 0,
+          count = 0;
+        for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+          accum += buffer[i];
+          count++;
+        }
+    
+        result[offsetResult] = Math.min(1, accum / count) * 0x7fff;
+        offsetResult++;
+        offsetBuffer = nextOffsetBuffer;
+      }
+      return result.buffer;
+  }
 // Post recording, question suggestion modal
 function ModalQSuggestion(props) {
 
@@ -111,16 +141,41 @@ function Recorder() {
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
 
-    const [transcribedAudio, setTranscribedAudio] = useState("");
+    const [transcribedAudio, setTranscribedAudio] = useState('');
 
 
     const [editVideoID, setEditVideoID] = useState('');
 
+    //const [socket, setSocket] = useState(null);
+    const client = useRef();
+
     const backgroundActiveColor = "#B1F7B0";
     const backgroundDefaultColor = "#e5e5e5";
 
+    // config 
+    //let audioContext = new AudioContext();
+    const bufferSize = 2048;
+
+    const [isRecording, setIsRecording] = useState(false);
+
+
+    //const [context, setContext] = useState(null);
+
+    const context = React.useRef(null);
+    //const [processor, setProcessor] = useState(null);
+
+    const processor = React.useRef(null);
+    //const [input, setInput] = useState(null);
+    const input = React.useRef("");
+
+
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
     const {open} = state
+
+
+    // socket.on('transcript', (data)=>{
+    //     setTranscribedAudio(transcribedAudio + " " + data);
+    // })
 
     useEffect(() => {
         if (history.location.state === undefined) {
@@ -152,7 +207,10 @@ function Recorder() {
             fetchOnBoardingQuestions();
             loadSuggestedQuestions();
         }
+
     }, []);
+
+
 
     const loadUserStreams = () => {
         return new Promise((resolve => {
@@ -302,23 +360,37 @@ function Recorder() {
         }))
     }
 
+
+
+      function handleDataReceived(data) {
+          //setTranscribedAudio(oldData => [...oldData, data])
+          setTranscribedAudio(input.current + " " + data);
+          if(data){
+            
+            input.current += (" " + data);
+            //setTranscribedAudio(input.current);
+          }
+          
+          console.log("data in recorder: ", data)
+          console.log("data in tA: ", transcribedAudio);
+      }
+
+
     const handleStartCaptureClick = React.useCallback((e) => {
         // start call  here
         resetTranscript();
         setRecordedChunks([]);
         setTranscribedAudio("")
-        //SpeechRecognition.startListening({continuous: true});
+        input.current = "";
+        setIsRecording(true)
 
-        // requesting the server to start listening
-        axios.post(`${env['server-url']}/transcribeAudio`, {
-            params: {
-                toiaID: history.location.state.toiaID,
-                fromRecorder: true
-            }
-        }).then((res)=>{
-            setTranscribedAudio(res.data);
-            return;
-        })
+        // starting listening through socket
+        //startRecording();
+        speechToTextUtils.initRecording(handleDataReceived,(error) => {
+            console.error('Error when transcribing', error);
+            setIsRecording(false)
+            // No further action needed, as stream already closes itself on error
+          })
 
         // sending request to server
         setCapturing(true);
@@ -343,18 +415,11 @@ function Recorder() {
     );
 
     const handleStopCaptureClick = React.useCallback((e) => {
+        // stop recording
+        setIsRecording(false)
+        speechToTextUtils.stopRecording();
 
-        // end call here 
-        //SpeechRecognition.stopListening();
-        // requesting the server to stop listening
-        axios.post(`${env['server-url']}/endTranscription`, {
-            params: {
-                toiaID: history.location.state.toiaID
-            }
-        }).then((res)=>{
-            setTranscribedAudio(res.data);
-            return;
-        })
+
         mediaRecorderRef.current.stop();
         setCapturing(false);
         e.preventDefault();
@@ -853,7 +918,7 @@ function Recorder() {
                     <div id="answerCorrection">Feel free to correct your answer below:</div>
                     <input
                         className="modal-ans font-class-1"
-                        placeholder={answerProvided}
+                        placeholder={transcribedAudio}
                         value={answerProvided}
                         type={"text"}
                         onChange={setAnswerValue}
@@ -1091,7 +1156,8 @@ function Recorder() {
 
                             <div className="video-layout-player-bottom">
                                 <TextArea
-                                    placeholder={"Type video transcript here!"}
+                                    //placeholder={"Type video transcript here!"}
+                                    placeholder={answerProvided}
                                     value={transcribedAudio}
                                     onChange={(e) => {
                                         setTranscribedAudio(e.target.value);
