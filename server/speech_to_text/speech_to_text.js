@@ -25,9 +25,9 @@ const request = {
       encoding: encoding,
       sampleRateHertz: sampleRateHertz,
       languageCode: languageCode,
-      "enableAutomaticPunctuation": true,
-      "profanityFilter": true,
-      "enable_separate_recognition_per_channel": false,
+      enableAutomaticPunctuation: true,
+      profanityFilter: true,
+      //"enable_separate_recognition_per_channel": false,
   
     },
     interimResults: false, // If you want interim results, set this to true
@@ -36,7 +36,7 @@ const request = {
 // config of the client object
 const clientConfig = {
   interfaces: {
-    'google.cloud.speech.v1p1beta1.Speech': {
+    'google.cloud.speech.v1p1beta1.Speech': { // google.cloud.speech.rpc
       retry_codes: {
         idempotent: ["DEADLINE_EXCEEDED", "UNAVAILABLE"] 
       },
