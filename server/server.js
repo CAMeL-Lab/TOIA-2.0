@@ -21,10 +21,14 @@ const speech = require('@google-cloud/speech');
 
 const speech_to_text = require('./speech_to_text/speech_to_text');
 // Creates a client
-const client = new speech.SpeechClient({
-    clientConfig: speech_to_text.clientConfig,
-});
+const client = new speech.SpeechClient()//{
+    // clientConfig: speech_to_text.clientConfig,
+//});
 const compression = require('compression')
+
+// storing transcript in session
+const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 
 const {
     isValidUser, saveSuggestedQuestion,
@@ -39,40 +43,38 @@ const connection = require('./configs/db-connection');
 const { restart } = require('nodemon');
 const {TrackRecordVideo, TrackEditVideo} = require("./tracker/tracker");
 
+const { Buffer } = require('buffer');
+
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
 
+// setting up socket
+//const server = app.listen(process.env.PORT || 3001, () => console.log('Server is listening!')); // require('http').createServer(app);
+const { createServer } = require("http");
+const {Server} = require("socket.io");
+const { create } = require('lodash');
 
-// main recording parameters
-const encoding = 'LINEAR16';
-const sampleRateHertz = 16000;
-const languageCode = 'en-US';
-
-let recording = null;
-let recognizeStream;
-
-let streamingLimit = 210000; // 3.5 sec
-let timeout;
-
-
-// restarting stream after interval
-timeout = setInterval(restartStream, streamingLimit);
-
-
-//Create an 'express' instance
 const app = express();
+
+const httpServer = createServer(app);
+
+//const io = new Server(httpServer, { /* options */ });
+
+const io = new Server(httpServer, { cors: {
+    origin: "*"
+  },transports : ['websocket']});
+// const io = require('socket.io')(server, {cors: {
+//     origin: "*"
+//   },transports : ['websocket'] });
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-
+app.use(cors());
 app.use(express.static('./public'));
 app.use(compression())
-app.use(cors());
 
 
-// chucks of transcript from speech to text
-// setting as local to each 
-app.locals.responseChunks = [];
+
 
 
 // if on development, server static files
@@ -98,103 +100,95 @@ for (let i = 0; i < process.argv.length; i++) {
 }
 require('./configs/setup-database')(connection, force_load_onboard_questions);
 
-// functions for google speech to text api
-//####################################################
-// Create a recognize stream
-let streamStarted = true;
 
-async function createStream(req, res) {
-    recognizeStream = await client
-    .streamingRecognize(speech_to_text.request)
-    .on('error', err =>{
-        console.log("error code: ", err.code)
-        console.log("error, gRPC unvailable")
-        FinishTrancription();
-        restartStream();
-    })
-    .on('data', async (data) =>{
-        if(!streamStarted) return;
-        //speechCallback(data);
-        process.stdout.write(
-        data.results[0] && data.results[0].alternatives[0]
-        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-        : '\n\nReached transcription time limit, press Ctrl+C\n'
-    ) 
-        await app.locals.responseChunks.push(`${data.results[0].alternatives[0].transcript}`);
-        
-        if(req.body.params && req.body.params.fromRecorder === false){
+//################################################################
+// SOCKET.IO implementation
+//################################################################
+io.on('connect', function (socket) {
+    console.log("frontend connected to server!: ", socket.id);
 
-            let response = "";
-            let noSpaces = [];
-            //console.log(responseChunks)
-            app.locals.responseChunks.forEach(elem => noSpaces.push(elem.trim()))
+    const onResponse = (response) => {
+		//console.log("response:", response.results[0].alternatives[0]);
+		socket.emit("transcript", response);
+	};
 
-            let uniqueChars = [...new Set(noSpaces)];
-            //console.log("set elements: ", uniqueChars);
-            await uniqueChars.forEach(elem => response +=  (elem + " ")); //res.write(elem));
-            res.send(response);
-            console.log("response sent: ", response);
-            FinishTrancription();
-            return;
+    let recognizeStream = null;
 
-            }
-        }
-    );
+    socket.on('join', function() {
+        socket.emit('message', "socket connected to server")
+        console.log("handshake successfull")
+    });
+
     
-    }
-
-async function transcribeAudio(req, res) {
-    app.locals.responseChunks = []
-    console.log("transcribeAudio called")
-    createStream(req, res);
-    //console.log(recorder)
-    recording = recorder
-    .record({
-    sampleRateHertz: sampleRateHertz,
-    threshold: 0,
-    verbose: false,
-    recordProgram: 'rec', // Try also "arecord" or "sox"
-    silence: '50000.0',
+    socket.on('message', (data)=>{
+        socket.emit('broad', data);
     })
-    recording.stream()
-        .on('error', console.error)
-        .pipe(recognizeStream);
 
-    // Restart stream when streamingLimit expires
-    //setTimeout(createStream, streamingLimit);
+    socket.on('transcribeAudio', (data)=>{
+        console.log("stream created!")
+        createStream(this, data);
+        //await recognizeStream.addListener("data", onResponse);
+    })
+
+    socket.on('endTranscription', ()=> {
+       endRecognitionStream();
+    })
+
+    socket.on('audioData', (data)=> {
+        if (recognizeStream !== null) {
+            //writing the data to the recognition stream
+
+            recognizeStream.write(data)//, undefined, (err) => {
+        }
+    })
+
+    socket.on("connect_error", (err) => {
+        console.log(`server: connect_error due to ${err.message}`);
+      });
+    
+    //   socket.on("disconnect", () => {
+    //     socket.connect();
+    //   });
+
+      // functions for google speech to text api
+    //####################################################
+    // Create a recognize stream    
+    function createStream(socket) {
+        recognizeStream =  client
+            .streamingRecognize(speech_to_text.request)
+            .on('error', console.error)
+            .on('data', (data) => {
+                console.log("data recieved: ");
+            process.stdout.write(
+                data.results[0] && data.results[0].alternatives[0]
+                ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+                : '\n\nReached transcription time limit, press Ctrl+C\n'
+            );
+           
+            //socket.emit('transcript', data.results[0].alternatives[0].transcript);
+            onResponse(data.results[0].alternatives[0].transcript)
+    
+            // if end of utterance, let's restart stream
+            if (data.results[0] && data.results[0].isFinal) {
+                endRecognitionStream();
+                createStream(socket);
+                // console.log('restarted stream serverside');
+            }
+            });
+        }
+
+        function endRecognitionStream() {
+            if (recognizeStream) {
+              recognizeStream.end();
+              //recognizeStream.destroy();
+              console.log("stream ended")
+            }
+            recognizeStream = null;
+          }
 
 
-}
+});
 
-function speechCallback(stream, incoming_which_stream) {
-    let stdoutText = stream.results[0].alternatives[0].transcript;
-    console.log(stdoutText);
-}
-
-function restartStream() {
-    if (recognizeStream) {
-        recognizeStream.removeListener('data', speechCallback);
-        recognizeStream.destroy();
-        recognizeStream = null;
-        console.log("restarted successfully!")
-    }
-    createStream();
-}
-
-//function for reinstantiating recorder
-function FinishTrancription() {
-    try {
-      console.log("Ending...")
-      recording.stop();
-      //recognizeStream.end();
-      //recognizeStream.removeListener();
-      //recognizeStream = null;
-    }
-    catch (exception_var) {
-      console.log("No recording on going");
-    }
-  
-  }
 //########################################
 
 app.post('/createTOIA', cors(), async (req, res) => {
@@ -280,6 +274,7 @@ app.post('/login', cors(), (req, res) => {
                                 firstName: entry[0].first_name,
                                 language: entry[0].language
                             }
+
                             res.send(userData);
                         } else {
                             res.send("-2");
@@ -718,7 +713,6 @@ app.post('/getVideoPlayback', cors(), (req, res) => {
 });
 
 app.post('/fillerVideo', cors(), (req, res) => {
-
     let query_getFiller = `SELECT * FROM questions 
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id
                             INNER JOIN video ON video.id_video = videos_questions_streams.id_video
@@ -1267,49 +1261,6 @@ app.post('/getUserData', cors(), (req, res) =>{
     })
 })
 
-app.post('/transcribeAudio', cors(), async (req, res)=>{
-    // transcribing audio
-    streamStarted = true;
 
-    FinishTrancription()
-    await createStream(req, res);
-    
-    await transcribeAudio(req, res);
 
-    //setTimeout(FinishTrancription, 200);
-    
-    //res.end();
-    return;
-})
-
-// transcription for frontend
-// app.post('/getTranscribedAudio', cors(), async (req, res)=>{
-//     // transcribing audio
-//     streamStarted = true;
-//     FinishTrancription()
-
-//     await createStream(req, res);
-//     await transcribeAudio(req, res);
-//     console.log("frontend: ", responseChunks)
-
-//     //return;
-
-// })
-
-app.post('/endTranscription', cors(), async (req, res)=>{
-    FinishTrancription();
-    //console.log("returned responses: ", speech_to_text.returnResponses())
-    let response = "";
-    let noSpaces = [];
-    //console.log(responseChunks)
-    app.locals.responseChunks.forEach(elem => noSpaces.push(elem.trim()))
-
-    let uniqueChars = [...new Set(noSpaces)];
-    //console.log("set elements: ", uniqueChars);
-    await uniqueChars.forEach(elem => response +=  (elem + " ")); //res.write(elem));
-    //console.log("response: ", response);
-    
-    return res.send(response);//res.end() 
-})
-
-module.exports = app;
+module.exports = httpServer;
