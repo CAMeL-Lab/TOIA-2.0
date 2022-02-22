@@ -39,6 +39,8 @@ app = Flask(__name__)
 
 generator = pipeline('text-generation', model='gpt2')
 
+Service_Active = True
+
 @app.route('/')
 def show_page():
     return render_template("index.html")
@@ -57,6 +59,25 @@ def return3Questions():
     return {"mandatoryQuestions": ["How are you?", "What is your name?", "Where are you from?"]}
 
     #add priority, add label?
+
+@app.route('/activate')
+def activate_service():
+    global Service_Active
+    Service_Active = True
+    return "Activated!"
+
+@app.route('/deactivate')
+def deactivate_service():
+    global Service_Active
+    Service_Active = False
+    return "Deactivated!"
+
+@app.route('/status')
+def service_status():
+    if Service_Active:
+        return "Service is active"
+    else:
+        return "Service is not active"
 
 @app.route('/generateNextQ',  methods = ['POST'])
 def generateNextQ():
