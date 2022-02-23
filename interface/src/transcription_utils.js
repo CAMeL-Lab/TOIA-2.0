@@ -2,16 +2,14 @@ import io from 'socket.io-client';
 
 const socket = new io.connect("http://localhost:3001/", {transports: ['websocket']});
 
-console.log("socket: ", socket)
-
 socket.on('connect', function (data) {
     console.log('connected to socket');
     socket.emit('join', 'Server Connected to Client');
   });
 
-  socket.on('messages', function (data) {
-    console.log(data);
-  });
+//   socket.on('messages', function (data) {
+//     console.log(data);
+//   });
 
 // Stream Audio
 let bufferSize = 2048,
@@ -62,7 +60,6 @@ let AudioStreamer = {
     // }
 
     socket.on('transcript',  (response) => {
-        
         onData(response);
         //console.log("response data: ", response);
       })
@@ -135,6 +132,9 @@ function closeAll() {
   }
 
   if (processor) {
+      try{
+
+      
     if (input) {
       try {
         input.disconnect(processor);
@@ -143,7 +143,13 @@ function closeAll() {
       }
     }
     processor.disconnect(context.destination);
+} catch(err){
+    console.log("processor failed!")
+}
   }
+  try{
+      
+  
   if (context) {
     context.close().then(function () {
       input = null;
@@ -152,8 +158,14 @@ function closeAll() {
       AudioContext = null;
     });
   }
+
+}catch(err){
+    console.log("context failed!")
+}
 }
 
+
+// downsample the biffer to 16000Hz
 var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
     if (outSampleRate == sampleRate) {
       return buffer;
