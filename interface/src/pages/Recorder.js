@@ -15,6 +15,7 @@ import CheckMarkIcon from '../icons/check-mark-success1.webp';
 import videoTypesJSON from '../configs/VideoTypes.json';
 import io from 'socket.io-client';
 import speechToTextUtils from "../transcription_utils";
+import Tracker from "../utils/tracker";
 
 
 const videoConstraints = {
@@ -188,8 +189,6 @@ function Recorder() {
         setLanguage(history.location.state.toiaLanguage);
         setTOIAid(history.location.state.toiaID);
 
-        // Tracker
-        setRecordStartTimestamp(+ new Date());
 
         if (history.location.state.isEditing){
             InitializeEditingMode();
@@ -212,6 +211,9 @@ function Recorder() {
             loadSuggestedQuestions();
         }
 
+        // Tracker
+        setRecordStartTimestamp(+ new Date());
+        new Tracker().startTracking(history.location.state);
     }, []);
 
 

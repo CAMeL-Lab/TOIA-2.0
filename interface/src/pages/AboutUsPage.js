@@ -19,6 +19,7 @@ import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
 import axios from 'axios';
 import toia_logo from "../images/TOIA_Logo.png";
+import Tracker from "../utils/tracker";
 
 function AvatarViewPage() {
 
@@ -44,6 +45,9 @@ function AvatarViewPage() {
           setLanguage(history.location.state.toiaLanguage);
           setTOIAid(history.location.state.toiaID);
         }
+
+        // Tracker
+        new Tracker().startTracking(history.location.state);
     },[]);
 
     var team =[// This is a list of all members names and their accompanying pictures

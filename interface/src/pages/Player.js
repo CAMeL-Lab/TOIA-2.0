@@ -8,6 +8,7 @@ import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import Tracker from "../utils/tracker";
 
 function Player(){
 
@@ -76,6 +77,8 @@ function Player(){
     //SpeechRecognition.startListening({continuous:true});
     continueChat();
 
+      // Tracker
+      new Tracker().startTracking(history.location.state);
   },[]);
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,});
