@@ -7,7 +7,6 @@ import submitButton from "../icons/submit-button.svg";
 import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import env from './env.json';
 import speechToTextUtils from "../transcription_utils";
 
@@ -142,13 +141,12 @@ function Player(){
     //     speechToTextUtils.initRecording(handleDataReceived,(error) => {
     //       console.error('Error when transcribing', error);
     //       // setIsRecording(false)
-    //       //fetchFiller();
+    //       //fetchFiller(); 
     //       // No further action needed, as stream already closes itself on error
     //     })
       
       
     // }
-    console.log("still here!")
 
   }
 

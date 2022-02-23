@@ -1,6 +1,8 @@
+import env from './pages/env.json';
 import io from 'socket.io-client';
 
-const socket = new io.connect("http://localhost:3001/", {transports: ['websocket']});
+
+const socket = new io.connect(`${env['server-url']}`, {transports: ['websocket']});
 
 socket.on('connect', function (data) {
     console.log('connected to socket');
