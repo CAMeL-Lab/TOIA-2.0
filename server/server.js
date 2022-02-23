@@ -22,7 +22,7 @@ const speech = require('@google-cloud/speech');
 const speech_to_text = require('./speech_to_text/speech_to_text');
 // Creates a client
 const client = new speech.SpeechClient()//{
-    // clientConfig: speech_to_text.clientConfig,
+// clientConfig: speech_to_text.clientConfig,
 //});
 const compression = require('compression')
 
@@ -40,19 +40,19 @@ const {
 const connection = require('./configs/db-connection');
 //const {transcribeAudio, recognizeStream, responseChunks} = require('./speech_to_text/speech_to_text')
 
-const { restart } = require('nodemon');
-const {TrackRecordVideo, TrackEditVideo} = require("./tracker/tracker");
+const {restart} = require('nodemon');
+const {TrackRecordVideo, TrackEditVideo, Ping} = require("./tracker/tracker");
 
-const { Buffer } = require('buffer');
+const {Buffer} = require('buffer');
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
 
 // setting up socket
 //const server = app.listen(process.env.PORT || 3001, () => console.log('Server is listening!')); // require('http').createServer(app);
-const { createServer } = require("http");
+const {createServer} = require("http");
 const {Server} = require("socket.io");
-const { create } = require('lodash');
+const {create} = require('lodash');
 
 const app = express();
 
@@ -60,9 +60,11 @@ const httpServer = createServer(app);
 
 //const io = new Server(httpServer, { /* options */ });
 
-const io = new Server(httpServer, { cors: {
-    origin: "*"
-  },transports : ['websocket']});
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*"
+    }, transports: ['websocket']
+});
 // const io = require('socket.io')(server, {cors: {
 //     origin: "*"
 //   },transports : ['websocket'] });
@@ -72,9 +74,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static('./public'));
 app.use(compression())
-
-
-
 
 
 // if on development, server static files
@@ -94,7 +93,7 @@ let videoStore = gc.bucket(process.env.GC_BUCKET);
 // Load on-boarding questions
 let force_load_onboard_questions = false;
 for (let i = 0; i < process.argv.length; i++) {
-    if (process.argv[i] === "--force-onboard"){
+    if (process.argv[i] === "--force-onboard") {
         force_load_onboard_questions = true;
     }
 }
@@ -106,35 +105,39 @@ require('./configs/setup-database')(connection, force_load_onboard_questions);
 //################################################################
 io.on('connect', function (socket) {
     console.log("frontend connected to server!: ", socket.id);
+    // Track Session Activity
+    socket.on('ping', async function (user_id) {
+        await Ping(user_id);
+    })
 
     const onResponse = (response) => {
-		//console.log("response:", response.results[0].alternatives[0]);
-		socket.emit("transcript", response);
-	};
+        //console.log("response:", response.results[0].alternatives[0]);
+        socket.emit("transcript", response);
+    };
 
     let recognizeStream = null;
 
-    socket.on('join', function() {
+    socket.on('join', function () {
         socket.emit('message', "socket connected to server")
         console.log("handshake successfull")
     });
 
-    
-    socket.on('message', (data)=>{
+
+    socket.on('message', (data) => {
         socket.emit('broad', data);
     })
 
-    socket.on('transcribeAudio', (data)=>{
+    socket.on('transcribeAudio', (data) => {
         console.log("stream created!")
         createStream(this, data);
         //await recognizeStream.addListener("data", onResponse);
     })
 
-    socket.on('endTranscription', ()=> {
-       endRecognitionStream();
+    socket.on('endTranscription', () => {
+        endRecognitionStream();
     })
 
-    socket.on('audioData', (data)=> {
+    socket.on('audioData', (data) => {
         if (recognizeStream !== null) {
             //writing the data to the recognition stream
 
@@ -144,47 +147,47 @@ io.on('connect', function (socket) {
 
     socket.on("connect_error", (err) => {
         console.log(`server: connect_error due to ${err.message}`);
-      });
-    
+    });
+
     //   socket.on("disconnect", () => {
     //     socket.connect();
     //   });
 
-      // functions for google speech to text api
+    // functions for google speech to text api
     //####################################################
     // Create a recognize stream    
     function createStream(socket) {
-        recognizeStream =  client
+        recognizeStream = client
             .streamingRecognize(speech_to_text.request)
             .on('error', console.error)
             .on('data', (data) => {
                 console.log("data recieved: ");
-            process.stdout.write(
-                data.results[0] && data.results[0].alternatives[0]
-                ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-                : '\n\nReached transcription time limit, press Ctrl+C\n'
-            );
-           
-            //socket.emit('transcript', data.results[0].alternatives[0].transcript);
-            onResponse(data.results[0].alternatives[0].transcript)
-    
-            // if end of utterance, let's restart stream
-            if (data.results[0] && data.results[0].isFinal) {
-                endRecognitionStream();
-                createStream(socket);
-                // console.log('restarted stream serverside');
-            }
-            });
-        }
+                process.stdout.write(
+                    data.results[0] && data.results[0].alternatives[0]
+                        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+                        : '\n\nReached transcription time limit, press Ctrl+C\n'
+                );
 
-        function endRecognitionStream() {
-            if (recognizeStream) {
-              recognizeStream.end();
-              //recognizeStream.destroy();
-              console.log("stream ended")
-            }
-            recognizeStream = null;
-          }
+                //socket.emit('transcript', data.results[0].alternatives[0].transcript);
+                onResponse(data.results[0].alternatives[0].transcript)
+
+                // if end of utterance, let's restart stream
+                if (data.results[0] && data.results[0].isFinal) {
+                    endRecognitionStream();
+                    createStream(socket);
+                    // console.log('restarted stream serverside');
+                }
+            });
+    }
+
+    function endRecognitionStream() {
+        if (recognizeStream) {
+            recognizeStream.end();
+            //recognizeStream.destroy();
+            console.log("stream ended")
+        }
+        recognizeStream = null;
+    }
 
 
 });
@@ -964,11 +967,11 @@ app.post('/recorder', cors(), async (req, res) => {
                         }
 
                         // Track
-                        if (fields.hasOwnProperty('start_time') && fields.hasOwnProperty('end_time')){
+                        if (fields.hasOwnProperty('start_time') && fields.hasOwnProperty('end_time')) {
                             let start_time = fields.start_time;
                             let end_time = fields.end_time;
-                            if (isEditing(req)){
-                                if (isSaveAsNew(req)){
+                            if (isEditing(req)) {
+                                if (isSaveAsNew(req)) {
                                     await TrackRecordVideo(fields.id[0], start_time, end_time, videoID);
                                 } else {
                                     await TrackEditVideo(fields.id[0], start_time, end_time, videoID, fields.old_video_id);
@@ -1072,7 +1075,7 @@ app.post('/questions/suggestions/:user_id/edit', async (req, res) => {
     }
 
     isValidUser(user_id).then(async () => {
-        try{
+        try {
             const response = await updateSuggestedQuestion(user_id, question_id, question_new_value);
             res.send(response);
         } catch (e) {
@@ -1247,20 +1250,19 @@ app.get('/videos/:user_id/', async (req, res) => {
 });
 
 //getting user data to populate settings 
-app.post('/getUserData', cors(), (req, res) =>{
+app.post('/getUserData', cors(), (req, res) => {
     let query_getUserData = `SELECT *
                                 FROM toia_user
                                 WHERE id = "${req.body.params.toiaID}";`
     connection.query(query_getUserData, (err, entries, fields) => {
-        if (err){
+        if (err) {
             throw err;
-        } 
+        }
         console.log("user data sent!")
         res.send(Object.values(entries))
-        
+
     })
 })
-
 
 
 module.exports = httpServer;

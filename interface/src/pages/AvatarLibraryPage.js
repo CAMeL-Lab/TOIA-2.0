@@ -8,6 +8,7 @@ import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
+import Tracker from "../utils/tracker";
 
 function AvatarLibraryPage() {
 
@@ -75,6 +76,8 @@ function AvatarLibraryPage() {
         setSearchData(res.data);
       });
 
+      // Track
+        new Tracker().startTracking(history.location.state);
     },[]);
 
     var input1, input2; //input fields for email and password

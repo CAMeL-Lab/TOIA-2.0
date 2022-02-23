@@ -9,6 +9,7 @@ import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
 import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
+import Tracker from "../utils/tracker";
 
 function HomePage() {
 
@@ -44,6 +45,8 @@ function HomePage() {
       setTOIAid(history.location.state.toiaID);
     }
 
+    // Tracker
+    new Tracker().startTracking(history.location.state);
   },[]);
 
   function openModal(e){

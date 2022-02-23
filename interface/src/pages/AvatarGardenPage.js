@@ -14,6 +14,7 @@ import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
 import './AvatarGardenPage.css';
+import Tracker from "../utils/tracker";
 
 export const renderSuggestedQsCard = (card, index, onClickFunc) => {
     return (
@@ -183,6 +184,9 @@ function AvatarGardenPage() {
         });
         fetchOnBoardingQuestions();
         fetchSuggestedQuestions();
+
+        // Tracker
+        new Tracker().startTracking(history.location.state);
     }, []);
 
     function fetchStreamList() {
