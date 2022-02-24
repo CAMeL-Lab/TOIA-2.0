@@ -87,10 +87,21 @@
 
 .mute-button {
   position: absolute;
-  top: 82%;
-  left: 40%;
-  width: 8%;
-  height: 25px;
+  top: 4%;
+  right: 15%;
+  width: 15%;
+  height: 7%;
+  font-size: 1.5rem;
+  /* background-color: var(--check-green); */
+}
+
+.recording-button{
+  position: absolute;
+  top: 4%;
+  left: 15%;
+  width: 15%;
+  height: 7%;
+  font-size: 1.5rem;
 }
 
 .skip-end-button {
@@ -99,4 +110,18 @@
   left: 52%;
   width: 8%;
   height: 25px;
+}
+
+.submit-button{
+  position: absolute;
+  bottom: -2%;
+  left: 42%;
+  width: 15%;
+  height: 7%;
+  font-size: 1.5rem;
+  color: #02587A;
+}
+
+.cursor-disabled {
+  cursor: not-allowed !important;
 }

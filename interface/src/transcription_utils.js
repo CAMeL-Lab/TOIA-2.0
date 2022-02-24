@@ -1,16 +1,14 @@
 import socket from "./utils/socket";
 
 
-console.log("socket: ", socket)
-
 socket.on('connect', function (data) {
     console.log('connected to socket');
     socket.emit('join', 'Server Connected to Client');
 });
 
-socket.on('messages', function (data) {
-    console.log(data);
-  });
+//   socket.on('messages', function (data) {
+//     console.log(data);
+//   });
 
 // Stream Audio
 let bufferSize = 2048,
@@ -26,55 +24,63 @@ const mediaConstraints = {
 };
 
 let AudioStreamer = {
-    /**
-     * @param {function} onData Callback to run on data each time it's received
-     * @param {function} onError Callback to run on an error if one is emitted.
-     */
-    initRecording: function (onData, onError) {
-        socket.emit('transcribeAudio', '');
-        AudioContext = window.AudioContext || window.webkitAudioContext;
-        context = new AudioContext({
-            latencyHint: 'interactive',
-        });
-        processor = context.createScriptProcessor(bufferSize, 1, 1);
-        processor.connect(context.destination);
-        context.resume();
+  /**
+   * @param {function} onData Callback to run on data each time it's received
+   * @param {function} onError Callback to run on an error if one is emitted.
+   */
+  initRecording: function (onData, onError) {
+    socket.emit('transcribeAudio', '');
+    AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext({
+        latencyHint: 'interactive',
+  });
+    processor = context.createScriptProcessor(bufferSize, 1, 1);
+    processor.connect(context.destination);
+    context.resume();
 
-        const handleSuccess = function (stream) {
-            globalStream = stream;
-            input = context.createMediaStreamSource(stream);
-            input.connect(processor);
+    const handleSuccess = function (stream) {
+      globalStream = stream;
+      input = context.createMediaStreamSource(stream);
+      input.connect(processor);
 
-            processor.onaudioprocess = function (e) {
-                microphoneProcess(e);
-            };
-        };
+      processor.onaudioprocess = function (e) {
+        microphoneProcess(e);
+      };
+    };
 
-        navigator.mediaDevices.getUserMedia(mediaConstraints)
-            .then(handleSuccess);
+    navigator.mediaDevices.getUserMedia(mediaConstraints)
+      .then(handleSuccess);
 
-        socket.on('transcript', (response) => {
-            onData(response);
-        })
-        socket.on('message', (res) => {
-            console.log(res)
-        })
-        socket.on('googleCloudStreamError', (error) => {
-            if (onError) {
-                onError('error');
-            }
-            closeAll();
-        });
+    // if (onData) {
+    //   socket.on('transcript', (response) => {
+    //     onData(response.data);
+    //     console.log("response data: ", response);
+    //   });
+    // }
 
-        socket.on('endTranscription', () => {
-            closeAll();
-        });
-    },
+    socket.on('transcript',  (response) => {
+        onData(response);
+        //console.log("response data: ", response);
+      })
+    socket.on('message', (res)=>{
+        console.log(res)
+    })
+    socket.on('googleCloudStreamError', (error) => {
+      if (onError) {
+        onError('error');
+      }
+      closeAll();
+    });
 
-    stopRecording: function () {
-        socket.emit('endTranscription');
-        closeAll();
-    }
+    socket.on('endTranscription', () => {
+      closeAll();
+    });
+  },
+
+  stopRecording: function () {
+    socket.emit('endTranscription');
+    closeAll();
+  }
 }
 
 export default AudioStreamer;
@@ -115,35 +121,50 @@ function convertFloat32ToInt16(buffer) {
  * Stops recording and closes everything down. Runs on error or on stop.
  */
 function closeAll() {
-    // Clear the listeners (prevents issue if opening and closing repeatedly)
-    socket.off('transcript');
-    socket.off('googleCloudStreamError');
-    let tracks = globalStream ? globalStream.getTracks() : null;
-    let track = tracks ? tracks[0] : null;
-    if (track) {
-        track.stop();
-    }
+  // Clear the listeners (prevents issue if opening and closing repeatedly)
+  socket.off('transcript');
+  socket.off('googleCloudStreamError');
+  let tracks = globalStream ? globalStream.getTracks() : null;
+  let track = tracks ? tracks[0] : null;
+  if (track) {
+    track.stop();
+  }
 
-    if (processor) {
-        if (input) {
-            try {
-                input.disconnect(processor);
-            } catch (error) {
-                console.warn('Attempt to disconnect input failed.')
-            }
-        }
-        processor.disconnect(context.destination);
+  if (processor) {
+      try{
+
+      
+    if (input) {
+      try {
+        input.disconnect(processor);
+      } catch (error) {
+        console.warn('Attempt to disconnect input failed.')
+      }
     }
-    if (context) {
-        context.close().then(function () {
-            input = null;
-            processor = null;
-            context = null;
-            AudioContext = null;
-        });
-    }
+    processor.disconnect(context.destination);
+} catch(err){
+    console.log("processor failed!")
+}
+  }
+  try{
+      
+  
+  if (context) {
+    context.close().then(function () {
+      input = null;
+      processor = null;
+      context = null;
+      AudioContext = null;
+    });
+  }
+
+}catch(err){
+    console.log("context failed!")
+}
 }
 
+
+// downsample the biffer to 16000Hz
 var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
     if (outSampleRate === sampleRate) {
         return buffer;
