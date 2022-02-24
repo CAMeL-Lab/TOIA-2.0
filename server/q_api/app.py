@@ -81,7 +81,8 @@ def service_status():
 
 @app.route('/generateNextQ',  methods = ['POST'])
 def generateNextQ():
-
+    if not Service_Active:
+        return {"error":"Inactive"}
     # UNCOMMENT AFTER INTEGRATION WITH BACKEND
 
     body_unicode = request.data.decode('utf-8')
