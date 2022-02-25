@@ -177,6 +177,7 @@ function AvatarGardenPage() {
         });
         fetchOnBoardingQuestions();
         fetchSuggestedQuestions();
+        getUserData();
     }, []);
 
     function fetchStreamList() {
@@ -1029,7 +1030,7 @@ function AvatarGardenPage() {
             >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
                 <button onClick={(event) => {
                     openModal2(event);
-                    getUserData()
+                    
                 }} className="garden-settings"><i className="fa fa-cog"/></button>
             </div>
             <div className="section1">
