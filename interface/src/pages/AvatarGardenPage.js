@@ -187,6 +187,7 @@ function AvatarGardenPage() {
 
         // Tracker
         new Tracker().startTracking(history.location.state);
+
         getUserData();
     }, []);
 

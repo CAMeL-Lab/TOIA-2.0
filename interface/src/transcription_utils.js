@@ -1,6 +1,11 @@
 import socket from "./utils/socket";
 
 
+import io from 'socket.io-client';
+
+
+
+
 socket.on('connect', function (data) {
     console.log('connected to socket');
     socket.emit('join', 'Server Connected to Client');
