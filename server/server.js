@@ -21,9 +21,9 @@ const speech = require('@google-cloud/speech');
 
 const speech_to_text = require('./speech_to_text/speech_to_text');
 // Creates a client
-const client = new speech.SpeechClient()//{
-    // clientConfig: speech_to_text.clientConfig,
-//});
+const client = new speech.SpeechClient({
+     clientConfig: speech_to_text.clientConfig,
+});
 const compression = require('compression')
 
 // storing transcript in session
@@ -114,12 +114,13 @@ io.on('connect', function (socket) {
 
     
     socket.on('message', (data)=>{
-        socket.emit('broad', data);
+        socket.emit('message', data);
     })
 
     socket.on('transcribeAudio', (data)=>{
-        console.log("stream created!")
+        
         createStream(this, data);
+        console.log("stream created!")
         //await recognizeStream.addListener("data", onResponse);
     })
 

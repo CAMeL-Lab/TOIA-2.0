@@ -7,8 +7,8 @@ import submitButton from "../icons/submit-button.svg";
 import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import env from './env.json';
+import speechToTextUtils from "../transcription_utils";
 
 function Player(){
 
@@ -45,19 +45,22 @@ function Player(){
   const [fillerPlaying, setFillerPlaying]=useState(true);
 
   const [video,setVideo] = useState(null);
+  const [isInteracting, setIsInteracting] = useState(false);
 
   //const [question,setQuestion] = useState(null);
   //const [matched,setMatched]=useState(0);
 
   //const [transcribedAudio, setTranscribedAudio] = useState("");
 
-  const transcribedAudio = React.useRef(null);
-  const question = React.useRef(null);
+  const transcribedAudio = React.useRef('');
+  const textInput = React.useRef('');
+  const question = React.useRef('');
+  const interacting = React.useRef('false');
 
 
   var input1, input2;
-  let [micMute, setMicStatus]=React.useState(false);
-  let [micString, setMicString]=React.useState('Mute');
+  let [micMute, setMicStatus]=React.useState(true);
+  let [micString, setMicString]=React.useState('INTERACT');
 
   useEffect(() => {
     if(history.location.state.toiaID!=undefined){
@@ -75,7 +78,6 @@ function Player(){
 
     fetchFiller();
     //SpeechRecognition.startListening({continuous:true});
-    continueChat();
 
   },[]);
 
@@ -100,49 +102,66 @@ function Player(){
           break;
       }
   }
-  var cont = false;
-  let cancelToken;
 
   //const controller = new AbortController();
 
-  function continueChat(){
-    if (typeof cancelToken != typeof undefined) {
-      endTranscription()
-      cancelToken.cancel("Operation canceled due to new request.")
+  // handling data recieved from server
+  function handleDataReceived(data){
+
+    // setting the transcribedAudio 
+    if(data){
+      transcribedAudio.current = data;
+      question.current = data;
+      
+      speechToTextUtils.stopRecording();
+      fetchData()
+    } else{
+      console.log("no data received from server")
     }
 
-    cancelToken = axios.CancelToken.source()
-    setFillerPlaying(true);
     
-    // requesting the server to start listening
-    console.log("request sent")
-    axios.post(`${env['server-url']}/transcribeAudio`, {
-      params: {
-          toiaID: history.location.state.toiaID,
-          fromRecorder: false
-      }
-    }, { cancelToken: cancelToken.token }).then((res)=>{
-      transcribedAudio.current=res.data;
-      //setTranscribedAudio(newData);
-      //setQuestion(res.data);
-      question.current = res.data;
-      console.log("transcribed audio in res.data= ", transcribedAudio.current);
-      console.log("question = ", question.current);
-      fetchData();
-      return;
-    }).catch((err) =>{
-      console.log(err)
-    })
+  }
 
+  async function continueChat(){
+    
+
+    if(interacting.current=='true'){
+     
+      await endTranscription();
+      
+      speechToTextUtils.initRecording(handleDataReceived,(error) => {
+        console.error('Error when transcribing', error);
+        // setIsRecording(false)
+        //fetchFiller();
+        // No further action needed, as stream already closes itself on error
+      })
+    }  
+
+    //   if(micString=='PAUSE'){
+    //     speechToTextUtils.initRecording(handleDataReceived,(error) => {
+    //       console.error('Error when transcribing', error);
+    //       // setIsRecording(false)
+    //       //fetchFiller(); 
+    //       // No further action needed, as stream already closes itself on error
+    //     })
+      
+      
+    // }
+
+  }
+
+  async function chatFiller(){
+    fetchFiller();
+   
+    continueChat();
+    
   }
 
   function fetchData(){
       //continueChat();
       //fetchFiller();
       //fetchFiller();
-      console.log("transcribedAudio in fetch data", transcribedAudio.current);
-      console.log("question in current", question.current)
-      if(question.current==null || question==""){
+      if(question.current==null || question.current==""){
         setFillerPlaying(true);
         fetchFiller();
       }
@@ -156,60 +175,62 @@ function Player(){
           streamIdToTalk: history.location.state.streamToTalk
         }
       }).then((res)=>{
-        console.log("this is res.data: ", res.data);
+        
         if (res.data === "error"){
           setFillerPlaying(true);
-          fetchFiller();
+          //fetchFiller();
           //continueChat();
         } else{
-          setFillerPlaying(false);
-        setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={fetchFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
-        console.log("video here")
-        //resetTranscript();
-        //setTranscribedAudio("")
-        //continueChat();
-        //fetchFiller();
+          setFillerPlaying(true);
+        setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={interacting.current=='false' ? fetchFiller:chatFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
+        transcribedAudio.current = '';
+        
       }});
     }
   }
 
   function endTranscription(){
-
-    axios.post(`${env['server-url']}/endTranscription`, {
-      params: {
-          toiaID: history.location.state.toiaID
-      }
-    }).then((res)=>{
-      console.log("transcription ended!")
-      return;
-    })
+    speechToTextUtils.stopRecording();
   }
 
 
     function micStatusChange(){
       if(micMute==true){
         setMicStatus(false);
-        setMicString('Mute');
-        SpeechRecognition.startListening();
+        setMicString('PAUSE');
+        setIsInteracting(true)
+        interacting.current = 'true';
+        //speechToTextUtils.initRecording();
+        speechToTextUtils.initRecording(handleDataReceived,(error) => {
+          console.error('Error when transcribing', error);
+          // setIsRecording(false)
+          //fetchFiller();
+          // No further action needed, as stream already closes itself on error
+        })
+        
+       
       }else{
-        SpeechRecognition.stopListening();
+        speechToTextUtils.stopRecording();
         setMicStatus(true);
-        setMicString('Unmute');
-        fetchData();
+        setMicString('INTERACT');
+        setIsInteracting(false)
+        interacting.current = 'false';
+        
+        //continueChat();
       }
     }
 
     function fetchFiller(){
+      //continueChat();
+      
       if(fillerPlaying){
         axios.post(`${env['server-url']}/fillerVideo`,{
           params: {
             toiaIDToTalk: history.location.state.toiaToTalk,
             toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk
-          }
-        }).then(async (res)=>{
-          console.log("filler playing again here")
+          }}).then(async (res)=>{
           
-          let videoELem=<video muted className="player-vid" id="vidmain" key="filler" onEnded={fetchFiller} autoPlay><source src={res.data} type='video/mp4'></source></video>;
+          let videoELem=<video muted className="player-vid" id="vidmain" key="filler" onEnded={interacting.current=='false' ? fetchFiller:chatFiller} autoPlay><source src={res.data} type='video/mp4'></source></video>;
           setVideo(videoELem);
           document.getElementById("vidmain").load();
           const playPromise = document.getElementById("vidmain").play();
@@ -228,8 +249,38 @@ function Player(){
                 fetchFiller();
               });
           }
-          continueChat();
+          //continueChat();
         });
+      }
+    }
+
+    function textChange(e){
+      textInput.current = e.target.value;
+    }
+
+    function submitResponse(e){
+      question.current = textInput.current;
+      if(question.current!=""){
+        // fetchData();
+        axios.post(`${env['server-url']}/player`,{
+          params:{
+            toiaIDToTalk: history.location.state.toiaToTalk,
+            toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
+            question,
+            streamIdToTalk: history.location.state.streamToTalk
+          }
+        }).then((res)=>{
+         
+          if (res.data === "error"){
+            setFillerPlaying(true);
+            //fetchFiller();
+            //continueChat();
+          } else{
+            setFillerPlaying(true);
+          setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={fetchFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
+          transcribedAudio.current = '';
+          question.current = '';
+        }})
       }
     }
 
@@ -263,6 +314,7 @@ function Player(){
 
     function home() {
       if(isLoggedIn){
+        endTranscription();
         history.push({
           pathname: '/',
           state: {
@@ -276,11 +328,11 @@ function Player(){
           pathname: '/',
         });
       }
-      endTranscription();
     }
 
     function about() {
       if(isLoggedIn){
+        endTranscription();
           history.push({
           pathname: '/about',
           state: {
@@ -294,11 +346,11 @@ function Player(){
           pathname: '/about',
           });
       }
-      endTranscription();
     }
 
     function library() {
       if(isLoggedIn){
+        endTranscription();
           history.push({
           pathname: '/library',
           state: {
@@ -312,11 +364,11 @@ function Player(){
           pathname: '/library',
           });
       }
-      endTranscription();
     }
 
     function garden(e) {
       if (isLoggedIn) {
+        endTranscription();
           history.push({
           pathname: '/mytoia',
           state: {
@@ -328,7 +380,7 @@ function Player(){
       }else{
           openModal(e);
       }
-      endTranscription();
+      
     }
 
    function logout(){
@@ -413,20 +465,48 @@ function Player(){
         {/* <button onClick={()=>{SpeechRecognition.startListening({ continuous: true })}}>Start</button>
         <button onClick={fetchData}>Stop</button>
         <button onClick={resetTranscript}>Reset</button> */}
+        { (micMute) ? (
+          <button color='green' className = "ui green microphone button mute-button" onClick={micStatusChange}><i aria-hidden="true" class="microphone icon"></i>{micString}</button>
+        ):(
+          <button  className = "ui secondary button mute-button" onClick={micStatusChange}><i aria-hidden="true" class="microphone slash icon"></i>{micString}</button>
+
+        )}
+
         
-        <button className = "mute-button" onClick={micStatusChange}>{micString}</button>
         
-        <button className = "skip-end-button" >Skip to End </button>
+        
+        {/* <button className = "skip-end-button" >Skip to End </button> */}
 
         <div>
-        <input
+        { (micMute) ? (
+           <><input
+              className="type-q font-class-1"
+              placeholder={'Type text here!'}
+              // value={''}
+              // defaultValue= 'Type text here!'
+              id="video-text-box"
+              type={"text"}
+              onChange={textChange} /><button color='green' className="ui primary button submit-button" onClick={submitResponse}><i aria-hidden="true" class="send icon"></i>SEND</button></>
+         
+        ):(
+          <input
+          className="type-q font-class-1"
+          placeholder={"Transcript"}
+          value={transcribedAudio.current || ''}
+          id="video-text-box"
+          type={"text"}
+          //onChange={setQuestionValue}
+      />
+
+        )}
+        {/* <input
               className="type-q font-class-1"
               placeholder={"Transcript"}
               value={transcribedAudio.current || ''}
               id="video-text-box"
               type={"text"}
               //onChange={setQuestionValue}
-          />
+          /> */}
 
       </div>
 
