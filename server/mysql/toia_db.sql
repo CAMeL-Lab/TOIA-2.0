@@ -104,8 +104,8 @@ CREATE TABLE `tracker` (
   `track_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `activity` varchar(500) NOT NULL,
-  `start_time` int NOT NULL,
-  `end_time` int DEFAULT NULL,
+  `start_time` bigint NOT NULL,
+  `end_time` bigint DEFAULT NULL,
   `video_id` varchar(500) DEFAULT NULL,
   `old_video_id` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`track_id`),
@@ -166,4 +166,4 @@ CREATE TABLE `videos_questions_streams` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-19 17:07:08
+-- Dump completed on 2022-02-25 12:22:10
