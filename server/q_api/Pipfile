@@ -21,7 +21,7 @@ requests = "==2.25.1"
 sacremoses = "==0.0.43"
 six = "==1.15.0"
 tokenizers = "==0.9.4"
-torch = {version = "==1.6.0", file = "https://download.pytorch.org/whl/cpu/torch-1.6.0-cp38-none-macosx_10_9_x86_64.whl"}
+torch = "==1.6.0"
 tqdm = "==4.55.1"
 transformers = "==4.1.1"
 urllib3 = "==1.26.2"

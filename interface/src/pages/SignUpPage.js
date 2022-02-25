@@ -6,7 +6,6 @@ import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
-import env from './env.json';
 
 function SignUpPage() {
 
@@ -52,7 +51,7 @@ function SignUpPage() {
       form.append('pwd', pass);
       form.append('language', language);
       console.log(form);
-      axios.post(`${env['server-url']}/createTOIA`,form).then((res)=>{
+      axios.post(`/createTOIA`,form).then((res)=>{
           if (res.status === 200){
               console.log(`Account created successfully ${res.data}`);
               history.push({
@@ -81,7 +80,7 @@ function SignUpPage() {
       pwd:input2
     }
 
-    axios.post(`${env['server-url']}/login`,params).then(res=>{
+    axios.post(`/login`,params).then(res=>{
       if(res.data==-1){
         alert('Incorrect email address.');
       }else if(res.data==-2){

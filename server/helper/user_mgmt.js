@@ -248,6 +248,20 @@ const updateSuggestedQuestion = (user_id, id_question, new_value) => {
     })
 }
 
+const isEditing = (req) => {
+    if (!req.hasOwnProperty('fields')) throw "Request object must have a property called fields.";
+
+    let fields = req.fields;
+    return fields.hasOwnProperty('is_editing') && fields.is_editing[0] === 'true';
+}
+
+const isSaveAsNew = (req) => {
+    if (!req.hasOwnProperty('fields')) throw "Request object must have a property called fields.";
+
+    let fields = req.fields;
+    return fields.hasOwnProperty('save_as_new') && fields.save_as_new[0] === 'true';
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -262,3 +276,5 @@ module.exports.saveSuggestedQuestion = saveSuggestedQuestion;
 module.exports.getQuestionType = getQuestionType;
 module.exports.deleteSuggestionEntry = deleteSuggestionEntry;
 module.exports.updateSuggestedQuestion = updateSuggestedQuestion;
+module.exports.isEditing = isEditing;
+module.exports.isSaveAsNew = isSaveAsNew;

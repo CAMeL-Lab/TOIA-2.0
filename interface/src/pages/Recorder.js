@@ -12,10 +12,10 @@ import {default as EditCreateMultiSelect} from "editable-creatable-multiselect";
 import Switch from "react-switch";
 import {RecordAVideoCard, OnBoardingQCard} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
-import env from './env.json';
 import videoTypesJSON from '../configs/VideoTypes.json';
 import io from 'socket.io-client';
 import speechToTextUtils from "../transcription_utils";
+import Tracker from "../utils/tracker";
 
 
 const videoConstraints = {
@@ -112,6 +112,8 @@ function Recorder() {
     const [isEditing, setIsEditing] = useState(false);
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
+    const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
+    const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
 
     const [transcribedAudio, setTranscribedAudio] = useState('');
 
@@ -159,6 +161,7 @@ function Recorder() {
         setLanguage(history.location.state.toiaLanguage);
         setTOIAid(history.location.state.toiaID);
 
+
         if (history.location.state.isEditing){
             InitializeEditingMode();
         } else {
@@ -180,13 +183,16 @@ function Recorder() {
             loadSuggestedQuestions();
         }
 
+        // Tracker
+        setRecordStartTimestamp(+ new Date());
+        new Tracker().startTracking(history.location.state);
     }, []);
 
 
 
     const loadUserStreams = () => {
         return new Promise((resolve => {
-            axios.post(`${env['server-url']}/getUserStreams`, {
+            axios.post(`/getUserStreams`, {
                 params: {
                     toiaID: history.location.state.toiaID
                 }
@@ -202,7 +208,7 @@ function Recorder() {
 
     const loadSuggestedQuestions = React.useCallback(() => {
         return new Promise(((resolve) => {
-            axios.post(`${env['server-url']}/getUserSuggestedQs`, {
+            axios.post(`/getUserSuggestedQs`, {
                 params: {
                     toiaID: history.location.state.toiaID
                 }
@@ -216,13 +222,18 @@ function Recorder() {
 
     function fetchOnBoardingQuestions() {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `${env['server-url']}/questions/onboarding/${toiaID}/pending`};
+        const options = {method: 'GET', url: `/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setPendingOnBoardingQs(response.data);
                 if (response.data.length !== 0 && !history.location.state.question_obj) {
-                    alert("Please record the required videos before creating new ones!");
+                    if (!history.location.state.isEditing){
+                        alert("Please record the required videos before creating new ones!");
+                    } else {
+                        alert("You cannot edit videos before recording the required ones!");
+                    }
+
                     navigateToMyTOIA();
                 }
             } else {
@@ -240,6 +251,9 @@ function Recorder() {
         setWaitingServerResponse(true);
 
         if (type && video_id) {
+            // Fetch on-boarding questions
+            fetchOnBoardingQuestions();
+
             // Load all streams
             loadUserStreams().then((userAllStreams) => {
                 setAllStreams(userAllStreams);
@@ -295,7 +309,7 @@ function Recorder() {
         return new Promise(((resolve, reject) => {
             const options = {
                 method: 'GET',
-                url: `${env['server-url']}/videos/${history.location.state.toiaID}/`,
+                url: `/videos/${history.location.state.toiaID}/`,
                 params: {video_id: video_id, type: type}
             };
 
@@ -315,7 +329,7 @@ function Recorder() {
         return new Promise((resolve => {
             const options = {
                 method: 'POST',
-                url: `${env['server-url']}/getVideoPlayback`,
+                url: `/getVideoPlayback`,
                 headers: {'Content-Type': 'application/json'},
                 data: {params: {playbackVideoID: video_id}}
             };
@@ -366,9 +380,17 @@ function Recorder() {
 
         // sending request to server
         setCapturing(true);
-        mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-            mimeType: "video/webm"
-        });
+
+        try {
+            mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+                mimeType: "video/webm"
+            });
+        } catch (e) {
+            mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+                mimeType: "video/mp4"
+            });
+        }
+
         mediaRecorderRef.current.addEventListener(
             "dataavailable",
             handleDataAvailable
@@ -430,40 +452,12 @@ function Recorder() {
             alert("Something went wrong!")
             console.log(err);
         })
-
-        // let form = new FormData();
-        // form.append('blob', recordedVideo);
-        // form.append('thumb', videoThumbnail);
-        // form.append('id', toiaID);
-        // form.append('name', toiaName);
-        // form.append('language', toiaLanguage);
-        // form.append('questions', JSON.stringify(questionsSelected));
-        // form.append('answer', answerProvided);
-        // form.append('videoType', videoType);
-        // form.append('private', isPrivate.toString());
-        // form.append('streams', JSON.stringify(listStreams));
-        //
-        // axios.post(`${env['server-url']}/recorder`, form, {
-        //     headers: {
-        //         "Content-type": "multipart/form-data"
-        //     },
-        // }).then(res => {
-        //     if (res.status === 200) {
-        //
-        //     } else {
-        //         setWaitingServerResponse(false);
-        //         alert("Something went wrong!")
-        //         console.log(res.data);
-        //     }
-        // }).catch(err => {
-        //     setWaitingServerResponse(false);
-        //     alert("Something went wrong!");
-        //     console.log(err);
-        // })
     }
 
     const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type='') => {
         return new Promise(((resolve, reject) => {
+            let endTimestamp = + new Date();
+
             let form = new FormData();
             form.append('blob', recordedVideo);
             form.append('thumb', videoThumbnail);
@@ -475,6 +469,11 @@ function Recorder() {
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
+
+            form.append('start_time', recordStartTimestamp);
+            form.append('end_time', endTimestamp);
+            setRecordEndTimestamp(endTimestamp);
+
             if (is_editing){
                 form.append('is_editing', true);
                 form.append('save_as_new', save_as_new.toString());
@@ -482,7 +481,7 @@ function Recorder() {
                 form.append('old_video_type', old_video_type);
             }
 
-            axios.post(`${env['server-url']}/recorder`, form, {
+            axios.post(`/recorder`, form, {
                 headers: {
                     "Content-type": "multipart/form-data"
                 },
