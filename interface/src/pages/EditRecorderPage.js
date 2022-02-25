@@ -10,7 +10,6 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 import Switch from "react-switch";
-import env from './env.json';
 
 
 const videoConstraints = {
@@ -166,7 +165,7 @@ function EditRecorder () {
             form.append('question', question);
             form.append('answer', transcript);
             console.log(form);
-            axios.post(`${env['server-url']}/recorder`,form).then(()=>{
+            axios.post(`/recorder`,form).then(()=>{
               history.push({
                 pathname: '/mytoia',
               });

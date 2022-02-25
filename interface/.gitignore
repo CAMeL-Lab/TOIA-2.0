@@ -4,3 +4,4 @@ package-lock.json
 *.eslintcache
 /src/pages/env.json
 /.idea/
+.env

@@ -39,6 +39,8 @@ app = Flask(__name__)
 
 generator = pipeline('text-generation', model='gpt2')
 
+Service_Active = True
+
 @app.route('/')
 def show_page():
     return render_template("index.html")
@@ -58,9 +60,29 @@ def return3Questions():
 
     #add priority, add label?
 
+@app.route('/activate')
+def activate_service():
+    global Service_Active
+    Service_Active = True
+    return "Activated!"
+
+@app.route('/deactivate')
+def deactivate_service():
+    global Service_Active
+    Service_Active = False
+    return "Deactivated!"
+
+@app.route('/status')
+def service_status():
+    if Service_Active:
+        return "Service is active"
+    else:
+        return "Service is not active"
+
 @app.route('/generateNextQ',  methods = ['POST'])
 def generateNextQ():
-
+    if not Service_Active:
+        return {"error":"Inactive"}
     # UNCOMMENT AFTER INTEGRATION WITH BACKEND
 
     body_unicode = request.data.decode('utf-8')
@@ -113,11 +135,16 @@ def generateNextQ():
         print (bert_filtered_qs)
 
         # TODO: Fix issue -> List index out of range
-        question = bert_filtered_qs[-1][1]
-
+        try:
+            question = bert_filtered_qs[-1][1]
+        except:
+            print(bert_filtered_qs)
+            question = ""
     if callback_url is not None:
-        requests.post(callback_url, json={"q": question})
-
+        try:
+            requests.post(callback_url, json={"q": question})
+        except:
+            print("Error when sending suggestions to server. Is the server running?")
 
     return {"q":question}
 

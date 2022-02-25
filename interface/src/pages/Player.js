@@ -7,7 +7,10 @@ import submitButton from "../icons/submit-button.svg";
 import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
-import env from './env.json';
+
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import Tracker from "../utils/tracker";
+
 import speechToTextUtils from "../transcription_utils";
 
 function Player(){
@@ -79,6 +82,8 @@ function Player(){
     fetchFiller();
     //SpeechRecognition.startListening({continuous:true});
 
+      // Tracker
+      new Tracker().startTracking(history.location.state);
   },[]);
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,});
@@ -141,12 +146,18 @@ function Player(){
     //     speechToTextUtils.initRecording(handleDataReceived,(error) => {
     //       console.error('Error when transcribing', error);
     //       // setIsRecording(false)
+
+    //       //fetchFiller();
+
     //       //fetchFiller(); 
+
     //       // No further action needed, as stream already closes itself on error
     //     })
       
       
     // }
+    console.log("still here!")
+
 
   }
 
@@ -167,7 +178,7 @@ function Player(){
       }
       else{
         //endTranscription();
-      axios.post(`${env['server-url']}/player`,{
+      axios.post(`/player`,{
         params:{
           toiaIDToTalk: history.location.state.toiaToTalk,
           toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
@@ -224,7 +235,7 @@ function Player(){
       //continueChat();
       
       if(fillerPlaying){
-        axios.post(`${env['server-url']}/fillerVideo`,{
+        axios.post(`/fillerVideo`,{
           params: {
             toiaIDToTalk: history.location.state.toiaToTalk,
             toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk
@@ -262,7 +273,9 @@ function Player(){
       question.current = textInput.current;
       if(question.current!=""){
         // fetchData();
-        axios.post(`${env['server-url']}/player`,{
+
+        axios.post(`/player`,{
+
           params:{
             toiaIDToTalk: history.location.state.toiaToTalk,
             toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
@@ -292,7 +305,7 @@ function Player(){
           pwd:input2
       }
 
-      axios.post(`${env['server-url']}/login`,params).then(res=>{
+      axios.post(`/login`,params).then(res=>{
           if(res.data==-1){
               //alert('Email not found');
               alert("Incorrect e-mail address.");

@@ -8,7 +8,7 @@ import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
-import env from './env.json';
+import Tracker from "../utils/tracker";
 
 function AvatarLibraryPage() {
 
@@ -71,11 +71,13 @@ function AvatarLibraryPage() {
         setTOIAid(history.location.state.toiaID);
       }
 
-      axios.get(`${env['server-url']}/getAllStreams`).then((res)=>{
+      axios.get(`/getAllStreams`).then((res)=>{
         setAllData(res.data);
         setSearchData(res.data);
       });
 
+      // Track
+        new Tracker().startTracking(history.location.state);
     },[]);
 
     var input1, input2; //input fields for email and password
@@ -183,7 +185,7 @@ function AvatarLibraryPage() {
         pwd:input2
       }
 
-      axios.post(`${env['server-url']}/login`,params).then(res=>{
+      axios.post(`/login`,params).then(res=>{
         if(res.data==-1){
           alert("Incorrect e-mail address.");
         }else if(res.data==-2){

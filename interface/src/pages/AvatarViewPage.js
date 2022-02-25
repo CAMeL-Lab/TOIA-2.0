@@ -7,6 +7,7 @@ import video from "../icons/sample-video.svg"
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
+import Tracker from "../utils/tracker";
 
 
 function AvatarViewPage() {
@@ -31,7 +32,7 @@ function AvatarViewPage() {
     
     React.useEffect(() => {
     
-        axios.get(`${env['server-url']}/getAvatarInfo`,{params:{
+        axios.get(`/getAvatarInfo`,{params:{
             avatarID: history.location.state.id_avatar
         }}).then((res)=>{
             setName(res.data.name);
@@ -39,6 +40,9 @@ function AvatarViewPage() {
             setBio(res.data.bio);
             setAvatarID(history.location.state.id_avatar);
         });
+
+        // Tracker
+        new Tracker().startTracking(history.location.state);
     });
     
     const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})

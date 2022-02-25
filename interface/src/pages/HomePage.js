@@ -8,8 +8,8 @@ import sample from "../icons/sample-video.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
-import env from './env.json';
 import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
+import Tracker from "../utils/tracker";
 
 function HomePage() {
 
@@ -45,6 +45,8 @@ function HomePage() {
       setTOIAid(history.location.state.toiaID);
     }
 
+    // Tracker
+    new Tracker().startTracking(history.location.state);
   },[]);
 
   function openModal(e){
@@ -80,7 +82,7 @@ function HomePage() {
       pwd:input2
     }
 
-    axios.post(`${env['server-url']}/login`,params).then(res=>{
+    axios.post(`/login`,params).then(res=>{
       console.log("Response successfully received!");
       console.log(res.data);
       if(res.data==-1){

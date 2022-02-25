@@ -1,13 +1,15 @@
-import env from './pages/env.json';
+import socket from "./utils/socket";
+
+
 import io from 'socket.io-client';
 
 
-const socket = new io.connect(`${env['server-url']}`, {transports: ['websocket']});
+
 
 socket.on('connect', function (data) {
     console.log('connected to socket');
     socket.emit('join', 'Server Connected to Client');
-  });
+});
 
 //   socket.on('messages', function (data) {
 //     console.log(data);
@@ -15,15 +17,15 @@ socket.on('connect', function (data) {
 
 // Stream Audio
 let bufferSize = 2048,
-  AudioContext,
-  context,
-  processor,
-  input,
-  globalStream;
+    AudioContext,
+    context,
+    processor,
+    input,
+    globalStream;
 
 const mediaConstraints = {
-  audio: true,
-  video: false
+    audio: true,
+    video: false
 };
 
 let AudioStreamer = {
@@ -96,10 +98,10 @@ export default AudioStreamer;
  */
 function microphoneProcess(e) {
     //console.log(e.inputBuffer)
-  const left = e.inputBuffer.getChannelData(0);
-  //const left16 = convertFloat32ToInt16(left);
-  var left16 = downsampleBuffer(left, e.inputBuffer.sampleRate, 16000);
-  socket.emit('audioData', left16);
+    const left = e.inputBuffer.getChannelData(0);
+    //const left16 = convertFloat32ToInt16(left);
+    var left16 = downsampleBuffer(left, e.inputBuffer.sampleRate, 16000);
+    socket.emit('audioData', left16);
 }
 
 /**
@@ -109,15 +111,15 @@ function microphoneProcess(e) {
  * @param {object} buffer Buffer being converted
  */
 function convertFloat32ToInt16(buffer) {
-  let l = buffer.length;
-  let buf = new Int16Array(l / 3);
+    let l = buffer.length;
+    let buf = new Int16Array(l / 3);
 
-  while (l--) {
-    if (l % 3 === 0) {
-      buf[l / 3] = buffer[l] * 0xFFFF;
+    while (l--) {
+        if (l % 3 === 0) {
+            buf[l / 3] = buffer[l] * 0xFFFF;
+        }
     }
-  }
-  return buf.buffer
+    return buf.buffer
 }
 
 /**
@@ -169,11 +171,11 @@ function closeAll() {
 
 // downsample the biffer to 16000Hz
 var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
-    if (outSampleRate == sampleRate) {
-      return buffer;
+    if (outSampleRate === sampleRate) {
+        return buffer;
     }
     if (outSampleRate > sampleRate) {
-      throw 'downsampling rate show be smaller than original sample rate';
+        throw 'downsampling rate show be smaller than original sample rate';
     }
     var sampleRateRatio = sampleRate / outSampleRate;
     var newLength = Math.round(buffer.length / sampleRateRatio);
@@ -181,17 +183,17 @@ var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
     var offsetResult = 0;
     var offsetBuffer = 0;
     while (offsetResult < result.length) {
-      var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
-      var accum = 0,
-        count = 0;
-      for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
-        accum += buffer[i];
-        count++;
-      }
-  
-      result[offsetResult] = Math.min(1, accum / count) * 0x7fff;
-      offsetResult++;
-      offsetBuffer = nextOffsetBuffer;
+        var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+        var accum = 0,
+            count = 0;
+        for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+            accum += buffer[i];
+            count++;
+        }
+
+        result[offsetResult] = Math.min(1, accum / count) * 0x7fff;
+        offsetResult++;
+        offsetBuffer = nextOffsetBuffer;
     }
     return result.buffer;
-  };
+};

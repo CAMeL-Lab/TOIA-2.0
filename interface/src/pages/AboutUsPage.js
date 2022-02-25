@@ -18,8 +18,8 @@ import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
 import axios from 'axios';
-import env from './env.json';
 import toia_logo from "../images/TOIA_Logo.png";
+import Tracker from "../utils/tracker";
 
 function AvatarViewPage() {
 
@@ -45,6 +45,9 @@ function AvatarViewPage() {
           setLanguage(history.location.state.toiaLanguage);
           setTOIAid(history.location.state.toiaID);
         }
+
+        // Tracker
+        new Tracker().startTracking(history.location.state);
     },[]);
 
     var team =[// This is a list of all members names and their accompanying pictures
@@ -161,7 +164,7 @@ function AvatarViewPage() {
             pwd:input2
         }
 
-        axios.post(`${env['server-url']}/login`,params).then(res=>{
+        axios.post(`/login`,params).then(res=>{
             if(res.data==-1){
                 //alert('Email not found');
                 alert("Incorrect e-mail address.");
