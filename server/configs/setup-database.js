@@ -9,7 +9,7 @@ const loadOnBoardingQuestions = async (connectionInstance, force_load = false) =
                 let get_query = `SELECT * FROM questions WHERE onboarding = 1`;
                 connectionInstance.query(get_query, (err, result) => {
                     if (err) throw err;
-                    if (result.length >= 0) {
+                    if (result.length > 0) {
                         questions_already_loaded = true;
                     }
                     resolve();
