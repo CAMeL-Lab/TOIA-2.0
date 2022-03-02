@@ -42,7 +42,7 @@ export const RecordAVideoCard = ({onClick, isDisabled}) => {
              onClick={(e) => {
                  if (!isDisabled) onClick(e);
              }}>
-            <div className={"ui red card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
+            <div className={"ui card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
                 <div className="image">
                     <img alt=""
                          src={addButton}/>
