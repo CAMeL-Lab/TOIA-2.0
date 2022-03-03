@@ -57,7 +57,7 @@ video {
 /*Icons*/
 .videoControlButtons {
     display: block;
-    position: absolute;
+    position: absolute !important;
     left: 0.5%;
     top: 69.5%;
 
@@ -563,7 +563,7 @@ video {
 
 .recorder-check-btn {
     right: 3%;
-    position: absolute;
+    position: absolute !important;
     top: 69.5%;
     width: 80px;
     z-index: 3;
