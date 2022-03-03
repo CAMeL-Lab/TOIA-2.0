@@ -164,7 +164,7 @@ function AvatarViewPage() {
             pwd:input2
         }
 
-        axios.post(`/login`,params).then(res=>{
+        axios.post(`/api/login`,params).then(res=>{
             if(res.data==-1){
                 //alert('Email not found');
                 alert("Incorrect e-mail address.");

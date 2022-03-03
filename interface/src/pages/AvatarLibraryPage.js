@@ -71,7 +71,7 @@ function AvatarLibraryPage() {
         setTOIAid(history.location.state.toiaID);
       }
 
-      axios.get(`/getAllStreams`).then((res)=>{
+      axios.get(`/api/getAllStreams`).then((res)=>{
         setAllData(res.data);
         setSearchData(res.data);
       });
@@ -185,7 +185,7 @@ function AvatarLibraryPage() {
         pwd:input2
       }
 
-      axios.post(`/login`,params).then(res=>{
+      axios.post(`/api/login`,params).then(res=>{
         if(res.data==-1){
           alert("Incorrect e-mail address.");
         }else if(res.data==-2){

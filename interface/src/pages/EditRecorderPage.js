@@ -165,7 +165,7 @@ function EditRecorder () {
             form.append('question', question);
             form.append('answer', transcript);
             console.log(form);
-            axios.post(`/recorder`,form).then(()=>{
+            axios.post(`/api/recorder`,form).then(()=>{
               history.push({
                 pathname: '/mytoia',
               });
