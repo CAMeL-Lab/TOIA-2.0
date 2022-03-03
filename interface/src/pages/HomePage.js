@@ -82,7 +82,7 @@ function HomePage() {
       pwd:input2
     }
 
-    axios.post(`/login`,params).then(res=>{
+    axios.post(`/api/login`,params).then(res=>{
       console.log("Response successfully received!");
       console.log(res.data);
       if(res.data==-1){

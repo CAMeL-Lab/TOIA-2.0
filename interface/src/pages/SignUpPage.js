@@ -51,7 +51,7 @@ function SignUpPage() {
       form.append('pwd', pass);
       form.append('language', language);
       console.log(form);
-      axios.post(`/createTOIA`,form).then((res)=>{
+      axios.post(`/api/createTOIA`,form).then((res)=>{
           if (res.status === 200){
               console.log(`Account created successfully ${res.data}`);
               history.push({
@@ -80,7 +80,7 @@ function SignUpPage() {
       pwd:input2
     }
 
-    axios.post(`/login`,params).then(res=>{
+    axios.post(`/api/login`,params).then(res=>{
       if(res.data==-1){
         alert('Incorrect email address.');
       }else if(res.data==-2){
