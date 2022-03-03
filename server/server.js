@@ -178,5 +178,13 @@ io.on('connect', function (socket) {
 
 app.use('/api', MainRoute);
 
+if (process.env.ENVIRONMENT === "production"){
+    // Serve react files
+    app.use(express.static(path.join(__dirname, 'interface/build')));
+
+    app.get('/*', function (req, res) {
+        res.sendFile(path.join(__dirname, 'interface/build', 'index.html'));
+    });
+}
 
 module.exports = httpServer;
