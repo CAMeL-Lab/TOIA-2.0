@@ -5,3 +5,4 @@ package-lock.json
 /src/pages/env.json
 /.idea/
 .env
+/build

@@ -192,7 +192,7 @@ function Recorder() {
 
     const loadUserStreams = () => {
         return new Promise((resolve => {
-            axios.post(`/getUserStreams`, {
+            axios.post(`/api/getUserStreams`, {
                 params: {
                     toiaID: history.location.state.toiaID
                 }
@@ -208,7 +208,7 @@ function Recorder() {
 
     const loadSuggestedQuestions = React.useCallback(() => {
         return new Promise(((resolve) => {
-            axios.post(`/getUserSuggestedQs`, {
+            axios.post(`/api/getUserSuggestedQs`, {
                 params: {
                     toiaID: history.location.state.toiaID
                 }
@@ -222,7 +222,7 @@ function Recorder() {
 
     function fetchOnBoardingQuestions() {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `/questions/onboarding/${toiaID}/pending`};
+        const options = {method: 'GET', url: `/api/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
@@ -309,7 +309,7 @@ function Recorder() {
         return new Promise(((resolve, reject) => {
             const options = {
                 method: 'GET',
-                url: `/videos/${history.location.state.toiaID}/`,
+                url: `/api/videos/${history.location.state.toiaID}/`,
                 params: {video_id: video_id, type: type}
             };
 
@@ -329,7 +329,7 @@ function Recorder() {
         return new Promise((resolve => {
             const options = {
                 method: 'POST',
-                url: `/getVideoPlayback`,
+                url: `/api/getVideoPlayback`,
                 headers: {'Content-Type': 'application/json'},
                 data: {params: {playbackVideoID: video_id}}
             };
@@ -481,7 +481,7 @@ function Recorder() {
                 form.append('old_video_type', old_video_type);
             }
 
-            axios.post(`/recorder`, form, {
+            axios.post(`/api/recorder`, form, {
                 headers: {
                     "Content-type": "multipart/form-data"
                 },

@@ -178,7 +178,7 @@ function Player(){
       }
       else{
         //endTranscription();
-      axios.post(`/player`,{
+      axios.post(`/api/player`,{
         params:{
           toiaIDToTalk: history.location.state.toiaToTalk,
           toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
@@ -235,7 +235,7 @@ function Player(){
       //continueChat();
       
       if(fillerPlaying){
-        axios.post(`/fillerVideo`,{
+        axios.post(`/api/fillerVideo`,{
           params: {
             toiaIDToTalk: history.location.state.toiaToTalk,
             toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk
@@ -274,7 +274,7 @@ function Player(){
       if(question.current!=""){
         // fetchData();
 
-        axios.post(`/player`,{
+        axios.post(`/api/player`,{
 
           params:{
             toiaIDToTalk: history.location.state.toiaToTalk,
@@ -305,7 +305,7 @@ function Player(){
           pwd:input2
       }
 
-      axios.post(`/login`,params).then(res=>{
+      axios.post(`/api/login`,params).then(res=>{
           if(res.data==-1){
               //alert('Email not found');
               alert("Incorrect e-mail address.");
