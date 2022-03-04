@@ -10,6 +10,7 @@ import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
 import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
@@ -205,46 +206,59 @@ function AvatarGardenPage() {
         }))
     }
 
-    function fetchOnBoardingQuestions() {
+    function fetchOnBoardingQuestions(cb_success = null, cb_fail = null) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `/api/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setPendingOnBoardingQs(response.data);
+
+                if (cb_success) cb_success();
             } else {
-                alert("Something went wrong!");
+                NotificationManager.error('Something went wrong');
+
+                if (cb_fail) cb_fail();
             }
         }).catch(function (error) {
             console.error(error);
+
+            if (cb_fail) cb_fail();
         });
     }
 
-    function fetchSuggestedQuestions() {
+    function fetchSuggestedQuestions(cb_success = null, cb_fail = null) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `/api/questions/suggestions/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setSuggestedQsList(response.data);
+                if (cb_success) cb_success();
             } else {
                 console.log(response);
+                if (cb_fail) cb_fail();
             }
         }).catch(function (error) {
             console.error(error);
+            if (cb_fail) cb_fail();
         });
     }
 
-    function fetchRecordedQuestions(streamID) {
+    function fetchRecordedQuestions(streamID, cb_success = null, cb_fail = null) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `/api/questions/answered/${toiaID}/${streamID}`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setRecordedQsList(response.data);
+                if (cb_success) cb_success();
+            } else {
+                if (cb_fail) cb_fail();
             }
         }).catch(function (error) {
             console.error(error);
+            if (cb_fail) cb_fail();
         });
     }
 
@@ -446,11 +460,21 @@ function AvatarGardenPage() {
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
-                setWaitingServerReponse(false);
-                setIsEditSuggestionModalActive(false);
-                setCurrentlyEditingSuggestion(null);
-                setSuggestionNewValue('');
-                fetchSuggestedQuestions();
+                fetchSuggestedQuestions(() => {
+                    setWaitingServerReponse(false);
+                    setIsEditSuggestionModalActive(false);
+                    setCurrentlyEditingSuggestion(null);
+                    setSuggestionNewValue('');
+
+                    NotificationManager.info('Suggestion updated!');
+                }, () => {
+                    setWaitingServerReponse(false);
+                    setIsEditSuggestionModalActive(false);
+                    setCurrentlyEditingSuggestion(null);
+                    setSuggestionNewValue('');
+
+                    NotificationManager.error('Unable to retrieve suggestions');
+                });
             } else {
                 console.error(response);
             }
@@ -1161,7 +1185,7 @@ function AvatarGardenPage() {
                 </div>
 
             </div>
-
+            <NotificationContainer/>
         </div>
     );
 

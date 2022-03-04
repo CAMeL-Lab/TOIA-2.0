@@ -896,7 +896,7 @@ router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
 router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
     const user_id = req.params.user_id;
     isValidUser(user_id).then((success) => {
-        if (req.body.q === undefined) {
+        if (req.body.q === undefined || typeof req.body.q !== "string" || req.body.q.trim().length <= 1) {
             res.sendStatus(400);
             return;
         }
@@ -916,7 +916,7 @@ router.post('/questions/suggestions/:user_id/edit', async (req, res) => {
     const question_id = req.body.question_id || null;
     const question_new_value = req.body.new_value || null;
 
-    if (!user_id || !question_id || !question_new_value) {
+    if (!user_id || !question_id || !question_new_value || typeof question_new_value !== "string" || question_new_value.length <= 0) {
         res.sendStatus(400);
         return;
     }

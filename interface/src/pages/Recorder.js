@@ -16,6 +16,7 @@ import videoTypesJSON from '../configs/VideoTypes.json';
 import io from 'socket.io-client';
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 
 const videoConstraints = {
@@ -1186,6 +1187,7 @@ function Recorder() {
                 </div>
 
             </div>
+            <NotificationContainer/>
         </div>
     );
 }
