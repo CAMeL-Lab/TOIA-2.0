@@ -7,8 +7,11 @@ function emailExists(email) {
         let query = `SELECT id FROM toia_user WHERE email = ?`;
         connection.query(query, [email], (err, entry) => {
             if (err) throw err;
-            if (entry.length === 0) resolve(false);
-            resolve(true);
+            if (entry.length === 0) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
         })
     }))
 }
@@ -21,8 +24,11 @@ module.exports.isValidUser = function (userId) {
                 console.log(err);
                 reject();
             } else {
-                if (result.length === 1) resolve(true);
-                reject(false);
+                if (result.length === 1) {
+                    resolve(true);
+                } else {
+                    reject(false);
+                }
             }
         });
     }))
@@ -141,8 +147,11 @@ const isOnBoardingQuestion = (id_question) => {
         let query = `SELECT id FROM questions WHERE onboarding = 1 AND id = ?`;
         connection.query(query, [id_question], (err, entry) => {
             if (err) throw err;
-            if (entry.length === 1) resolve(true);
-            resolve(false);
+            if (entry.length === 1) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
         })
     }))
 }
@@ -152,8 +161,11 @@ const isRecorded = (id_question, user_id) => {
         let query = `SELECT * FROM videos_questions_streams WHERE id_question = ? AND id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
         connection.query(query, [id_question, user_id], (err, entry) => {
             if (err) throw err;
-            if (entry.length !== 0) resolve(true);
-            resolve(false);
+            if (entry.length !== 0) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
         })
     }))
 }
@@ -163,8 +175,11 @@ const getQuestionInfo = (id) => {
         let query = `SELECT id as id_question, question, suggested_type, onboarding, priority, trigger_suggester FROM questions WHERE id=?`;
         connection.query(query, [id], (err, entry) => {
             if (err) throw err;
-            if (entry.length === 0) resolve(undefined);
-            resolve(entry[0]);
+            if (entry.length === 0) {
+                resolve(null);
+            } else {
+                resolve(entry[0]);
+            }
         })
     }))
 }
@@ -174,8 +189,11 @@ const getStreamInfo = (id) => {
         let query = `SELECT * FROM stream WHERE id_stream=?`;
         connection.query(query, [id], (err, entry) => {
             if (err) throw err;
-            if (entry.length === 0) resolve(undefined);
-            resolve(entry[0]);
+            if (entry.length === 0) {
+                resolve(null);
+            } else {
+                resolve(entry[0]);
+            }
         })
     }))
 }
@@ -185,21 +203,37 @@ const shouldTriggerSuggester = (id_question) => {
         let query = `SELECT id FROM questions WHERE trigger_suggester = 1 AND id = ?`;
         connection.query(query, [id_question], (err, entry) => {
             if (err) throw err;
-            if (entry.length === 1) resolve(true);
-            resolve(false);
+            if (entry.length === 1) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
         })
     }));
 }
 
 const getQuestionType = (id_question) => {
     return new Promise((resolve => {
-        let query = "SELECT suggested_type FROM questions WHERE id = ?";
-        connection.query(query, [id_question], (err, entry) => {
-            if (err) throw err;
-            if (entry.length === 1) resolve(entry[0].suggested_type);
-            resolve(undefined);
-        });
-    }));
+        getQuestionInfo(id_question).then((result) => {
+            if (result) {
+                resolve(result.suggested_type);
+            } else {
+                resolve(null);
+            }
+        })
+    }))
+}
+
+const getQuestionValue = (id_question) => {
+    return new Promise((resolve => {
+        getQuestionType(id_question).then((question) => {
+            if (question){
+                resolve(question.question);
+            } else {
+                resolve(null);
+            }
+        })
+    }))
 }
 
 const deleteSuggestionEntry = (user_id, id_question) => {
@@ -215,33 +249,43 @@ const deleteSuggestionEntry = (user_id, id_question) => {
 const updateSuggestedQuestion = (user_id, id_question, new_value) => {
     return new Promise(async (resolve, reject) => {
         if (await isSuggestedQuestion(id_question, user_id)) {
-            let query = `SELECT * FROM question_suggestions WHERE id_question = ?`;
-            connection.query(query, [id_question], async (err, entries) => {
-                if (err) throw err;
-                if (entries.length === 1) {
-                    let query_update = `UPDATE questions SET question = ? WHERE id = ?`;
-                    connection.query(query_update, [new_value, id_question], (err) => {
-                        if (err) throw err;
-                        resolve({
-                            question_id: id_question,
-                            user_id: user_id,
-                            question: new_value
-                        });
-                    })
-                } else {
-                    // DO NOT update existing record! Same suggestion for multiple user. Add new record.
-                    await deleteSuggestionEntry(user_id, id_question);
-
-                    let old_question_type = await getQuestionType(id_question);
-                    saveSuggestedQuestion(user_id, new_value, old_question_type).then((new_q_id) => {
-                        resolve({
-                            question_id: new_q_id,
-                            user_id: user_id,
-                            question: new_value
+            // Check if new_value is same as old value
+            const old_value = await getQuestionValue(id_question);
+            if (old_value === new_value){
+                resolve({
+                    question_id: id_question,
+                    user_id: user_id,
+                    question: new_value
+                });
+            } else {
+                let query = `SELECT * FROM question_suggestions WHERE id_question = ?`;
+                connection.query(query, [id_question], async (err, entries) => {
+                    if (err) throw err;
+                    if (entries.length === 1) {
+                        let query_update = `UPDATE questions SET question = ? WHERE id = ?`;
+                        connection.query(query_update, [new_value, id_question], (err) => {
+                            if (err) throw err;
+                            resolve({
+                                question_id: id_question,
+                                user_id: user_id,
+                                question: new_value
+                            });
                         })
-                    });
-                }
-            })
+                    } else {
+                        // DO NOT update existing record! Same suggestion for multiple user. Add new record.
+                        await deleteSuggestionEntry(user_id, id_question);
+
+                        let old_question_type = await getQuestionType(id_question);
+                        saveSuggestedQuestion(user_id, new_value, old_question_type).then((new_q_id) => {
+                            resolve({
+                                question_id: new_q_id,
+                                user_id: user_id,
+                                question: new_value
+                            })
+                        });
+                    }
+                })
+            }
         } else {
             reject({"error": "Provided user id and suggested question id pair doesn't exist."})
         }
@@ -278,3 +322,4 @@ module.exports.deleteSuggestionEntry = deleteSuggestionEntry;
 module.exports.updateSuggestedQuestion = updateSuggestedQuestion;
 module.exports.isEditing = isEditing;
 module.exports.isSaveAsNew = isSaveAsNew;
+module.exports.getQuestionValue = getQuestionValue;
