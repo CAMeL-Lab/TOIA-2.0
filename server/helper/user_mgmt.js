@@ -306,6 +306,44 @@ const isSaveAsNew = (req) => {
     return fields.hasOwnProperty('save_as_new') && fields.save_as_new[0] === 'true';
 }
 
+const isUserStream = (user_id, stream_id) => {
+    return new Promise((resolve => {
+        let query = `SELECT 1 FROM stream WHERE id_stream = ? AND toia_id = ?`;
+        connection.query(query, [stream_id, user_id], (err, result) => {
+            if (err) throw err;
+            resolve(result.length === 1);
+        })
+    }))
+}
+
+const getStreamTotalVideosCount = (user_id, stream_id = null) => {
+    return new Promise((async resolve => {
+        let query;
+        let queryParams;
+        if (stream_id) {
+            const belongsToUser = await isUserStream(user_id, stream_id);
+            if (belongsToUser) {
+                query = `SELECT DISTINCT id_video FROM videos_questions_streams WHERE id_stream = ?`;
+                queryParams = [stream_id];
+            } else {
+                resolve(0);
+                return;
+            }
+        } else {
+            query = `SELECT DISTINCT id_video FROM videos_questions_streams WHERE id_stream IN (SELECT id_stream FROM stream WHERE toia_id = ?)`;
+            queryParams = [user_id];
+        }
+        connection.query(query, queryParams, (err, result) => {
+            if (err) throw err;
+            resolve(result.length);
+        });
+    }))
+}
+
+const getUserTotalVideosCount = (user_id) => {
+    return getStreamTotalVideosCount(user_id);
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -323,3 +361,5 @@ module.exports.updateSuggestedQuestion = updateSuggestedQuestion;
 module.exports.isEditing = isEditing;
 module.exports.isSaveAsNew = isSaveAsNew;
 module.exports.getQuestionValue = getQuestionValue;
+module.exports.getStreamTotalVideosCount = getStreamTotalVideosCount;
+module.exports.getUserTotalVideosCount = getUserTotalVideosCount;

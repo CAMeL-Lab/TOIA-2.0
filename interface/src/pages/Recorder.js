@@ -17,6 +17,7 @@ import io from 'socket.io-client';
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import {NotificationManager} from "react-notifications";
 
 
 const videoConstraints = {
@@ -104,6 +105,9 @@ function Recorder() {
     const [isEditing, setIsEditing] = useState(false);
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
+
+    const [videosCount, setVideosCount] = useState(0);
+
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
     const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
 
@@ -164,6 +168,8 @@ function Recorder() {
             });
             fetchOnBoardingQuestions();
             loadSuggestedQuestions();
+
+            fetchVideosCount();
         }
 
         // Tracker
@@ -223,6 +229,24 @@ function Recorder() {
                 alert("Something went wrong!");
             }
         }).catch(function (error) {
+            console.error(error);
+        });
+    }
+
+
+    function fetchVideosCount(){
+        const toiaID = history.location.state.toiaID;
+        const options = {
+            method: 'POST',
+            url: '/api/getUserVideosCount',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosCount(response.data.count);
+        }).catch(function (error) {
+            NotificationManager.error("An error occurred!");
             console.error(error);
         });
     }
@@ -819,6 +843,27 @@ function Recorder() {
                     </div>
                 </div>
                 <div className="Video-Layout">
+                    <div className="stats-container stats-container-recorder">
+                        <div className="stats-wrapper">
+                            <div className="stats-number">
+                                {videosCount}
+                            </div>
+                            <div className="stats-label">
+                                Total Videos
+                            </div>
+                        </div>
+
+                        {/*<div className="stats-wrapper">*/}
+                        {/*    <div className="stats-number">*/}
+                        {/*        20Min*/}
+                        {/*    </div>*/}
+                        {/*    <div className="stats-label">*/}
+                        {/*        Total Videos Length*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
+                    </div>
+
+
                     {(!viewingRecordedView) ? (
                         <div className="video-layout-recorder-box">
                             <div className="video-layout-player-top">
