@@ -630,3 +630,8 @@ video {
     background-color: #ab0000!important;
     color:white!important;
 }
+
+.stats-container-recorder{
+    top:-5%;
+    left: 0!important;
+}

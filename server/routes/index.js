@@ -18,7 +18,7 @@ const {
     isValidUser,
     saveSuggestedQuestion,
     updateSuggestedQuestion,
-    getStreamInfo
+    getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -369,7 +369,9 @@ router.post('/getUserStreams', cors(), async (req, res) => {
                 res.send(entries);
             }
 
-            entries.forEach((entry) => {
+            for (const entry of entries) {
+                entry.videos_count = await getStreamTotalVideosCount(req.body.params.toiaID, entry.id_stream);
+
                 // send local storage image when in development
                 if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
@@ -378,7 +380,7 @@ router.post('/getUserStreams', cors(), async (req, res) => {
                     if (counter === entries.length) {
                         callback();
                     }
-                    return;
+                    continue;
                 }
 
                 // send gcloud image when in production
@@ -394,7 +396,7 @@ router.post('/getUserStreams', cors(), async (req, res) => {
                         }
                     }
                 });
-            });
+            }
 
         }
     });
@@ -1108,6 +1110,33 @@ router.post('/getUserData', cors(), (req, res) => {
         console.log("user data sent!")
         res.send(Object.values(entries))
 
+    })
+})
+
+// Get total number of videos that a user has recorded
+router.post('/getUserVideosCount', cors(), (req, res) => {
+   let user_id = req.body.user_id;
+
+    isValidUser(user_id).then(async () => {
+        let videos_count = await getUserTotalVideosCount(user_id);
+        res.send({"count":videos_count});
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
+})
+
+// Get total number of videos that a user has recorded for a particular stream
+router.post('/getStreamVideosCount', cors(), (req, res) => {
+    let user_id = req.body.user_id;
+    let stream_id = req.body.stream_id;
+
+    isValidUser(user_id).then(async () => {
+        let videos_count = await getStreamTotalVideosCount(user_id, stream_id);
+        res.send({"count":videos_count});
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
     })
 })
 

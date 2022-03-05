@@ -165,6 +165,8 @@ function AvatarGardenPage() {
     const [currentlyEditingSuggestion, setCurrentlyEditingSuggestion] = useState(undefined);
     const [waitingServerResponse, setWaitingServerReponse] = useState(false);
     const [suggestionNewValue, setSuggestionNewValue] = useState('');
+
+    const [videosCount, setVideosCount] = useState(0);
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -187,6 +189,7 @@ function AvatarGardenPage() {
         });
         fetchOnBoardingQuestions();
         fetchSuggestedQuestions();
+        fetchVideosCount();
 
         // Tracker
         new Tracker().startTracking(history.location.state);
@@ -261,6 +264,23 @@ function AvatarGardenPage() {
         }).catch(function (error) {
             console.error(error);
             if (cb_fail) cb_fail();
+        });
+    }
+
+    function fetchVideosCount(){
+        const toiaID = history.location.state.toiaID;
+        const options = {
+            method: 'POST',
+            url: '/api/getUserVideosCount',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosCount(response.data.count);
+        }).catch(function (error) {
+            NotificationManager.error("An error occurred!");
+            console.error(error);
         });
     }
 
@@ -418,16 +438,20 @@ function AvatarGardenPage() {
         };
 
         axios.request(options).then(function (response) {
+            setShowVideoDeletePopup(false);
+            NotificationManager.info("Deleting video...");
             if (response.status === 200) {
                 if (currentStream) {
                     fetchRecordedQuestions(currentStream.id);
                 } else {
                     fetchRecordedQuestions(streamList[0].id_stream);
                 }
-                setShowVideoDeletePopup(false);
-
+                fetchOnBoardingQuestions();
+                fetchStreamList();
+                fetchVideosCount();
                 NotificationManager.info("Video removed!");
             } else {
+                NotificationManager.error("Couldn't delete video!");
                 console.error(response);
             }
         }).catch(function (error) {
@@ -573,8 +597,14 @@ function AvatarGardenPage() {
                 <div onClick={album_page}>
                     <h1 className="t1 garden-font-class-2" //name of user
                     >{toiaName}</h1>
-                    <p className="t2 garden-font-class-2" //individual stream name
+                    <p className="t2 garden-font-class-2 margin-bottom-2px" //individual stream name
                     >{card.name}</p>
+
+                    <div className="ui gray label medium">
+                        <i aria-hidden="true" className="video icon"/>
+                        Total Videos In Stream:
+                        <div className="detail">{card.videos_count}</div>
+                    </div>
                 </div>
                 <br/>
                 <div className="garden-carousel-menu" //stats that appear under stream
@@ -1073,8 +1103,25 @@ function AvatarGardenPage() {
                 <h1 className="garden-title garden-font-class-1 " //welcome message
                 >Hi {toiaName}</h1>
 
-                {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
-            >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
+                <div className="stats-container">
+                    <div className="stats-wrapper">
+                        <div className="stats-number">
+                            {videosCount}
+                        </div>
+                        <div className="stats-label">
+                            Total Videos
+                        </div>
+                    </div>
+
+                    {/*<div className="stats-wrapper">*/}
+                    {/*    <div className="stats-number">*/}
+                    {/*        20Min*/}
+                    {/*    </div>*/}
+                    {/*    <div className="stats-label">*/}
+                    {/*        Total Videos Length*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                </div>
                 <button onClick={(event) => {
                     openModal2(event);
                     
