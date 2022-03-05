@@ -181,7 +181,9 @@ function AvatarGardenPage() {
 
         fetchStreamList().then((data) => {
             fetchRecordedQuestions(data[0].id_stream);
-            setCurrentStream(data[0]);
+            let dataCpy = data[0];
+            dataCpy.id = dataCpy.id_stream;
+            setCurrentStream(dataCpy);
         });
         fetchOnBoardingQuestions();
         fetchSuggestedQuestions();
@@ -418,13 +420,18 @@ function AvatarGardenPage() {
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 if (currentStream) {
-                    fetchRecordedQuestions(currentStream.id_stream);
+                    fetchRecordedQuestions(currentStream.id);
+                } else {
+                    fetchRecordedQuestions(streamList[0].id_stream);
                 }
                 setShowVideoDeletePopup(false);
+
+                NotificationManager.info("Video removed!");
             } else {
                 console.error(response);
             }
         }).catch(function (error) {
+            NotificationManager.error("Couldn't delete video!");
             console.error(error);
         });
     }
@@ -439,11 +446,14 @@ function AvatarGardenPage() {
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
-                fetchSuggestedQuestions();
+                fetchSuggestedQuestions(() => {
+                    NotificationManager.info("Suggestion Removed!");
+                });
             } else {
                 console.log(response);
             }
         }).catch(function (error) {
+            NotificationManager.error("Couldn't delete suggestion!");
             console.error(error);
         });
     }
@@ -693,6 +703,8 @@ function AvatarGardenPage() {
         axios.post(`/api/createNewStream`, form).then((res) => {
             setStreamList(res.data);
             dispatch4({type: 'close'});
+
+            NotificationManager.success("Stream Created!");
         });
         e.preventDefault();
     }
