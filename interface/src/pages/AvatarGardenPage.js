@@ -167,6 +167,7 @@ function AvatarGardenPage() {
     const [suggestionNewValue, setSuggestionNewValue] = useState('');
 
     const [videosCount, setVideosCount] = useState(0);
+    const [videosTotalDuration, setVideosTotalDuration] = useState(null);
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -190,6 +191,7 @@ function AvatarGardenPage() {
         fetchOnBoardingQuestions();
         fetchSuggestedQuestions();
         fetchVideosCount();
+        fetchVideosTotalDuration();
 
         // Tracker
         new Tracker().startTracking(history.location.state);
@@ -267,7 +269,7 @@ function AvatarGardenPage() {
         });
     }
 
-    function fetchVideosCount(){
+    function fetchVideosCount() {
         const toiaID = history.location.state.toiaID;
         const options = {
             method: 'POST',
@@ -280,6 +282,24 @@ function AvatarGardenPage() {
             setVideosCount(response.data.count);
         }).catch(function (error) {
             NotificationManager.error("An error occurred!");
+            console.error(error);
+        });
+    }
+
+    function fetchVideosTotalDuration() {
+        const toiaID = history.location.state.toiaID;
+
+        const options = {
+            method: 'POST',
+            url: '/api/getTotalVideoDuration',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosTotalDuration(response.data.total_duration);
+        }).catch(function (error) {
+            NotificationManager.error("Couldn't fetch videos duration!");
             console.error(error);
         });
     }
@@ -449,6 +469,7 @@ function AvatarGardenPage() {
                 fetchOnBoardingQuestions();
                 fetchStreamList();
                 fetchVideosCount();
+                fetchVideosTotalDuration();
                 NotificationManager.info("Video removed!");
             } else {
                 NotificationManager.error("Couldn't delete video!");
@@ -1113,18 +1134,18 @@ function AvatarGardenPage() {
                         </div>
                     </div>
 
-                    {/*<div className="stats-wrapper">*/}
-                    {/*    <div className="stats-number">*/}
-                    {/*        20Min*/}
-                    {/*    </div>*/}
-                    {/*    <div className="stats-label">*/}
-                    {/*        Total Videos Length*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
+                    <div className="stats-wrapper">
+                        <div className="stats-number">
+                            {(videosTotalDuration)? (videosTotalDuration / 60).toFixed(1): 0}Min
+                        </div>
+                        <div className="stats-label">
+                            Total Videos Length
+                        </div>
+                    </div>
                 </div>
                 <button onClick={(event) => {
                     openModal2(event);
-                    
+
                 }} className="garden-settings"><i className="fa fa-cog"/></button>
             </div>
             <div className="section1">
@@ -1173,7 +1194,9 @@ function AvatarGardenPage() {
                                                         setCurrentlyEditingSuggestion(q);
                                                         setIsEditSuggestionModalActive(true);
                                                     }}
-                                                    onDelete={() => {handleDeleteSuggestion(q)}}
+                                                    onDelete={() => {
+                                                        handleDeleteSuggestion(q)
+                                                    }}
                                                     key={index}/>
                                 )
                             })}
