@@ -634,4 +634,5 @@ video {
 .stats-container-recorder{
     top:-5%;
     left: 0!important;
+    width: fit-content;
 }
