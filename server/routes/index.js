@@ -703,6 +703,14 @@ router.post('/recorder', cors(), async (req, res) => {
         return;
     }
 
+    if (!fields.hasOwnProperty('video_duration')){
+        console.log("Error: video duration not set!");
+        res.sendStatus(400).send("Something went wrong!");
+        return;
+    }
+
+    const video_duration = parseInt(fields.video_duration[0]);
+
     let query_getNextIndex = `SELECT MAX(idx) AS maxIndex
                               FROM video;`;
     connection.query(query_getNextIndex, async (err, entry) => {
@@ -769,10 +777,10 @@ router.post('/recorder', cors(), async (req, res) => {
                     });
                 }
 
-                let query_saveVideo = `INSERT INTO video(id_video, toia_id, idx, private, answer, language, likes, views)
-                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
+                let query_saveVideo = `INSERT INTO video(id_video, toia_id, idx, private, answer, language, likes, views, duration_seconds)
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
-                connection.query(query_saveVideo, [videoID, fields.id[0], vidIndex, isPrivate, answer, fields.language[0], 0, 0], async (err) => {
+                connection.query(query_saveVideo, [videoID, fields.id[0], vidIndex, isPrivate, answer, fields.language[0], 0, 0, video_duration], async (err) => {
                     if (err) {
                         throw err;
                     } else {

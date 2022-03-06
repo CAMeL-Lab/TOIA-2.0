@@ -106,6 +106,9 @@ function Recorder() {
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
 
+    const [videoDuration, setVideoDuration] = useState(null);
+    const videoPlaybackRef = useRef(null);
+
     const [videosCount, setVideosCount] = useState(0);
 
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
@@ -168,10 +171,9 @@ function Recorder() {
             });
             fetchOnBoardingQuestions();
             loadSuggestedQuestions();
-
-            fetchVideosCount();
         }
 
+        fetchVideosCount();
         // Tracker
         setRecordStartTimestamp(+ new Date());
         new Tracker().startTracking(history.location.state);
@@ -428,6 +430,11 @@ function Recorder() {
 
     function handleDownload(e) {
         e.preventDefault();
+        if (!videoType){
+            NotificationManager.error("Video Type Not Selected!");
+            return;
+        }
+
         if (!isDefaultStreamSelected()){
             setDefaultStreamAlertActive(true);
             return;
@@ -475,6 +482,7 @@ function Recorder() {
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
+            form.append('video_duration', videoDuration.toString());
 
             form.append('start_time', recordStartTimestamp);
             form.append('end_time', endTimestamp);
@@ -934,14 +942,14 @@ function Recorder() {
                                         <Button.Group>
                                             <Popup content={"This will create a new entry, keeping the old one unchanged!"}
                                                    inverted
-                                                   trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse}>Save As New</Button>}
+                                                   trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)}>Save As New</Button>}
                                             />
                                             <Button.Or/>
-                                            <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse} positive>Update</Button>
+                                            <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)} positive>Update</Button>
                                         </Button.Group>
                                     ) : (
                                         <Button className="right floated" positive loading={waitingServerResponse}
-                                                disabled={waitingServerResponse} onClick={handleDownload}>Save
+                                                disabled={waitingServerResponse || !videoDuration} onClick={handleDownload}>Save
                                             Video</Button>
                                     )
                                 }
@@ -954,7 +962,18 @@ function Recorder() {
                             </div>
 
                             <div className="layout video-layout-player-middle">
-                                <video autoPlay controls>
+                                <video autoPlay controls
+                                       onLoadedMetadata={ () => {
+                                           // This is a trick to make video duration load instantly
+                                           videoPlaybackRef.current.currentTime = 9999999999;
+                                       }}
+
+                                       onDurationChange={() => {
+                                           if (videoPlaybackRef.current.duration && videoPlaybackRef.current.duration !== Infinity){
+                                               setVideoDuration(videoPlaybackRef.current.duration);
+                                               videoPlaybackRef.current.currentTime = 0;
+                                           }
+                                       }} ref={videoPlaybackRef}>
                                     <source src={(recordedVideo)? window.URL.createObjectURL(recordedVideo) : ""} type='video/mp4'/>
                                 </video>
                             </div>
