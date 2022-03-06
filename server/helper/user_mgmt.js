@@ -344,6 +344,23 @@ const getUserTotalVideosCount = (user_id) => {
     return getStreamTotalVideosCount(user_id);
 }
 
+const getUserTotalVideoDuration = (user_id) => {
+    return new Promise((resolve => {
+        let query = `SELECT DISTINCT video.id_video, video.duration_seconds FROM video 
+                    INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
+                    WHERE video.toia_id = ?`;
+        connection.query(query, [user_id], (err, entries) => {
+            if (err) throw err;
+
+            let totalLengthSeconds = entries.reduce((total, currentVal) => {
+                return total + currentVal.duration_seconds;
+            } , 0);
+
+            resolve(totalLengthSeconds);
+        })
+    }))
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -363,3 +380,4 @@ module.exports.isSaveAsNew = isSaveAsNew;
 module.exports.getQuestionValue = getQuestionValue;
 module.exports.getStreamTotalVideosCount = getStreamTotalVideosCount;
 module.exports.getUserTotalVideosCount = getUserTotalVideosCount;
+module.exports.getUserTotalVideoDuration = getUserTotalVideoDuration;

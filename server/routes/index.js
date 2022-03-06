@@ -18,7 +18,7 @@ const {
     isValidUser,
     saveSuggestedQuestion,
     updateSuggestedQuestion,
-    getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount
+    getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -1142,6 +1142,19 @@ router.post('/getStreamVideosCount', cors(), (req, res) => {
     isValidUser(user_id).then(async () => {
         let videos_count = await getStreamTotalVideosCount(user_id, stream_id);
         res.send({"count":videos_count});
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
+})
+
+// Get total video duration of a user
+router.post('/getTotalVideoDuration', cors(), (req, res) => {
+    let user_id = req.body.user_id;
+
+    isValidUser(user_id).then(async () => {
+        let total_duration = await getUserTotalVideoDuration(user_id);
+        res.send({"total_duration":total_duration});
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);

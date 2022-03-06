@@ -110,6 +110,7 @@ function Recorder() {
     const videoPlaybackRef = useRef(null);
 
     const [videosCount, setVideosCount] = useState(0);
+    const [videosTotalDuration, setVideosTotalDuration] = useState(null);
 
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
     const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
@@ -174,6 +175,7 @@ function Recorder() {
         }
 
         fetchVideosCount();
+        fetchVideosTotalDuration();
         // Tracker
         setRecordStartTimestamp(+ new Date());
         new Tracker().startTracking(history.location.state);
@@ -249,6 +251,25 @@ function Recorder() {
             setVideosCount(response.data.count);
         }).catch(function (error) {
             NotificationManager.error("An error occurred!");
+            console.error(error);
+        });
+    }
+
+
+    function fetchVideosTotalDuration() {
+        const toiaID = history.location.state.toiaID;
+
+        const options = {
+            method: 'POST',
+            url: '/api/getTotalVideoDuration',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosTotalDuration(response.data.total_duration);
+        }).catch(function (error) {
+            NotificationManager.error("Couldn't fetch videos duration!");
             console.error(error);
         });
     }
@@ -861,14 +882,14 @@ function Recorder() {
                             </div>
                         </div>
 
-                        {/*<div className="stats-wrapper">*/}
-                        {/*    <div className="stats-number">*/}
-                        {/*        20Min*/}
-                        {/*    </div>*/}
-                        {/*    <div className="stats-label">*/}
-                        {/*        Total Videos Length*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
+                        <div className="stats-wrapper">
+                            <div className="stats-number">
+                                {(videosTotalDuration)? (videosTotalDuration / 60).toFixed(1): 0}Min
+                            </div>
+                            <div className="stats-label">
+                                Total Videos Length
+                            </div>
+                        </div>
                     </div>
 
 
