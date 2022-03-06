@@ -129,6 +129,7 @@ CREATE TABLE `video` (
   `language` varchar(45) NOT NULL,
   `likes` int NOT NULL DEFAULT '0',
   `views` int NOT NULL DEFAULT '0',
+  `duration_seconds` int NOT NULL,
   PRIMARY KEY (`id_video`),
   UNIQUE KEY `idx_UNIQUE` (`idx`),
   KEY `id_toia_idx` (`toia_id`),
@@ -166,4 +167,4 @@ CREATE TABLE `videos_questions_streams` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-25 12:22:10
+-- Dump completed on 2022-03-06 14:40:32
