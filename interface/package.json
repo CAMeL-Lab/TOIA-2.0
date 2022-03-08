@@ -69,5 +69,5 @@
   "devDependencies": {
     "@types/react-speech-recognition": "^3.6.1"
   },
-  "proxy": "http://localhost:3001/"
+  "proxy": "http://express-api:3001/"
 }
