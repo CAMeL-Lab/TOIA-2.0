@@ -648,8 +648,7 @@ video {
 
 .timer-view {
     padding: 2px 5px;
-    background-color:#b31616;
-    border:solid 1px #b31616;
+    background-color:#b31616b3;
     color:white;
     margin-top:8px;
     border-radius:5px;
