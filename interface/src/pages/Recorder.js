@@ -18,6 +18,7 @@ import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import {NotificationManager} from "react-notifications";
+import getBlobDuration from "get-blob-duration";
 
 
 const videoConstraints = {
@@ -112,6 +113,9 @@ function Recorder() {
     const [videosCount, setVideosCount] = useState(0);
     const [videosTotalDuration, setVideosTotalDuration] = useState(null);
 
+    const [videoLengthSeconds, setVideoLengthSeconds] = useState(0);
+
+    // This is for tracking purpose. These timestamps do not reflect the video start and end timestamps
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
     const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
 
@@ -180,6 +184,10 @@ function Recorder() {
         setRecordStartTimestamp(+ new Date());
         new Tracker().startTracking(history.location.state);
     }, []);
+
+    useEffect(() => {
+        GetVideoLength();
+    }, [recordedChunks])
 
 
 
@@ -335,6 +343,20 @@ function Recorder() {
         }
     }
 
+    const getTimeDiffString = (diff_in_seconds) => {
+        diff_in_seconds = Math.floor(diff_in_seconds);
+        let hours = Math.floor(diff_in_seconds / 60 / 60);
+        let remaining = diff_in_seconds - hours * 60 * 60;
+        let minutes = Math.floor(remaining / 60);
+        let seconds = remaining % 60;
+
+        if (hours !== 0){
+            return hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+        } else {
+            return minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+        }
+    }
+
     const loadVideoData = (video_id, type) => {
         return new Promise(((resolve, reject) => {
             const options = {
@@ -425,7 +447,7 @@ function Recorder() {
             "dataavailable",
             handleDataAvailable
         );
-        mediaRecorderRef.current.start();
+        mediaRecorderRef.current.start(1000);
         e.preventDefault();
     }, [webcamRef, setCapturing, mediaRecorderRef]);
 
@@ -602,6 +624,13 @@ function Recorder() {
                 alert("Something went wrong!")
                 console.log(err);
             })
+        }
+    }
+
+    const GetVideoLength = async () => {
+        if (recordedChunks.length){
+            const blob = new Blob(recordedChunks, {type: "video/webm"});
+            setVideoLengthSeconds(await getBlobDuration(blob));
         }
     }
 
@@ -897,7 +926,7 @@ function Recorder() {
                         <div className="video-layout-recorder-box">
                             <div className="video-layout-player-top">
                                 <Popup
-                                    disabled={recordedChunks.length > 0}
+                                    disabled={recordedChunks.length > 0 && !isRecording}
                                     content={"Record a video to proceed"}
                                     trigger={
                                         <div style={{display: "inline-block"}}
@@ -905,7 +934,7 @@ function Recorder() {
                                             <Button icon labelPosition='right' className="right floated"
                                                     onClick={() => {
                                                         togglePreviewBox()
-                                                    }} disabled={!(recordedChunks.length > 0)}>
+                                                    }} disabled={!(recordedChunks.length > 0) || isRecording}>
                                                 Next
                                                 <Icon name='right arrow'/>
                                             </Button>
@@ -914,7 +943,7 @@ function Recorder() {
                                 />
 
                                 {
-                                    recordedChunks.length > 0 && (
+                                    (recordedChunks.length > 0 && !isRecording) && (
                                         <Button icon labelPosition='left' className="right floated"
                                                 onClick={handleStartCaptureClick}>
                                             Record Again
@@ -931,6 +960,10 @@ function Recorder() {
                                     mirrored={true}
                                     videoConstraints={videoConstraints}/>
 
+                            <div className="timer-wrapper">
+                                <div className="timer-view">{getTimeDiffString(videoLengthSeconds)}</div>
+                            </div>
+
                             {capturing ? (
                                 <button className="icon tooltip videoControlButtons" onClick={handleStopCaptureClick}
                                         data-tooltip="Stop Recording">
@@ -943,7 +976,7 @@ function Recorder() {
                                 </button>
                             )}
 
-                            {recordedChunks.length > 0 && (
+                            {(recordedChunks.length > 0 && !isRecording) && (
                                 <button className="recorder-check-btn check tooltip cursor-pointer"
                                         onClick={() => {
                                             togglePreviewBox()
@@ -1046,5 +1079,3 @@ function Recorder() {
 }
 
 export default Recorder;
-
-// removed this from icon -> style={{fontSize: 34}}
