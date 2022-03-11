@@ -630,3 +630,26 @@ video {
     background-color: #ab0000!important;
     color:white!important;
 }
+
+.stats-container-recorder{
+    top:-5%;
+    left: 0!important;
+    width: fit-content;
+}
+
+.timer-wrapper{
+    width: 70px;
+    position: absolute;
+    text-align: center;
+    left: 45%;
+    top: 8.5% !important;
+    z-index: 1;
+}
+
+.timer-view {
+    padding: 2px 5px;
+    background-color:#b31616b3;
+    color:white;
+    margin-top:8px;
+    border-radius:5px;
+}

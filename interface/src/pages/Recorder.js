@@ -16,6 +16,9 @@ import videoTypesJSON from '../configs/VideoTypes.json';
 import io from 'socket.io-client';
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import {NotificationManager} from "react-notifications";
+import getBlobDuration from "get-blob-duration";
 
 
 const videoConstraints = {
@@ -70,15 +73,6 @@ function ModalQSuggestion(props) {
 
 function Recorder() {
 
-    function exampleReducer(state, action) {
-        switch (action.type) {
-            case 'close':
-                return {open: false};
-            case 'open':
-                return {open: true};
-        }
-    }
-
     const {transcript, resetTranscript} = useSpeechRecognition({command: '*'});
 
     const webcamRef = useRef(null);
@@ -112,13 +106,22 @@ function Recorder() {
     const [isEditing, setIsEditing] = useState(false);
     const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
     const [defaultStreamAlertActive, setDefaultStreamAlertActive] = useState(false);
+
+    const [videoDuration, setVideoDuration] = useState(null);
+    const videoPlaybackRef = useRef(null);
+
+    const [videosCount, setVideosCount] = useState(0);
+    const [videosTotalDuration, setVideosTotalDuration] = useState(null);
+
+    const [videoLengthSeconds, setVideoLengthSeconds] = useState(0);
+
+    // This is for tracking purpose. These timestamps do not reflect the video start and end timestamps
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
     const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
 
     const [transcribedAudio, setTranscribedAudio] = useState('');
 
 
-    const [editVideoID, setEditVideoID] = useState('');
 
     //const [socket, setSocket] = useState(null);
     const client = useRef();
@@ -142,14 +145,6 @@ function Recorder() {
     //const [input, setInput] = useState(null);
     const input = React.useRef("");
 
-
-    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-    const {open} = state
-
-
-    // socket.on('transcript', (data)=>{
-    //     setTranscribedAudio(transcribedAudio + " " + data);
-    // })
 
     useEffect(() => {
         if (history.location.state === undefined) {
@@ -183,10 +178,16 @@ function Recorder() {
             loadSuggestedQuestions();
         }
 
+        fetchVideosCount();
+        fetchVideosTotalDuration();
         // Tracker
         setRecordStartTimestamp(+ new Date());
         new Tracker().startTracking(history.location.state);
     }, []);
+
+    useEffect(() => {
+        GetVideoLength();
+    }, [recordedChunks])
 
 
 
@@ -240,6 +241,43 @@ function Recorder() {
                 alert("Something went wrong!");
             }
         }).catch(function (error) {
+            console.error(error);
+        });
+    }
+
+
+    function fetchVideosCount(){
+        const toiaID = history.location.state.toiaID;
+        const options = {
+            method: 'POST',
+            url: '/api/getUserVideosCount',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosCount(response.data.count);
+        }).catch(function (error) {
+            NotificationManager.error("An error occurred!");
+            console.error(error);
+        });
+    }
+
+
+    function fetchVideosTotalDuration() {
+        const toiaID = history.location.state.toiaID;
+
+        const options = {
+            method: 'POST',
+            url: '/api/getTotalVideoDuration',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosTotalDuration(response.data.total_duration);
+        }).catch(function (error) {
+            NotificationManager.error("Couldn't fetch videos duration!");
             console.error(error);
         });
     }
@@ -302,6 +340,20 @@ function Recorder() {
         } else {
             alert("Video Type and ID not specified");
             navigateToMyTOIA();
+        }
+    }
+
+    const getTimeDiffString = (diff_in_seconds) => {
+        diff_in_seconds = Math.floor(diff_in_seconds);
+        let hours = Math.floor(diff_in_seconds / 60 / 60);
+        let remaining = diff_in_seconds - hours * 60 * 60;
+        let minutes = Math.floor(remaining / 60);
+        let seconds = remaining % 60;
+
+        if (hours !== 0){
+            return hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+        } else {
+            return minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
         }
     }
 
@@ -395,7 +447,7 @@ function Recorder() {
             "dataavailable",
             handleDataAvailable
         );
-        mediaRecorderRef.current.start();
+        mediaRecorderRef.current.start(1000);
         e.preventDefault();
     }, [webcamRef, setCapturing, mediaRecorderRef]);
 
@@ -421,6 +473,11 @@ function Recorder() {
 
     function handleDownload(e) {
         e.preventDefault();
+        if (!videoType){
+            NotificationManager.error("Video Type Not Selected!");
+            return;
+        }
+
         if (!isDefaultStreamSelected()){
             setDefaultStreamAlertActive(true);
             return;
@@ -432,7 +489,6 @@ function Recorder() {
             resetTranscript();
             setRecordedChunks([]);
             setVideoThumbnail('');
-            dispatch({type: 'close'});
 
             setVideoType(null);
             setVideoTypeFormal(null);
@@ -469,6 +525,7 @@ function Recorder() {
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
+            form.append('video_duration', videoDuration.toString());
 
             form.append('start_time', recordStartTimestamp);
             form.append('end_time', endTimestamp);
@@ -516,7 +573,7 @@ function Recorder() {
                 resetTranscript();
                 setRecordedChunks([]);
                 setVideoThumbnail('');
-                dispatch({type: 'close'});
+
 
                 setVideoType(null);
                 setVideoTypeFormal(null);
@@ -548,7 +605,6 @@ function Recorder() {
                 resetTranscript();
                 setRecordedChunks([]);
                 setVideoThumbnail('');
-                dispatch({type: 'close'});
 
                 setVideoType(null);
                 setVideoTypeFormal(null);
@@ -571,30 +627,11 @@ function Recorder() {
         }
     }
 
-    function openModal(event) {
-        if (questionsSelected.length === 0) {
-            alert("Please choose a question before submitting your response.");
-        } else if (videoType == null) {
-            alert("Please choose a video type before submitting your response.");
-        } else {
-            if (recordedChunks.length) {
-                const blob = new Blob(recordedChunks, {
-                    type: "video/webm"
-                });
-                setRecordedVideo(blob);
-                // the ratio we are using is 16:9 or the universal high definition standard for european television
-                let videoElem = <video id="playbackVideo" width="496" height="324" autoPlay controls>
-                    <source src={window.URL.createObjectURL(blob)} type='video/mp4'/>
-                </video>;
-                setVideoComponent(videoElem);
-                // document.getElementById("videoRecorded").src = window.URL.createObjectURL(blob);
-                setAnswerProvided(transcribedAudio);
-                dispatch({type: 'open'});
-            } else {
-                alert("Please record a video clip before submitting your response.");
-            }
+    const GetVideoLength = async () => {
+        if (recordedChunks.length){
+            const blob = new Blob(recordedChunks, {type: "video/webm"});
+            setVideoLengthSeconds(await getBlobDuration(blob));
         }
-        event.preventDefault();
     }
 
     const togglePreviewBox = () => {
@@ -620,33 +657,6 @@ function Recorder() {
                 question_obj: card
             }
         });
-    }
-
-    function exampleReducer2(state2, action) { // for account settings window
-        switch (action.type) {
-            case 'close':
-                return {open2: false};
-            case 'open':
-                return {open2: true};
-        }
-    }
-
-    const [state2, dispatch2] = React.useReducer(exampleReducer2, {open2: false,})
-    const {open2} = state2
-
-    function openModal2(e) {
-        dispatch2({type: 'open'});
-        e.preventDefault();
-    }
-
-    function handleClose(e) {
-        e.preventDefault();
-        setVideoComponent(null);
-        setRecordedChunks([]);
-        setAnswerProvided('');
-        setTranscribedAudio("");
-        input.current = '';
-        dispatch({type: 'close'});
     }
 
     function navigateToHome() {
@@ -705,25 +715,12 @@ function Recorder() {
             }
         }
     }
-
-    function setAnswerValue(event) {
-        setAnswerProvided(event.target.value);
-    }
-
     function logout() {
         //logout function needs to be implemented (wahib)
         history.push({
             pathname: '/',
         });
     }
-
-    const inlineStyleSetting = {
-        modal: {
-            height: '85vh',
-            width: '65vw',
-        }
-    };
-
     const reset = () => {
         history.push({
             pathname: '/recorder',
@@ -734,58 +731,6 @@ function Recorder() {
             }
         });
     }
-
-    //code for webcam for Thumbnail
-    const thumbnail_videoConstraints = {
-        width: 262.5,
-        height: 315,
-        facingMode: "user"
-    };
-
-    const WebcamCapture = () => {
-
-
-        const webcamRef = React.useRef(null);
-
-        const capture = React.useCallback(
-            () => {
-                const imageSrc = webcamRef.current.getScreenshot();
-                setVideoThumbnail(imageSrc)
-            });
-
-
-        return (
-            <div className="webcam-container">
-                <div className="webcam-img">
-
-                    {videoThumbnail === '' ? <Webcam
-                        audio={false}
-                        height={315}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width={262.5}
-                        videoConstraints={thumbnail_videoConstraints}
-                        borderRadius={5}
-                    /> : <img src={videoThumbnail}/>}
-                </div>
-                <div>
-                    {videoThumbnail !== '' ?
-                        <button onClick={(e) => {
-                            e.preventDefault();
-                            setVideoThumbnail('');
-                        }}
-                                className="webcam-btn">
-                            Retake Image</button> :
-                        <button onClick={(e) => {
-                            e.preventDefault();
-                            capture();
-                        }}
-                                className="webcam-btn">Capture</button>
-                    }
-                </div>
-            </div>
-        );
-    };
 
     const handlePrivacySwitch = () => {
         if (isPrivate) {
@@ -868,88 +813,6 @@ function Recorder() {
 
     return (
         <div className="record-page">
-            <Modal //this is the new pop up menu
-
-                size='large'
-                style={{position: "absolute", height: "80%", width: "896px", top: "1.5%", alignContent: "center"}}
-                open={open}
-                onClose={handleClose}
-            >
-                <Modal.Header className="modal-header">
-                    <div>Do you want to save this video entry?</div>
-                </Modal.Header>
-                <Modal.Content>
-                    <div id="typeOfVideo">Video Type: {videoTypeFormal}</div>
-                    <div id="privacyOfVideo">Privacy Settings: {privacyText}</div>
-                    <div id="video_thumbnail">
-                        <button onClick={(event) => {
-                            openModal2(event)
-                        }}>{videoThumbnail === '' ? "Click to create a thumbnail!" : "Click to edit your thumbnail!"}</button>
-                    </div>
-                    <div id="divider"/>
-                    {videoPlayback}
-                    {/* <video id="videoRecorded"></video> */}
-                    <div id="answerCorrection">Feel free to correct your answer below:</div>
-                    <input
-                        className="modal-ans font-class-1"
-                        placeholder={transcribedAudio}
-                        value={answerProvided}
-                        type={"text"}
-                        onChange={setAnswerValue}
-                    />
-                    <div className={"question-label-modal"}>Questions being answered:</div>
-                    <div className={"question-selection-box question-modal-input"}>
-                        <EditCreateMultiSelect
-                            suggestions={suggestedQsListCopy}
-                            selectedItems={questionsSelected}
-                            updateSuggestions={(response) => {
-                            }}
-                            updateSelectedItems={(response) => {
-                            }}
-                            maxDisplayedItems={5}
-                            placeholder={"Type your own question"}
-                            displayField={"question"}
-                            disabled={true}/>
-                    </div>
-                    {/* <div contentEditable="true" className="modal-ans font-class-1" onChange={setAnswerValue}>{answerProvided}
-          </div> */}
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button color='red' inverted onClick={handleClose} style={{position: "relative", bottom: "4px"}}>
-                        {/*<i className="fa fa-check"></i>*/}
-                        <p>Discard</p>
-                    </Button>
-                    <Button color='green' inverted onClick={handleDownload}
-                            style={{position: "relative", bottom: "4px"}} loading={waitingServerResponse}>
-                        {/*<i className="fa fa-check"></i>*/}
-                        <p>Save</p>
-                    </Button>
-                </Modal.Actions>
-            </Modal>
-            <Modal //This is the settings pop menu, that shows whenever you delete or move videos
-                size='large'
-                closeIcon={true}
-                style={inlineStyleSetting.modal}
-                open={open2}
-                onClose={() => dispatch2({type: 'close'})}
-            >
-                <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Click a Thumbnail!</h1>
-                    <p className="login_blurb login-montserrat-black">Add a thumnail for your recorded video</p>
-                </Modal.Header>
-                <Modal.Content>
-                    <div className="thumbnail">
-                        <WebcamCapture/>
-                    </div>
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button color='green' inverted onClick={() => dispatch2({type: 'close'})}>
-                        <i className="fa fa-check"/>
-
-                    </Button>
-                </Modal.Actions>
-            </Modal>
-
             <ModalQSuggestion
                 active={questionSuggestionModalActive}
                 ModalOnOpen={() => {
@@ -1006,8 +869,8 @@ function Recorder() {
                         />
 
                         <span className="public_tooltip">
-          Set the privacy of the specific video
-          </span>
+                            Set the privacy of the specific video
+                        </span>
                     </div>
                     <div className="select">
                         <Popup
@@ -1038,11 +901,32 @@ function Recorder() {
                     </div>
                 </div>
                 <div className="Video-Layout">
+                    <div className="stats-container stats-container-recorder">
+                        <div className="stats-wrapper">
+                            <div className="stats-number">
+                                {videosCount}
+                            </div>
+                            <div className="stats-label">
+                                Total Videos
+                            </div>
+                        </div>
+
+                        <div className="stats-wrapper">
+                            <div className="stats-number">
+                                {(videosTotalDuration)? (videosTotalDuration / 60).toFixed(1): 0}Min
+                            </div>
+                            <div className="stats-label">
+                                Total Videos Length
+                            </div>
+                        </div>
+                    </div>
+
+
                     {(!viewingRecordedView) ? (
                         <div className="video-layout-recorder-box">
                             <div className="video-layout-player-top">
                                 <Popup
-                                    disabled={recordedChunks.length > 0}
+                                    disabled={recordedChunks.length > 0 && !isRecording}
                                     content={"Record a video to proceed"}
                                     trigger={
                                         <div style={{display: "inline-block"}}
@@ -1050,7 +934,7 @@ function Recorder() {
                                             <Button icon labelPosition='right' className="right floated"
                                                     onClick={() => {
                                                         togglePreviewBox()
-                                                    }} disabled={!(recordedChunks.length > 0)}>
+                                                    }} disabled={!(recordedChunks.length > 0) || isRecording}>
                                                 Next
                                                 <Icon name='right arrow'/>
                                             </Button>
@@ -1059,7 +943,7 @@ function Recorder() {
                                 />
 
                                 {
-                                    recordedChunks.length > 0 && (
+                                    (recordedChunks.length > 0 && !isRecording) && (
                                         <Button icon labelPosition='left' className="right floated"
                                                 onClick={handleStartCaptureClick}>
                                             Record Again
@@ -1070,8 +954,16 @@ function Recorder() {
                             </div>
 
 
-                            <Webcam className="layout" audio={true} ref={webcamRef} mirrored={true}
+                            <Webcam className="layout"
+                                    audio={true}
+                                    ref={webcamRef}
+                                    mirrored={true}
                                     videoConstraints={videoConstraints}/>
+
+                            <div className="timer-wrapper">
+                                <div className="timer-view">{getTimeDiffString(videoLengthSeconds)}</div>
+                            </div>
+
                             {capturing ? (
                                 <button className="icon tooltip videoControlButtons" onClick={handleStopCaptureClick}
                                         data-tooltip="Stop Recording">
@@ -1083,7 +975,8 @@ function Recorder() {
                                     <i className="fa fa-video-camera"/>
                                 </button>
                             )}
-                            {recordedChunks.length > 0 && (
+
+                            {(recordedChunks.length > 0 && !isRecording) && (
                                 <button className="recorder-check-btn check tooltip cursor-pointer"
                                         onClick={() => {
                                             togglePreviewBox()
@@ -1092,6 +985,7 @@ function Recorder() {
                                     <i className="fa fa-check"/>
                                 </button>
                             )}
+
                             <p className="recorder-speech">{transcribedAudio}</p>
                         </div>
                     ) : (
@@ -1100,17 +994,16 @@ function Recorder() {
                                 {
                                     (isEditing) ? (
                                         <Button.Group>
-                                            <Popup
-                                                content={"This will create a new entry, keeping the old one unchanged!"}
-                                                inverted
-                                                trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse}>Save As New</Button>}
+                                            <Popup content={"This will create a new entry, keeping the old one unchanged!"}
+                                                   inverted
+                                                   trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)}>Save As New</Button>}
                                             />
                                             <Button.Or/>
-                                            <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse} positive>Update</Button>
+                                            <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)} positive>Update</Button>
                                         </Button.Group>
                                     ) : (
                                         <Button className="right floated" positive loading={waitingServerResponse}
-                                                disabled={waitingServerResponse} onClick={handleDownload}>Save
+                                                disabled={waitingServerResponse || !videoDuration} onClick={handleDownload}>Save
                                             Video</Button>
                                     )
                                 }
@@ -1123,7 +1016,18 @@ function Recorder() {
                             </div>
 
                             <div className="layout video-layout-player-middle">
-                                <video autoPlay controls>
+                                <video autoPlay controls
+                                       onLoadedMetadata={ () => {
+                                           // This is a trick to make video duration load instantly
+                                           videoPlaybackRef.current.currentTime = 9999999999;
+                                       }}
+
+                                       onDurationChange={() => {
+                                           if (videoPlaybackRef.current.duration && videoPlaybackRef.current.duration !== Infinity){
+                                               setVideoDuration(videoPlaybackRef.current.duration);
+                                               videoPlaybackRef.current.currentTime = 0;
+                                           }
+                                       }} ref={videoPlaybackRef}>
                                     <source src={(recordedVideo)? window.URL.createObjectURL(recordedVideo) : ""} type='video/mp4'/>
                                 </video>
                             </div>
@@ -1163,33 +1067,15 @@ function Recorder() {
                             placeholder={"Type your own question"}
                             maxDisplayedItems={5}
                             displayField={"question"}
+                            autoAddOnBlur={true}
                             disabled={pendingOnBoardingQs.length !== 0}/>
                     </div>
-{/*// */}
-{/*//                     {recordedChunks.length > 0 && (*/}
-{/*//                         <button className="check tooltip" onClick={openModal}><i className="fa fa-check"></i>*/}
-{/*//                             <span className="check_tooltip">*/}
-{/*//           Save Video*/}
-{/*//           </span>*/}
-{/*//                         </button>*/}
-{/*//                     )}*/}
-{/*//                     <p className="recorder-speech">{transcribedAudio}</p>*/}
-{/*//                     <input*/}
-{/*//                         className="type-q font-class-1"*/}
-{/*//                         placeholder={"Type your own question"}*/}
-{/*//                         value={questionSelected}*/}
-{/*//                         id="video-text-box"*/}
-{/*//                         type={"text"}*/}
-{/*//                         onChange={setQuestionValue}*/}
-{/*//                     />*/}
-{/*// >>>>>>> master*/}
                 </div>
 
             </div>
+            <NotificationContainer/>
         </div>
     );
 }
 
 export default Recorder;
-
-// removed this from icon -> style={{fontSize: 34}}

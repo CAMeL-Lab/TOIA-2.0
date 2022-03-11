@@ -31,8 +31,12 @@ MarkupSafe = "==1.1.1"
 Pillow = "==8.1.0"
 Werkzeug = "==1.0.1"
 jupyterlab = "*"
+sqlalchemy = "*"
+mysql = "*"
+pymysql = "*"
 
 [dev-packages]
+ipywidgets = "*"
 
 [requires]
 python_version = "3.8"
