@@ -47,7 +47,7 @@ if (process.env.ENVIRONMENT === "production") {
         const responseHeader = 'Content-Type';
         const maxAgeSeconds = 3600;
         const method = 'GET';
-        const origin = process.env.EXPRESS_HOST + process.env.EXPRESS_PORT;
+        const origin = process.env.EXPRESS_HOST + ":" + process.env.EXPRESS_PORT;
 
         await gc.bucket(process.env.GC_BUCKET).setCorsConfiguration([
             {
