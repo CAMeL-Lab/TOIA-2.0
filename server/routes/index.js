@@ -36,10 +36,35 @@ const path = require("path");
 const saltRounds = 12;
 
 const gc = new Storage({
-    keyFilename: path.join(__dirname, "/toia-capstone-2021-dc5b358c68c2.json"),
+    keyFilename: process.env.GOOGLE_CLOUD_STORE_CREDENTIALS,
     projectId: 'toia-capstone-2021'
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
+
+// Allow cross-origin get requests
+if (process.env.ENVIRONMENT === "production") {
+    async function configureBucketCors() {
+        const responseHeader = 'Content-Type';
+        const maxAgeSeconds = 3600;
+        const method = 'GET';
+        const origin = process.env.EXPRESS_HOST + process.env.EXPRESS_PORT;
+
+        await gc.bucket(process.env.GC_BUCKET).setCorsConfiguration([
+            {
+                maxAgeSeconds,
+                method: [method],
+                origin: [origin],
+                responseHeader: [responseHeader],
+            },
+        ]);
+
+        console.log(`Bucket ${process.env.GC_BUCKET} was updated with a CORS config
+                  to allow ${method} requests from ${origin} sharing 
+                  ${responseHeader} responses across origins`);
+    }
+
+    configureBucketCors().catch(console.error);
+}
 
 router.post('/createTOIA', cors(), async (req, res) => {
     let form = new multiparty.Form();
@@ -703,7 +728,7 @@ router.post('/recorder', cors(), async (req, res) => {
         return;
     }
 
-    if (!fields.hasOwnProperty('video_duration')){
+    if (!fields.hasOwnProperty('video_duration')) {
         console.log("Error: video duration not set!");
         res.sendStatus(400).send("Something went wrong!");
         return;
@@ -1123,11 +1148,11 @@ router.post('/getUserData', cors(), (req, res) => {
 
 // Get total number of videos that a user has recorded
 router.post('/getUserVideosCount', cors(), (req, res) => {
-   let user_id = req.body.user_id;
+    let user_id = req.body.user_id;
 
     isValidUser(user_id).then(async () => {
         let videos_count = await getUserTotalVideosCount(user_id);
-        res.send({"count":videos_count});
+        res.send({"count": videos_count});
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
@@ -1141,7 +1166,7 @@ router.post('/getStreamVideosCount', cors(), (req, res) => {
 
     isValidUser(user_id).then(async () => {
         let videos_count = await getStreamTotalVideosCount(user_id, stream_id);
-        res.send({"count":videos_count});
+        res.send({"count": videos_count});
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
@@ -1154,7 +1179,7 @@ router.post('/getTotalVideoDuration', cors(), (req, res) => {
 
     isValidUser(user_id).then(async () => {
         let total_duration = await getUserTotalVideoDuration(user_id);
-        res.send({"total_duration":total_duration});
+        res.send({"total_duration": total_duration});
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
