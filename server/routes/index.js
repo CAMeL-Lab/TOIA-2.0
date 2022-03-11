@@ -18,7 +18,7 @@ const {
     isValidUser,
     saveSuggestedQuestion,
     updateSuggestedQuestion,
-    getStreamInfo
+    getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -369,7 +369,9 @@ router.post('/getUserStreams', cors(), async (req, res) => {
                 res.send(entries);
             }
 
-            entries.forEach((entry) => {
+            for (const entry of entries) {
+                entry.videos_count = await getStreamTotalVideosCount(req.body.params.toiaID, entry.id_stream);
+
                 // send local storage image when in development
                 if (process.env.ENVIRONMENT === "development") {
                     entry.pic = `/${req.body.params.toiaName}_${req.body.params.toiaID}/StreamPic/${entry.name}_${entry.id_stream}.jpg`;
@@ -378,7 +380,7 @@ router.post('/getUserStreams', cors(), async (req, res) => {
                     if (counter === entries.length) {
                         callback();
                     }
-                    return;
+                    continue;
                 }
 
                 // send gcloud image when in production
@@ -394,7 +396,7 @@ router.post('/getUserStreams', cors(), async (req, res) => {
                         }
                     }
                 });
-            });
+            }
 
         }
     });
@@ -701,6 +703,14 @@ router.post('/recorder', cors(), async (req, res) => {
         return;
     }
 
+    if (!fields.hasOwnProperty('video_duration')){
+        console.log("Error: video duration not set!");
+        res.sendStatus(400).send("Something went wrong!");
+        return;
+    }
+
+    const video_duration = parseInt(fields.video_duration[0]);
+
     let query_getNextIndex = `SELECT MAX(idx) AS maxIndex
                               FROM video;`;
     connection.query(query_getNextIndex, async (err, entry) => {
@@ -767,10 +777,10 @@ router.post('/recorder', cors(), async (req, res) => {
                     });
                 }
 
-                let query_saveVideo = `INSERT INTO video(id_video, toia_id, idx, private, answer, language, likes, views)
-                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
+                let query_saveVideo = `INSERT INTO video(id_video, toia_id, idx, private, answer, language, likes, views, duration_seconds)
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
-                connection.query(query_saveVideo, [videoID, fields.id[0], vidIndex, isPrivate, answer, fields.language[0], 0, 0], async (err) => {
+                connection.query(query_saveVideo, [videoID, fields.id[0], vidIndex, isPrivate, answer, fields.language[0], 0, 0, video_duration], async (err) => {
                     if (err) {
                         throw err;
                     } else {
@@ -896,7 +906,7 @@ router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
 router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
     const user_id = req.params.user_id;
     isValidUser(user_id).then((success) => {
-        if (req.body.q === undefined) {
+        if (req.body.q === undefined || typeof req.body.q !== "string" || req.body.q.trim().length <= 1) {
             res.sendStatus(400);
             return;
         }
@@ -916,7 +926,7 @@ router.post('/questions/suggestions/:user_id/edit', async (req, res) => {
     const question_id = req.body.question_id || null;
     const question_new_value = req.body.new_value || null;
 
-    if (!user_id || !question_id || !question_new_value) {
+    if (!user_id || !question_id || !question_new_value || typeof question_new_value !== "string" || question_new_value.length <= 0) {
         res.sendStatus(400);
         return;
     }
@@ -1108,6 +1118,46 @@ router.post('/getUserData', cors(), (req, res) => {
         console.log("user data sent!")
         res.send(Object.values(entries))
 
+    })
+})
+
+// Get total number of videos that a user has recorded
+router.post('/getUserVideosCount', cors(), (req, res) => {
+   let user_id = req.body.user_id;
+
+    isValidUser(user_id).then(async () => {
+        let videos_count = await getUserTotalVideosCount(user_id);
+        res.send({"count":videos_count});
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
+})
+
+// Get total number of videos that a user has recorded for a particular stream
+router.post('/getStreamVideosCount', cors(), (req, res) => {
+    let user_id = req.body.user_id;
+    let stream_id = req.body.stream_id;
+
+    isValidUser(user_id).then(async () => {
+        let videos_count = await getStreamTotalVideosCount(user_id, stream_id);
+        res.send({"count":videos_count});
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
+})
+
+// Get total video duration of a user
+router.post('/getTotalVideoDuration', cors(), (req, res) => {
+    let user_id = req.body.user_id;
+
+    isValidUser(user_id).then(async () => {
+        let total_duration = await getUserTotalVideoDuration(user_id);
+        res.send({"total_duration":total_duration});
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
     })
 })
 

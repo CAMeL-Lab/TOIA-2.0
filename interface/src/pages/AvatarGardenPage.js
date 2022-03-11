@@ -10,6 +10,7 @@ import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
 import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import '@brainhubeu/react-carousel/lib/style.css';
 import axios from 'axios';
@@ -164,6 +165,9 @@ function AvatarGardenPage() {
     const [currentlyEditingSuggestion, setCurrentlyEditingSuggestion] = useState(undefined);
     const [waitingServerResponse, setWaitingServerReponse] = useState(false);
     const [suggestionNewValue, setSuggestionNewValue] = useState('');
+
+    const [videosCount, setVideosCount] = useState(0);
+    const [videosTotalDuration, setVideosTotalDuration] = useState(null);
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -180,10 +184,14 @@ function AvatarGardenPage() {
 
         fetchStreamList().then((data) => {
             fetchRecordedQuestions(data[0].id_stream);
-            setCurrentStream(data[0]);
+            let dataCpy = data[0];
+            dataCpy.id = dataCpy.id_stream;
+            setCurrentStream(dataCpy);
         });
         fetchOnBoardingQuestions();
         fetchSuggestedQuestions();
+        fetchVideosCount();
+        fetchVideosTotalDuration();
 
         // Tracker
         new Tracker().startTracking(history.location.state);
@@ -205,45 +213,93 @@ function AvatarGardenPage() {
         }))
     }
 
-    function fetchOnBoardingQuestions() {
+    function fetchOnBoardingQuestions(cb_success = null, cb_fail = null) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `/api/questions/onboarding/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setPendingOnBoardingQs(response.data);
+
+                if (cb_success) cb_success();
             } else {
-                alert("Something went wrong!");
+                NotificationManager.error('Something went wrong');
+
+                if (cb_fail) cb_fail();
             }
         }).catch(function (error) {
             console.error(error);
+
+            if (cb_fail) cb_fail();
         });
     }
 
-    function fetchSuggestedQuestions() {
+    function fetchSuggestedQuestions(cb_success = null, cb_fail = null) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `/api/questions/suggestions/${toiaID}/pending`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setSuggestedQsList(response.data);
+                if (cb_success) cb_success();
             } else {
                 console.log(response);
+                if (cb_fail) cb_fail();
             }
         }).catch(function (error) {
             console.error(error);
+            if (cb_fail) cb_fail();
         });
     }
 
-    function fetchRecordedQuestions(streamID) {
+    function fetchRecordedQuestions(streamID, cb_success = null, cb_fail = null) {
         const toiaID = history.location.state.toiaID;
         const options = {method: 'GET', url: `/api/questions/answered/${toiaID}/${streamID}`};
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setRecordedQsList(response.data);
+                if (cb_success) cb_success();
+            } else {
+                if (cb_fail) cb_fail();
             }
         }).catch(function (error) {
+            console.error(error);
+            if (cb_fail) cb_fail();
+        });
+    }
+
+    function fetchVideosCount() {
+        const toiaID = history.location.state.toiaID;
+        const options = {
+            method: 'POST',
+            url: '/api/getUserVideosCount',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosCount(response.data.count);
+        }).catch(function (error) {
+            NotificationManager.error("An error occurred!");
+            console.error(error);
+        });
+    }
+
+    function fetchVideosTotalDuration() {
+        const toiaID = history.location.state.toiaID;
+
+        const options = {
+            method: 'POST',
+            url: '/api/getTotalVideoDuration',
+            headers: {'Content-Type': 'application/json'},
+            data: {user_id: toiaID}
+        };
+
+        axios.request(options).then(function (response) {
+            setVideosTotalDuration(response.data.total_duration);
+        }).catch(function (error) {
+            NotificationManager.error("Couldn't fetch videos duration!");
             console.error(error);
         });
     }
@@ -402,15 +458,25 @@ function AvatarGardenPage() {
         };
 
         axios.request(options).then(function (response) {
+            setShowVideoDeletePopup(false);
+            NotificationManager.info("Deleting video...");
             if (response.status === 200) {
                 if (currentStream) {
-                    fetchRecordedQuestions(currentStream.id_stream);
+                    fetchRecordedQuestions(currentStream.id);
+                } else {
+                    fetchRecordedQuestions(streamList[0].id_stream);
                 }
-                setShowVideoDeletePopup(false);
+                fetchOnBoardingQuestions();
+                fetchStreamList();
+                fetchVideosCount();
+                fetchVideosTotalDuration();
+                NotificationManager.info("Video removed!");
             } else {
+                NotificationManager.error("Couldn't delete video!");
                 console.error(response);
             }
         }).catch(function (error) {
+            NotificationManager.error("Couldn't delete video!");
             console.error(error);
         });
     }
@@ -425,11 +491,14 @@ function AvatarGardenPage() {
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
-                fetchSuggestedQuestions();
+                fetchSuggestedQuestions(() => {
+                    NotificationManager.info("Suggestion Removed!");
+                });
             } else {
                 console.log(response);
             }
         }).catch(function (error) {
+            NotificationManager.error("Couldn't delete suggestion!");
             console.error(error);
         });
     }
@@ -446,11 +515,21 @@ function AvatarGardenPage() {
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
-                setWaitingServerReponse(false);
-                setIsEditSuggestionModalActive(false);
-                setCurrentlyEditingSuggestion(null);
-                setSuggestionNewValue('');
-                fetchSuggestedQuestions();
+                fetchSuggestedQuestions(() => {
+                    setWaitingServerReponse(false);
+                    setIsEditSuggestionModalActive(false);
+                    setCurrentlyEditingSuggestion(null);
+                    setSuggestionNewValue('');
+
+                    NotificationManager.info('Suggestion updated!');
+                }, () => {
+                    setWaitingServerReponse(false);
+                    setIsEditSuggestionModalActive(false);
+                    setCurrentlyEditingSuggestion(null);
+                    setSuggestionNewValue('');
+
+                    NotificationManager.error('Unable to retrieve suggestions');
+                });
             } else {
                 console.error(response);
             }
@@ -539,8 +618,14 @@ function AvatarGardenPage() {
                 <div onClick={album_page}>
                     <h1 className="t1 garden-font-class-2" //name of user
                     >{toiaName}</h1>
-                    <p className="t2 garden-font-class-2" //individual stream name
+                    <p className="t2 garden-font-class-2 margin-bottom-2px" //individual stream name
                     >{card.name}</p>
+
+                    <div className="ui gray label medium">
+                        <i aria-hidden="true" className="video icon"/>
+                        Total Videos In Stream:
+                        <div className="detail">{card.videos_count}</div>
+                    </div>
                 </div>
                 <br/>
                 <div className="garden-carousel-menu" //stats that appear under stream
@@ -669,6 +754,8 @@ function AvatarGardenPage() {
         axios.post(`/api/createNewStream`, form).then((res) => {
             setStreamList(res.data);
             dispatch4({type: 'close'});
+
+            NotificationManager.success("Stream Created!");
         });
         e.preventDefault();
     }
@@ -1037,11 +1124,28 @@ function AvatarGardenPage() {
                 <h1 className="garden-title garden-font-class-1 " //welcome message
                 >Hi {toiaName}</h1>
 
-                {/* <h1 className="garden-notifications garden-font-class-3 " //welcome message
-            >Notifications <h4 style = {{position: "absolute", top: "65.5%", fontWeight: "300"}}>Four new videos added!</h4></h1> */}
+                <div className="stats-container">
+                    <div className="stats-wrapper">
+                        <div className="stats-number">
+                            {videosCount}
+                        </div>
+                        <div className="stats-label">
+                            Total Videos
+                        </div>
+                    </div>
+
+                    <div className="stats-wrapper">
+                        <div className="stats-number">
+                            {(videosTotalDuration)? (videosTotalDuration / 60).toFixed(1): 0}Min
+                        </div>
+                        <div className="stats-label">
+                            Total Videos Length
+                        </div>
+                    </div>
+                </div>
                 <button onClick={(event) => {
                     openModal2(event);
-                    
+
                 }} className="garden-settings"><i className="fa fa-cog"/></button>
             </div>
             <div className="section1">
@@ -1090,7 +1194,9 @@ function AvatarGardenPage() {
                                                         setCurrentlyEditingSuggestion(q);
                                                         setIsEditSuggestionModalActive(true);
                                                     }}
-                                                    onDelete={() => {handleDeleteSuggestion(q)}}
+                                                    onDelete={() => {
+                                                        handleDeleteSuggestion(q)
+                                                    }}
                                                     key={index}/>
                                 )
                             })}
@@ -1161,7 +1267,7 @@ function AvatarGardenPage() {
                 </div>
 
             </div>
-
+            <NotificationContainer/>
         </div>
     );
 
