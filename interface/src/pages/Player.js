@@ -1,6 +1,3 @@
-import './App.css'
-import './Player.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, {Component} from 'react';
 import {useState, useEffect} from 'react';
 import submitButton from "../icons/submit-button.svg";
