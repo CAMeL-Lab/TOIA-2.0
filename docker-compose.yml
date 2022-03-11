@@ -42,7 +42,8 @@ services:
       mysql:
         condition: service_healthy
     build:
-      context: server
+      context: ./
+      dockerfile: server/Dockerfile
     restart: on-failure
     ports:
       - ${EXPRESS_PORT}:${EXPRESS_PORT}
@@ -52,13 +53,13 @@ services:
     env_file:
       - ./.env
       - ./server/.env
-
-  react-ui:
-    depends_on:
-      - mysql
-    build: interface
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./.env
-      - ./interface/.env
+#
+#  react-ui:
+#    depends_on:
+#      - mysql
+#    build: interface
+#    ports:
+#      - "3000:3000"
+#    env_file:
+#      - ./.env
+#      - ./interface/.env

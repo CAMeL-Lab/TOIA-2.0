@@ -1,6 +1,3 @@
-import './App.css';
-import './AvatarViewPage.css';
-import 'semantic-ui-css/semantic.min.css';
 import React from "react";
 import submitButton from "../icons/submit-button.svg";
 import video from "../icons/sample-video.svg"
