@@ -623,7 +623,7 @@ video {
 
 .video-layout-player-top .buttons {
     float: right;
-    margin-left: 10px;
+    margin-left: 10px !important;
 }
 
 .StreamNotSelectedAlert, .StreamNotSelectedAlert::before {

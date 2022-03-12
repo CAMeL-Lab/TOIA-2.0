@@ -1,5 +1,3 @@
-import './App.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, {useState, useEffect} from 'react';
 import Carousel from 'react-elastic-carousel'
 import Menu from '@material-ui/core/Menu';

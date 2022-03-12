@@ -1,6 +1,3 @@
-import './App.css';
-import './HomePage.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, {useState, useEffect, useRef} from "react";
 import signupButton from "../icons/signup-button.svg";
 import submitButton from "../icons/submit-button.svg";
