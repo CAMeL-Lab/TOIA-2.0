@@ -1,6 +1,3 @@
-import './App.css';
-import './AvatarLibraryPage.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, { useState, useEffect } from 'react';
 import Fuse from "fuse.js";
 import sampleVideo from "../icons/sample-video.svg";

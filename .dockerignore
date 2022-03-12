@@ -1,0 +1,15 @@
+server/node_modules
+server/Dockerfile
+server/.idea
+server/.gitignore
+.dockerignore
+server/package-lock.json
+server/interface
+
+interface/node_modules
+interface/Dockerfile
+interface/.idea
+interface/.gitignore
+interface/.dockerignore
+interface/package-lock.json
+

@@ -1,6 +1,3 @@
-import './App.css';
-import './Recorder.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, {useState, useEffect, useRef} from "react";
 import Webcam from "react-webcam";
 import axios from 'axios';

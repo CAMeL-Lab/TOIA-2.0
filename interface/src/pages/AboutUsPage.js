@@ -1,6 +1,3 @@
-import './App.css';
-import './AboutUsPage.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, { useState, useEffect } from "react";
 import submitButton from "../icons/submit-button.svg";
 import sampleVideo from "../icons/sample-video.svg";
