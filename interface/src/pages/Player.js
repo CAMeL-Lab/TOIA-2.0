@@ -1,6 +1,3 @@
-import './App.css'
-import './Player.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, {Component} from 'react';
 import {useState, useEffect} from 'react';
 import submitButton from "../icons/submit-button.svg";
@@ -11,6 +8,8 @@ import history from '../services/history';
 import Tracker from "../utils/tracker";
 
 import speechToTextUtils from "../transcription_utils";
+import {NotificationManager} from "react-notifications";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 function Player(){
 
@@ -306,9 +305,9 @@ function Player(){
       axios.post(`/api/login`,params).then(res=>{
           if(res.data==-1){
               //alert('Email not found');
-              alert("Incorrect e-mail address.");
+              NotificationManager.error("Incorrect e-mail address.");
           }else if(res.data==-2){
-              alert("Incorrect password.");
+              NotificationManager.error("Incorrect password.");
           }else {
               console.log(res.data);
               history.push({
@@ -522,7 +521,7 @@ function Player(){
       </div>
 
       </div>
-      
+      <NotificationContainer/>
     </div>
   )
 }

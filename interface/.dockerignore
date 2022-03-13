@@ -1,6 +1,0 @@
-node_modules
-Dockerfile
-.idea
-.gitignore
-.dockerignore
-package-lock.json

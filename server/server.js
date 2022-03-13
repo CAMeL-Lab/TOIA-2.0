@@ -1,6 +1,5 @@
 //Set up requirements
 const express = require('express');
-require('dotenv').config({path: '../.env'})
 const path = require('path');
 const {Storage} = require('@google-cloud/storage');
 
