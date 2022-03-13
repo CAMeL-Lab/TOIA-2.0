@@ -146,7 +146,7 @@ def generateNextQ():
                         ]
         except:
             print(bert_filtered_qs)
-            questions = []
+            questions = [""]
     if callback_url is not None:
         try:
             requests.post(callback_url, json={"q": questions})
