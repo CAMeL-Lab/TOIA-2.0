@@ -30,7 +30,7 @@ const request = {
       //"enable_separate_recognition_per_channel": false,
   
     },
-    interimResults: false, // If you want interim results, set this to true
+    interimResults: true, // If you want interim results, set this to true
 };
 
 // config of the client object

@@ -8,7 +8,6 @@ import axios from 'axios';
 import {Modal} from 'semantic-ui-react';
 import history from '../services/history';
 
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Tracker from "../utils/tracker";
 
 import speechToTextUtils from "../transcription_utils";
@@ -112,11 +111,10 @@ function Player(){
 
   // handling data recieved from server
   function handleDataReceived(data){
-
     // setting the transcribedAudio 
-    if(data){
-      transcribedAudio.current = data;
-      question.current = data;
+    if(data && data.isFinal){
+      transcribedAudio.current = data.alternatives[0].transcript;
+      question.current = data.alternatives[0].transcript;
       
       speechToTextUtils.stopRecording();
       fetchData()

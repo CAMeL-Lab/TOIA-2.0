@@ -14,10 +14,42 @@ var cardSelected = [];//the videos selected to be edited or deleted
 
 function AvatarSettings() {
 
-  var stream =[//Holds info on the stream
-    {still: nizar, name: "Professor Stream", privacy: "Public", language: "English", bio:"This is my professor album", ppl: "8", heart:"5", thumbs:"3"}
-  ]
+  const [currentUserFullname, setCurrentUserFullname] = useState(null);
+  const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  const [currentStream, setCurrentStream] = useState(undefined);
+  const [toiaName, setName] = useState(null);
+  const [toiaLanguage, setLanguage] = useState(null);
+   const [toiaID, setTOIAid] = useState(null);
 
+
+  React.useEffect(() => {
+
+    if (history.location.state === undefined) {
+        history.push({
+            pathname: '/'
+        });
+    }
+
+    setName(history.location.state.toiaName);
+    setLanguage(history.location.state.toiaLanguage);
+    setTOIAid(history.location.state.toiaID);
+
+    fetchStreamList().then((data) => {
+        setCurrentStream(data[0]);
+        // console.log(currentStream)
+        console.log(data[0]);
+    });
+
+    // Tracker
+    // new Tracker().startTracking(history.location.state);
+    
+    getUserData();
+}, []);
+
+  var stream =[//Holds info on the stream
+    {still: nizar, name:currentUserFullname , privacy: "Public", language: "English", bio:"This is my professor album", ppl: "8", heart:"5", thumbs:"3"}
+  ]
   var avatars = [ //This hold the video and information that are apart of the selected stream (Wahib)
     { still: sampleVideo, question: "This text serves as a placeholder for a question.This text serves as a placeholder for a question.", album: "default business"},
     { still: sampleVideo, question: "This text serves as a placeholder for a question.", album: "default personal"},
@@ -138,28 +170,75 @@ function AvatarSettings() {
     }
   }
 
+  // querying the database for user data
+  function getUserData() {
+    axios.post(`/api/getUserData`, {
+        params: {
+            toiaID: history.location.state.toiaID,
+        }
+    }).then((res) => {
+        setCurrentUserFullname(res.data[0].first_name + " " + res.data[0].last_name);
+        setCurrentUserLanguage(res.data[0].language);
+        setCurrentUserEmail(res.data[0].email);
+    })
+}
+
+function fetchStreamList() {
+  return new Promise(((resolve) => {
+      axios.post(`/api/getUserStreams`, {
+          params: {
+              toiaID: history.location.state.toiaID,
+              toiaName: history.location.state.toiaName
+          }
+      }).then((res) => {
+          resolve(res.data);
+      });
+  }))
+}
+
   /*nav bar functions*/
   function home() {
+
     history.push({
       pathname: '/',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+    }
     });
   }
 
   function about() {
     history.push({
       pathname: '/about',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+    }
     });
   }
 
   function library() {
     history.push({
       pathname: '/library',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+    }
     });
   }
 
   function garden() {
     history.push({
         pathname: '/mytoia',
+        state: {
+          toiaName,
+          toiaLanguage,
+          toiaID
+      }
     });
   }
 
@@ -174,12 +253,22 @@ function AvatarSettings() {
   function edit() {
     history.push({
       pathname: '/editrecorder',
+      state: {
+        toiaName,
+        toiaLanguage,
+        toiaID
+    }
     });
   }
 
   function add() {
       history.push({
           pathname: '/recorder',
+          state: {
+            toiaName,
+            toiaLanguage,
+            toiaID
+        }
       });
   }
 
@@ -230,7 +319,7 @@ function AvatarSettings() {
       <div className="settings-section1" //the first section
       >
         <h1 className="settings-settings settings-font-class-3 " // main heading
-        >My {stream[0].name}</h1>
+        >{stream[0].name}</h1>
         <div className="settings-name settings-font-class-1" //the name input field
         >Name: </div>
         <input
