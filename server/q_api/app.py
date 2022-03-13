@@ -99,7 +99,7 @@ def generateNextQ():
     question = ''
     if len(starters) > 0:
         print("SENDING STARTER")
-        question = starters.pop()
+        questions = [starters.pop()]
 
     else:
 
@@ -128,25 +128,35 @@ def generateNextQ():
             logits = outputs.logits
             bert_filtered_qs.append((logits[0,0].item(), sentence))
 
+        # Sort by decending score
+        bert_filtered_qs.sort(key=lambda tup: tup[0], reverse=True)
 
-        bert_filtered_qs.sort(key=lambda tup: tup[0])
 
+        print(bert_filtered_qs)
 
-        print (bert_filtered_qs)
-
-        # TODO: Fix issue -> List index out of range
+        # Set the number of suggestions as minimum between all available and 5. Output max 5 suggestions.
+        # but we may have 1-2 duplicates (hence I put 7)
+        no_suggestions = min(len(bert_filtered_qs) - 1, 7)
+        # TODO: Fix issue -> List index out of range  #Note this happens when there are no suggestions.
         try:
-            question = bert_filtered_qs[-1][1]
+            questions = [
+                bert_filtered_qs[i][1] \
+                    for i in range(no_suggestions - 1) \
+                        if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1] \
+                        ]
         except:
             print(bert_filtered_qs)
-            question = ""
+            questions = []
     if callback_url is not None:
         try:
-            requests.post(callback_url, json={"q": question})
+            requests.post(callback_url, json={"q": questions})
         except:
             print("Error when sending suggestions to server. Is the server running?")
-
-    return {"q":question}
+    
+    print(storage)
+    
+    return {"q": questions[0]}  #For now, it only gives the top-1 suggestion.
+                                #Remove [0] when server is updated to process the list.
 
 
 

@@ -1,6 +1,3 @@
-import './App.css';
-import './HomePage.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, {useState, useEffect, useRef} from "react";
 import signupButton from "../icons/signup-button.svg";
 import submitButton from "../icons/submit-button.svg";
@@ -10,6 +7,8 @@ import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
 import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
 import Tracker from "../utils/tracker";
+import {NotificationManager} from "react-notifications";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 function HomePage() {
 
@@ -87,9 +86,9 @@ function HomePage() {
       console.log(res.data);
       if(res.data==-1){
           //alert('Email not found');
-        alert("Incorrect e-mail address.");
+        NotificationManager.error("Incorrect e-mail address.");
       }else if(res.data==-2){
-        alert("Incorrect password");
+        NotificationManager.error("Incorrect password");
         // setHasPasswordError(true);
       }else {
         history.push({
@@ -267,6 +266,8 @@ function HomePage() {
         <div className="home-welcome-text home-montserrat-black">{welcome_text}</div>
         <div onClick={signup}><img className="home-signup" src={signupButton} /></div>
       </div>
+      <NotificationContainer/>
+
     </div>
   );
 }

@@ -1,5 +1,3 @@
-import './App.css';
-import './AvatarStream.css';
 import React, { useState } from 'react';
 import Fuse from "fuse.js";
 import addButton from "../icons/add-button.svg";

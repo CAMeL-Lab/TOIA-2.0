@@ -1,6 +1,3 @@
-import './App.css';
-import './AboutUsPage.css';
-import 'semantic-ui-css/semantic.min.css';
 import React, { useState, useEffect } from "react";
 import submitButton from "../icons/submit-button.svg";
 import sampleVideo from "../icons/sample-video.svg";
@@ -18,6 +15,7 @@ import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
 import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
 import axios from 'axios';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import toia_logo from "../images/TOIA_Logo.png";
 import Tracker from "../utils/tracker";
 
@@ -167,9 +165,9 @@ function AvatarViewPage() {
         axios.post(`/api/login`,params).then(res=>{
             if(res.data==-1){
                 //alert('Email not found');
-                alert("Incorrect e-mail address.");
+                NotificationManager.error("Incorrect e-mail address.");
             }else if(res.data==-2){
-                alert("Incorrect password.");
+                NotificationManager.error("Incorrect password.");
             }else {
                 console.log(res.data);
                 history.push({
@@ -313,7 +311,7 @@ function AvatarViewPage() {
 
 
 
-
+            <NotificationContainer/>
         </div>
 
 

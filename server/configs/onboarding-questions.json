@@ -66,13 +66,13 @@
     "trigger_suggester": true
   },
   {
-    "question": "Type as many questions as you'd like to answer: Yes, and record yourself saying Yes",
+    "question": "Record yourself saying Yes. You cann add questions for this answer later.",
     "type": "y/n-answer",
     "priority": 11,
     "trigger_suggester": false
   },
   {
-    "question": "Type as many questions as you'd like to answer: No, and record yourself saying No",
+    "question": "Record yourself saying No. You can add questions for this answer later.",
     "type": "y/n-answer",
     "priority": 12,
     "trigger_suggester": false
