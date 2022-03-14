@@ -12,7 +12,7 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-load_dotenv()
+load_dotenv('../../.env')
 
 SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
 
