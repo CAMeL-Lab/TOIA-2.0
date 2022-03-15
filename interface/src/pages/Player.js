@@ -51,9 +51,9 @@ function Player(){
   //const [question,setQuestion] = useState(null);
   //const [matched,setMatched]=useState(0);
 
-  //const [transcribedAudio, setTranscribedAudio] = useState("");
+  const [transcribedAudio, setTranscribedAudio] = useState("");
 
-  const transcribedAudio = React.useRef('');
+  //const transcribedAudio = React.useRef('');
   const textInput = React.useRef('');
   const question = React.useRef('');
   const interacting = React.useRef('false');
@@ -111,12 +111,20 @@ function Player(){
   // handling data recieved from server
   function handleDataReceived(data){
     // setting the transcribedAudio 
-    if(data && data.isFinal){
-      transcribedAudio.current = data.alternatives[0].transcript;
-      question.current = data.alternatives[0].transcript;
+    if(data){
+      // transcribedAudio.current = data.alternatives[0].transcript;
+      setTranscribedAudio(data.alternatives[0].transcript);
+
+      if (data.isFinal){
+        
+        question.current = data.alternatives[0].transcript;
+
+       
       
-      speechToTextUtils.stopRecording();
-      fetchData()
+        speechToTextUtils.stopRecording();
+        fetchData()
+      }
+      
     } else{
       console.log("no data received from server")
     }
@@ -172,6 +180,7 @@ function Player(){
       if(question.current==null || question.current==""){
         setFillerPlaying(true);
         fetchFiller();
+        
       }
       else{
         //endTranscription();
@@ -191,7 +200,8 @@ function Player(){
         } else{
           setFillerPlaying(true);
         setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={interacting.current=='false' ? fetchFiller:chatFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
-        transcribedAudio.current = '';
+        // transcribedAudio.current = '';
+        setTranscribedAudio('');
         
       }});
     }
@@ -268,9 +278,9 @@ function Player(){
 
     function submitResponse(e){
       question.current = textInput.current;
+      
       if(question.current!=""){
         // fetchData();
-
         axios.post(`/api/player`,{
 
           params:{
@@ -286,9 +296,11 @@ function Player(){
             //fetchFiller();
             //continueChat();
           } else{
+            
             setFillerPlaying(true);
           setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={fetchFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
-          transcribedAudio.current = '';
+          // transcribedAudio.current = '';
+          setTranscribedAudio("");
           question.current = '';
         }})
       }
@@ -309,7 +321,7 @@ function Player(){
           }else if(res.data==-2){
               NotificationManager.error("Incorrect password.");
           }else {
-              console.log(res.data);
+            
               history.push({
                   pathname: '/mytoia',
                   state: {
@@ -485,8 +497,9 @@ function Player(){
         
         
         
-        {/* <button className = "skip-end-button" >Skip to End </button> */}
+        <button className = "ui red button skip-end-button" onClick={interacting.current=='false' ? fetchFiller:chatFiller}> Skip to End <i aria-hidden="true" class="angle double right icon"></i></button>
 
+        
         <div>
         { (micMute) ? (
            <><input
@@ -502,7 +515,7 @@ function Player(){
           <input
           className="type-q font-class-1"
           placeholder={"Transcript"}
-          value={transcribedAudio.current || ''}
+          value={transcribedAudio || ''}
           id="video-text-box"
           type={"text"}
           //onChange={setQuestionValue}
