@@ -18,7 +18,7 @@ python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
-(P.S. to create requirements.txt, first create virtual environment with venv, then manually install dependancies neede with pip. Porting from conda doesn't work at all)
+(P.S. to create requirements.txt, first create virtual environment with venv, then manually install dependancies needed with pip. Porting from conda doesn't work at all)
 
 Install MySql. On Mac:
 ```bash
