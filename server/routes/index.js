@@ -31,6 +31,7 @@ const {Buffer} = require("buffer");
 const {TrackRecordVideo, TrackEditVideo} = require("../tracker/tracker");
 const {Storage} = require("@google-cloud/storage");
 const path = require("path");
+const mv = require('mv');
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -95,7 +96,7 @@ router.post('/createTOIA', cors(), async (req, res) => {
                                 let dest = `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/`;
                                 let destFileName = `All_${stream_entry.insertId}.jpg`;
                                 mkdirp(dest).then(() => {
-                                    fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                                    mv(file.blob[0].path, dest + destFileName, (error) => {
                                         if (error) throw error;
                                         resolve();
                                     });
@@ -456,7 +457,7 @@ router.post('/createNewStream', cors(), (req, res) => {
                     let dest = `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/`;
                     let destFileName = `${fields.newStreamName[0]}_${entry.insertId}.jpg`;
                     mkdirp(dest).then(() => {
-                        fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                        mv(file.blob[0].path, dest + destFileName, (error) => {
                             if (error) {
                                 console.log(error);
                             }
@@ -789,7 +790,7 @@ router.post('/recorder', cors(), async (req, res) => {
                     let dest = `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/`;
                     let destFileName = videoID;
                     mkdirp(dest).then(() => {
-                        fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                        mv(file.blob[0].path, dest + destFileName, (error) => {
                             if (error) {
                                 console.log(error);
                             }
