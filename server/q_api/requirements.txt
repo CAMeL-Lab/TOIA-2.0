@@ -27,3 +27,8 @@ tqdm==4.55.1
 transformers==4.1.1
 urllib3==1.26.2
 Werkzeug==1.0.1
+SQLAlchemy==1.4.32
+cloud-sql-python-connector==0.5.2
+PyMySQL==1.0.2
+openai==0.15.0
+python-dotenv==0.19.2
