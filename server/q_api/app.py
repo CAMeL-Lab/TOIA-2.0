@@ -16,6 +16,7 @@ import sqlalchemy as db
 from sqlalchemy.sql import text as QueryText
 from dotenv import load_dotenv
 import openai
+import logging
 load_dotenv()
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -53,16 +54,17 @@ API = "GPT-3"
 def generate_prompt(new_q, new_a, avatar_id, api):
     
     statement = QueryText("""
-SELECT questions.question, video.answer AS latest_question_answer 
-FROM video
-INNER JOIN videos_questions_streams
-ON videos_questions_streams.id_video = video.id_video
-INNER JOIN questions
-ON questions.id = videos_questions_streams.id_question
-WHERE toia_id = :avatar_id 
-AND questions.trigger_suggester = 1
-ORDER BY video.idx DESC LIMIT 1;
-        """)
+                            SELECT questions.question, video.answer AS latest_question_answer 
+                            FROM video
+                            INNER JOIN videos_questions_streams
+                            ON videos_questions_streams.id_video = video.id_video
+                            INNER JOIN questions
+                            ON questions.id = videos_questions_streams.id_question
+                            WHERE toia_id = :avatar_id 
+                            AND questions.trigger_suggester = 1
+                            ORDER BY video.idx DESC LIMIT 1;
+                """)
+
     CONNECTION = ENGINE.connect()  #Need to refresh connection
     result_proxy = CONNECTION.execute(statement, avatar_id=avatar_id)
     result_set = result_proxy.fetchall()
@@ -77,18 +79,18 @@ ORDER BY video.idx DESC LIMIT 1;
         
     elif api == "GPT-3":
         prompt = """Suggest five plausible questions.
-{}
-Q: {}
-A: {}
-Possible questions:
-"""
+                    {}
+                    Q: {}
+                    A: {}
+                    Possible questions:
+                """
         if len(result_set) == 0:
             prompt = prompt.format("", new_q, new_a)
         else:
             prompt = prompt.format(
-"""
-Q: {}
-A: {}""".format(result_set[0][0], result_set[0][1]),
+                                """
+                                Q: {}
+                                A: {}""".format(result_set[0][0], result_set[0][1]),
                 new_q, new_a)
 
     return prompt
@@ -148,17 +150,17 @@ def generateNextQ(api=API):
 
     print("Received body", body)
     #### Delete after integration with backend ##############
-    text=body['qa_pair']  
-    new_q, new_a = nltk.tokenize.sent_tokenize(text)  
-    n_suggestions = 5
-    avatar_id = 1
+    # text=body['qa_pair']
+    # new_q, new_a = nltk.tokenize.sent_tokenize(text)
+    # n_suggestions = 5
+    # avatar_id = 1
     #########################################################
 
     #### Uncomment after integration with backend ####
-    # new_q = body['new_q']  
-    # new_a = body['new_a']  
-    # n_suggestions = body['n_suggestions']  
-    # avatar_id = body['avatar_id']  
+    new_q = body['new_q']
+    new_a = body['new_a']
+    n_suggestions = body['n_suggestions']
+    avatar_id = body['avatar_id']
     ##################################################
     callback_url = None
     if 'callback_url' in body:
@@ -178,7 +180,7 @@ def generateNextQ(api=API):
         #all generated examples 
         allGenerations = ""
         for i in range(n_suggestions):
-            allGenerations = allGenerations + " " + q[i]['generated_text'][len(text) - 4:]
+            allGenerations = allGenerations + " " + q[i]['generated_text'][len(prompt) - 4:]
 
         #Separating all the sentences... 
         sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
@@ -211,8 +213,11 @@ def generateNextQ(api=API):
         )
         
         generation = response.choices[0]['text']
-        # remove new lines, numbered lists, or - lists.
-        generation = re.sub(r'\n+[0-9]+.|\n+[0-9]+)|\n+-|\n+ -|\n\n', "", generation)
+        # numbered lists, or - lists.
+        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-)", re.MULTILINE)
+        generation = re.sub(reg, "", generation)
+        # remove new line
+        generation = generation.replace('\n', ' ').replace('\r', '').strip()
         # split sentences into list
         suggestions = nltk.tokenize.sent_tokenize(generation)
         # strip trailing white spaces
@@ -221,8 +226,13 @@ def generateNextQ(api=API):
     print(prompt)
     print(suggestions)
     
-    ### Uncomment after integration with backend ###
-    # return suggestions
+    if callback_url is not None:
+        for suggestion in suggestions:
+            try:
+                requests.post(callback_url, json={"q": suggestion})
+            except:
+                logging.error("Error when sending suggestions to server. Is the server running?")
+    else:
+        logging.warning("No callback_url provided!")
 
-    ### Delete after integration
-    return suggestions[0]
+    return {"suggestions":json.dumps(suggestions)}
