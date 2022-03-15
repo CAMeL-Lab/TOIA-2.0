@@ -28,6 +28,11 @@ services:
     build: server/q_api
     ports:
       - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - ./.env
 
   toia-dm:
     build: server/toia-dm

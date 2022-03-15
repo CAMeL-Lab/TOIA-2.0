@@ -34,6 +34,10 @@ jupyterlab = "*"
 sqlalchemy = "*"
 mysql = "*"
 pymysql = "*"
+install = "*"
+openai = "*"
+python-dotenv = "*"
+cloud-sql-python-connector = "*"
 
 [dev-packages]
 ipywidgets = "*"
