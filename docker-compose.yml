@@ -30,6 +30,11 @@ services:
       - "5000:5000"
     environment:
       - ENVIRONMENT=production
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - ./.env
 
   toia-dm:
     build: server/toia-dm

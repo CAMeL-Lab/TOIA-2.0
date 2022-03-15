@@ -18,7 +18,6 @@ SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(
 
 ENGINE = db.create_engine(SQL_URL)
 
-CONNECTION = ENGINE.connect()
 METADATA = db.MetaData()
 VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
 
@@ -52,6 +51,7 @@ def dialogue_manager(payload: DMpayload):
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND videos_questions_streams.type NOT IN ('filler', 'exit');""")
 
+    CONNECTION = ENGINE.connect()
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
     result_set = result_proxy.fetchall()
 
