@@ -8,4 +8,4 @@ process.env['GOOGLE_CLOUD_STORE_CREDENTIALS'] = path.join(__dirname, process.env
 const httpServer = require('./server');
 const port = process.env.EXPRESS_PORT || null;
 if (!port) throw "EXPRESS_PORT env variable not set!";
-const server = httpServer.listen(port, () => console.log('Server is listening on port ' + port));
+const server = httpServer.listen(port, () => console.log('Server is listening on port ' + port + " || Environment = " + process.env.ENVIRONMENT));
