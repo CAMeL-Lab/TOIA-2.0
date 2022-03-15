@@ -1,6 +1,5 @@
 import requests
 from flask import Flask, request, render_template, url_for
-import os
 import argparse
 import random
 import os
@@ -13,14 +12,22 @@ import nltk
 from nltk import tokenize
 import ssl
 import torch
+import sqlalchemy as db
+from sqlalchemy.sql import text as QueryText
+from dotenv import load_dotenv
+import openai
+import logging
+load_dotenv()
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
 
 #Local storage of the conversation data - will be deprecated once the database is in place
-storage = []
+SQL_URL = "{dbconnection}+pymysql://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"), dbusername=os.environ.get("DB_USERNAME"), dbpassword=os.environ.get("DB_PASSWORD"), dbhost=os.environ.get("DB_HOST"), dbname=os.environ.get("DB_DATABASE"))
 
-starters = ["What topics would you like to talk about?", "What are your hobbies?", "Where did you study?"]
+ENGINE = db.create_engine(SQL_URL)
+
+print("Connected successfully!")
 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -39,12 +46,56 @@ app = Flask(__name__)
 
 generator = pipeline('text-generation', model='gpt2')
 
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+
 Service_Active = True
+API = "GPT-3"
 
-@app.route('/')
-def show_page():
-    return render_template("index.html")
+def generate_prompt(new_q, new_a, avatar_id, api):
+    
+    statement = QueryText("""
+                            SELECT questions.question, video.answer AS latest_question_answer 
+                            FROM video
+                            INNER JOIN videos_questions_streams
+                            ON videos_questions_streams.id_video = video.id_video
+                            INNER JOIN questions
+                            ON questions.id = videos_questions_streams.id_question
+                            WHERE toia_id = :avatar_id 
+                            AND questions.trigger_suggester = 1
+                            ORDER BY video.idx DESC LIMIT 1;
+                """)
 
+    CONNECTION = ENGINE.connect()  #Need to refresh connection
+    result_proxy = CONNECTION.execute(statement, avatar_id=avatar_id)
+    result_set = result_proxy.fetchall()
+    
+    if api == "GPT-2":      
+        prompt = new_q + " " + new_a
+        if len(result_set) > 0:
+            prompt = """{} {} {}""".format(
+                result_set[0][0],
+                result_set[0][1],
+                prompt)
+        
+    elif api == "GPT-3":
+        prompt = """Suggest five plausible questions.
+                    {}
+                    Q: {}
+                    A: {}
+                    Possible questions:
+                """
+        if len(result_set) == 0:
+            prompt = prompt.format("", new_q, new_a)
+        else:
+            prompt = prompt.format(
+                                """
+                                Q: {}
+                                A: {}""".format(result_set[0][0], result_set[0][1]),
+                new_q, new_a)
+
+    return prompt
+
+    
 @app.route('/getTrial')
 def hello():
     return "Successful getTrial"
@@ -53,12 +104,6 @@ def hello():
 def test():
     data = request.data
     return ("Success you sent me: ", data)
-
-@app.route('/getMandatoryQuestions')
-def return3Questions():
-    return {"mandatoryQuestions": ["How are you?", "What is your name?", "Where are you from?"]}
-
-    #add priority, add label?
 
 @app.route('/activate')
 def activate_service():
@@ -79,42 +124,68 @@ def service_status():
     else:
         return "Service is not active"
 
+@app.route('/useGPT2')
+def activate_gpt2():
+    global API
+    API = "GPT-2"
+    return "Using GPT-2 API."
+
+@app.route('/useGPT3')
+def activate_gpt3():
+    global API
+    API = "GPT-3"
+    return "Using GPT-3 API."
+
+@app.route('/generationAPI')
+def api_status():
+    return "Generator is using {} API.".format(API)
+
 @app.route('/generateNextQ',  methods = ['POST'])
-def generateNextQ():
+def generateNextQ(api=API):
     if not Service_Active:
         return {"error":"Inactive"}
-    # UNCOMMENT AFTER INTEGRATION WITH BACKEND
 
     body_unicode = request.data.decode('utf-8')
     body = json.loads(body_unicode)
 
     print("Received body", body)
-    text=body['qa_pair']
+    #### Delete after integration with backend ##############
+    # text=body['qa_pair']
+    # new_q, new_a = nltk.tokenize.sent_tokenize(text)
+    # n_suggestions = 5
+    # avatar_id = 1
+    #########################################################
+
+    #### Uncomment after integration with backend ####
+    new_q = body['new_q']
+    new_a = body['new_a']
+    n_suggestions = body['n_suggestions']
+    avatar_id = body['avatar_id']
+    ##################################################
     callback_url = None
     if 'callback_url' in body:
         callback_url = body['callback_url']
 
-    storage.append(text)
+    prompt = generate_prompt(
+        new_q=new_q, 
+        new_a=new_a, 
+        avatar_id=avatar_id,
+        api=API)
+    
+    if api == "GPT-2":
+        q = generator(prompt, 
+                  num_return_sequences=n_suggestions, 
+                  max_length=50 + len(prompt))
 
-    question = ''
-    if len(starters) > 0:
-        print("SENDING STARTER")
-        questions = [starters.pop()]
-
-    else:
-
-        text = " ".join(storage[-2:])
-        q = generator(text, num_return_sequences=3,max_length=50+len(text))
-
-        #all generated examples
+        #all generated examples 
         allGenerations = ""
-        for i in range(3):
-            allGenerations = allGenerations +" "+ q[i]['generated_text'][len(text)-4:]
+        for i in range(n_suggestions):
+            allGenerations = allGenerations + " " + q[i]['generated_text'][len(prompt) - 4:]
 
-        #Separating all the sentences...
+        #Separating all the sentences... 
         sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
 
-        #Filter out questions
+        #Filter out questions 
         questionsList = []
         for sentence in sentenceList :
             if "?" in sentence:
@@ -128,39 +199,40 @@ def generateNextQ():
             logits = outputs.logits
             bert_filtered_qs.append((logits[0,0].item(), sentence))
 
-        # Sort by decending score
         bert_filtered_qs.sort(key=lambda tup: tup[0], reverse=True)
-
-
-        print(bert_filtered_qs)
-
-        # Set the number of suggestions as minimum between all available and 5. Output max 5 suggestions.
-        # but we may have 1-2 duplicates (hence I put 7)
-        no_suggestions = min(len(bert_filtered_qs) - 1, 7)
-        # TODO: Fix issue -> List index out of range  #Note this happens when there are no suggestions.
-        try:
-            questions = [
-                bert_filtered_qs[i][1] \
-                    for i in range(no_suggestions - 1) \
-                        if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1] \
-                        ]
-        except:
-            print(bert_filtered_qs)
-            questions = []
+        # Update number of suggestions in case there are less than n_suggestion questions identified
+        n_suggestions = min(len(bert_filtered_qs) - 1, n_suggestions)
+        suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
+        
+    elif api == "GPT-3":      
+        response = openai.Completion.create(
+            engine="text-davinci-001",
+            prompt=prompt,
+            temperature=0.7,
+            max_tokens=250
+        )
+        
+        generation = response.choices[0]['text']
+        # numbered lists, or - lists.
+        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-)", re.MULTILINE)
+        generation = re.sub(reg, "", generation)
+        # remove new line
+        generation = generation.replace('\n', ' ').replace('\r', '').strip()
+        # split sentences into list
+        suggestions = nltk.tokenize.sent_tokenize(generation)
+        # strip trailing white spaces
+        suggestions = [suggestion.strip() for suggestion in suggestions]
+        
+    print(prompt)
+    print(suggestions)
+    
     if callback_url is not None:
-        try:
-            requests.post(callback_url, json={"q": questions})
-        except:
-            print("Error when sending suggestions to server. Is the server running?")
-    
-    print(storage)
-    
-    return {"q": questions[0]}  #For now, it only gives the top-1 suggestion.
-                                #Remove [0] when server is updated to process the list.
+        for suggestion in suggestions:
+            try:
+                requests.post(callback_url, json={"q": suggestion})
+            except:
+                logging.error("Error when sending suggestions to server. Is the server running?")
+    else:
+        logging.warning("No callback_url provided!")
 
-
-
-
-
-
-
+    return {"suggestions":json.dumps(suggestions)}
