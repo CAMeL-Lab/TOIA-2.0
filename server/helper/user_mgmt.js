@@ -81,6 +81,26 @@ async function linkSuggestedQuestionUser(userId, quesId, isPending = 1) {
     }));
 }
 
+const searchSuggestion = (question, user_id) => {
+    return new Promise((resolve) => {
+        let query = `SELECT id_question FROM question_suggestions WHERE id_question in (SELECT id FROM questions WHERE question = ?) AND toia_id = ?`;
+        connection.query(query, [question, user_id], (err, entries) => {
+            if (err) throw err;
+            resolve(entries);
+        })
+    })
+}
+
+const searchRecorded = (question, user_id) => {
+    return new Promise((resolve => {
+        let query = `SELECT id_question FROM videos_questions_streams WHERE id_question in (SELECT id FROM questions WHERE question = ?) AND id_video in (SELECT id_video FROM video WHERE toia_id = ?)`;
+        connection.query(query, [question, user_id], (err, entries) => {
+            if (err) throw err;
+            resolve(entries);
+        })
+    }))
+}
+
 const saveSuggestedQuestion = async function (userId, question, suggested_type = 'answer', priority = 100) {
     let quesId = await addQuestion(question, suggested_type, 0, priority, 1);
     return new Promise((resolve, reject) => {
@@ -90,16 +110,6 @@ const saveSuggestedQuestion = async function (userId, question, suggested_type =
             reject();
         })
     })
-}
-
-module.exports.videoGetAllQuestions = function (videoId) {
-    return new Promise(((resolve) => {
-        let query = `SELECT questions.* FROM questions INNER JOIN videos_questions ON questions.id = videos_questions.id_question WHERE videos_questions.id_video = ?`;
-        connection.query(query, [videoId], (err, result) => {
-            if (err) throw err;
-            resolve(result);
-        });
-    }))
 }
 
 function isSuggestedQuestion(quesId, userId) {
@@ -381,3 +391,5 @@ module.exports.getQuestionValue = getQuestionValue;
 module.exports.getStreamTotalVideosCount = getStreamTotalVideosCount;
 module.exports.getUserTotalVideosCount = getUserTotalVideosCount;
 module.exports.getUserTotalVideoDuration = getUserTotalVideoDuration;
+module.exports.searchSuggestion = searchSuggestion;
+module.exports.searchRecorded = searchRecorded;

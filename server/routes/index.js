@@ -18,7 +18,8 @@ const {
     isValidUser,
     saveSuggestedQuestion,
     updateSuggestedQuestion,
-    getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration
+    getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
+    searchSuggestion
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -31,6 +32,7 @@ const {Buffer} = require("buffer");
 const {TrackRecordVideo, TrackEditVideo} = require("../tracker/tracker");
 const {Storage} = require("@google-cloud/storage");
 const path = require("path");
+const mv = require('mv');
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -95,7 +97,7 @@ router.post('/createTOIA', cors(), async (req, res) => {
                                 let dest = `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/`;
                                 let destFileName = `All_${stream_entry.insertId}.jpg`;
                                 mkdirp(dest).then(() => {
-                                    fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                                    mv(file.blob[0].path, dest + destFileName, (error) => {
                                         if (error) throw error;
                                         resolve();
                                     });
@@ -456,7 +458,7 @@ router.post('/createNewStream', cors(), (req, res) => {
                     let dest = `Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/`;
                     let destFileName = `${fields.newStreamName[0]}_${entry.insertId}.jpg`;
                     mkdirp(dest).then(() => {
-                        fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                        mv(file.blob[0].path, dest + destFileName, (error) => {
                             if (error) {
                                 console.log(error);
                             }
@@ -789,7 +791,7 @@ router.post('/recorder', cors(), async (req, res) => {
                     let dest = `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/`;
                     let destFileName = videoID;
                     mkdirp(dest).then(() => {
-                        fs.rename(file.blob[0].path, dest + destFileName, (error) => {
+                        mv(file.blob[0].path, dest + destFileName, (error) => {
                             if (error) {
                                 console.log(error);
                             }
@@ -838,13 +840,32 @@ router.post('/recorder', cors(), async (req, res) => {
 
                             //Generate suggested questions
                             if (await shouldTriggerSuggester(q_id) && !isEditing(req)) {
-                                axios.post(`${process.env.Q_API_ROUTE}`, {
-                                    qa_pair: q.question + " " + answer,
-                                    callback_url: req.protocol + '://' + req.get('host') + "/saveSuggestedQuestion/" + fields.id[0]
-                                }).catch(function (error) {
+                                const options = {
+                                    method: 'POST',
+                                    url: process.env.Q_API_ROUTE,
+                                    headers: {'Content-Type': 'application/json'},
+                                    data: {
+                                        new_q: q.question,
+                                        new_a: answer,
+                                        n_suggestions: 5,
+                                        avatar_id: fields.id[0],
+                                        callback_url: req.protocol + '://' + req.get('host') + "/api/saveSuggestedQuestion/" + fields.id[0]
+                                    }
+                                };
+
+                                axios.request(options).catch(function (error) {
                                     console.log("=============== Error with Q_API ============")
                                     console.log(error);
                                 });
+
+
+                                // axios.post(`${process.env.Q_API_ROUTE}`, {
+                                //     qa_pair: q.question + " " + q.question,
+                                //     callback_url: req.protocol + '://' + req.get('host') + "/api/saveSuggestedQuestion/" + fields.id[0]
+                                // }).catch(function (error) {
+                                //     console.log("=============== Error with Q_API ============")
+                                //     console.log(error);
+                                // });
                             }
                         }
 
@@ -929,17 +950,34 @@ router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
 });
 
 router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
+    console.log("request received!");
     const user_id = req.params.user_id;
     isValidUser(user_id).then((success) => {
         if (req.body.q === undefined || typeof req.body.q !== "string" || req.body.q.trim().length <= 1) {
             res.sendStatus(400);
             return;
         }
-        saveSuggestedQuestion(user_id, req.body.q).then(() => {
-            res.sendStatus(200);
-        }, () => {
-            res.sendStatus(500);
+
+        searchRecorded(req.body.q, user_id).then((entries) => {
+            if (entries.length === 0){
+                searchSuggestion(req.body.q, user_id).then((entries) => {
+                    if (entries.length === 0){
+                        saveSuggestedQuestion(user_id, req.body.q).then(() => {
+                            res.sendStatus(200);
+                        }, () => {
+                            res.sendStatus(500);
+                        })
+                    } else {
+                        console.log("Suggestion already exists!");
+                        res.sendStatus(200);
+                    }
+                })
+            } else {
+                console.log("Question already recorded!");
+                res.sendStatus(200);
+            }
         })
+
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);

@@ -29,7 +29,10 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - ENVIRONMENT=production
+      - ENVIRONMENT=development
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./server/q_api:/app
     depends_on:
       mysql:
         condition: service_healthy
@@ -40,11 +43,11 @@ services:
     build: server/toia-dm
     ports:
       - ${DM_PORT}:${DM_PORT}
+    volumes:
+      - ./server/toia-dm:/app
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      - ENVIRONMENT=production
     env_file:
       - ./.env
 
@@ -54,16 +57,33 @@ services:
         condition: service_healthy
     build:
       context: ./
-      dockerfile: server/Dockerfile.prod
+      dockerfile: server/Dockerfile.dev
     restart: on-failure
     ports:
       - ${EXPRESS_PORT}:${EXPRESS_PORT}
     environment:
-      - ENVIRONMENT=production
+      - PORT=3001
+      - ENVIRONMENT=development
     container_name: express-api
+    volumes:
+      - ./server:/app/
+      - /app/node_modules
     env_file:
       - ./.env
       - ./server/.env
+
+  react-ui:
+    depends_on:
+      - mysql
+    build: interface
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./interface:/app
+      - /app/node_modules
+    env_file:
+      - ./.env
+      - ./interface/.env
 
 volumes:
   mysql-vol:

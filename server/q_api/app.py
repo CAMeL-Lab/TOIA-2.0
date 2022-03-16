@@ -194,7 +194,7 @@ def generateNextQ(api=API):
         #Bert evaluation
         bert_filtered_qs = []
         for sentence in questionsList:
-            encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A]
+            encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A] using storage[-3:]
             outputs = model(**encoding)
             logits = outputs.logits
             bert_filtered_qs.append((logits[0,0].item(), sentence))
@@ -213,19 +213,39 @@ def generateNextQ(api=API):
         )
         
         generation = response.choices[0]['text']
-        # numbered lists, or - lists.
-        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-)", re.MULTILINE)
-        generation = re.sub(reg, "", generation)
-        # remove new line
-        generation = generation.replace('\n', ' ').replace('\r', '').strip()
         # split sentences into list
         suggestions = nltk.tokenize.sent_tokenize(generation)
+
+        # Filter suggestions
+        suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
+        # Remove suggestions starting with "A:"
+        suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
+
+        # numbered lists, or - lists.
+        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
+
+        suggestions = list(map(lambda suggestion: re.sub(reg, "", suggestion), suggestions))
+
+#         # remove new line
+#         generation = generation.replace('\n', ' ').replace('\r', '').strip()
+
+#         # Remove - if any
+#         def removeHyphen(suggestion):
+#             if suggestion[:1] == '-':
+#                 return suggestion[1:len(suggestion)]
+#             else:
+#                 return suggestion
+#         suggestions = list(map(removeHyphen, suggestions))
+
         # strip trailing white spaces
         suggestions = [suggestion.strip() for suggestion in suggestions]
-        
+
     print(prompt)
-    print(suggestions)
-    
+    if len(suggestions):
+        print(suggestions)
+    else:
+        logging.warning("No suggestions!")
+
     if callback_url is not None:
         for suggestion in suggestions:
             try:

@@ -14,5 +14,3 @@ server/q_api/notebooks/.ipynb_checkpoints
 .env
 interface/.env
 server/toia-dm/.env
-
-.idea
