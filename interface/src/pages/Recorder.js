@@ -9,6 +9,8 @@ import {default as EditCreateMultiSelect} from "editable-creatable-multiselect";
 import Switch from "react-switch";
 import {RecordAVideoCard, OnBoardingQCard} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
+import RecordButton from '../icons/record1.png';
+import RecordingGif from '../icons/recording51.gif';
 import videoTypesJSON from '../configs/VideoTypes.json';
 import io from 'socket.io-client';
 import speechToTextUtils from "../transcription_utils";
@@ -399,15 +401,19 @@ function Recorder() {
 
       function handleDataReceived(data) {
           //setTranscribedAudio(oldData => [...oldData, data])
-          setTranscribedAudio(input.current + " " + data);
-          if(data){
-            
-            input.current += (" " + data);
+          //setTranscribedAudio(input.current + " " + data);
+
+          setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
+
+          let isFinal = undefined || data.isFinal
+
+          if(data && isFinal){
+            setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
+
+            input.current += (" " + data.alternatives[0].transcript);
             //setTranscribedAudio(input.current);
           }
           
-          console.log("data in recorder: ", data)
-          console.log("data in tA: ", transcribedAudio);
       }
 
 
@@ -964,12 +970,25 @@ function Recorder() {
                             {capturing ? (
                                 <button className="icon tooltip videoControlButtons" onClick={handleStopCaptureClick}
                                         data-tooltip="Stop Recording">
-                                    <i className="fa fa-stop"/>
+                                    {/* <i className="fa fa-stop"/> */}
+                                    {/* <i class="huge icons"> */}
+                                    {/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
+                                    {/* <i aria-hidden="true" class="red stop icon"></i> */}
+                                    {/* </i> */}
+
+                                    {/* stop */}
+                                    {/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
+
+                                    <img src={RecordingGif} width={38.5} height={38.5} alt="record button" />
+                                    
+                                    {/* <i className="fa-solid fa-circle-stop"></i> */}
+                                    {/* <div ><i aria-hidden="true" className="primary stop circle outline"/></div> */}
                                 </button>
                             ) : (
                                 <button className="icon tooltip videoControlButtons cursor-pointer"
                                         onClick={handleStartCaptureClick} data-tooltip="Start Recording">
-                                    <i className="fa fa-video-camera"/>
+                                    {/* <i className="fa fa-video-camera"/> */}
+                                    <img src={RecordButton} width={38.5} height={38.5} alt="record button" />
                                 </button>
                             )}
 

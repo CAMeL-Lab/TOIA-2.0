@@ -150,7 +150,8 @@ io.on('connect', function (socket) {
                 );
 
                 //socket.emit('transcript', data.results[0].alternatives[0].transcript);
-                onResponse(data.results[0].alternatives[0].transcript)
+                // onResponse(data.results[0].alternatives[0].transcript)
+                onResponse(data.results[0])
 
                 // if end of utterance, let's restart stream
                 if (data.results[0] && data.results[0].isFinal) {
