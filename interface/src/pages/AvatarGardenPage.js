@@ -716,6 +716,11 @@ function AvatarGardenPage() {
     function album_page() {
         history.push({
             pathname: '/stream',
+            state: {
+                toiaName,
+                toiaLanguage,
+                toiaID
+            }
         });
     }
 

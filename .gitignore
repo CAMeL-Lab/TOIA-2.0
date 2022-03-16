@@ -13,6 +13,4 @@ server/package-lock.json
 server/q_api/notebooks/.ipynb_checkpoints
 .env
 interface/.env
-
-
-.idea
+server/toia-dm/.env
