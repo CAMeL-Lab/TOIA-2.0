@@ -194,7 +194,7 @@ def generateNextQ(api=API):
         #Bert evaluation
         bert_filtered_qs = []
         for sentence in questionsList:
-            encoding = tokenizer(" ".join(storage[-3:]), sentence, return_tensors='pt')
+            encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A]
             outputs = model(**encoding)
             logits = outputs.logits
             bert_filtered_qs.append((logits[0,0].item(), sentence))
@@ -235,4 +235,4 @@ def generateNextQ(api=API):
     else:
         logging.warning("No callback_url provided!")
 
-    return {"suggestions":json.dumps(suggestions)}
+    return {"suggestions": json.dumps(suggestions)}
