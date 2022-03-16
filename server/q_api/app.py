@@ -214,18 +214,33 @@ def generateNextQ(api=API):
         
         generation = response.choices[0]['text']
         # numbered lists, or - lists.
-        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-)", re.MULTILINE)
+        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
         generation = re.sub(reg, "", generation)
         # remove new line
         generation = generation.replace('\n', ' ').replace('\r', '').strip()
         # split sentences into list
         suggestions = nltk.tokenize.sent_tokenize(generation)
+
+        # Remove suggestions with "A:"
+        suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
+
+        # Remove - if any
+        def removeHyphen(suggestion):
+            if suggestion[:1] == '-':
+                return suggestion[1:len(suggestion)]
+            else:
+                return suggestion
+        suggestions = list(map(removeHyphen, suggestions))
+
         # strip trailing white spaces
         suggestions = [suggestion.strip() for suggestion in suggestions]
-        
+
     print(prompt)
-    print(suggestions)
-    
+    if len(suggestions):
+        print(suggestions)
+    else:
+        logging.warning("No suggestions!")
+
     if callback_url is not None:
         for suggestion in suggestions:
             try:
