@@ -213,24 +213,29 @@ def generateNextQ(api=API):
         )
         
         generation = response.choices[0]['text']
-        # numbered lists, or - lists.
-        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
-        generation = re.sub(reg, "", generation)
-        # remove new line
-        generation = generation.replace('\n', ' ').replace('\r', '').strip()
         # split sentences into list
         suggestions = nltk.tokenize.sent_tokenize(generation)
 
-        # Remove suggestions with "A:"
+        # Filter suggestions
+        suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
+        # Remove suggestions starting with "A:"
         suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
 
-        # Remove - if any
-        def removeHyphen(suggestion):
-            if suggestion[:1] == '-':
-                return suggestion[1:len(suggestion)]
-            else:
-                return suggestion
-        suggestions = list(map(removeHyphen, suggestions))
+        # numbered lists, or - lists.
+        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
+
+        suggestions = list(map(lambda suggestion: re.sub(reg, "", suggestion), suggestions))
+
+#         # remove new line
+#         generation = generation.replace('\n', ' ').replace('\r', '').strip()
+
+#         # Remove - if any
+#         def removeHyphen(suggestion):
+#             if suggestion[:1] == '-':
+#                 return suggestion[1:len(suggestion)]
+#             else:
+#                 return suggestion
+#         suggestions = list(map(removeHyphen, suggestions))
 
         # strip trailing white spaces
         suggestions = [suggestion.strip() for suggestion in suggestions]
