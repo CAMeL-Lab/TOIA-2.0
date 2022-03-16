@@ -1,4 +1,5 @@
 const connection = require('../configs/db-connection');
+const {isValidUser} = require("../helper/user_mgmt");
 const tableName = 'tracker';
 
 const Inactivity_Min_Length_Milliseconds = 120000;
@@ -84,33 +85,38 @@ const Ping = (user_id) => {
     let currentTimestamp = +new Date();
 
     return new Promise((resolve) => {
-        getLastActivityEndTime(user_id, Activity.Login).then((result) => {
-            if (result === -1) {
-                // First login
-                console.log("Tracker: First Login!");
-                RegisterLogin(user_id).then(track_id => {
-                    resolve(track_id);
-                })
-            } else {
-                // Not first login. Check inactivity duration
-                const last_end_time = result.end_time;
-                const track_id = result.track_id;
-                let diff = new Date(currentTimestamp) - new Date(last_end_time);
-                if (diff <= Inactivity_Min_Length_Milliseconds) {
-                    // Active
-                    let query = `UPDATE tracker SET end_time = ? WHERE track_id = ?`;
-                    connection.query(query, [currentTimestamp, track_id], (err, result) => {
-                        if (err) throw err;
-                        resolve(track_id)
-                    })
-                } else {
-                    // Inactive
-                    console.log("Tracker: New Login!");
+        isValidUser(user_id).then(() => {
+            getLastActivityEndTime(user_id, Activity.Login).then((result) => {
+                if (result === -1) {
+                    // First login
+                    console.log("Tracker: First Login!");
                     RegisterLogin(user_id).then(track_id => {
                         resolve(track_id);
                     })
+                } else {
+                    // Not first login. Check inactivity duration
+                    const last_end_time = result.end_time;
+                    const track_id = result.track_id;
+                    let diff = new Date(currentTimestamp) - new Date(last_end_time);
+                    if (diff <= Inactivity_Min_Length_Milliseconds) {
+                        // Active
+                        let query = `UPDATE tracker SET end_time = ? WHERE track_id = ?`;
+                        connection.query(query, [currentTimestamp, track_id], (err, result) => {
+                            if (err) throw err;
+                            resolve(track_id)
+                        })
+                    } else {
+                        // Inactive
+                        console.log("Tracker: New Login!");
+                        RegisterLogin(user_id).then(track_id => {
+                            resolve(track_id);
+                        })
+                    }
                 }
-            }
+            })
+        }).catch((reject) => {
+            if (reject === false) console.log("Activity tracker: user doesn't exist!");
+            resolve();
         })
     })
 }
