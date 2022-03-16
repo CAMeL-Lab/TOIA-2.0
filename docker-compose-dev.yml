@@ -30,6 +30,9 @@ services:
       - "5000:5000"
     environment:
       - ENVIRONMENT=development
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./server/q_api:/app
     depends_on:
       mysql:
         condition: service_healthy
