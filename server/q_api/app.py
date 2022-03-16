@@ -62,7 +62,7 @@ def generate_prompt(new_q, new_a, avatar_id, api):
                             ON questions.id = videos_questions_streams.id_question
                             WHERE toia_id = :avatar_id 
                             AND questions.trigger_suggester = 1
-                            ORDER BY video.idx DESC LIMIT 1;
+                            ORDER BY video.idx DESC LIMIT 2;
                 """)
 
     CONNECTION = ENGINE.connect()  #Need to refresh connection
@@ -71,26 +71,25 @@ def generate_prompt(new_q, new_a, avatar_id, api):
     
     if api == "GPT-2":      
         prompt = new_q + " " + new_a
-        if len(result_set) > 0:
+        if len(result_set) > 1:
             prompt = """{} {} {}""".format(
-                result_set[0][0],
-                result_set[0][1],
+                result_set[1][0],
+                result_set[1][1],
                 prompt)
         
     elif api == "GPT-3":
-        prompt = """Suggest five plausible questions.
-                    {}
-                    Q: {}
-                    A: {}
-                    Possible questions:
-                """
-        if len(result_set) == 0:
+        prompt = """
+Suggest five plausible questions for following up the conversation.
+{}
+Q: {}
+A: {}
+Possible questions:"""
+        if len(result_set) <= 1:
             prompt = prompt.format("", new_q, new_a)
         else:
-            prompt = prompt.format(
-                                """
-                                Q: {}
-                                A: {}""".format(result_set[0][0], result_set[0][1]),
+            prompt = prompt.format("""
+Q: {}
+A: {}""".format(result_set[1][0], result_set[1][1]),
                 new_q, new_a)
 
     return prompt
