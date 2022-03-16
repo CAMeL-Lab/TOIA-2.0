@@ -194,7 +194,7 @@ def generateNextQ(api=API):
         #Bert evaluation
         bert_filtered_qs = []
         for sentence in questionsList:
-            encoding = tokenizer(" ".join([new_q, new_a]]), sentence, return_tensors='pt')  #previously using storage[-3:] so it was A-Q-A
+            encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #previously using storage[-3:] so it was A-Q-A
             outputs = model(**encoding)
             logits = outputs.logits
             bert_filtered_qs.append((logits[0,0].item(), sentence))
