@@ -45,7 +45,7 @@ def dialogue_manager(payload: DMpayload):
     print(avatar_id)
     print(stream_id)
 
-    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.* FROM video
+    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND videos_questions_streams.type NOT IN ('filler', 'exit');""")
