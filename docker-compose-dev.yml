@@ -85,5 +85,21 @@ services:
       - ./.env
       - ./interface/.env
 
+  metabase-sql-wrapper:
+    build:
+      context: ./metabase
+      dockerfile: ./Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./metabase/data:/data
+    environment:
+      MB_DB_FILE: /data/metabase
+      MB_DB_INIT_SQL_FILE: /data/metabase.db.sql
+      MB_DB_SAVE_TO_SQL_FILE: /data/metabase.db.sql
+
 volumes:
   mysql-vol:
