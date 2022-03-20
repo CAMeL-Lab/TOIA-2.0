@@ -7,7 +7,7 @@ import {Button, Image, Modal, Popup, TextArea, Icon} from 'semantic-ui-react';
 import {Multiselect} from 'multiselect-react-dropdown';
 import {default as EditCreateMultiSelect} from "editable-creatable-multiselect";
 import Switch from "react-switch";
-import {RecordAVideoCard, OnBoardingQCard} from './AvatarGardenPage';
+import {RecordAVideoCard, OnBoardingQCard, SuggestedQCard, SuggestedQCardNoAction} from './AvatarGardenPage';
 import CheckMarkIcon from '../icons/check-mark-success1.webp';
 import RecordButton from '../icons/record1.png';
 import RecordingGif from '../icons/recording51.gif';
@@ -32,6 +32,11 @@ function ModalQSuggestion(props) {
     const recordNewVideoDisabled = (!props.AllowAddingCustomVideo);
     const {ModalOnOpen, ModalOnClose, OnShowRecording, OnCardClickFunc, OnAddVideoCallback} = props;
 
+    const hasOnBoardingQs = () => {
+        const allQs = props.suggestedQuestions;
+        return allQs.filter(q => q.hasOwnProperty("onboarding") && q.onboarding === 1).length > 0;
+    }
+
     return (
         <Modal
             open={props.active}
@@ -52,9 +57,20 @@ function ModalQSuggestion(props) {
                             <div className="ui cards">
                                 <RecordAVideoCard onClick={OnAddVideoCallback} isDisabled={recordNewVideoDisabled}/>
                                 {suggestedQs.map((q, index) => {
-                                    return (<OnBoardingQCard data={q} onClick={(e) => {
-                                        OnCardClickFunc(e, q)
-                                    }} key={index}/>)
+                                    if (q.hasOwnProperty("onboarding") && q.onboarding === 1){
+                                        return (<OnBoardingQCard data={q} onClick={(e) => {
+                                            OnCardClickFunc(e, q)
+                                        }} key={index}/>)
+                                    } else {
+                                        return (
+                                            <SuggestedQCardNoAction data={q}
+                                                                    onClick={(e) => {
+                                                                        if (!hasOnBoardingQs())OnCardClickFunc(e, q);
+                                                                    }}
+                                                                    isDisabled={hasOnBoardingQs()}
+                                                                    key={index} />
+                                        )
+                                    }
                                 })}
                             </div>
                         </div>
@@ -649,17 +665,31 @@ function Recorder() {
     }
 
     function openSuggestion(e, card) {
-        history.push({
-            pathname: '/recorder?type=' + card.type,
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID,
-                suggestedQuestion: card.question,
-                id_question: card.id,
-                question_obj: card
-            }
-        });
+        if (card.id){
+            history.push({
+                pathname: '/recorder?type=' + card.type,
+                state: {
+                    toiaName,
+                    toiaLanguage,
+                    toiaID,
+                    suggestedQuestion: card.question,
+                    id_question: card.id,
+                    question_obj: card
+                }
+            });
+        } else {
+            history.push({
+                pathname: '/recorder?type=' + card.type,
+                state: {
+                    toiaName,
+                    toiaLanguage,
+                    toiaID,
+                    suggestedQuestion: card.question,
+                    id_question: card.id_question,
+                    question_obj: card
+                }
+            });
+        }
     }
 
     function navigateToHome() {
