@@ -104,6 +104,24 @@ export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) =>
     )
 }
 
+export const SuggestedQCardNoAction = ({data, onClick, isDisabled}) => {
+    return (
+        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+            <div className="ui grey card cursor-pointer" onClick={onClick}>
+                <div className="content">
+                    <div className="description three-line-ellipsis">
+                        {data.question}
+                    </div>
+                </div>
+                <div className="ui bottom attached button">
+                    <i className="add icon"/>
+                    Record
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
     return (
         <div>
