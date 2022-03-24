@@ -60,6 +60,7 @@ Making Changes Under Development Mode
 - Change the ENVIRONMENT variable in .env file to production
 
 
-
     docker-compose up
 
+
+Note: Make sure you have installed docker and the docker daemon is running.
