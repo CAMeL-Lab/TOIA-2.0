@@ -34,7 +34,7 @@ There are three `.env` files. One in the root directory, one in the `/interface`
     OPENAI_API_KEY=
 
 1. Set the password
-2. Place the gcloud credential files to their respective directory (see above).
+2. Place the gcloud credential files to their respective directories (see above).
 3. Set the value for `OPENAI_API_KEY `
 
 ### `.env` in interface
