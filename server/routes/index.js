@@ -848,7 +848,7 @@ router.post('/recorder', cors(), async (req, res) => {
                                     data: {
                                         new_q: q.question,
                                         new_a: answer,
-                                        n_suggestions: 5,
+                                        n_suggestions: 3,
                                         avatar_id: fields.id[0],
                                         callback_url: req.protocol + '://' + req.get('host') + "/api/saveSuggestedQuestion/" + fields.id[0]
                                     }

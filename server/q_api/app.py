@@ -240,6 +240,9 @@ def generateNextQ(api=API):
         # strip trailing white spaces
         suggestions = [suggestion.strip() for suggestion in suggestions]
 
+    if (n_suggestions and n_suggestions > 0 and len(suggestions) > n_suggestions):
+        suggestions = random.sample(suggestions, n_suggestions)
+
     print(prompt)
     if len(suggestions):
         print(suggestions)
