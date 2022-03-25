@@ -27,21 +27,27 @@ There are three `.env` files. One in the root directory, one in the `/interface`
     DB_USERNAME=root
     DB_PASSWORD=
     
-    GC_BUCKET=toia_store
+    GC_BUCKET=
     GOOGLE_SPEECH_API_CREDENTIALS_FILE=/speech_to_text/toia-capstone-2021-b944d1cc65aa.json
     GOOGLE_CLOUD_STORE_CREDENTIALS_FILE=/toia-capstone-2021-a17d9d7dd482.json
     
     OPENAI_API_KEY=
 
-1. Set the password
-2. Place the gcloud credential files to their respective directories (see above).
-3. Set the value for `OPENAI_API_KEY `
+1. Set the `DB_PASSWORD`
+2. Set the `GC_BUCKET` to the bucket-name
+3. Place the gcloud credential files to their respective directories:
+   1. place `toia-capstone-2021-b944d1cc65aa.json` to `TOIA-2.0/server/speech_to_text/`
+   2. place `toia-capstone-2021-a17d9d7dd482.json` to `TOIA-2.0/server/`
+   3. Do not change the locations defined in the `.env` file above as those are relative to `server/`
+4. Set the value for `OPENAI_API_KEY `
 
 ### `.env` in interface
 
     SKIP_PREFLIGHT_CHECK=true
 
 ### `.env` in server is empty. Feel free to add any variable specific to server
+
+Note: It's probably a good idea to place Google cloud related environment variables to `.env` in `server/` but it would require some changes to the code. I'll update the ReadMe file when I make this change.
 
 ## Running the app
 
