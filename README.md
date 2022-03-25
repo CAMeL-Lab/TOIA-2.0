@@ -45,6 +45,8 @@ There are three `.env` files. One in the root directory, one in the `/interface`
 
 ## Running the app
 
+Make sure you have installed docker and the docker daemon is running.
+
 #### Development mode
 
     docker-compose -f docker-compose-dev.yml up
@@ -54,13 +56,8 @@ Making Changes Under Development Mode
 - The docker-compose file is setup such that react and nodejs changes are reflected as soon as you change the files in `/interface` or `/server`
 - If you change anything inside `/server/q_api` or `/server/toia-dm`, you have to restart that particular container. 
 - By default, the files and database are persistent under development mode (Check volume mounts in `docker-compose-dev.yml`). If you wish to start a fresh environment, run `docker-compose down -v` to make sure all the volumes are purged when shutting down the containers. Then start the containers using the command above.
+- If the dialogue manager (toia-dm) shuts down when running in docker, change docker settings to allow more RAM (check [this](https://stackoverflow.com/questions/44533319/how-to-assign-more-memory-to-docker-container)). 
 
 #### Production mode
 
-- Change the ENVIRONMENT variable in .env file to production
-
-
-    docker-compose up
-
-
-Note: Make sure you have installed docker and the docker daemon is running.
+- Change the `ENVIRONMENT` variable in .env file to production and run `docker-compose up`
