@@ -1204,7 +1204,12 @@ function AvatarGardenPage() {
             </div>
 
             <div className="section2">
-                <input className="garden-search garden-search-text" type="text" placeholder="&#xF002;" onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/>
+                {/*<input className="garden-search garden-search-text" type="text" placeholder="&#xF002;" onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/>*/}
+
+                <div className="ui fluid icon input search-box-mytoia">
+                    <input type="text" placeholder="Search..." onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/>
+                    <i aria-hidden="true" className="search icon"/>
+                </div>
 
                 <div className="garden-grid">
                     <div className="cards-wrapper ui">
