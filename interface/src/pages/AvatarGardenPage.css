@@ -446,7 +446,7 @@
 .garden-search-text {
   /* font-style: italic; */
   font-weight: 300;
-  color: rgb(229,229,229);
+  color: #515151;
   font-family: "Montserrat-Medium", Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 300;
@@ -461,7 +461,7 @@
   display: inline-block !important;
   padding-left: 5px;
   padding-top: 2px;
-  color: black;
+  color: #636363;
 }
 .garden-search::-moz-placeholder {
   font-family: FontAwesome;
@@ -471,7 +471,7 @@
   display: inline-block !important;
   padding-left: 5px;
   padding-top: 2px;
-  color: black;
+  color: #636363;
 }
 .garden-search:-ms-input-placeholder {
   font-family: FontAwesome;
@@ -481,7 +481,7 @@
   display: inline-block !important;
   padding-left: 5px;
   padding-top: 2px;
-  color: black;
+  color: #636363;
 }
 
 /*Settings Popup Menu*/
@@ -1005,4 +1005,10 @@ box-shadow: 0 0 1px 3px rgb(229 229 229)
 .stats-label{
   font-size: 12px;
   line-height: 1;
+}
+
+.search-box-mytoia{
+  margin: 10px;
+  margin-left: 14px;
+  margin-right: 55px;
 }

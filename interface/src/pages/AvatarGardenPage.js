@@ -184,6 +184,8 @@ function AvatarGardenPage() {
 
     const [videosCount, setVideosCount] = useState(0);
     const [videosTotalDuration, setVideosTotalDuration] = useState(null);
+
+    const [searchTerm, setSearchTerm] = useState('');
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -552,6 +554,22 @@ function AvatarGardenPage() {
         }).catch(function (error) {
             console.error(error);
         });
+    }
+
+    const getFilteredSuggestionsList = () => {
+        const term = searchTerm.toLowerCase();
+        if (term.trim().length > 0){
+            return suggestedQsList.filter((q) => q.question.toLowerCase().search(term) > -1)
+        }
+        return suggestedQsList;
+    }
+
+    const getFilteredRecordedQsList = () => {
+        const term = searchTerm.toLowerCase();
+        if (term.trim().length > 0){
+            return recordedQsList.filter((q) => q.question.toLowerCase().search(term) > -1)
+        }
+        return recordedQsList;
     }
 
     var settingData = [
@@ -1186,7 +1204,12 @@ function AvatarGardenPage() {
             </div>
 
             <div className="section2">
-                <input className="garden-search garden-search-text" type="text" placeholder="&#xF002;"/>
+                {/*<input className="garden-search garden-search-text" type="text" placeholder="&#xF002;" onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/>*/}
+
+                <div className="ui fluid icon input search-box-mytoia">
+                    <input type="text" placeholder="Search..." onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/>
+                    <i aria-hidden="true" className="search icon"/>
+                </div>
 
                 <div className="garden-grid">
                     <div className="cards-wrapper ui">
@@ -1203,7 +1226,7 @@ function AvatarGardenPage() {
                                 )
                             })}
 
-                            {suggestedQsList.map((q, index) => {
+                            {getFilteredSuggestionsList().slice(0,5).map((q, index) => {
                                 return (
                                     <SuggestedQCard data={q}
                                                     onClick={(e) => {
@@ -1222,7 +1245,7 @@ function AvatarGardenPage() {
                                 )
                             })}
 
-                            {recordedQsList.map((q, index) => {
+                            {getFilteredRecordedQsList().slice(0,10).map((q, index) => {
                                 return (
                                     <RecordedQCard data={q}
                                                    onClick={(e) => {

@@ -474,7 +474,7 @@ router.post('/createNewStream', cors(), (req, res) => {
                                                FROM stream
                                                WHERE toia_id = "${fields.toiaID[0]}";`
 
-                connection.query(query_allStreamsUpdated, (err, entries, field) => {
+                connection.query(query_allStreamsUpdated, async (err, entries, field) => {
                     if (err) {
                         throw err;
                     } else {
@@ -491,7 +491,8 @@ router.post('/createNewStream', cors(), (req, res) => {
                         }
 
 
-                        entries.forEach((streamEntry) => {
+                        for (const streamEntry of entries) {
+                            streamEntry.videos_count = await getStreamTotalVideosCount(fields.toiaID[0], streamEntry.id_stream);
 
                             // send local storage image when in development
                             if (process.env.ENVIRONMENT === "development") {
@@ -501,7 +502,7 @@ router.post('/createNewStream', cors(), (req, res) => {
                                 if (counter === entries.length) {
                                     callback();
                                 }
-                                return;
+                                continue;
                             }
 
                             videoStore.file(`Accounts/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`).getSignedUrl(config, function (err, url) {
@@ -517,7 +518,7 @@ router.post('/createNewStream', cors(), (req, res) => {
                                     }
                                 }
                             });
-                        });
+                        }
                     }
                 });
             }
@@ -847,7 +848,7 @@ router.post('/recorder', cors(), async (req, res) => {
                                     data: {
                                         new_q: q.question,
                                         new_a: answer,
-                                        n_suggestions: 5,
+                                        n_suggestions: 3,
                                         avatar_id: fields.id[0],
                                         callback_url: req.protocol + '://' + req.get('host') + "/api/saveSuggestedQuestion/" + fields.id[0]
                                     }
