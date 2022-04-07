@@ -15,6 +15,9 @@ import axios from 'axios';
 import './AvatarGardenPage.css';
 import Tracker from "../utils/tracker";
 
+import { useBottomScrollListener } from 'react-bottom-scroll-listener';
+
+
 export const renderSuggestedQsCard = (card, index, onClickFunc) => {
     return (
         <div className="row" id={card.id_question}>
@@ -186,6 +189,10 @@ function AvatarGardenPage() {
     const [videosTotalDuration, setVideosTotalDuration] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [numberOfVideosDisplayed, setNumberOfVideosDisplayed] = useState(10);
+
+    const [loadingVideos, setLoadingVideos] = useState(true);
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
@@ -335,6 +342,14 @@ function AvatarGardenPage() {
             }
         });
     }
+
+    const reachedScrollBottom = () => {
+        setLoadingVideos(true);
+        setNumberOfVideosDisplayed(numberOfVideosDisplayed + 8);
+        setLoadingVideos(false);
+    }
+
+    const scrollRef = useBottomScrollListener(reachedScrollBottom);
 
     /*functions in charge of opening and closing the various pop up menus*/
     function exampleReducer(state, action) { //for warning window when you delete
@@ -1211,7 +1226,7 @@ function AvatarGardenPage() {
                     <i aria-hidden="true" className="search icon"/>
                 </div>
 
-                <div className="garden-grid">
+                <div className="garden-grid"  ref={scrollRef}>
                     <div className="cards-wrapper ui">
                         <div className="ui cards">
                             <RecordAVideoCard onClick={add} isDisabled={pendingOnBoardingQs.length !== 0}/>
@@ -1245,7 +1260,7 @@ function AvatarGardenPage() {
                                 )
                             })}
 
-                            {getFilteredRecordedQsList().slice(0,10).map((q, index) => {
+                            {getFilteredRecordedQsList().slice(0,numberOfVideosDisplayed).map((q, index) => {
                                 return (
                                     <RecordedQCard data={q}
                                                    onClick={(e) => {
@@ -1263,6 +1278,9 @@ function AvatarGardenPage() {
                             })}
                         </div>
                     </div>
+                    {
+                        loadingVideos && <div className="ui active centered inline loader"/>
+                    }
                 </div>
 
                 {EditSuggestionModal()}
