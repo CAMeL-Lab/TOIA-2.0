@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion
+    searchSuggestion, savePlayerFeedback
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -1223,6 +1223,34 @@ router.post('/getTotalVideoDuration', cors(), (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
+})
+
+router.post('/save_player_feedback', cors(), async (req, res) => {
+    let user_id = req.body.user_id || null;
+    let video_id = req.body.video_id || null;
+    let question = req.body.question.toString() || null;
+    let rating = req.body.rating || null;
+    let userValid = false;
+
+    if (video_id != null && question != null && rating !=null){
+        try {
+            userValid = await isValidUser(user_id);
+        } catch (e) {
+            userValid = false;
+        }
+
+        if (userValid){
+            savePlayerFeedback(video_id, question, rating, user_id).then(() => {
+                res.sendStatus(200);
+            })
+        } else {
+            savePlayerFeedback(video_id, question, rating).then(() => {
+                res.sendStatus(200);
+            })
+        }
+    } else {
+        res.sendStatus(401)
+    }
 })
 
 module.exports = router;
