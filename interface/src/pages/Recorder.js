@@ -448,7 +448,7 @@ function Recorder() {
             setIsRecording(false)
             // No further action needed, as stream already closes itself on error
           })
-
+         
         // sending request to server
         setCapturing(true);
 
