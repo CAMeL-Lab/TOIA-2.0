@@ -1,48 +1,50 @@
-CREATE DATABASE  IF NOT EXISTS `toia` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `toia`;
--- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.1.1
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: toia
--- ------------------------------------------------------
--- Server version	8.0.26
+-- Host: mysql
+-- Generation Time: Apr 16, 2022 at 01:40 PM
+-- Server version: 8.0.27
+-- PHP Version: 7.4.27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Table structure for table `question_suggestions`
+-- Database: `toia`
+--
+CREATE DATABASE IF NOT EXISTS `toia` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `toia`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_feedback`
 --
 
-DROP TABLE IF EXISTS `question_suggestions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `question_suggestions` (
-  `id_question` int NOT NULL AUTO_INCREMENT,
-  `toia_id` int NOT NULL,
-  `isPending` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id_question`,`toia_id`),
-  KEY `id_toia_idx` (`toia_id`),
-  CONSTRAINT `id_question` FOREIGN KEY (`id_question`) REFERENCES `questions` (`id`),
-  CONSTRAINT `id_toia` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE IF NOT EXISTS `player_feedback` (
+  `video_id` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `question` text NOT NULL,
+  `rating` int NOT NULL,
+  KEY `user_id` (`user_id`),
+  KEY `id_video` (`video_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `questions`
 --
 
-DROP TABLE IF EXISTS `questions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `questions` (
+CREATE TABLE IF NOT EXISTS `questions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `question` varchar(200) NOT NULL,
   `suggested_type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
@@ -51,16 +53,28 @@ CREATE TABLE `questions` (
   `trigger_suggester` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `question_suggestions`
+--
+
+CREATE TABLE IF NOT EXISTS `question_suggestions` (
+  `id_question` int NOT NULL AUTO_INCREMENT,
+  `toia_id` int NOT NULL,
+  `isPending` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id_question`,`toia_id`),
+  KEY `id_toia_idx` (`toia_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `stream`
 --
 
-DROP TABLE IF EXISTS `stream`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `stream` (
+CREATE TABLE IF NOT EXISTS `stream` (
   `id_stream` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `toia_id` int NOT NULL,
@@ -68,19 +82,16 @@ CREATE TABLE `stream` (
   `likes` int NOT NULL,
   `views` int NOT NULL,
   PRIMARY KEY (`id_stream`),
-  KEY `fk_stream_toia_user1_idx` (`toia_id`),
-  CONSTRAINT `fk_stream_toia_user1` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`)
+  KEY `fk_stream_toia_user1_idx` (`toia_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `toia_user`
 --
 
-DROP TABLE IF EXISTS `toia_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `toia_user` (
+CREATE TABLE IF NOT EXISTS `toia_user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `first_name` varchar(32) NOT NULL,
   `last_name` varchar(32) NOT NULL,
@@ -91,16 +102,14 @@ CREATE TABLE `toia_user` (
   UNIQUE KEY `idaavatar_UNIQUE` (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `tracker`
 --
 
-DROP TABLE IF EXISTS `tracker`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tracker` (
+CREATE TABLE IF NOT EXISTS `tracker` (
   `track_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `activity` varchar(500) NOT NULL,
@@ -111,16 +120,14 @@ CREATE TABLE `tracker` (
   PRIMARY KEY (`track_id`),
   UNIQUE KEY `track_id_UNIQUE` (`track_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `video`
 --
 
-DROP TABLE IF EXISTS `video`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `video` (
+CREATE TABLE IF NOT EXISTS `video` (
   `id_video` varchar(500) NOT NULL,
   `toia_id` int NOT NULL,
   `idx` int NOT NULL AUTO_INCREMENT,
@@ -132,39 +139,64 @@ CREATE TABLE `video` (
   `duration_seconds` int NOT NULL,
   PRIMARY KEY (`id_video`),
   UNIQUE KEY `idx_UNIQUE` (`idx`),
-  KEY `id_toia_idx` (`toia_id`),
-  CONSTRAINT `toia_id` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`) ON DELETE CASCADE
+  KEY `id_toia_idx` (`toia_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `videos_questions_streams`
 --
 
-DROP TABLE IF EXISTS `videos_questions_streams`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `videos_questions_streams` (
+CREATE TABLE IF NOT EXISTS `videos_questions_streams` (
   `id_video` varchar(500) NOT NULL,
   `id_question` int NOT NULL,
   `id_stream` int NOT NULL,
   `type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
   PRIMARY KEY (`id_video`,`id_question`,`id_stream`),
   KEY `id_question_idx` (`id_question`),
-  KEY `id_stream_idx` (`id_stream`),
-  CONSTRAINT `id_stream` FOREIGN KEY (`id_stream`) REFERENCES `stream` (`id_stream`) ON DELETE CASCADE,
-  CONSTRAINT `videos_questions_streams_ibfk_1` FOREIGN KEY (`id_video`) REFERENCES `video` (`id_video`) ON DELETE CASCADE,
-  CONSTRAINT `videos_questions_streams_ibfk_2` FOREIGN KEY (`id_question`) REFERENCES `questions` (`id`) ON DELETE CASCADE
+  KEY `id_stream_idx` (`id_stream`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `player_feedback`
+--
+ALTER TABLE `player_feedback`
+  ADD CONSTRAINT `id_video` FOREIGN KEY (`video_id`) REFERENCES `video` (`id_video`) ON DELETE CASCADE,
+  ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `toia_user` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `question_suggestions`
+--
+ALTER TABLE `question_suggestions`
+  ADD CONSTRAINT `id_question` FOREIGN KEY (`id_question`) REFERENCES `questions` (`id`),
+  ADD CONSTRAINT `id_toia` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`);
+
+--
+-- Constraints for table `stream`
+--
+ALTER TABLE `stream`
+  ADD CONSTRAINT `fk_stream_toia_user1` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`);
+
+--
+-- Constraints for table `video`
+--
+ALTER TABLE `video`
+  ADD CONSTRAINT `toia_id` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `videos_questions_streams`
+--
+ALTER TABLE `videos_questions_streams`
+  ADD CONSTRAINT `id_stream` FOREIGN KEY (`id_stream`) REFERENCES `stream` (`id_stream`) ON DELETE CASCADE,
+  ADD CONSTRAINT `videos_questions_streams_ibfk_1` FOREIGN KEY (`id_video`) REFERENCES `video` (`id_video`) ON DELETE CASCADE,
+  ADD CONSTRAINT `videos_questions_streams_ibfk_2` FOREIGN KEY (`id_question`) REFERENCES `questions` (`id`) ON DELETE CASCADE;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2022-03-06 14:40:32
