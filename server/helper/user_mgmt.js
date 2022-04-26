@@ -371,6 +371,17 @@ const getUserTotalVideoDuration = (user_id) => {
     }))
 }
 
+const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
+    console.log("saving player feedback")
+    return new Promise((resolve)=>{
+        let query = `INSERT INTO player_feedback(video_id, user_id, question, rating) VALUES(?, ?, ?, ?)`;
+        connection.query(query, [video_id, user_id, question, rating], (err) => {
+            if (err) throw err;
+            resolve();
+        })
+    })
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -393,3 +404,4 @@ module.exports.getUserTotalVideosCount = getUserTotalVideosCount;
 module.exports.getUserTotalVideoDuration = getUserTotalVideoDuration;
 module.exports.searchSuggestion = searchSuggestion;
 module.exports.searchRecorded = searchRecorded;
+module.exports.savePlayerFeedback = savePlayerFeedback;

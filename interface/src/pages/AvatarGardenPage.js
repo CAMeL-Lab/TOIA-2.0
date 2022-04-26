@@ -192,7 +192,7 @@ function AvatarGardenPage() {
 
     const [numberOfVideosDisplayed, setNumberOfVideosDisplayed] = useState(10);
 
-    const [loadingVideos, setLoadingVideos] = useState(true);
+    const [loadingVideos, setLoadingVideos] = useState(false);
     //sample video entry: {question:What is your name?, stream: "fun business"}
 
     React.useEffect(() => {
