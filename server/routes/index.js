@@ -1225,7 +1225,9 @@ router.post('/getTotalVideoDuration', cors(), (req, res) => {
     })
 })
 
+
 router.post('/save_player_feedback', cors(), async (req, res) => {
+    console.log("req video_id: ", req.body.video_id);
     let user_id = req.body.user_id || null;
     let video_id = req.body.video_id || null;
     let question = req.body.question.toString() || null;

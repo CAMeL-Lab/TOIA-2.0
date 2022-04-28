@@ -11,6 +11,8 @@ import speechToTextUtils from "../transcription_utils";
 import {NotificationManager} from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
+import PopModal from "../userRating/popModal";
+
 function Player(){
 
   function exampleReducer( state, action ) {
@@ -48,15 +50,22 @@ function Player(){
   const [video,setVideo] = useState(null);
   const [isInteracting, setIsInteracting] = useState(false);
 
+  const [hasRated, setHasRated] = useState(true); // controll the rating field
+  const [ratingVal, setRatingVal] = useState(1);
+  const [videoID, setVideoID] = useState(null);
+
   //const [question,setQuestion] = useState(null);
   //const [matched,setMatched]=useState(0);
 
   const [transcribedAudio, setTranscribedAudio] = useState("");
 
+
   //const transcribedAudio = React.useRef('');
   const textInput = React.useRef('');
   const question = React.useRef('');
   const interacting = React.useRef('false');
+  const newRating = React.useRef('true');
+  const isFillerPlaying = React.useRef('true');
 
 
   var input1, input2;
@@ -78,7 +87,6 @@ function Player(){
     setStreamNameToTalk(history.location.state.streamNameToTalk);
 
     fetchFiller();
-    //SpeechRecognition.startListening({continuous:true});
 
       // Tracker
       new Tracker().startTracking(history.location.state);
@@ -106,7 +114,7 @@ function Player(){
       }
   }
 
-  //const controller = new AbortController();
+
 
   // handling data recieved from server
   function handleDataReceived(data){
@@ -114,13 +122,16 @@ function Player(){
     if(data){
       // transcribedAudio.current = data.alternatives[0].transcript;
       setTranscribedAudio(data.alternatives[0].transcript);
+      setHasRated(false);
+      // newRating.current = 'false';
 
       if (data.isFinal){
         
         question.current = data.alternatives[0].transcript;
-
        
-      
+       
+        newRating.current = 'false';
+        console.log("has rated data: ", hasRated);
         speechToTextUtils.stopRecording();
         fetchData()
       }
@@ -133,56 +144,58 @@ function Player(){
   }
 
   async function continueChat(){
-    
+    console.log("continue chat here");
+    if( newRating.current !='false'){ // if the user has rated then they can continue 
+      if(interacting.current=='true'){
+          
+            await endTranscription();
+           
+            
+            speechToTextUtils.initRecording(handleDataReceived,(error) => {
+              console.error('Error when transcribing', error);
+            })
+          }  
 
-    if(interacting.current=='true'){
-     
-      await endTranscription();
-      
-      speechToTextUtils.initRecording(handleDataReceived,(error) => {
-        console.error('Error when transcribing', error);
-        // setIsRecording(false)
-        //fetchFiller();
-        // No further action needed, as stream already closes itself on error
-      })
-    }  
-
-    //   if(micString=='PAUSE'){
-    //     speechToTextUtils.initRecording(handleDataReceived,(error) => {
-    //       console.error('Error when transcribing', error);
-    //       // setIsRecording(false)
-
-    //       //fetchFiller();
-
-    //       //fetchFiller(); 
-
-    //       // No further action needed, as stream already closes itself on error
-    //     })
-      
-      
-    // }
+    } else{
+      NotificationManager.warning('Please provide a rating', '', 3000);
+    }
     console.log("still here!")
 
 
   }
 
   async function chatFiller(){
-    fetchFiller();
+
+    if ( newRating.current !='false'){
+      fetchFiller();
    
-    continueChat();
+      continueChat();
+    } else{
+      fetchFiller();
+    }
+    
     
   }
 
+  const skipFiller = function(){
+    if(isFillerPlaying.current == 'true'){
+      if(interacting.current=='false'){
+        fetchFiller();
+      } else{
+        chatFiller();
+      }
+    }
+  }
+
   function fetchData(){
-      //continueChat();
-      //fetchFiller();
-      //fetchFiller();
       if(question.current==null || question.current==""){
         setFillerPlaying(true);
         fetchFiller();
         
       }
       else{
+        // setHasRated(false);
+        // newRating.current ='false'
         //endTranscription();
       axios.post(`/api/player`,{
         params:{
@@ -199,8 +212,12 @@ function Player(){
           //continueChat();
         } else{
           setFillerPlaying(true);
-        setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={interacting.current=='false' ? fetchFiller:chatFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
-        // transcribedAudio.current = '';
+          //setHasRated(false);
+          newRating.current = 'false';
+          isFillerPlaying.current = 'false';
+          setVideoID(res.data); // setting the video ID
+          setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={interacting.current=='false' ? fetchFiller:chatFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
+          
         setTranscribedAudio('');
         
       }});
@@ -219,12 +236,17 @@ function Player(){
         setIsInteracting(true)
         interacting.current = 'true';
         //speechToTextUtils.initRecording();
-        speechToTextUtils.initRecording(handleDataReceived,(error) => {
-          console.error('Error when transcribing', error);
-          // setIsRecording(false)
-          //fetchFiller();
-          // No further action needed, as stream already closes itself on error
-        })
+
+        if( newRating.current != 'false'){
+          speechToTextUtils.initRecording(handleDataReceived,(error) => {
+            console.error('Error when transcribing', error);
+            // No further action needed, as stream already closes itself on error
+          })
+          // setHasRated(false);
+        } else{
+          NotificationManager.warning('Please provide a rating', '', 3000);
+        }
+        
         
        
       }else{
@@ -234,13 +256,12 @@ function Player(){
         setIsInteracting(false)
         interacting.current = 'false';
         
-        //continueChat();
       }
     }
 
     function fetchFiller(){
       //continueChat();
-      
+      isFillerPlaying.current = 'true';
       if(fillerPlaying){
         axios.post(`/api/fillerVideo`,{
           params: {
@@ -267,7 +288,6 @@ function Player(){
                 fetchFiller();
               });
           }
-          //continueChat();
         });
       }
     }
@@ -276,34 +296,97 @@ function Player(){
       textInput.current = e.target.value;
     }
 
+
+
+
+    const recordUserRating = function (rate){
+      // record the rating for the user
+      const vidID = videoID.split('/')// splitting by delimeter
+      
+      const options = {
+        method: 'POST',
+        url: 'http://localhost:3001/api/save_player_feedback',
+        headers: {'Content-Type': 'application/json'},
+        data: {
+         ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
+          video_id: vidID[vidID.length-1],
+          question: textInput.current,
+          rating: rate
+        }
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+      }).catch(function (error) {
+        console.error(error);
+      });
+
+
+
+
+
+
+
+    //   axios.post(`/api/save_player_feedback`,{
+
+    //     params:{
+    //       ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
+    //       video_id: videoID,
+    //       question:  textInput.current,
+    //       rating: rate,
+    //     }
+    //   }).then((res)=>{
+    //     console.log("rated!")
+    // })
+  }
+  
+
     function submitResponse(e){
+      // if hasRated == true then you can sumbit
+
+      console.log("rating val: ", ratingVal);
+
       question.current = textInput.current;
       
-      if(question.current!=""){
-        // fetchData();
-        axios.post(`/api/player`,{
+      // if (hasRated){
+      //   console.log("has rated button: ", hasRated);
+        if(question.current!=""  && newRating.current !='false'){
+          setHasRated(false);
+          // newRating.current = false;
+          // fetchData();
+          console.log("question herer")
+          axios.post(`/api/player`,{
 
-          params:{
-            toiaIDToTalk: history.location.state.toiaToTalk,
-            toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
-            question,
-            streamIdToTalk: history.location.state.streamToTalk
-          }
-        }).then((res)=>{
-         
-          if (res.data === "error"){
-            setFillerPlaying(true);
-            //fetchFiller();
-            //continueChat();
-          } else{
+            params:{
+              toiaIDToTalk: history.location.state.toiaToTalk,
+              toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
+              question,
+              streamIdToTalk: history.location.state.streamToTalk
+            }
+          }).then((res)=>{
             
+            console.log("response from server");
+            if (res.data === "error"){
+              setFillerPlaying(true);
+
+            } else{
+              
             setFillerPlaying(true);
-          setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={fetchFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
-          // transcribedAudio.current = '';
-          setTranscribedAudio("");
-          question.current = '';
-        }})
+            setHasRated(false);
+            newRating.current = 'false';
+            isFillerPlaying.current = 'false';
+            setVideo(<video className="player-vid" id="vidmain" key={transcribedAudio} onEnded={fetchFiller} autoPlay><source src={res.data} onEnded={fetchFiller} type='video/mp4'></source></video>);
+            
+            setVideoID(res.data); // setting the video ID
+            // transcribedAudio.current = '';
+            setTranscribedAudio("");
+            question.current = '';
+          }})
+        }
+       else if ( newRating.current !='true') {
+        NotificationManager.warning('Please provide a rating', '', 3000);
       }
+      
     }
 
     function submitHandler(e){
@@ -464,6 +547,9 @@ function Player(){
               </Modal.Content>
       </Modal>
       <div className="nav-heading-bar">
+
+      { newRating.current!='true' && <PopModal setRating={setRatingVal} setRatingDone={setHasRated} userRating={recordUserRating} newRatingVal={newRating} skipFillerVid={skipFiller}/>}
+
           <div onClick={home} className="nav-toia_icon app-opensans-normal">
               TOIA
           </div>
@@ -481,6 +567,10 @@ function Player(){
           </div>
       </div>
       <div className="player-group">
+
+       
+
+
         <h1 className="player-name player-font-class-3 ">{toiaFirstNameToTalk} {toiaLastNameToTalk}</h1>
         <p className="player-lang player-font-class-2 ">{streamNameToTalk}</p>
         {video}
@@ -491,11 +581,7 @@ function Player(){
           <button color='green' className = "ui green microphone button mute-button" onClick={micStatusChange}><i aria-hidden="true" class="microphone icon"></i>{micString}</button>
         ):(
           <button  className = "ui secondary button mute-button" onClick={micStatusChange}><i aria-hidden="true" class="microphone slash icon"></i>{micString}</button>
-
-        )}
-
-        
-        
+      )}
         
         <button className = "ui red button skip-end-button" onClick={interacting.current=='false' ? fetchFiller:chatFiller}> Skip to End <i aria-hidden="true" class="angle double right icon"></i></button>
 
@@ -505,8 +591,7 @@ function Player(){
            <><input
               className="type-q font-class-1"
               placeholder={'Type text here!'}
-              // value={''}
-              // defaultValue= 'Type text here!'
+
               id="video-text-box"
               type={"text"}
               onChange={textChange} /><button color='green' className="ui primary button submit-button" onClick={submitResponse}><i aria-hidden="true" class="send icon"></i>SEND</button></>

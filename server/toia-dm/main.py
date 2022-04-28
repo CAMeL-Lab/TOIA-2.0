@@ -15,6 +15,7 @@ load_dotenv()
 
 SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
 
+
 ENGINE = db.create_engine(SQL_URL)
 
 METADATA = db.MetaData()
@@ -89,4 +90,4 @@ def dialogue_manager(payload: DMpayload):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("DM_PORT")))
+    uvicorn.run(app, host="localhost", port=int(os.environ.get("DM_PORT")))
