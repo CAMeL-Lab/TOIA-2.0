@@ -12,6 +12,7 @@ import {NotificationManager} from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 import PopModal from "../userRating/popModal";
+import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 
 function Player(){
 
@@ -46,6 +47,7 @@ function Player(){
   const [streamIdToTalk, setStreamIdToTalk]=useState(null);
   const [streamNameToTalk, setStreamNameToTalk]=useState(null);
   const [fillerPlaying, setFillerPlaying]=useState(true);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
 
   const [video,setVideo] = useState(null);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -85,6 +87,7 @@ function Player(){
     setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
     setStreamIdToTalk(history.location.state.streamToTalk);
     setStreamNameToTalk(history.location.state.streamNameToTalk);
+    fetchAnsweredQuestions()
 
     fetchFiller();
 
@@ -163,6 +166,20 @@ function Player(){
 
 
   }
+
+  // function to fetch answered user questions from the DB
+  function fetchAnsweredQuestions(){
+    axios.get(`http://localhost:3001/api/questions/answered/${history.location.state.toiaToTalk}`).then((res) => {
+        let answeredQuestionsData = [];
+        res.data.forEach((answer) => {
+          if(answer.suggested_type == 'answer'){
+            answeredQuestionsData.push({question: answer.question});
+          }  
+        })
+        setAnsweredQuestions([...answeredQuestionsData]);
+      
+      })
+} 
 
   async function chatFiller(){
 
@@ -294,8 +311,15 @@ function Player(){
 
     function textChange(e){
       textInput.current = e.target.value;
+      console.log("text input in text change: ", textInput.current)
     }
-
+    function textInputChange(val){
+      if (val){
+        textInput.current = val.question;
+      }
+      
+      console.log("text input in text input change: ", textInput.current)
+    }
 
 
 
@@ -354,7 +378,7 @@ function Player(){
           setHasRated(false);
           // newRating.current = false;
           // fetchData();
-          console.log("question herer")
+          console.log("question herer: ", question.current)
           axios.post(`/api/player`,{
 
             params:{
@@ -549,7 +573,7 @@ function Player(){
       <div className="nav-heading-bar">
 
       { newRating.current!='true' && <PopModal setRating={setRatingVal} setRatingDone={setHasRated} userRating={recordUserRating} newRatingVal={newRating} skipFillerVid={skipFiller}/>}
-
+      
           <div onClick={home} className="nav-toia_icon app-opensans-normal">
               TOIA
           </div>
@@ -588,13 +612,18 @@ function Player(){
         
         <div>
         { (micMute) ? (
-           <><input
+          
+           <>
+           {/* <input
               className="type-q font-class-1"
               placeholder={'Type text here!'}
 
               id="video-text-box"
               type={"text"}
-              onChange={textChange} /><button color='green' className="ui primary button submit-button" onClick={submitResponse}><i aria-hidden="true" class="send icon"></i>SEND</button></>
+              onChange={textChange} /> */}
+              {micMute && <SuggestiveSearch handleTextChange={textChange} handleTextInputChange={textInputChange} questions={[...answeredQuestions]}/>}
+              
+              <button color='green' className="ui primary button submit-button" onClick={submitResponse}><i aria-hidden="true" class="send icon"></i>SEND</button></>
          
         ):(
           <input
