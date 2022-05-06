@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Apr 29, 2022 at 04:14 PM
+-- Generation Time: May 06, 2022 at 08:30 AM
 -- Server version: 8.0.27
 -- PHP Version: 7.4.27
 
@@ -34,7 +34,7 @@ CREATE TABLE `conversations_log` (
   `toia_id` int NOT NULL,
   `timestamp` bigint NOT NULL,
   `filler` tinyint(1) NOT NULL,
-  `question_asked` int NOT NULL,
+  `question_asked` text,
   `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

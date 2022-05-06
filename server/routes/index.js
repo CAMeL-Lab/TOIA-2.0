@@ -637,7 +637,6 @@ router.post('/fillerVideo', cors(), (req, res) => {
 
 router.post('/player', cors(), (req, res) => {
     // TODO: Review DM API calls
-    console.log("player question= ", req.body.params.question.current, req.body.params);
     axios.post(`${process.env.DM_ROUTE}`, {
         params: {
             query: req.body.params.question.current,
@@ -965,7 +964,6 @@ router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
 });
 
 router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
-    console.log("request received!");
     const user_id = req.params.user_id;
     isValidUser(user_id).then((success) => {
         if (req.body.q === undefined || typeof req.body.q !== "string" || req.body.q.trim().length <= 1) {
@@ -1241,7 +1239,6 @@ router.post('/getTotalVideoDuration', cors(), (req, res) => {
 
 
 router.post('/save_player_feedback', cors(), async (req, res) => {
-    console.log("req video_id: ", req.body.video_id);
     let user_id = req.body.user_id || null;
     let video_id = req.body.video_id || null;
     let question = req.body.question.toString() || null;
