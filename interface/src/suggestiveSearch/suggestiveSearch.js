@@ -40,7 +40,7 @@ export default function FreeSoloCreateOption(props) {
         if (inputValue !== "" && !isExisting) {
           filtered.push({
             inputValue,
-            question: `Add "${inputValue}"`
+            question: `"${inputValue}"`
           });
         }
 
