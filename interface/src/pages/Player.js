@@ -118,7 +118,6 @@ function Player(){
   }
 
 
-
   // handling data recieved from server
   function handleDataReceived(data){
     // setting the transcribedAudio 
@@ -127,11 +126,9 @@ function Player(){
       setTranscribedAudio(data.alternatives[0].transcript);
       setHasRated(false);
       // newRating.current = 'false';
-
       if (data.isFinal){
         
         question.current = data.alternatives[0].transcript;
-       
        
         newRating.current = 'false';
         console.log("has rated data: ", hasRated);
@@ -334,7 +331,7 @@ function Player(){
         data: {
          ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
           video_id: vidID[vidID.length-1],
-          question: textInput.current,
+          question: question.current,
           rating: rate
         }
       };
