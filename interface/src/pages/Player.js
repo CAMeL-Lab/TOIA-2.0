@@ -12,135 +12,201 @@ import {NotificationManager} from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 import PopModal from "../userRating/popModal";
+import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 
 function Player() {
 
-    function exampleReducer(state, action) {
-        switch (action.type) {
-            case 'close':
-                return {open: false};
-            case 'open':
-                return {open: true};
-        }
+  function exampleReducer( state, action ) {
+      switch (action.type) {
+        case 'close':
+          return { open: false };
+        case 'open':
+          return { open: true };
+      }
+  }
+
+  const commands=[
+    {
+      command: '*',
+      callback: fetchData
     }
+  ];
 
-    const commands = [
-        {
-            command: '*',
-            callback: fetchData
-        }
-    ];
 
+  //const { transcript, resetTranscript } = useSpeechRecognition({commands});
+
+  const [toiaName, setName] = React.useState(null);
+  const [toiaLanguage, setLanguage] = React.useState(null);
+  const [interactionLanguage,setInteractionLanguage] = useState(null);
+  const [toiaID,setTOIAid] = React.useState(null);
+  const [isLoggedIn,setLoginState]=useState(false);
+
+  const [toiaIDToTalk,setTOIAIdToTalk]=useState(null);
+  const [toiaFirstNameToTalk,setTOIAFirstNameToTalk]=useState(null);
+  const [toiaLastNameToTalk,setTOIALastNameToTalk]=useState(null);
+  const [streamIdToTalk, setStreamIdToTalk]=useState(null);
+  const [streamNameToTalk, setStreamNameToTalk]=useState(null);
+  const [fillerPlaying, setFillerPlaying]=useState(true);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
+
+  const [video,setVideo] = useState(null);
+  const [isInteracting, setIsInteracting] = useState(false);
+
+  const [hasRated, setHasRated] = useState(true); // controll the rating field
+  const [ratingVal, setRatingVal] = useState(1);
+  const [videoID, setVideoID] = useState(null);
+
+  //const [question,setQuestion] = useState(null);
+  //const [matched,setMatched]=useState(0);
+
+  const [transcribedAudio, setTranscribedAudio] = useState("");
+
+
+  //const transcribedAudio = React.useRef('');
+  const textInput = React.useRef('');
+  const question = React.useRef('');
+  const interacting = React.useRef('false');
+  const newRating = React.useRef('true');
+  const isFillerPlaying = React.useRef('true');
+
+
+  var input1, input2;
+  let [micMute, setMicStatus]=React.useState(true);
+  let [micString, setMicString]=React.useState('INTERACT');
+
+  useEffect(() => {
+    if(history.location.state.toiaID!=undefined){
+      setLoginState(true);
+      setTOIAid(history.location.state.toiaID);
+      setName(history.location.state.toiaName);
+      setLanguage(history.location.state.toiaLanguage);
+    }
+    
+    setTOIAIdToTalk(history.location.state.toiaToTalk);
+    setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
+    setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
+    setStreamIdToTalk(history.location.state.streamToTalk);
+    setStreamNameToTalk(history.location.state.streamNameToTalk);
+    fetchAnsweredQuestions()
+
+    fetchFiller();
+
+      // Tracker
+      new Tracker().startTracking(history.location.state);
+  },[]);
+
+  const [state, dispatch] = React.useReducer(exampleReducer, {open: false,});
+  const { open } = state;
+
+  function openModal(e){
+      dispatch({ type: 'open' });
+      e.preventDefault();
+  }
+
+  function myChangeHandler(event){
+      event.preventDefault();
+      var name = event.target.name;
+
+      switch(name) {
+        case "email":
+          input1 = event.target.value;
+          break;
+        case "pass":
+          input2 = event.target.value;
+          break;
+      }
+  }
+
+
+  // handling data recieved from server
+  function handleDataReceived(data){
+    // setting the transcribedAudio 
+    if(data){
+      // transcribedAudio.current = data.alternatives[0].transcript;
+      setTranscribedAudio(data.alternatives[0].transcript);
+      setHasRated(false);
+      // newRating.current = 'false';
+      if (data.isFinal){
+        
+        question.current = data.alternatives[0].transcript;
+       
+        newRating.current = 'false';
+        console.log("has rated data: ", hasRated);
+        speechToTextUtils.stopRecording();
+        fetchData()
+      }
+      
+    } else{
+      console.log("no data received from server")
+    }
+  }
 
     //const { transcript, resetTranscript } = useSpeechRecognition({commands});
 
-    const [toiaName, setName] = React.useState(null);
-    const [toiaLanguage, setLanguage] = React.useState(null);
-    const [interactionLanguage, setInteractionLanguage] = useState(null);
-    const [toiaID, setTOIAid] = React.useState(null);
-    const [isLoggedIn, setLoginState] = useState(false);
+  // function to fetch answered user questions from the DB
+  function fetchAnsweredQuestions(){
+    axios.get(`http://localhost:3001/api/questions/answered/${history.location.state.toiaToTalk}`).then((res) => {
+        let answeredQuestionsData = [];
+        res.data.forEach((answer) => {
+          if(answer.suggested_type == 'answer'){
+            answeredQuestionsData.push({question: answer.question});
+          }  
+        })
+        setAnsweredQuestions([...answeredQuestionsData]);
+      
+      })
+} 
 
-    const [toiaIDToTalk, setTOIAIdToTalk] = useState(null);
-    const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] = useState(null);
-    const [toiaLastNameToTalk, setTOIALastNameToTalk] = useState(null);
-    const [streamIdToTalk, setStreamIdToTalk] = useState(null);
-    const [streamNameToTalk, setStreamNameToTalk] = useState(null);
-    const [fillerPlaying, setFillerPlaying] = useState(true);
-
-    const [video, setVideo] = useState(null);
-    const [isInteracting, setIsInteracting] = useState(false);
-
-    const [hasRated, setHasRated] = useState(true); // controll the rating field
-    const [ratingVal, setRatingVal] = useState(1);
-    const [videoID, setVideoID] = useState(null);
-
-    //const [question,setQuestion] = useState(null);
-    //const [matched,setMatched]=useState(0);
-
-    const [transcribedAudio, setTranscribedAudio] = useState("");
-
-
-    //const transcribedAudio = React.useRef('');
-    const textInput = React.useRef('');
-    const question = React.useRef('');
-    const interacting = React.useRef('false');
-    const newRating = React.useRef('true');
-    const isFillerPlaying = React.useRef('true');
-
-
-    var input1, input2;
-    let [micMute, setMicStatus] = React.useState(true);
-    let [micString, setMicString] = React.useState('INTERACT');
-
-    useEffect(() => {
-        if (history.location.state.toiaID != undefined) {
-            setLoginState(true);
-            setTOIAid(history.location.state.toiaID);
-            setName(history.location.state.toiaName);
-            setLanguage(history.location.state.toiaLanguage);
-        }
-
-        setTOIAIdToTalk(history.location.state.toiaToTalk);
-        setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
-        setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
-        setStreamIdToTalk(history.location.state.streamToTalk);
-        setStreamNameToTalk(history.location.state.streamNameToTalk);
-
-        fetchFiller();
-
-        // Tracker
-        new Tracker().startTracking(history.location.state);
-    }, []);
-
-    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,});
-    const {open} = state;
-
-    function openModal(e) {
-        dispatch({type: 'open'});
-        e.preventDefault();
-    }
-
-    function myChangeHandler(event) {
-        event.preventDefault();
-        var name = event.target.name;
-
-        switch (name) {
-            case "email":
-                input1 = event.target.value;
-                break;
-            case "pass":
-                input2 = event.target.value;
-                break;
-        }
+    function textInputChange(val){
+      if (val){
+        textInput.current = val.question;
+      }
+      
+      console.log("text input in text input change: ", textInput.current)
     }
 
 
-    // handling data recieved from server
-    function handleDataReceived(data) {
-        // setting the transcribedAudio
-        if (data) {
-            // transcribedAudio.current = data.alternatives[0].transcript;
-            setTranscribedAudio(data.alternatives[0].transcript);
-            setHasRated(false);
-            // newRating.current = 'false';
 
-            if (data.isFinal) {
-
-                question.current = data.alternatives[0].transcript;
-
-
-                newRating.current = 'false';
-                console.log("has rated data: ", hasRated);
-                speechToTextUtils.stopRecording();
-                fetchData()
-            }
-
-        } else {
-            console.log("no data received from server")
+    const recordUserRating = function (rate){
+      // record the rating for the user
+      const vidID = videoID.split('/')// splitting by delimeter
+      
+      const options = {
+        method: 'POST',
+        url: 'http://localhost:3001/api/save_player_feedback',
+        headers: {'Content-Type': 'application/json'},
+        data: {
+         ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
+          video_id: vidID[vidID.length-1],
+          question: question.current,
+          rating: rate
         }
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+      }).catch(function (error) {
+        console.error(error);
+      });
 
 
-    }
+
+
+
+
+
+    //   axios.post(`/api/save_player_feedback`,{
+
+    //     params:{
+    //       ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
+    //       video_id: videoID,
+    //       question:  textInput.current,
+    //       rating: rate,
+    //     }
+    //   }).then((res)=>{
+    //     console.log("rated!")
+    // })
+  }
 
     async function continueChat() {
         console.log("continue chat here");
@@ -303,43 +369,6 @@ function Player() {
 
     function textChange(e) {
         textInput.current = e.target.value;
-    }
-
-
-    const recordUserRating = function (rate) {
-        // record the rating for the user
-        const vidID = videoID.split('/')// splitting by delimeter
-
-        const options = {
-            method: 'POST',
-            url: 'http://localhost:3001/api/save_player_feedback',
-            headers: {'Content-Type': 'application/json'},
-            data: {
-                ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
-                video_id: vidID[vidID.length - 1],
-                question: textInput.current,
-                rating: rate
-            }
-        };
-
-        axios.request(options).then(function (response) {
-            console.log(response.data);
-        }).catch(function (error) {
-            console.error(error);
-        });
-
-
-        //   axios.post(`/api/save_player_feedback`,{
-
-        //     params:{
-        //       ...(history.location.state.toiaID) && {user_id: history.location.state.toiaID},
-        //       video_id: videoID,
-        //       question:  textInput.current,
-        //       rating: rate,
-        //     }
-        //   }).then((res)=>{
-        //     console.log("rated!")
-        // })
     }
 
 
@@ -559,27 +588,27 @@ function Player() {
             </Modal>
             <div className="nav-heading-bar">
 
-                {newRating.current != 'true' &&
-                    <PopModal setRating={setRatingVal} setRatingDone={setHasRated} userRating={recordUserRating}
-                              newRatingVal={newRating} skipFillerVid={skipFiller}/>}
+      { newRating.current!='true' && <PopModal setRating={setRatingVal} setRatingDone={setHasRated} userRating={recordUserRating} newRatingVal={newRating} skipFillerVid={skipFiller}/>}
+      
+          <div onClick={home} className="nav-toia_icon app-opensans-normal">
+              TOIA
+          </div>
+          <div onClick={about} className="nav-about_icon app-monsterrat-black ">
+              About Us
+          </div>
+          <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
+              Talk To TOIA
+          </div>
+          <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
+              My TOIA
+          </div>
+          <div onClick={isLoggedIn ? logout : openModal}className="nav-login_icon app-monsterrat-black">
+              {isLoggedIn ? 'Logout' : 'Login'}
+          </div>
+      </div>
+      <div className="player-group">
 
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div onClick={about} className="nav-about_icon app-monsterrat-black ">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
-                    My TOIA
-                </div>
-                <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
-                    {isLoggedIn ? 'Logout' : 'Login'}
-                </div>
-            </div>
-            <div className="player-group">
+       
 
 
                 <h1 className="player-name player-font-class-3 ">{toiaFirstNameToTalk} {toiaLastNameToTalk}</h1>
@@ -601,40 +630,33 @@ function Player() {
                         onClick={interacting.current == 'false' ? fetchFiller : chatFiller}> Skip to End <i
                     aria-hidden="true" class="angle double right icon"></i></button>
 
-
-                <div>
-                    {(micMute) ? (
-                        <><input
-                            className="type-q font-class-1"
-                            placeholder={'Type text here!'}
-
-                            id="video-text-box"
-                            type={"text"}
-                            onChange={textChange}/>
-                            <button color='green' className="ui primary button submit-button" onClick={submitResponse}>
-                                <i aria-hidden="true" class="send icon"></i>SEND
-                            </button>
-                        </>
-
-                    ) : (
-                        <input
-                            className="type-q font-class-1"
-                            placeholder={"Transcript"}
-                            value={transcribedAudio || ''}
-                            id="video-text-box"
-                            type={"text"}
-                            //onChange={setQuestionValue}
-                        />
-
-                    )}
-                    {/* <input
+        
+        <div>
+        { (micMute) ? (
+          
+           <>
+           {/* <input
               className="type-q font-class-1"
-              placeholder={"Transcript"}
-              value={transcribedAudio.current || ''}
+              placeholder={'Type text here!'}
+
               id="video-text-box"
               type={"text"}
-              //onChange={setQuestionValue}
-          /> */}
+              onChange={textChange} /> */}
+              {micMute && <SuggestiveSearch handleTextChange={textChange} handleTextInputChange={textInputChange} questions={[...answeredQuestions]}/>}
+              
+              <button color='green' className="ui primary button submit-button" onClick={submitResponse}><i aria-hidden="true" class="send icon"></i>SEND</button></>
+         
+        ):(
+          <input
+          className="type-q font-class-1"
+          placeholder={"Transcript"}
+          value={transcribedAudio || ''}
+          id="video-text-box"
+          type={"text"}
+          //onChange={setQuestionValue}
+      />)}
+
+
 
                 </div>
 
