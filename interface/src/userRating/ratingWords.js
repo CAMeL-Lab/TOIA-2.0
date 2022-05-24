@@ -50,6 +50,7 @@ export default function HoverRating({setRatingValue, setRatingComplete, recUserR
 
           // recording the user rating
          recUserRating(newValue);
+         console.log("rated!")
           
         }}
         onChangeActive={(event, newHover) => {
