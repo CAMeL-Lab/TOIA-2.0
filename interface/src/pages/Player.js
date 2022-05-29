@@ -64,6 +64,18 @@ function Player() {
 	let [micString, setMicString] = React.useState("INTERACT");
 
 	useEffect(() => {
+		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted. 
+		if (history.location.state === undefined || history.location.state.toiaName === undefined || history.location.state.toiaLanguage === undefined || history.location.state.toiaID === undefined) {
+			alert("You must be logged in to access this page");
+            history.push({
+                pathname: '/'
+            });
+        }
+        setName(history.location.state.toiaName);
+        setLanguage(history.location.state.toiaLanguage);
+        setTOIAid(history.location.state.toiaID);
+
+
 		if (history.location.state.toiaID != undefined) {
 			setLoginState(true);
 			setTOIAid(history.location.state.toiaID);
