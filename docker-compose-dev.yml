@@ -17,7 +17,7 @@ services:
   phpMyAdmin:
     depends_on:
       - mysql
-    image: phpmyadmin
+    image: phpmyadmin:5.1.1-apache
     restart: on-failure
     ports:
       - "8080:80"

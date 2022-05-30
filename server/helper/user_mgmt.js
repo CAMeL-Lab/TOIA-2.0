@@ -372,7 +372,6 @@ const getUserTotalVideoDuration = (user_id) => {
 }
 
 const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
-    console.log("saving player feedback")
     return new Promise((resolve)=>{
         let query = `INSERT INTO player_feedback(video_id, user_id, question, rating) VALUES(?, ?, ?, ?)`;
         connection.query(query, [video_id, user_id, question, rating], (err) => {
@@ -380,6 +379,18 @@ const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
             resolve();
         })
     })
+}
+
+const saveConversationLog = (interactor_id, toia_id, filler, question_asked, video_played) => {
+    return new Promise(((resolve) => {
+        let currentTimestamp = +new Date();
+        const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played) VALUES (?, ?, ?, ?, ?, ?)`;
+
+        connection.query(query, [interactor_id, toia_id, currentTimestamp, filler, question_asked, video_played], (err, res) => {
+            if (err) throw err;
+            resolve();
+        })
+    }))
 }
 
 module.exports.addQuestion = addQuestion;
@@ -405,3 +416,4 @@ module.exports.getUserTotalVideoDuration = getUserTotalVideoDuration;
 module.exports.searchSuggestion = searchSuggestion;
 module.exports.searchRecorded = searchRecorded;
 module.exports.savePlayerFeedback = savePlayerFeedback;
+module.exports.saveConversationLog = saveConversationLog;

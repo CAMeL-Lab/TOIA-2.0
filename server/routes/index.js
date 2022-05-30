@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback
+    searchSuggestion, savePlayerFeedback, saveConversationLog
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -598,7 +598,7 @@ router.post('/fillerVideo', cors(), (req, res) => {
                             INNER JOIN video ON video.id_video = videos_questions_streams.id_video
                             WHERE video.toia_id = ? AND videos_questions_streams.type = ?`
 
-    connection.query(query_getFiller, [req.body.params.toiaIDToTalk, "filler"], (err, entries) => {
+    connection.query(query_getFiller, [req.body.params.toiaIDToTalk, "filler"], async (err, entries) => {
         if (err) {
             throw err;
         } else {
@@ -612,12 +612,19 @@ router.post('/fillerVideo', cors(), (req, res) => {
                 expires: '07-14-2022',
             };
 
+            const filler_video_id = entries[Math.floor(Math.random() * entries.length)].id_video;
+
+            if (req.body.params.record_log && req.body.params.record_log === "true") {
+                let interactor_id = req.body.params.interactor_id || null;
+                await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, true, null, filler_video_id);
+            }
+
             if (process.env.ENVIRONMENT === "development") {
-                res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`);
+                res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${filler_video_id}`);
                 return;
             }
 
-            videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${entries[Math.floor(Math.random() * entries.length)].id_video}`).getSignedUrl(config, function (err, url) {
+            videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${filler_video_id}`).getSignedUrl(config, function (err, url) {
                 if (err) {
                     console.error(err);
                 } else {
@@ -630,7 +637,6 @@ router.post('/fillerVideo', cors(), (req, res) => {
 
 router.post('/player', cors(), (req, res) => {
     // TODO: Review DM API calls
-    console.log("player question= ", req.body.params.question.current, req.body.params);
     axios.post(`${process.env.DM_ROUTE}`, {
         params: {
             query: req.body.params.question.current,
@@ -638,7 +644,7 @@ router.post('/player', cors(), (req, res) => {
             stream_id: req.body.params.streamIdToTalk
         }
 
-    }).then((videoDetails) => {
+    }).then(async (videoDetails) => {
 
         const config = {
             action: 'read',
@@ -646,17 +652,24 @@ router.post('/player', cors(), (req, res) => {
         };
 
 
+        const player_video_id = videoDetails.data.id_video;
+
+        if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
+            let interactor_id = req.body.params.interactor_id || null;
+            await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id);
+        }
+
         if (process.env.ENVIRONMENT === "development") {
             console.log(videoDetails.data.id_video)
             if (videoDetails.data.id_video === "204") {
                 res.send("error")
                 return;
             }
-            res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
+            res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`);
             return;
         }
 
-        videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`).getSignedUrl(config, function (err, url) {
+        videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`).getSignedUrl(config, function (err, url) {
             if (err) {
                 console.error(err);
             } else {
@@ -951,7 +964,6 @@ router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
 });
 
 router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
-    console.log("request received!");
     const user_id = req.params.user_id;
     isValidUser(user_id).then((success) => {
         if (req.body.q === undefined || typeof req.body.q !== "string" || req.body.q.trim().length <= 1) {
@@ -1227,7 +1239,6 @@ router.post('/getTotalVideoDuration', cors(), (req, res) => {
 
 
 router.post('/save_player_feedback', cors(), async (req, res) => {
-    console.log("req video_id: ", req.body.video_id);
     let user_id = req.body.user_id || null;
     let video_id = req.body.video_id || null;
     let question = req.body.question.toString() || null;
