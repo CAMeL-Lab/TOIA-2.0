@@ -249,12 +249,13 @@ function Player() {
 						isFillerPlaying.current = "false";
 						setVideoID(res.data); // setting the video ID
 						setVideoProperties({
-							key: res.data,
+							key: res.data + new Date(),// add timestamp to force video transition animation when the key hasn't changed
 							onEnded:
 								interacting.current == "false" ? fetchFiller : chatFiller,
 							source: res.data,
 							fetchFiller: fetchFiller,
 							muted: false,
+							filler: false
 						});
 
 						setTranscribedAudio("");
@@ -307,10 +308,11 @@ function Player() {
 				})
 				.then(async (res) => {
 					setVideoProperties({
-						key: res.data,
+						key: res.data+ new Date(),// add timestamp to force video transition animation when the key hasn't changed
 						onEnded: interacting.current == "false" ? fetchFiller : chatFiller,
 						source: res.data,
 						muted: true,
+						filler: true
 					});
 
 					document.getElementById("vidmain").load();
@@ -368,10 +370,11 @@ function Player() {
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
-							key: res.data,
+							key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 							onEnded: fetchFiller,
 							source: res.data,
 							muted: false,
+							filler: false
 						});
 
 						setVideoID(res.data); // setting the video ID
@@ -595,6 +598,7 @@ function Player() {
 								key={videoProperties.key}
 								muted={videoProperties.muted ? videoProperties.muted : false}
 								source={videoProperties.source}
+								filler={videoProperties.filler}
 							/>
 						</CSSTransition>
 					</TransitionGroup>
