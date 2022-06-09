@@ -88,6 +88,9 @@ function Player() {
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
 		setStreamIdToTalk(history.location.state.streamToTalk);
 		setStreamNameToTalk(history.location.state.streamNameToTalk);
+
+		canAccessStream();
+
 		fetchAnsweredQuestions();
 
 		fetchFiller();
@@ -116,6 +119,25 @@ function Player() {
 				input2 = event.target.value;
 				break;
 		}
+	}
+
+	function canAccessStream() {
+		let toiaID = history.location.state.toiaID;
+		let streamID = history.location.state.streamToTalk;
+
+		const options = {
+			method: 'POST',
+			url: '/api/permission/stream',
+			headers: {'Content-Type': 'application/json'},
+			data: {user_id: toiaID, stream_id: streamID}
+		};
+		  
+		axios.request(options).then(function (response) {
+			
+		}).catch(function (error) {
+			alert("You do not have permission to access this page");
+            library()
+		});
 	}
 
 	// handling data recieved from server
@@ -451,14 +473,14 @@ function Player() {
 	}
 
 	function library() {
-		if (isLoggedIn) {
+		if (history.location.state.toiaID != undefined) {
 			endTranscription();
 			history.push({
 				pathname: "/library",
 				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
+					toiaName: history.location.state.toiaName,
+					toiaLanguage: history.location.state.toiaLanguage,
+					toiaID: history.location.state.toiaID
 				},
 			});
 		} else {
