@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -33,6 +33,8 @@ const {TrackRecordVideo, TrackEditVideo} = require("../tracker/tracker");
 const {Storage} = require("@google-cloud/storage");
 const path = require("path");
 const mv = require('mv');
+
+const logger = require("../logger/index")
 
 // setting up the salt rounds for bcrypt
 const saltRounds = 12;
@@ -1265,5 +1267,25 @@ router.post('/save_player_feedback', cors(), async (req, res) => {
         res.sendStatus(401)
     }
 })
+
+// route to check if a user can access certain stream. Replace when a proper authentication system is in place.
+router.post("/permission/stream", cors(), async (req, res) => {
+    const user_id = req.body.user_id || null;
+    const stream_id = req.body.stream_id || null;
+
+    if (user_id === null || stream_id === null){
+        logger.debug("User/Stream id not provided when checking access permission");
+        res.sendStatus(401);
+    } else {
+        let hasAccess = await canAccessStream(user_id, stream_id);
+
+        if (hasAccess){
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(401);
+        }
+    }
+})
+
 
 module.exports = router;

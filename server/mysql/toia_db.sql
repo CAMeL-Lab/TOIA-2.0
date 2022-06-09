@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: May 06, 2022 at 08:30 AM
+-- Generation Time: Jun 09, 2022 at 07:23 PM
 -- Server version: 8.0.27
 -- PHP Version: 7.4.27
 
@@ -92,6 +92,17 @@ CREATE TABLE `stream` (
   `likes` int NOT NULL,
   `views` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stream_view_permission`
+--
+
+CREATE TABLE `stream_view_permission` (
+  `toia_id` int NOT NULL,
+  `stream_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Stores which users can view which streams';
 
 -- --------------------------------------------------------
 
@@ -195,6 +206,13 @@ ALTER TABLE `stream`
   ADD KEY `fk_stream_toia_user1_idx` (`toia_id`);
 
 --
+-- Indexes for table `stream_view_permission`
+--
+ALTER TABLE `stream_view_permission`
+  ADD KEY `view_permission_user_id` (`toia_id`),
+  ADD KEY `view_permission_stream_id` (`stream_id`);
+
+--
 -- Indexes for table `toia_user`
 --
 ALTER TABLE `toia_user`
@@ -278,6 +296,13 @@ ALTER TABLE `conversations_log`
   ADD CONSTRAINT `video_id` FOREIGN KEY (`video_played`) REFERENCES `video` (`id_video`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `player_feedback`
+--
+ALTER TABLE `player_feedback`
+  ADD CONSTRAINT `feedback_user_id` FOREIGN KEY (`user_id`) REFERENCES `toia_user` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `feedback_video_id` FOREIGN KEY (`video_id`) REFERENCES `video` (`id_video`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `question_suggestions`
 --
 ALTER TABLE `question_suggestions`
@@ -289,6 +314,13 @@ ALTER TABLE `question_suggestions`
 --
 ALTER TABLE `stream`
   ADD CONSTRAINT `fk_stream_toia_user1` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`);
+
+--
+-- Constraints for table `stream_view_permission`
+--
+ALTER TABLE `stream_view_permission`
+  ADD CONSTRAINT `view_permission_stream_id` FOREIGN KEY (`stream_id`) REFERENCES `stream` (`id_stream`) ON DELETE CASCADE,
+  ADD CONSTRAINT `view_permission_user_id` FOREIGN KEY (`toia_id`) REFERENCES `toia_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `video`
