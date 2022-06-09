@@ -9,7 +9,7 @@ export default function VideoPlaybackPlayer(props) {
                 onEnded={props.onEnded}
                 autoPlay
             >
-                <source src={props.source} type="video/mp4"></source>
+                <source src={props.source+ ((props.filler)? "":"#t=1")} type="video/mp4"></source>
             </video>
         </div>
     );
