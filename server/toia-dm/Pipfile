@@ -21,6 +21,9 @@ spacy-sentence-bert = "*"
 
 [dev-packages]
 jupyterlab = "*"
+openai = "*"
+matplotlib = "*"
+plotly = "*"
 
 [requires]
 python_version = "3.8"
