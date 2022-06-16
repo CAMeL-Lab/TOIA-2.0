@@ -1,18 +1,17 @@
-import React, { Component } from "react";
-import { useState, useEffect } from "react";
-import submitButton from "../icons/submit-button.svg";
 import axios from "axios";
-import { Modal } from "semantic-ui-react";
-import history from "../services/history";
-
-import Tracker from "../utils/tracker";
-
-import speechToTextUtils from "../transcription_utils";
+import React, { useEffect, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
-
-import PopModal from "../userRating/popModal";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { Modal } from "semantic-ui-react";
+import submitButton from "../icons/submit-button.svg";
+import history from "../services/history";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
+import speechToTextUtils from "../transcription_utils";
+import PopModal from "../userRating/popModal";
+import Tracker from "../utils/tracker";
+import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
+
 
 function Player() {
 	function exampleReducer(state, action) {
@@ -45,7 +44,7 @@ function Player() {
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 	const [answeredQuestions, setAnsweredQuestions] = useState([]);
 
-	const [video, setVideo] = useState(null);
+	const [videoProperties, setVideoProperties] = useState(null);
 	const [isInteracting, setIsInteracting] = useState(false);
 
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
@@ -65,6 +64,18 @@ function Player() {
 	let [micString, setMicString] = React.useState("INTERACT");
 
 	useEffect(() => {
+		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted. 
+		if (history.location.state === undefined || history.location.state.toiaName === undefined || history.location.state.toiaLanguage === undefined || history.location.state.toiaID === undefined) {
+			alert("You must be logged in to access this page");
+            history.push({
+                pathname: '/'
+            });
+        }
+        setName(history.location.state.toiaName);
+        setLanguage(history.location.state.toiaLanguage);
+        setTOIAid(history.location.state.toiaID);
+
+
 		if (history.location.state.toiaID != undefined) {
 			setLoginState(true);
 			setTOIAid(history.location.state.toiaID);
@@ -77,6 +88,9 @@ function Player() {
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
 		setStreamIdToTalk(history.location.state.streamToTalk);
 		setStreamNameToTalk(history.location.state.streamNameToTalk);
+
+		canAccessStream();
+
 		fetchAnsweredQuestions();
 
 		fetchFiller();
@@ -107,6 +121,25 @@ function Player() {
 		}
 	}
 
+	function canAccessStream() {
+		let toiaID = history.location.state.toiaID;
+		let streamID = history.location.state.streamToTalk;
+
+		const options = {
+			method: 'POST',
+			url: '/api/permission/stream',
+			headers: {'Content-Type': 'application/json'},
+			data: {user_id: toiaID, stream_id: streamID}
+		};
+		  
+		axios.request(options).then(function (response) {
+			
+		}).catch(function (error) {
+			alert("You do not have permission to access this page");
+            library()
+		});
+	}
+
 	// handling data recieved from server
 	function handleDataReceived(data) {
 		// setting the transcribedAudio
@@ -119,7 +152,6 @@ function Player() {
 				question.current = data.alternatives[0].transcript;
 
 				newRating.current = "false";
-				console.log("has rated data: ", hasRated);
 				speechToTextUtils.stopRecording();
 				fetchData();
 			}
@@ -147,15 +179,11 @@ function Player() {
 		if (val) {
 			textInput.current = val.question;
 		}
-
-		console.log("text input in text input change: ", textInput.current);
 	}
 
 	const recordUserRating = function (rate) {
 		// record the rating for the user
 		const vidID = videoID.split("/"); // splitting by delimeter
-
-		console.log(vidID[vidID.length - 1], textInput.current, rate);
 
 		const options = {
 			method: "POST",
@@ -182,7 +210,6 @@ function Player() {
 	};
 
 	async function continueChat() {
-		console.log("continue chat here");
 		if (newRating.current != "false") {
 			// if the user has rated then they can continue
 			if (interacting.current == "true") {
@@ -195,7 +222,6 @@ function Player() {
 		} else {
 			NotificationManager.warning("Please provide a rating", "", 3000);
 		}
-		console.log("still here!");
 	}
 
 	async function chatFiller() {
@@ -244,23 +270,15 @@ function Player() {
 						newRating.current = "false";
 						isFillerPlaying.current = "false";
 						setVideoID(res.data); // setting the video ID
-						setVideo(
-							<video
-								className="player-vid"
-								id="vidmain"
-								key={transcribedAudio}
-								onEnded={
-									interacting.current == "false" ? fetchFiller : chatFiller
-								}
-								autoPlay
-							>
-								<source
-									src={res.data}
-									onEnded={fetchFiller}
-									type="video/mp4"
-								></source>
-							</video>
-						);
+						setVideoProperties({
+							key: res.data + new Date(),// add timestamp to force video transition animation when the key hasn't changed
+							onEnded:
+								interacting.current == "false" ? fetchFiller : chatFiller,
+							source: res.data,
+							fetchFiller: fetchFiller,
+							muted: false,
+							filler: false
+						});
 
 						setTranscribedAudio("");
 					}
@@ -311,21 +329,14 @@ function Player() {
 					},
 				})
 				.then(async (res) => {
-					let videoELem = (
-						<video
-							muted
-							className="player-vid"
-							id="vidmain"
-							key="filler"
-							onEnded={
-								interacting.current == "false" ? fetchFiller : chatFiller
-							}
-							autoPlay
-						>
-							<source src={res.data} type="video/mp4"></source>
-						</video>
-					);
-					setVideo(videoELem);
+					setVideoProperties({
+						key: res.data+ new Date(),// add timestamp to force video transition animation when the key hasn't changed
+						onEnded: interacting.current == "false" ? fetchFiller : chatFiller,
+						source: res.data,
+						muted: true,
+						filler: true
+					});
+
 					document.getElementById("vidmain").load();
 					const playPromise = document.getElementById("vidmain").play();
 					if (playPromise !== undefined) {
@@ -354,13 +365,10 @@ function Player() {
 	function submitResponse(e) {
 		// if hasRated == true then you can sumbit
 
-		console.log("rating val: ", ratingVal);
-
 		question.current = textInput.current;
 
 		if (question.current != "" && newRating.current != "false") {
 			setHasRated(false);
-			console.log("question herer");
 			axios
 				.post(`/api/player`, {
 					params: {
@@ -375,7 +383,6 @@ function Player() {
 					},
 				})
 				.then((res) => {
-					console.log("response from server");
 					if (res.data === "error") {
 						setFillerPlaying(true);
 					} else {
@@ -383,21 +390,14 @@ function Player() {
 						setHasRated(false);
 						newRating.current = "false";
 						isFillerPlaying.current = "false";
-						setVideo(
-							<video
-								className="player-vid"
-								id="vidmain"
-								key={transcribedAudio}
-								onEnded={fetchFiller}
-								autoPlay
-							>
-								<source
-									src={res.data}
-									onEnded={fetchFiller}
-									type="video/mp4"
-								></source>
-							</video>
-						);
+
+						setVideoProperties({
+							key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+							onEnded: fetchFiller,
+							source: res.data,
+							muted: false,
+							filler: false
+						});
 
 						setVideoID(res.data); // setting the video ID
 						setTranscribedAudio("");
@@ -473,14 +473,14 @@ function Player() {
 	}
 
 	function library() {
-		if (isLoggedIn) {
+		if (history.location.state.toiaID != undefined) {
 			endTranscription();
 			history.push({
 				pathname: "/library",
 				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
+					toiaName: history.location.state.toiaName,
+					toiaLanguage: history.location.state.toiaLanguage,
+					toiaID: history.location.state.toiaID
 				},
 			});
 		} else {
@@ -608,7 +608,23 @@ function Player() {
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
 				</h1>
 				<p className="player-lang player-font-class-2 ">{streamNameToTalk}</p>
-				{video}
+				{videoProperties && (
+					<TransitionGroup>
+						<CSSTransition
+							key={videoProperties.key}
+							timeout={500}
+							classNames="fade"
+						>
+							<VideoPlaybackPlayer
+								onEnded={videoProperties.onEnded}
+								key={videoProperties.key}
+								muted={videoProperties.muted ? videoProperties.muted : false}
+								source={videoProperties.source}
+								filler={videoProperties.filler}
+							/>
+						</CSSTransition>
+					</TransitionGroup>
+				)}
 				{micMute ? (
 					<button
 						color="green"

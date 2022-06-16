@@ -393,6 +393,20 @@ const saveConversationLog = (interactor_id, toia_id, filler, question_asked, vid
     }))
 }
 
+const canAccessStream = (user_id, stream_id) => {
+    return new Promise((resolve)=>{
+        let query = `SELECT * FROM stream_view_permission WHERE toia_id = ? AND stream_id = ?`;
+        connection.query(query, [user_id, stream_id], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 1) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        })
+    })
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -417,3 +431,4 @@ module.exports.searchSuggestion = searchSuggestion;
 module.exports.searchRecorded = searchRecorded;
 module.exports.savePlayerFeedback = savePlayerFeedback;
 module.exports.saveConversationLog = saveConversationLog;
+module.exports.canAccessStream = canAccessStream;
