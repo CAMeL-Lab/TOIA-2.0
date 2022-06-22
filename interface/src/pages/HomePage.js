@@ -10,6 +10,8 @@ import Tracker from "../utils/tracker";
 import {NotificationManager} from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
+
+
 function HomePage() {
 
   function exampleReducer( state, action ) {
@@ -21,10 +23,22 @@ function HomePage() {
     }
   }
 
+  let welcome_text_en = "Welcome to";
+  let welcome_text_fr = "Bienvenue à";
+  let blurb_en = " communication reimagined.";
+  let blurb_fr = " communication réinventée";
+  // let blurb_fr = "إعادة تصور التواصل";
 
-  let welcome_text= "Welcome to";
-  let toia_text= "TOIA";
-  let blurb = " communication reimagined.";
+  let welcome_text = {
+    "en":welcome_text_en,
+    "fr": welcome_text_fr
+  };
+  let toia_text = "TOIA";
+  
+  let blurb = {
+    "en":blurb_en,
+    "fr": blurb_fr
+  };
   var input1, input2; //these hold all the user login data
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -187,6 +201,16 @@ function HomePage() {
     }
   }
 
+  function switch_lang(e){
+    if(toiaLanguage == "en"){
+      setLanguage("fr");
+    } else if (toiaLanguage == "fr"){
+      setLanguage("en");
+    } else {
+      setLanguage("fr");
+    }
+  }
+
   const inlineStyle = {
     modal : {
         height: '560px',
@@ -249,6 +273,9 @@ function HomePage() {
         <div onClick={garden} className="nav-my_icon app-monsterrat-black">
           My TOIA
         </div>
+        <div onClick={switch_lang} className="nav-my_icon app-monsterrat-black">
+          Switch
+        </div>
         <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
           {isLoggedIn ? 'Logout' : 'Login'}
         </div>
@@ -261,9 +288,9 @@ function HomePage() {
       </video>
 
       <div className="home-overlap-group">
-        <div className="home-des home-montserrat-black">{blurb}</div>
-        <h1 className="home-toia home-opensans-normal">{toia_text}</h1>
-        <div className="home-welcome-text home-montserrat-black">{welcome_text}</div>
+        <div className="home-des home-montserrat-black">{blurb[toiaLanguage ?? "en"]}</div>
+        <h1 className="home-toia home-opensans-normal">{toia_text}.</h1>
+        <div className="home-welcome-text home-montserrat-black">{welcome_text[toiaLanguage ?? "en"]}</div>
         <div onClick={signup}><img className="home-signup" src={signupButton} /></div>
       </div>
       <NotificationContainer/>
