@@ -68,7 +68,7 @@
   position: absolute;
   text-align: left;
   top: 0px;
-  width: 232px;
+  width: 420px;
   font-size: 36px;
   font-weight: 600;
 }
@@ -93,7 +93,7 @@
   position: absolute;
   text-align: left;
   top: 200px;
-  width: 404px;
+  width: 420px;
   font-size: 25px;
   font-weight: 500;
 }
@@ -121,4 +121,8 @@
 /*colors*/
 :root {
   --desert-storm: rgba(248, 248, 248, 1);
+}
+
+.right-align{
+  text-align: right;
 }

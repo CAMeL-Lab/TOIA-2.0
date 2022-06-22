@@ -23,21 +23,26 @@ function HomePage() {
     }
   }
 
+  let right_languages = ["ar"];
+
   let welcome_text_en = "Welcome to";
   let welcome_text_fr = "Bienvenue à";
+  let welcome_text_ar = "مرحبا بك في";
   let blurb_en = " communication reimagined.";
   let blurb_fr = " communication réinventée";
-  // let blurb_fr = "إعادة تصور التواصل";
+  let blurb_ar = "إعادة تصور التواصل";
 
   let welcome_text = {
-    "en":welcome_text_en,
-    "fr": welcome_text_fr
+    "en": welcome_text_en,
+    "fr": welcome_text_fr,
+    "ar": welcome_text_ar
   };
   let toia_text = "TOIA";
   
   let blurb = {
-    "en":blurb_en,
-    "fr": blurb_fr
+    "en": blurb_en,
+    "fr": blurb_fr,
+    "ar": blurb_ar
   };
   var input1, input2; //these hold all the user login data
 
@@ -205,9 +210,11 @@ function HomePage() {
     if(toiaLanguage == "en"){
       setLanguage("fr");
     } else if (toiaLanguage == "fr"){
+      setLanguage("ar");
+    } else if (toiaLanguage == "ar"){
       setLanguage("en");
     } else {
-      setLanguage("fr");
+      setLanguage("en");
     }
   }
 
@@ -288,9 +295,9 @@ function HomePage() {
       </video>
 
       <div className="home-overlap-group">
-        <div className="home-des home-montserrat-black">{blurb[toiaLanguage ?? "en"]}</div>
+        <div className={`home-des home-montserrat-black ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`}>{blurb[toiaLanguage ?? "en"]} </div>
         <h1 className="home-toia home-opensans-normal">{toia_text}.</h1>
-        <div className="home-welcome-text home-montserrat-black">{welcome_text[toiaLanguage ?? "en"]}</div>
+        <div className={`home-welcome-text home-montserrat-black ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`}>{welcome_text[toiaLanguage ?? "en"]}</div>
         <div onClick={signup}><img className="home-signup" src={signupButton} /></div>
       </div>
       <NotificationContainer/>
