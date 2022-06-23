@@ -137,26 +137,15 @@ function AvatarLibraryPage() {
       return;
       }
 
-      const fuse = new Fuse(allData, {
-        keys: [ // sets criteria for search, allows for user to search for both name and stream name
-          'maker',
-          {
-            name: 'streamName',
-            weight: 0.5
-          }
-        ]
-      });
+      const filteredData = allData.filter((item, index) => {
+        let searchTerms = searchval.split(" ");
+        for (let term of searchTerms){
+          if ((item.first_name + item.last_name + item.name).toLowerCase().includes(term.toLowerCase())) return true;
+        }
+        return false;
+      })
 
-      const result = fuse.search(searchval);//collects the results of those that match the search
-      const match = [];
-      if (!result.length) {
-          setSearchData([]);//if there are no results show nothing
-      } else {
-          result.forEach(({item}) => {
-              match.push(item);
-          });
-          setSearchData(match);//display all the cards that match the search value
-      }
+      setSearchData(filteredData);
     };
 
     //login pop up functions
@@ -491,7 +480,7 @@ function AvatarLibraryPage() {
             <input className="library-search" type="text" placeholder='&#xF002;  ' onChange={(event) => searchStreams(event.target.value)}/>
             <div className ="library-grid" //videos
             >
-                {allData.map(renderStream)}
+                {searchData.map(renderStream)}
             </div>
             </div>
         </div>
