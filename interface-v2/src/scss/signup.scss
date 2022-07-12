@@ -1,0 +1,197 @@
+.row {
+}
+.signup-page-sec {
+  display: flex;
+  .image-side {
+    background: #6c55fc;
+    width: 35vw;
+    padding: 0px 150px 0px 150px;
+    justify-content: space-evenly;
+    display: flex;
+    flex-direction: column;
+    .signup-logo {
+      width: 156px;
+      height: 48px;
+    }
+    .signup-human {
+      height: 356.56201171875px;
+      width: 241.86473083496094px;
+
+      border-radius: 0px;
+    }
+  }
+  .container {
+    flex: 1;
+    flex-direction: column;
+
+    .form-side {
+      margin-top: 54px;
+      margin-right: 127px;
+      flex: none;
+      float: right;
+
+      .language-dropdown {
+        width: fit-content;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 24px;
+
+        color: #7d7d7d;
+        border: none;
+        float: right;
+      }
+    }
+    .form-sec-fown {
+  margin-bottom: 112px;
+      width: 100%;
+      .inner-div-form {
+        width: 550px;
+        margin: auto;
+        .row {
+          display: block;
+          .col {
+            .signup-from {
+              display: flex;
+              flex-direction: column;
+              width: 100%;
+              h1 {
+                font-style: normal;
+                font-weight: 700;
+                font-size: 45px;
+                line-height: 54px;
+                text-align: left;
+                color: #000000;
+                margin-top: 100px;
+                margin-bottom: 0%;
+              }
+              .sign-up-with-btn {
+                display: flex;
+                gap: 31px;
+                margin-top: 50px;
+                button {
+                  justify-content: space-evenly;
+                  padding: 12px 16px;
+                  gap: 0px 17px;
+                  height: 60px;
+                  width: 290px;
+                  left: 199px;
+                  top: 246px;
+                  display: flex;
+                  background-color: transparent;
+                  border: 1px solid #828282;
+                  border-radius: 10px;
+                  font-style: normal;
+                  font-weight: 400;
+                  font-size: 18px;
+                  color: #000000;
+                }
+              }
+            }
+          }
+        }
+
+        .or-sec {
+          display: flex;
+          gap: 26.99px;
+          justify-content: center;
+          margin-top: 60px;
+          p {
+            margin: 0%;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 22px;
+            /* identical to box height */
+
+            color: #7d7d7d;
+          }
+        }
+        .sign-up-form {
+          .form-floating {
+            .form-control {
+              border: none;
+              border-bottom: 1px solid #7d7d7d;
+              font-style: normal;
+              font-weight: 400;
+              font-size: 18px;
+              line-height: 22px;
+              border-radius: 0%;
+              color: #7d7d7d;
+              // height: 90px;
+              padding: 0px;
+            }
+            .form-control:focus {
+              box-shadow: none;
+            }
+            label {
+              padding: 0%;
+              top: 10px;
+              font-style: normal;
+              font-weight: 400;
+              font-size: 18px;
+              line-height: 22px;
+
+              color: #7d7d7d;
+            }
+            .btn-pass-show {
+              display: flex;
+              justify-content: flex-end;
+              width: 100%;
+              .show-password {
+                background: transparent;
+                border: none;
+                z-index: 10;
+                margin-top: -40px;
+                float: right;
+                position: absolute;
+              }
+            }
+          }
+          .btn {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 22px;
+            /* identical to box height */
+
+            color: #ffffff;
+            width: 100%;
+            height: 60px;
+            left: 229px;
+            top: 658px;
+            margin-top: 60px;
+            background: #6c55fc;
+            border-radius: 10px;
+          }
+          .btn:focus {
+            box-shadow: 0 0 0 0.05rem #6c55fc;
+            border-color: #6c55fc;
+          }
+          .alrd-account {
+            display: flex;
+            gap: 15px;
+            margin-top: 27px;
+            p {
+              font-style: normal;
+              font-weight: 400;
+              font-size: 18px;
+              line-height: 20px;
+
+              color: #7d7d7d;
+            }
+            a {
+              text-decoration: none;
+              font-style: normal;
+              font-weight: 400;
+              font-size: 18px;
+              line-height: 20px;
+
+              color: #6c55fc;
+            }
+          }
+        }
+      }
+    }
+  }
+}

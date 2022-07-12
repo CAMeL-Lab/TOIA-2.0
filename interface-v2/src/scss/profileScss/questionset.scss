@@ -1,0 +1,39 @@
+.ques-set-main {
+	padding: 56px;
+	.job-admission-tabs {
+		width: 30%;
+		border-bottom: 2px solid #c4c4c4;
+		gap: 35px;
+		display: flex;
+		.nav-item {
+			.nav-link {
+				font-style: normal;
+				font-weight: 500;
+				font-size: 15px;
+				line-height: 40px;
+				padding: 0%;
+				color: #000000;
+			}
+
+			.nav-link:hover {
+				border-color: transparent;
+				line-height: 40px;
+
+				isolation: unset;
+			}
+
+			.nav-link.active {
+				font-style: normal;
+				font-weight: 500;
+				font-size: 15px;
+				line-height: 40px;
+				border: none;
+				border-color: transparent;
+				border-bottom: 2px solid #6a30fa;
+
+				color: #6a30fa;
+				background-color: transparent;
+			}
+		}
+	}
+}
