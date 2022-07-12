@@ -1,0 +1,77 @@
+.profile-main-body {
+	margin-left: auto;
+	margin-right: auto;
+	.profile-side-bar {
+		--bs-gutter-x: 0rem;
+		.profile-col {
+			background-color: rgba(19, 38, 141, 0.08);
+			border-right: 1px solid rgba(0, 0, 0, 0.28);
+			margin-left: auto;
+			margin-right: auto;
+			.profile-image {
+				border: none;
+				margin-top: 56px;
+				background-color: transparent;
+
+				.profile-image-card {
+					width: 85px;
+					height: 85px;
+					border-radius: 100%;
+					margin-right: auto;
+					margin-left: auto;
+				}
+				.profile-card-body {
+					.profile-user-name {
+						line-height: 21px;
+						font-size: 17px;
+						font-weight: 500;
+						margin-right: auto;
+						margin-left: auto;
+						text-align: center;
+					}
+					.profile-user-category {
+						font-style: normal;
+						font-weight: 500;
+						font-size: 10px;
+						line-height: 12px;
+						align-items: center;
+						text-align: center;
+						margin-right: auto;
+						margin-left: auto;
+						color: #525252;
+					}
+				}
+				margin-bottom: 52.5px;
+			}
+			.side-bar-tabs {
+				gap: 25px;
+				.tabs-name {
+					a {
+						font-style: normal;
+						font-weight: 500;
+						font-size: 17px;
+						line-height: 21px;
+						/* identical to box height */
+
+						display: flex;
+						gap: 33.12px;
+						padding: 10px 33px;
+						vertical-align: middle;
+						color: #77738b;
+					}
+					a.active {
+						background-color: transparent;
+						border-radius: 0%;
+						color: #000000;
+						border-left: 6px solid #6c55fc;
+						img {
+							filter: invert(228%) sepia(150%) saturate(3484%)
+								hue-rotate(224deg) brightness(91%)
+								contrast(119%);
+						}
+					}
+				}
+			}
+		}
+	}
+}

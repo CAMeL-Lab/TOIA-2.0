@@ -1,0 +1,55 @@
+.main-sec {
+  margin-top: 136.67px;
+  
+height: 90vh;
+  .col {
+    .vstack {
+        padding-top: 30px;
+      .into-text {
+        max-width: 526px;
+        p {
+          font-style: normal;
+          font-weight: 500;
+          font-size: 45px;
+          line-height: 54px;
+          display: flex;
+          align-items: center;
+
+          color: #000000;
+          margin: 0%;
+        }
+        margin-bottom: 50px;
+      }
+      .button-start {
+        display: flex;
+        gap: 18px;
+        .start-btn {
+          background: #442dd0;
+          color: #ffffff;
+        }
+        button:hover {
+          box-shadow: 0 0 0 0.05rem #442dd0;
+        }
+        button:focus {
+          box-shadow: 0 0 0 0.05rem #442dd0;
+        }
+
+        button {
+          width: 220px;
+          height: 63.59px;
+          left: 358px;
+          top: 499px;
+          color: #442dd0;
+
+          background-color: #ffffff;
+          border: 3px solid #442dd0;
+          border-radius: 5px;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 30px;
+          line-height: 36px;
+        }
+      }
+    }
+  }
+}

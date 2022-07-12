@@ -1,0 +1,39 @@
+footer {
+	font-style: normal;
+	font-weight: 500;
+	font-size: 15px;
+	line-height: 18px;
+	display: flex;
+	align-items: center;
+
+	color: #aeaeae;
+	top: 892px;
+	background: #fafafa;
+	height: 90px;
+	.container {
+		.row {
+			.col {
+				.footer-right-compo,
+				.footer-left-compo {
+					display: flex;
+					gap: 44px;
+					vertical-align: middle;
+					height: 100%;
+					a {
+						font-style: normal;
+						font-weight: 500;
+						font-size: 15px;
+						line-height: 18px;
+						display: flex;
+						align-items: center;
+						text-decoration: none;
+						color: #aeaeae;
+					}
+				}
+				.footer-left-compo {
+					justify-content: flex-end;
+				}
+			}
+		}
+	}
+}

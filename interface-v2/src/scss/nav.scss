@@ -1,0 +1,29 @@
+.navbar-collapse {
+  flex-grow: 0;
+}
+.navbar {
+  height: 76px;
+  left: 0px;
+  top: 0px;
+
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  justify-content: space-between;
+  width: 100%;
+  .container {
+    .navbar-collapse {
+      .navbar-nav {
+        gap: 0px 20px;
+        a {
+          font-style: normal;
+          font-weight: 500;
+          font-size: 22px;
+          line-height: 27px;
+          /* identical to box height */
+
+          color: #000000;
+        }
+      }
+    }
+  }
+}
