@@ -11,8 +11,6 @@ export default function FreeSoloCreateOption(props) {
     <Autocomplete
       value={value}
       onChange={(event, newValue) => {
-          console.log("newValue: ", newValue)
-          console.log("event: ", event);
         if (typeof newValue === "string") {
           setValue({
             question: newValue
@@ -81,16 +79,26 @@ export default function FreeSoloCreateOption(props) {
             resize: "none",
             textAlign: "left",
             /* top: 75%; */
-            top: "80.75%",
-            width: "90.25%",
+            top: "90%",
+            width: "55.25%",
+            left: "1%",
+            height: "7.5%",
             // height: "80.25%",
             color: "#707070",
             fontSize: "1.5rem",
             paddingTop: "25px",
-            paddingBottom: "25px"
+            paddingBottom: "25px",
+            "& label": {
+              marginLeft: "35%",
+              paddingTop: "3.55%",
+              fontSize: "1.2rem",
+              "&.Mui-focused": {
+                marginLeft: 0
+              }
+            }
           }}
           {...params}
-          label="Enter search phrase"
+          label="Type a question to ask"
           onChange={(value) => {
            props.handleTextChange(value);
           }}
