@@ -7,14 +7,41 @@ import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Modal } from "semantic-ui-react";
-import submitButton from "../icons/submit-button.svg";
+import i18n from "i18next";
+import { useTranslation, initReactI18next, Trans } from "react-i18next";
 import history from "../services/history";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
+import { NotificationManager } from "react-notifications";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
+
 import PopModal from "../userRating/popModal";
-import Tracker from "../utils/tracker";
-import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
+import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
+
+const translationsEn = {
+  welcome: "Welcome!",
+  "sample-text": "Sample <bold><italic>text</italic></bold>.",
+  changed: "You have changed the language {{count}} time",
+  changed_plural: "You have changed the language {{count}} times",
+};
+
+const translationsFr = {
+  welcome: "Bienvenue!",
+  "sample-text": "Exemple de <bold><italic>texte</italic></bold>.",
+  changed: "Vous avez changé la langue {{count}} fois",
+};
+
+i18n
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources: {
+      en: { translation: translationsEn },
+      fr: { translation: translationsFr },
+    },
+    lng: "en",
+    fallbackLng: "en",
+  });
 
 function Player() {
 	function exampleReducer(state, action) {

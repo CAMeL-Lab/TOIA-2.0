@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {Suspense, useState, useEffect, useRef} from "react";
 import signupButton from "../icons/signup-button.svg";
 import submitButton from "../icons/submit-button.svg";
 import sample from "../icons/sample-video.svg";
@@ -9,6 +9,8 @@ import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
 import Tracker from "../utils/tracker";
 import {NotificationManager} from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import i18n from "i18next";
+import { useTranslation, initReactI18next, Trans } from "react-i18next";
 
 
 
@@ -23,27 +25,54 @@ function HomePage() {
     }
   }
 
+  const { t } = useTranslation();
+
   let right_languages = ["ar"];
 
-  let welcome_text_en = "Welcome to";
-  let welcome_text_fr = "Bienvenue à";
-  let welcome_text_ar = "مرحبا بك في";
-  let blurb_en = " communication reimagined.";
-  let blurb_fr = " communication réinventée";
-  let blurb_ar = "إعادة تصور التواصل";
+  const translationsEn = {
+    welcome: "Welcome to",
+    blurb: " communication reimagined."
+  };
+  const translationsFr = {
+    welcome: "Bienvenue à",
+    blurb: " communication réinventée."
+  };
+  const translationsAr = {
+    welcome: "مرحبا بك في" ,
+    blurb: "إعادة تصور التواصل"
+  };
 
-  let welcome_text = {
-    "en": welcome_text_en,
-    "fr": welcome_text_fr,
-    "ar": welcome_text_ar
-  };
-  let toia_text = "TOIA";
+  i18n
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources: {
+      en: { translation: translationsEn },
+      fr: { translation: translationsFr },
+      ar: { translation: translationsAr },
+    },
+    lng: "en",
+    fallbackLng: "en",
+    interpolation: { escapeValue: false },
+  });
+  // let welcome_text_en = "Welcome to";
+  // let welcome_text_fr = "Bienvenue à";
+  // let welcome_text_ar = "مرحبا بك في";
+  // let blurb_en = " communication reimagined.";
+  // let blurb_fr = " communication réinventée.";
+  // let blurb_ar = "إعادة تصور التواصل";
+
+  // let welcome_text = {
+  //   "en": welcome_text_en,
+  //   "fr": welcome_text_fr,
+  //   "ar": welcome_text_ar
+  // };
+  // let toia_text = "TOIA";
   
-  let blurb = {
-    "en": blurb_en,
-    "fr": blurb_fr,
-    "ar": blurb_ar
-  };
+  // let blurb = {
+  //   "en": blurb_en,
+  //   "fr": blurb_fr,
+  //   "ar": blurb_ar
+  // };
   var input1, input2; //these hold all the user login data
 
   const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
@@ -207,14 +236,16 @@ function HomePage() {
   }
 
   function switch_lang(e){
-    if(toiaLanguage == "en"){
-      setLanguage("fr");
-    } else if (toiaLanguage == "fr"){
-      setLanguage("ar");
-    } else if (toiaLanguage == "ar"){
-      setLanguage("en");
+     // i18n.changeLanguage(toiaLanguage);
+     console.log("Language changed:", i18n.language);
+    if(i18n.language == "en"){
+      i18n.changeLanguage("fr");
+    } else if (i18n.language == "fr"){
+      i18n.changeLanguage("ar");
+    } else if (i18n.language == "ar"){
+      i18n.changeLanguage("en");
     } else {
-      setLanguage("en");
+      i18n.changeLanguage("en");
     }
   }
 
@@ -231,6 +262,7 @@ function HomePage() {
   };
 
   return (
+    <Suspense>
     <div className="home-page">
       <Modal //this is the new pop up menu
         size='large'
@@ -295,14 +327,15 @@ function HomePage() {
       </video>
 
       <div className="home-overlap-group">
-        <div className={`home-des home-montserrat-black ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`}>{blurb[toiaLanguage ?? "en"]} </div>
-        <h1 className="home-toia home-opensans-normal">{toia_text}.</h1>
-        <div className={`home-welcome-text home-montserrat-black ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`}>{welcome_text[toiaLanguage ?? "en"]}</div>
+        <div className={`home-des home-montserrat-black ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`}>{t("blurb")} </div>
+        <h1 className="home-toia home-opensans-normal">TOIA</h1>
+        <div className={`home-welcome-text home-montserrat-black ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`}>{t("welcome")}</div>
         <div onClick={signup}><img className="home-signup" src={signupButton} /></div>
       </div>
       <NotificationContainer/>
 
     </div>
+    </Suspense>
   );
 }
 
