@@ -9,13 +9,13 @@ const Landingpage = () => {
     <>
       <Container>
         <Row className="main-sec">
-          <Col>
+          <Col className="main-left">
             <Stack>
               <div className="into-text">
-                <p>
-                  Practice your Interview Skills for Job,Internship, or Graduate
+                <h1>
+                  Practice your Interview Skills for Job, Internship, or Graduate
                   School
-                </p>
+                </h1>
               </div>
               <div className="button-start">
                 <Button
@@ -32,7 +32,7 @@ const Landingpage = () => {
               />
             </Stack>
           </Col>
-          <Col>
+          <Col className="main-right">
             <img src={laptop} alt="...." />
           </Col>
         </Row>

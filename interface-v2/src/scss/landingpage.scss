@@ -1,19 +1,29 @@
+@import "rfs/scss";
+
 .main-sec {
   margin-top: 136.67px;
-  
-height: 90vh;
+
+  height: 90vh;
+
   .col {
+    width: 50%;
+
+    img {
+      width: 100%;
+    }
+
     .vstack {
-        padding-top: 30px;
+      padding-top: 30px;
       .into-text {
         max-width: 526px;
-        p {
-          font-style: normal;
+        h1 {
+          @include font-size(2.7rem);
+          // font-style: normal;
           font-weight: 500;
-          font-size: 45px;
-          line-height: 54px;
-          display: flex;
-          align-items: center;
+          // font-size: 3vw;
+          // line-height: 54px;
+          // display: flex;
+          // align-items: center;
 
           color: #000000;
           margin: 0%;
@@ -51,5 +61,11 @@ height: 90vh;
         }
       }
     }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .into-text {
+    text-align: center;
   }
 }

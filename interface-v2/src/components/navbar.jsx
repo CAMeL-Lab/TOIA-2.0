@@ -17,7 +17,6 @@ function NavBar() {
             <Nav className="me-auto">
               <Nav.Link href="/practice">Practice</Nav.Link>
               <Nav.Link href="/review">Review</Nav.Link>
-              <Nav.Link href="/mock-interview">Mock Interview</Nav.Link>
               <Nav.Link href="/login">Log-in</Nav.Link>
             </Nav>
           </Navbar.Collapse>
