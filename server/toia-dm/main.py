@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import os
 from utils import toia_answer, NLP, PS
+from utils_gpt3 import getFirstNSimilar
 from dotenv import load_dotenv
 import uvicorn
 from fastapi import FastAPI
@@ -88,6 +89,42 @@ def dialogue_manager(payload: DMpayload):
     json.dumps(result)
     return result
 
+@app.post("/tfidfShortList")
+def tfidfShortList(payload: DMpayload, NUM_SHORTLIST=50):
+    raw_payload = payload.params
+    query = raw_payload.query
+    avatar_id = raw_payload.avatar_id
+    stream_id = raw_payload.stream_id
+    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
+                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
+                            INNER JOIN questions ON questions.id = videos_questions_streams.id_question
+                            WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND questions.trigger_suggester = 1;""")
+
+    CONNECTION = ENGINE.connect()
+    result_proxy = CONNECTION.execute(statement,streamID=stream_id)
+    result_set = result_proxy.fetchall()
+
+    df_avatar = pd.DataFrame(result_set,
+                                columns=[
+                                    'stream_id_stream',
+                                    'type',
+                                    'question',
+                                    'id_video',
+                                    'toia_id',
+                                    'idx',
+                                    'private',
+                                    'answer',
+                                    'language',
+                                    'likes',
+                                    'views',
+                                ])
+
+    final_suggestions = getFirstNSimilar(df_avatar, query, NUM_SHORTLIST)
+
+    print("TFIDF Shortlist:\n", final_suggestions)
+
+    return {"suggestions_shortlist": json.dumps(final_suggestions.tolist())}
+
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=int(os.environ.get("DM_PORT")))
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("DM_PORT")))

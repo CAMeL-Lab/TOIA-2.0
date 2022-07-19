@@ -647,12 +647,15 @@ router.post('/player', cors(), (req, res) => {
 
 
         if (process.env.ENVIRONMENT === "development") {
-            console.log(videoDetails.data.id_video)
+            console.log("Video:", videoDetails)
             if (videoDetails.data.id_video === "204") {
                 res.send("error")
                 return;
             }
-            res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`);
+            res.send({
+                url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${videoDetails.data.id_video}`,
+                answer: videoDetails.data.answer
+        });
             return;
         }
 
@@ -660,7 +663,10 @@ router.post('/player', cors(), (req, res) => {
             if (err) {
                 console.error(err);
             } else {
-                res.send(url);
+                res.send({
+                    url,
+                    answer: videoDetails.data.answer
+                });
             }
         });
     }).catch((err) => {
@@ -893,6 +899,52 @@ router.post('/recorder', cors(), async (req, res) => {
             });
         }
     });
+});
+
+router.post('/getSmartQuestions', (req,res)=>{
+    // Method 3: Using TFIDF to shortlist question before using GPT-3 to directly select questions
+    console.log("Starting....");
+    axios.post("http://toia-dm:5001/tfidfShortList", {
+        params: {
+            query: req.body.params.latest_question,
+            avatar_id: req.body.params.avatar_id,
+            stream_id: req.body.params.stream_id
+        }
+    })
+    .then(response2 => {
+        console.log("==========SHORTLISTED=========");
+        // console.log(response2);
+        console.log(response2.data.suggestions_shortlist);
+        const options = {
+            method: 'POST',
+            url: "http://q_api:5000/generateSmartQ",
+            headers: {'Content-Type': 'application/json'},
+            data: {
+                new_q: req.body.params.latest_question,
+                new_a: req.body.params.latest_answer,
+                n_suggestions: 5,
+                avatar_id: req.body.params.avatar_id,
+                suggestions_shortlist: response2.data.suggestions_shortlist
+            }
+        };
+        axios.request(options)
+        .then((response)=>{
+            console.log("==========FINAL RESPONSE=========");
+            // console.log(response2);
+            console.log(response.data.suggestions);
+            res.send(response.data.suggestions);
+        })
+        .catch(function (error) {
+            console.log("=============== Error with Q_API ============")
+            console.log(error);
+        });
+        // res.send(response2.data.suggestions_shortlist);
+    })
+    .catch(error => {
+        console.log("=============== Error with TOIA-DM_API ============")
+        console.log(error);
+    });
+
 });
 
 router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
