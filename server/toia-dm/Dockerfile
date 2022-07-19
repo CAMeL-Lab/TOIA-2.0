@@ -1,5 +1,6 @@
 FROM ubuntu:20.04
 
+ENV FLASK_RUN_HOST 0.0.0.0
 RUN apt-get update
 RUN apt-get install -y build-essential
 RUN apt-get install python3-pip -y
