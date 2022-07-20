@@ -177,10 +177,14 @@ const Practice = () => {
 									<div className="video-sec"></div>
 								</Col>
 								<Col xs lg="4">
-									<Editor
-										editorState={editorState}
-										onChange={setEditorState}
-									/>
+									<Form className="form-inout-sec-aa">
+										<Form.Group
+											className="mb-3 "
+											controlId="exampleForm.ControlTextarea1"
+										>
+											<Form.Control as="textarea" className="comnt-area-aa" />
+										</Form.Group>
+									</Form>
 								</Col>
 							</Row>
 						</div>

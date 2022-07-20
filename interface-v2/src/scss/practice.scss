@@ -213,10 +213,16 @@
     }
   }
 }
-.public-DraftStyleDefault-ltr {
-  height: 374px;
-  padding: 20px;
+.form-inout-sec-aa{
   background: #fafafa;
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
+
+  .comnt-area-aa {
+    background: #FAFAFA;
+    height: 374px;
+    padding: 20px;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+  }
 }
+
