@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -873,15 +873,6 @@ router.post('/recorder', cors(), async (req, res) => {
                                     console.log("=============== Error with Q_API ============")
                                     console.log(error);
                                 });
-
-
-                                // axios.post(`${process.env.Q_API_ROUTE}`, {
-                                //     qa_pair: q.question + " " + q.question,
-                                //     callback_url: req.protocol + '://' + req.get('host') + "/api/saveSuggestedQuestion/" + fields.id[0]
-                                // }).catch(function (error) {
-                                //     console.log("=============== Error with Q_API ============")
-                                //     console.log(error);
-                                // });
                             }
                         }
 
@@ -1284,6 +1275,31 @@ router.post("/permission/stream", cors(), async (req, res) => {
         } else {
             res.sendStatus(401);
         }
+    }
+})
+
+
+router.post('/saveAdaSearch', cors(), async (req, res) => {
+    const video_id = req.body.video_id;
+    const question_id = req.body.question_id;
+    const data = req.body.ada_search;
+
+    if (await saveAdaSearch(data, question_id, video_id) === true){
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(403);
+    }
+})
+
+router.post('/getAdaSearch', cors(), async (req, res) => {
+    const video_id = req.body.video_id;
+    const question_id = req.body.question_id;
+
+    let data = await getAdaSearch(question_id, video_id)
+    if (data === null){
+        res.sendStatus(403);
+    } else {
+        res.send(data);
     }
 })
 

@@ -407,6 +407,35 @@ const canAccessStream = (user_id, stream_id) => {
     })
 }
 
+const saveAdaSearch = (data, question_id, video_id) => {
+    let buff = new Buffer.from(data);
+    let base64data = buff.toString('base64');
+
+    let query = `UPDATE videos_questions_streams SET ada_search=? WHERE id_video=? AND id_question=?`;
+
+    return new Promise((resolve) => {
+        connection.query(query, [base64data, video_id, question_id], (err, result) => {
+            if (err) throw err;
+            resolve(true)
+        })
+    })
+}
+
+const getAdaSearch = (question_id, video_id) => {
+    let query = `SELECT ada_search FROM videos_questions_streams WHERE id_video=? AND id_question=?`;
+
+    return new Promise((resolve) => {
+        connection.query(query, [video_id, question_id], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 0) resolve(null);
+            
+            let ada_search_encoded = entry[0].ada_search;
+            let buff = new Buffer.from(ada_search_encoded, 'base64');
+            resolve(buff.toString('ascii'));
+        })
+    })
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -432,3 +461,5 @@ module.exports.searchRecorded = searchRecorded;
 module.exports.savePlayerFeedback = savePlayerFeedback;
 module.exports.saveConversationLog = saveConversationLog;
 module.exports.canAccessStream = canAccessStream;
+module.exports.saveAdaSearch = saveAdaSearch;
+module.exports.getAdaSearch = getAdaSearch;

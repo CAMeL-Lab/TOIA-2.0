@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jun 09, 2022 at 07:23 PM
+-- Generation Time: Jun 23, 2022 at 06:58 PM
 -- Server version: 8.0.27
 -- PHP Version: 7.4.27
 
@@ -163,7 +163,8 @@ CREATE TABLE `videos_questions_streams` (
   `id_video` varchar(500) NOT NULL,
   `id_question` int NOT NULL,
   `id_stream` int NOT NULL,
-  `type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL
+  `type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
+  `ada_search` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -209,7 +210,7 @@ ALTER TABLE `stream`
 -- Indexes for table `stream_view_permission`
 --
 ALTER TABLE `stream_view_permission`
-  ADD KEY `view_permission_user_id` (`toia_id`),
+  ADD PRIMARY KEY (`toia_id`,`stream_id`),
   ADD KEY `view_permission_stream_id` (`stream_id`);
 
 --
