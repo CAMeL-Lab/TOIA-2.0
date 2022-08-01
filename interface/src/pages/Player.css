@@ -35,11 +35,11 @@
 }
 .player-vid {
   background-color: transparent;
-  left: 15%;
+  left: 1%;
   position: absolute;
-  top: 12.5%;
+  top: 5.5%;
   width: 70%;
-  height: 68%;
+  height: 69%;
   border-radius: 5px;
 }
 
@@ -51,8 +51,9 @@
   position: absolute;
   text-align: center;
   top: 0px;
-  /* width: 60%; */
-  width: 100%;
+  /* left: 0.5%; */
+  width: 70%;
+  /* width: 100%; */
 }
 .player-lang {
   background-color: transparent;
@@ -61,35 +62,49 @@
   /* left: 36.5%; */
   position: absolute;
   text-align: center;
+  /* left: 2%; */
   top: 7%;
-  /* width: 30%; */
-  width: 100%;
+  width: 10%;
+  /* width: 100%; */
 }
 
 /*fonts*/
 .player-font-class-2 {
   color: black;
   font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-size: 16px;
+  font-size: 17px;
   font-style: normal;
   font-weight: 500;
+  top: 8%;
+  left: 1%;
   letter-spacing: -0.18px;
+  z-index: 9;
 }
 .player-font-class-3 {
   color: black;
   font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-size: 36px;
+  font-size: 34px;
   font-style: normal;
   font-weight: 700;
+  top: -3%;
+  letter-spacing: -0.54px;
+}
+
+.player-font-class-4 {
+  color: black;
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
   letter-spacing: -0.54px;
 }
 
 
 .mute-button {
   position: absolute;
-  top: 4%;
-  right: 15%;
-  width: 15%;
+  top: 80.4%;
+  left: 1%;
+  width: 70%;
   height: 7%;
   font-size: 1.5rem;
   /* background-color: var(--check-green); */
@@ -106,23 +121,83 @@
 
 .skip-end-button {
   position: absolute;
-  top: 4%;
-  left: 15%;
+  top: 65%;
+  left: 57%;
   width: 15%;
   height: 7%;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  z-index: 9;
 }
 
 .submit-button{
   position: absolute;
-  bottom: -2%;
-  left: 42%;
-  width: 15%;
-  height: 7%;
+  top: 93.7%;
+  left: 57.5%;
+  width: 13.5%;
+  height: 7.5%;
   font-size: 1.5rem;
-  color: #02587A;
+  color: #49769c;
 }
 
+.card-1{
+  position: absolute;
+  left: 75.5%;
+  top: -2%;
+}
+
+.card-2{
+  position: absolute;
+  left: 75.5%;
+  top: 20%;
+}
+
+.card-3{
+  position: absolute;
+  left: 75.5%;
+  top: 42%;
+}
+
+.card-4{
+  position: absolute;
+  left: 75.5%;
+  top: 64%;
+}
+
+.card-5{
+  position: absolute;
+  left: 75.5%;
+  top: 86%;
+}
+
+.card-width-control{
+  max-height: 30%;
+  min-height: 24%;
+}
 .cursor-disabled {
   cursor: not-allowed !important;
+}
+
+.redo-icon{
+  color:#006a94;
+}
+
+
+.transcript {
+  background-color: rgba(126, 124, 124, 0.1);
+  border: 0;
+  border-radius: 3px;
+  height: 41px;
+  /* left: 39%; */
+  left: 1%;
+  padding: 5px;
+  position: absolute;
+  resize: none;
+  text-align: left;
+  /* top: 75%; */
+  top: 89.75%;
+  width: 70%;
+  color: #707070;
+  font-size: 1.5rem;
+  padding-top: 25px;
+  padding-bottom: 25px;
 }

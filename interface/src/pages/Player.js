@@ -1,3 +1,5 @@
+import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
+import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NotificationManager } from "react-notifications";
@@ -6,6 +8,10 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
+import { Label, Modal } from "semantic-ui-react";
+import submitButton from "../icons/submit-button.svg";
+import history from "../services/history";
+import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
 import PopModal from "../userRating/popModal";
@@ -41,7 +47,7 @@ function Player() {
 	const [streamIdToTalk, setStreamIdToTalk] = useState(null);
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
-	const [answeredQuestions, setAnsweredQuestions] = useState([]);
+	const [answeredQuestions, setAnsweredQuestions] = useState(["Loading ..."]);
 
 	const [videoProperties, setVideoProperties] = useState(null);
 	const [isInteracting, setIsInteracting] = useState(false);
@@ -52,15 +58,20 @@ function Player() {
 
 	const [transcribedAudio, setTranscribedAudio] = useState("");
 
+	// suggested questions for cards
+	const [suggestion2, setSuggestion2] = React.useState("");
+
 	const textInput = React.useRef("");
 	const question = React.useRef("");
 	const interacting = React.useRef("false");
 	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
+	const questionsLength = React.useRef(0);
+	const interimTextInput = React.useRef("");
 
 	var input1, input2;
 	let [micMute, setMicStatus] = React.useState(true);
-	let [micString, setMicString] = React.useState("INTERACT");
+	let [micString, setMicString] = React.useState("ASK BY VOICE");
 
 	useEffect(() => {
 		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -97,9 +108,22 @@ function Player() {
 		fetchAnsweredQuestions();
 
 		fetchFiller();
-
 		// Tracker
 		new Tracker().startTracking(history.location.state);
+	}, []);
+
+	useEffect(() => {
+		const listener = (event) => {
+			if (event.code === "Enter" || event.code === "NumpadEnter") {
+				event.preventDefault();
+
+				submitResponse();
+			}
+		};
+		document.addEventListener("keydown", listener);
+		return () => {
+			document.removeEventListener("keydown", listener);
+		};
 	}, []);
 
 	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
@@ -143,6 +167,44 @@ function Player() {
 				library();
 			});
 	}
+	// if user asks one of the suggested questions
+	function askQuestionFromCard(question, suggestionNumber) {
+		const oldQuestion = question.current;
+		axios
+			.post(`/api/player`, {
+				params: {
+					toiaIDToTalk: history.location.state.toiaToTalk,
+					toiaFirstNameToTalk:
+						history.location.state.toiaFirstNameToTalk,
+					question,
+					streamIdToTalk: history.location.state.streamToTalk,
+				},
+			})
+			.then((res) => {
+				if (res.data === "error") {
+					setFillerPlaying(true);
+					console.log("error");
+				} else {
+					setFillerPlaying(true);
+					setHasRated(false);
+
+					isFillerPlaying.current = "false";
+					setVideoProperties({
+						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+						onEnded:fetchFiller,
+						source: res.data,
+						fetchFiller: fetchFiller,
+						muted: false,
+						filler: false,
+					});
+
+					setVideoID(res.data); // setting the video ID
+					setTranscribedAudio("");
+					question.current = "";
+				}
+			});
+	}
+	// Function ends here
 
 	// handling data recieved from server
 	function handleDataReceived(data) {
@@ -156,6 +218,7 @@ function Player() {
 				question.current = data.alternatives[0].transcript;
 
 				newRating.current = "false";
+
 				speechToTextUtils.stopRecording();
 				fetchData();
 			}
@@ -167,7 +230,9 @@ function Player() {
 	// function to fetch answered user questions from the DB
 	function fetchAnsweredQuestions() {
 		axios
-			.get(`/api/questions/answered/${history.location.state.toiaToTalk}`)
+			.get(
+				`http://localhost:3001/api/questions/answered/${history.location.state.toiaToTalk}`
+			)
 			.then((res) => {
 				let answeredQuestionsData = [];
 				res.data.forEach((answer) => {
@@ -177,7 +242,13 @@ function Player() {
 						});
 					}
 				});
+
 				setAnsweredQuestions([...answeredQuestionsData]);
+
+				questionsLength.current =
+					answeredQuestionsData.length >= 3
+						? 3
+						: answeredQuestionsData.length;
 			});
 	}
 
@@ -193,14 +264,14 @@ function Player() {
 
 		const options = {
 			method: "POST",
-			url: "/api/save_player_feedback",
+			url: "http://localhost:3001/api/save_player_feedback",
 			headers: { "Content-Type": "application/json" },
 			data: {
 				...(history.location.state.toiaID && {
 					user_id: history.location.state.toiaID,
 				}),
 				video_id: vidID[vidID.length - 1],
-				question: textInput.current,
+				question: question.current,
 				rating: rate,
 			},
 		};
@@ -263,10 +334,6 @@ function Player() {
 							history.location.state.toiaFirstNameToTalk,
 						question,
 						streamIdToTalk: history.location.state.streamToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
 					},
 				})
 				.then((res) => {
@@ -274,6 +341,7 @@ function Player() {
 						setFillerPlaying(true);
 					} else {
 						setFillerPlaying(true);
+						//setHasRated(false);
 						newRating.current = "false";
 						isFillerPlaying.current = "false";
 						setVideoID(res.data); // setting the video ID
@@ -302,7 +370,7 @@ function Player() {
 	function micStatusChange() {
 		if (micMute == true) {
 			setMicStatus(false);
-			setMicString("PAUSE");
+			setMicString("STOP ASK BY VOICE");
 			setIsInteracting(true);
 			interacting.current = "true";
 
@@ -321,7 +389,7 @@ function Player() {
 		} else {
 			speechToTextUtils.stopRecording();
 			setMicStatus(true);
-			setMicString("INTERACT");
+			setMicString("ASK BY VOICE");
 			setIsInteracting(false);
 			interacting.current = "false";
 		}
@@ -363,12 +431,10 @@ function Player() {
 							.then((_) => {
 								// Automatic playback started!
 								// Show playing UI.
-								console.log("audio played auto");
 							})
 							.catch((error) => {
 								// Auto-play was prevented
 								// Show paused UI.
-								console.log("playback prevented");
 
 								fetchFiller();
 							});
@@ -379,14 +445,17 @@ function Player() {
 
 	function textChange(e) {
 		textInput.current = e.target.value;
+		interimTextInput.current = textInput.current;
 	}
 
 	function submitResponse(e) {
 		// if hasRated == true then you can sumbit
 
-		question.current = textInput.current;
+		question.current = textInput.current
+			? textInput.current
+			: interimTextInput.current;
 
-		if (question.current != "" && newRating.current != "false") {
+		if (question.current != "") {
 			setHasRated(false);
 			axios
 				.post(`/api/player`, {
@@ -396,10 +465,6 @@ function Player() {
 							history.location.state.toiaFirstNameToTalk,
 						question,
 						streamIdToTalk: history.location.state.streamToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
 					},
 				})
 				.then((res) => {
@@ -408,7 +473,7 @@ function Player() {
 					} else {
 						setFillerPlaying(true);
 						setHasRated(false);
-						newRating.current = "false";
+
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
@@ -420,12 +485,11 @@ function Player() {
 						});
 
 						setVideoID(res.data); // setting the video ID
+						// transcribedAudio.current = '';
 						setTranscribedAudio("");
 						question.current = "";
 					}
 				});
-		} else if (newRating.current != "true") {
-			NotificationManager.warning("Please provide a rating", "", 3000);
 		}
 	}
 
@@ -672,10 +736,18 @@ function Player() {
 				{micMute ? (
 					<button
 						color="green"
-						className="ui green microphone button mute-button"
+						className="ui linkedin microphone button mute-button"
 						onClick={micStatusChange}
 					>
-						<i aria-hidden="true" class="microphone icon"></i>
+						<i aria-hidden="true" class="">
+							<RecordVoiceOverRoundedIcon
+								sx={{
+									paddingTop: "0px",
+									paddingRight: "0px",
+									fontSize: "1.7rem",
+								}}
+							/>
+						</i>
 						{micString}
 					</button>
 				) : (
@@ -683,23 +755,30 @@ function Player() {
 						className="ui secondary button mute-button"
 						onClick={micStatusChange}
 					>
-						<i aria-hidden="true" class="microphone slash icon"></i>
+						<i aria-hidden="true" class="">
+							<VoiceOverOffRoundedIcon />
+						</i>
 						{micString}
 					</button>
 				)}
 
-				<button
-					className="ui red button skip-end-button"
-					onClick={
-						interacting.current == "false"
-							? fetchFiller
-							: chatFiller
-					}
-				>
-					{" "}
-					Skip to End{" "}
-					<i aria-hidden="true" class="angle double right icon"></i>
-				</button>
+				{isFillerPlaying.current == "false" ? (
+					<button
+						className="ui inverted button skip-end-button"
+						onClick={
+							interacting.current == "false"
+								? fetchFiller
+								: chatFiller
+						}
+					>
+						{" "}
+						Skip to End{" "}
+						<i
+							aria-hidden="true"
+							class="angle double right icon"
+						></i>
+					</button>
+				) : null}
 
 				<div>
 					{micMute ? (
@@ -712,22 +791,27 @@ function Player() {
 								/>
 							)}
 
+							<SuggestionCard
+								questions={[...answeredQuestions]}
+								suggestedQuestion2={setSuggestion2}
+								askQuestion={askQuestionFromCard}
+							/>
+
 							<button
 								color="green"
-								className="ui primary button submit-button"
+								className="ui linkedin button submit-button"
 								onClick={submitResponse}
 							>
-								<i aria-hidden="true" class="send icon"></i>SEND
+								<i aria-hidden="true" class="send icon"></i>ASK
 							</button>
 						</>
 					) : (
 						<input
-							className="type-q font-class-1"
+							className="transcript font-class-1"
 							placeholder={"Transcript"}
 							value={transcribedAudio || ""}
 							id="video-text-box"
 							type={"text"}
-							//onChange={setQuestionValue}
 						/>
 					)}
 				</div>
