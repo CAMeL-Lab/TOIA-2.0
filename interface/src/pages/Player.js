@@ -124,6 +124,7 @@ function Player() {
 		}
 	}
 
+	// if user asks one of the suggested questions
 	function askQuestionFromCard(question, suggestionNumber) {
 		const oldQuestion = question.current;
 		axios
@@ -167,6 +168,7 @@ function Player() {
 				}
 			});
 	}
+	// Function ends here
 
 	// handling data recieved from server
 	function handleDataReceived(data) {
