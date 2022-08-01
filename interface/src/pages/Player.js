@@ -56,14 +56,13 @@ function Player() {
 	// suggested questions for cards
 	const [suggestion2, setSuggestion2] = React.useState("");
 
-	//const transcribedAudio = React.useRef('');
 	const textInput = React.useRef("");
-	const interimTextInput = React.useRef("");
 	const question = React.useRef("");
 	const interacting = React.useRef("false");
 	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
 	const questionsLength = React.useRef(0);
+	const interimTextInput = React.useRef("");
 
 	var input1, input2;
 	let [micMute, setMicStatus] = React.useState(true);
@@ -125,68 +124,6 @@ function Player() {
 		}
 	}
 
-	// handling data recieved from server
-	function handleDataReceived(data) {
-		// setting the transcribedAudio
-		if (data) {
-			// transcribedAudio.current = data.alternatives[0].transcript;
-			setTranscribedAudio(data.alternatives[0].transcript);
-			setHasRated(false);
-			// newRating.current = 'false';
-			if (data.isFinal) {
-				question.current = data.alternatives[0].transcript;
-
-				newRating.current = "false";
-
-				speechToTextUtils.stopRecording();
-				fetchData();
-			}
-		} else {
-			console.log("no data received from server");
-		}
-	}
-
-	async function continueChat() {
-		if (newRating.current != "false") {
-			// if the user has rated then they can continue
-			if (interacting.current == "true") {
-				await endTranscription();
-
-				speechToTextUtils.initRecording(handleDataReceived, (error) => {
-					console.error("Error when transcribing", error);
-				});
-			}
-		} else {
-			NotificationManager.warning("Please provide a rating", "", 3000);
-		}
-	}
-
-	// function to fetch answered user questions from the DB
-
-	function fetchAnsweredQuestions() {
-		axios
-			.get(
-				`http://localhost:3001/api/questions/answered/${history.location.state.toiaToTalk}`
-			)
-			.then((res) => {
-				let answeredQuestionsData = [];
-				res.data.forEach((answer) => {
-					if (answer.suggested_type == "answer") {
-						answeredQuestionsData.push({
-							question: answer.question,
-						});
-					}
-				});
-
-				setAnsweredQuestions([...answeredQuestionsData]);
-
-				questionsLength.current =
-					answeredQuestionsData.length >= 3
-						? 3
-						: answeredQuestionsData.length;
-			});
-	}
-
 	function askQuestionFromCard(question, suggestionNumber) {
 		const oldQuestion = question.current;
 		axios
@@ -230,6 +167,102 @@ function Player() {
 				}
 			});
 	}
+
+	// handling data recieved from server
+	function handleDataReceived(data) {
+		// setting the transcribedAudio
+		if (data) {
+			// transcribedAudio.current = data.alternatives[0].transcript;
+			setTranscribedAudio(data.alternatives[0].transcript);
+			setHasRated(false);
+			// newRating.current = 'false';
+			if (data.isFinal) {
+				question.current = data.alternatives[0].transcript;
+
+				newRating.current = "false";
+
+				speechToTextUtils.stopRecording();
+				fetchData();
+			}
+		} else {
+			console.log("no data received from server");
+		}
+	}
+
+	// function to fetch answered user questions from the DB
+	function fetchAnsweredQuestions() {
+		axios
+			.get(
+				`http://localhost:3001/api/questions/answered/${history.location.state.toiaToTalk}`
+			)
+			.then((res) => {
+				let answeredQuestionsData = [];
+				res.data.forEach((answer) => {
+					if (answer.suggested_type == "answer") {
+						answeredQuestionsData.push({
+							question: answer.question,
+						});
+					}
+				});
+
+				setAnsweredQuestions([...answeredQuestionsData]);
+
+				questionsLength.current =
+					answeredQuestionsData.length >= 3
+						? 3
+						: answeredQuestionsData.length;
+			});
+	}
+
+	function textInputChange(val) {
+		if (val) {
+			textInput.current = val.question;
+		}
+	}
+
+	const recordUserRating = function (rate) {
+		// record the rating for the user
+		const vidID = videoID.split("/"); // splitting by delimeter
+
+		const options = {
+			method: "POST",
+			url: "http://localhost:3001/api/save_player_feedback",
+			headers: { "Content-Type": "application/json" },
+			data: {
+				...(history.location.state.toiaID && {
+					user_id: history.location.state.toiaID,
+				}),
+				video_id: vidID[vidID.length - 1],
+				question: question.current,
+				rating: rate,
+			},
+		};
+
+		axios
+			.request(options)
+			.then(function (response) {
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
+	};
+
+	async function continueChat() {
+		if (newRating.current != "false") {
+			// if the user has rated then they can continue
+			if (interacting.current == "true") {
+				await endTranscription();
+
+				speechToTextUtils.initRecording(handleDataReceived, (error) => {
+					console.error("Error when transcribing", error);
+				});
+			}
+		} else {
+			NotificationManager.warning("Please provide a rating", "", 3000);
+		}
+	}
+
 	async function chatFiller() {
 		if (newRating.current != "false") {
 			fetchFiller();
@@ -386,40 +419,6 @@ function Player() {
 		textInput.current = e.target.value;
 		interimTextInput.current = textInput.current;
 	}
-
-	function textInputChange(val) {
-		if (val) {
-			textInput.current = val.question;
-		}
-	}
-
-	const recordUserRating = function (rate) {
-		// record the rating for the user
-		const vidID = videoID.split("/"); // splitting by delimeter
-
-		const options = {
-			method: "POST",
-			url: "http://localhost:3001/api/save_player_feedback",
-			headers: { "Content-Type": "application/json" },
-			data: {
-				...(history.location.state.toiaID && {
-					user_id: history.location.state.toiaID,
-				}),
-				video_id: vidID[vidID.length - 1],
-				question: question.current,
-				rating: rate,
-			},
-		};
-
-		axios
-			.request(options)
-			.then(function (response) {
-				console.log(response.data);
-			})
-			.catch(function (error) {
-				console.error(error);
-			});
-	};
 
 	function submitResponse(e) {
 		// if hasRated == true then you can sumbit
