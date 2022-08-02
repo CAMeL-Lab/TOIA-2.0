@@ -7,6 +7,10 @@ import history from '../services/history';
 import {Modal, Button } from 'semantic-ui-react';
 import Switch from "react-switch";
 
+import NavBar from './NavBar.js';
+
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 const videoConstraints = {
     width: 750,
@@ -22,6 +26,8 @@ const videoConstraints = {
 // ];
 
 function EditRecorder () {
+
+  const { t } = useTranslation();
 
     function exampleReducer( state, action ) {
         switch (action.type) {
@@ -348,34 +354,20 @@ function EditRecorder () {
                 </Button>
                 </Modal.Actions>
             </Modal>
-            <div className="nav-heading-bar">
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div onClick={about} className="nav-about_icon app-monsterrat-black">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
-                    My TOIA
-                </div>
-                <div onClick={logout}className="nav-login_icon app-monsterrat-black ">
-                    Logout
-                </div>
-            </div>
-            <h1 className="edit-title edit-font-class-3 ">Edit Recording</h1>
+            
+            {NavBar(toiaName, toiaID, toiaLanguage, false, history, dispatch, open, t)}
+
+            <h1 className="edit-title edit-font-class-3 ">{t("edit_recording_page_title")}</h1>
             <div className="side-bar">
-                <div className="side-button b1" value="filler" id="filler" style={{backgroundColor: fillerColor}} onClick={setType}>Filler</div>
-                <div className="side-button b2" value="answer" id="answer" style={{backgroundColor: answerColor}} onClick={setType}>Regular Answer</div>
+                <div className="side-button b1" value="filler" id="filler" style={{backgroundColor: fillerColor}} onClick={setType}>{t("filler")}</div>
+                <div className="side-button b2" value="answer" id="answer" style={{backgroundColor: answerColor}} onClick={setType}>{t("regular_answer")}</div>
                 {/* <div className="side-button b2" value="no-answer" id="no-answer" style={{backgroundColor: bgColor2}} onClick={setType}>No Answer Provided</div> */}
-                <div className="side-button b3" value="y/n-answer" id="y/n-answer" style={{backgroundColor: yesNoColor}} onClick={setType}>Yes or No</div>
-                <div className="side-button b4" value="greeting" id="greeting" style={{backgroundColor: greetingColor}} onClick={setType}>Greeting</div>
-                <div className="side-button b5" value="exit" id="exit" style={{backgroundColor: exitColor}} onClick={setType}>Exit</div>
+                <div className="side-button b3" value="y/n-answer" id="y/n-answer" style={{backgroundColor: yesNoColor}} onClick={setType}>{t("yes_or_no")}</div>
+                <div className="side-button b4" value="greeting" id="greeting" style={{backgroundColor: greetingColor}} onClick={setType}>{t("greeting")}</div>
+                <div className="side-button b5" value="exit" id="exit" style={{backgroundColor: exitColor}} onClick={setType}>{t("exit")}</div>
                 <hr className="divider1"></hr>
                 <div className="font-class-1 public" style={{backgroundColor: privacyColor}}>
-                <span>Public</span>
+                <span>{t("public")}</span>
                 <Switch
                     onChange={handleChange}
                     // checked={isPublic}
@@ -394,7 +386,7 @@ function EditRecorder () {
                 <hr className="divider2"></hr>
                 <div className="select">
                 <CreatableSelect
-                    placeholder = "Select album...."
+                    placeholder = {t("select_album")}
                     isClearable
                     isMulti
                     // onChange={setAlbum}

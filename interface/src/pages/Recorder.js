@@ -19,6 +19,11 @@ import NotificationContainer from "react-notifications/lib/NotificationContainer
 import {NotificationManager} from "react-notifications";
 import getBlobDuration from "get-blob-duration";
 
+import NavBar from './NavBar.js';
+
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
+
 
 const videoConstraints = {
     width: 720,
@@ -27,6 +32,8 @@ const videoConstraints = {
 };
 // Post recording, question suggestion modal
 function ModalQSuggestion(props) {
+
+    const { t } = useTranslation();
 
     const suggestedQs = props.suggestedQuestions.slice(0, 5);
     const recordNewVideoDisabled = (!props.AllowAddingCustomVideo);
@@ -50,7 +57,7 @@ function ModalQSuggestion(props) {
 
                 <Modal.Description>
                     <p>
-                        {(suggestedQs.length !== 0 ? "Here are some suggestions..." : "No suggestions.")}
+                        {(suggestedQs.length !== 0 ? t("show_suggestions") : t("no_suggestions"))}
                     </p>
                     <div className={"questionSuggestionsWrapper"}>
                         <div className="cards-wrapper ui">
@@ -87,6 +94,8 @@ function ModalQSuggestion(props) {
 }
 
 function Recorder() {
+
+    const { t } = useTranslation();
 
     const {transcript, resetTranscript} = useSpeechRecognition({command: '*'});
 
@@ -858,23 +867,7 @@ function Recorder() {
                 OnAddVideoCallback={reset}
                 AllowAddingCustomVideo={pendingOnBoardingQs.length === 0}/>
 
-            <div className="nav-heading-bar">
-                <div onClick={navigateToHome} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div onClick={navigateToAbout} className="nav-about_icon app-monsterrat-black">
-                    About Us
-                </div>
-                <div onClick={navigateToLibrary} className="nav-talk_icon app-monsterrat-black ">
-                    Talk To TOIA
-                </div>
-                <div onClick={navigateToMyTOIA} className="nav-my_icon app-monsterrat-black ">
-                    My TOIA
-                </div>
-                <div onClick={logout} className="nav-login_icon app-monsterrat-black ">
-                    Logout
-                </div>
-            </div>
+            {NavBar(toiaName, toiaID, toiaLanguage, false, history, null, null, t)}
 
             <div>
                 <div className="side-bar">
@@ -902,7 +895,7 @@ function Recorder() {
                         />
 
                         <span className="public_tooltip">
-                            Set the privacy of the specific video
+                            {t("privacy_tooltip")}
                         </span>
                     </div>
                     <div className="select">
@@ -919,10 +912,10 @@ function Recorder() {
                                     displayValue="name" // Property name to display in the dropdown options
                                     selectedValues={mainStreamVal}
                                     disablePreSelectedValues={false}
-                                    placeholder="Add Stream"
+                                    placeholder={t("add_stream")}
                                 />
                             }
-                            content={'Default stream must be selected!'}
+                            content={t("alert_select_default_stream")}
                             on='click'
                             open={defaultStreamAlertActive}
                             onClose={()=>setDefaultStreamAlertActive(false)}
@@ -960,7 +953,7 @@ function Recorder() {
                             <div className="video-layout-player-top">
                                 <Popup
                                     disabled={recordedChunks.length > 0 && !isRecording}
-                                    content={"Record a video to proceed"}
+                                    content={t("alert_record_video")}
                                     trigger={
                                         <div style={{display: "inline-block"}}
                                              className="right floated recorder-next-btn-wrapper">
@@ -979,7 +972,7 @@ function Recorder() {
                                     (recordedChunks.length > 0 && !isRecording) && (
                                         <Button icon labelPosition='left' className="right floated"
                                                 onClick={handleStartCaptureClick}>
-                                            Record Again
+                                            {t("record_again_button")}
                                             <Icon name='repeat'/>
                                         </Button>
                                     )
@@ -999,7 +992,7 @@ function Recorder() {
 
                             {capturing ? (
                                 <button className="icon tooltip videoControlButtons" onClick={handleStopCaptureClick}
-                                        data-tooltip="Stop Recording">
+                                        data-tooltip={t("stop_recording_tooltip")}>
                                     {/* <i className="fa fa-stop"/> */}
                                     {/* <i class="huge icons"> */}
                                     {/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
@@ -1016,7 +1009,7 @@ function Recorder() {
                                 </button>
                             ) : (
                                 <button className="icon tooltip videoControlButtons cursor-pointer"
-                                        onClick={handleStartCaptureClick} data-tooltip="Start Recording">
+                                        onClick={handleStartCaptureClick} data-tooltip={t("start_recording_tooltip")}>
                                     {/* <i className="fa fa-video-camera"/> */}
                                     <img src={RecordButton} width={38.5} height={38.5} alt="record button" />
                                 </button>
@@ -1027,7 +1020,7 @@ function Recorder() {
                                         onClick={() => {
                                             togglePreviewBox()
                                         }}
-                                        data-tooltip="Save Video">
+                                        data-tooltip={t("save_video_tooltip")}>
                                     <i className="fa fa-check"/>
                                 </button>
                             )}
@@ -1040,23 +1033,24 @@ function Recorder() {
                                 {
                                     (isEditing) ? (
                                         <Button.Group>
-                                            <Popup content={"This will create a new entry, keeping the old one unchanged!"}
+                                            <Popup content={t("editing_alert")}
                                                    inverted
-                                                   trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)}>Save As New</Button>}
+                                                   trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)}>{t("save_as_new_button")}</Button>}
                                             />
                                             <Button.Or/>
-                                            <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)} positive>Update</Button>
+                                            <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)} positive>{t("update_button")}</Button>
                                         </Button.Group>
                                     ) : (
                                         <Button className="right floated" positive loading={waitingServerResponse}
-                                                disabled={waitingServerResponse || !videoDuration} onClick={handleDownload}>Save
-                                            Video</Button>
+                                                disabled={waitingServerResponse || !videoDuration} onClick={handleDownload}>
+                                                {t("save_video_button")}
+                                                </Button>
                                     )
                                 }
 
                                 <Button icon labelPosition='left' className="right floated"
                                         onClick={() => setViewingRecordedVideo(false)} disabled={waitingServerResponse}>
-                                    Record Again
+                                    {t("record_again_button")}
                                     <Icon name='repeat'/>
                                 </Button>
                             </div>
@@ -1091,9 +1085,9 @@ function Recorder() {
                         </div>
                     )}
 
-                    <h5 className="ui header question-selection-box-label">
+                    <h5 className={`ui header question-selection-box-label ${t("alignment")}`}>
                         <div className="content">
-                            Question(s):
+                            {t("questions")}
                         </div>
                     </h5>
 
@@ -1110,7 +1104,7 @@ function Recorder() {
                                     setSuggestedQsListCopy([...suggestedQsListCopy, response.removedItem])
                                 }
                             }}
-                            placeholder={"Type your own question"}
+                            placeholder={t("type_custom_question_input")}
                             maxDisplayedItems={5}
                             displayField={"question"}
                             autoAddOnBlur={true}

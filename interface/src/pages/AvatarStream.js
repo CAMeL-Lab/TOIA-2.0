@@ -8,9 +8,16 @@ import {Modal, Button } from 'semantic-ui-react';
 import axios from 'axios';
 import nizar from "../images/nizar.jpg";
 
+import NavBar from './NavBar.js';
+
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
+
 var cardSelected = [];//the videos selected to be edited or deleted
 
 function AvatarSettings() {
+
+  const { t } = useTranslation();
 
   const [currentUserFullname, setCurrentUserFullname] = useState(null);
   const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
@@ -296,30 +303,15 @@ function fetchStreamList() {
           </Button>
           </Modal.Actions>
       </Modal>
-      <div className="nav-heading-bar" //nav bar
-      >
-          <div onClick={home} className="nav-toia_icon app-opensans-normal">
-              TOIA
-          </div>
-        <div onClick={about} className="nav-about_icon app-monsterrat-black">
-              About Us
-          </div>
-          <div onClick={library} className="nav-talk_icon app-monsterrat-black">
-              Talk To TOIA
-          </div>
-          <div onClick={garden} className="nav-my_icon app-monsterrat-black">
-              My TOIA
-          </div>
-          <div onClick={logout}className="nav-login_icon app-monsterrat-black">
-              Logout
-          </div>
-      </div>
+
+      {NavBar(toiaName, toiaID, toiaLanguage, false, history, dispatch, open, t)}
+      
       <div className="settings-section1" //the first section
       >
         <h1 className="settings-settings settings-font-class-3 " // main heading
         >{stream[0].name}</h1>
         <div className="settings-name settings-font-class-1" //the name input field
-        >Name: </div>
+        >{t("name_input")}</div>
         <input
             className="settings-name_box settings-font-class-1"
             defaultValue = {stream[0].name}
@@ -327,14 +319,14 @@ function fetchStreamList() {
             onChange={e=>changehandler(e.target.className, e.target.value)}
         />
         <div className="settings-priv settings-font-class-1" //the privacy input feild
-        >Privacy: </div>
+        >{t("privacy_input")}</div>
         <select className="settings-priv_box settings-font-class-1" onChange={e=>changehandler(e.target.className, e.target.value)}  /*required={true}*/>
           <option value="" disabled selected hidden>{stream[0].privacy}</option>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
+          <option value="public">{t("privacy_option_public")}</option>
+          <option value="private">{t("privacy_option_private")}</option>
         </select>
         <div className="settings-lang settings-font-class-1" //the language input field
-        >Language: </div>
+        >{t("language_input")}</div>
         <select className="settings-lang_box settings-font-class-1" onChange={e=>changehandler(e.target.className, e.target.value)} /*required={true}*/>
             <option value="" disabled selected hidden>{stream[0].language}</option>
             <option value="AF">Afrikaans</option>
@@ -411,7 +403,7 @@ function fetchStreamList() {
             <option value="XH">Xhosa</option>
         </select>
         <div className="settings-bio settings-font-class-1" // bio input field
-        >Bio: </div>
+        >{t("bio_input")}</div>
         <textarea
             className="settings-bio_box settings-font-class-1"
             defaultValue = {stream[0].bio}
@@ -441,7 +433,7 @@ function fetchStreamList() {
         </div>
         <div onClick={add}><img className="settings-add" src={addButton} //the add video button
         /></div>
-        <h1 className="settings-video-text settings-font-class-3">Add Video</h1>
+        <h1 className="settings-video-text settings-font-class-3">{t("add_video")}</h1>
       </div>
     </form>
   );

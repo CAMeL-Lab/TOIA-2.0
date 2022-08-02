@@ -7,8 +7,6 @@ import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Modal } from "semantic-ui-react";
-import i18n from "i18next";
-import { useTranslation, initReactI18next, Trans } from "react-i18next";
 import history from "../services/history";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
@@ -19,31 +17,15 @@ import NotificationContainer from "react-notifications/lib/NotificationContainer
 import PopModal from "../userRating/popModal";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 
-const translationsEn = {
-  welcome: "Welcome!",
-  "sample-text": "Sample <bold><italic>text</italic></bold>.",
-  changed: "You have changed the language {{count}} time",
-  changed_plural: "You have changed the language {{count}} times",
-};
+import NavBar from './NavBar.js';
 
-const translationsFr = {
-  welcome: "Bienvenue!",
-  "sample-text": "Exemple de <bold><italic>texte</italic></bold>.",
-  changed: "Vous avez changé la langue {{count}} fois",
-};
-
-i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    resources: {
-      en: { translation: translationsEn },
-      fr: { translation: translationsFr },
-    },
-    lng: "en",
-    fallbackLng: "en",
-  });
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 function Player() {
+
+	const { t } = useTranslation();
+
 	function exampleReducer(state, action) {
 		switch (action.type) {
 			case "close":
@@ -629,118 +611,6 @@ function Player() {
 		}
 	}
 
-	function submitHandler(e) {
-		e.preventDefault();
-
-		let params = {
-			email: input1,
-			pwd: input2,
-		};
-
-		axios.post(`/api/login`, params).then((res) => {
-			if (res.data == -1) {
-				//alert('Email not found');
-				NotificationManager.error("Incorrect e-mail address.");
-			} else if (res.data == -2) {
-				NotificationManager.error("Incorrect password.");
-			} else {
-				history.push({
-					pathname: "/mytoia",
-					state: {
-						toiaName: res.data.firstName,
-						toiaLanguage: res.data.language,
-						toiaID: res.data.toia_id,
-					},
-				});
-			}
-		});
-	}
-
-	function home() {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/",
-			});
-		}
-	}
-
-	function about() {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/about",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/about",
-			});
-		}
-	}
-
-	function library() {
-		if (history.location.state.toiaID != undefined) {
-			endTranscription();
-			history.push({
-				pathname: "/library",
-				state: {
-					toiaName: history.location.state.toiaName,
-					toiaLanguage: history.location.state.toiaLanguage,
-					toiaID: history.location.state.toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/library",
-			});
-		}
-	}
-
-	function garden(e) {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/mytoia",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			openModal(e);
-		}
-	}
-
-	function logout() {
-		//logout function needs to be implemented (wahib)
-		history.push({
-			pathname: "/",
-		});
-		endTranscription();
-	}
-
-	function signup() {
-		history.push({
-			pathname: "/signup",
-		});
-		endTranscription();
-	}
-
 	const inlineStyle = {
 		modal: {
 			height: "560px",
@@ -750,97 +620,7 @@ function Player() {
 
 	return (
 		<div className="player">
-			<Modal //this is the new pop up menu
-				size="large"
-				style={inlineStyle.modal}
-				open={open}
-				onClose={() => dispatch({ type: "close" })}
-			>
-				<Modal.Header className="login_header">
-					<h1 className="login_welcome login-opensans-normal">
-						Welcome Back
-					</h1>
-					<p className="login_blurb login-montserrat-black">
-						Enter the following information to login to your TOIA
-						account
-					</p>
-				</Modal.Header>
-
-				<Modal.Content>
-					<form className="login_popup" onSubmit={submitHandler}>
-						<input
-							className="login_email login-font-class-1"
-							placeholder={"Email"}
-							type={"email"}
-							required={true}
-							onChange={myChangeHandler}
-							name={"email"}
-						/>
-						<input
-							className="login_pass login-font-class-1"
-							placeholder={"Password"}
-							type={"password"}
-							required={true}
-							onChange={myChangeHandler}
-							name={"pass"}
-						/>
-						<input
-							className="login_button smart-layers-pointers "
-							type="image"
-							src={submitButton}
-							alt="Submit"
-						/>
-						<div
-							className="login_text login-montserrat-black"
-							onClick={signup}
-						>
-							Don't have an Account? Sign Up
-						</div>
-					</form>
-				</Modal.Content>
-			</Modal>
-			<div className="nav-heading-bar">
-				{newRating.current != "true" && (
-					<PopModal
-						setRating={setRatingVal}
-						setRatingDone={setHasRated}
-						userRating={recordUserRating}
-						newRatingVal={newRating}
-						skipFillerVid={skipFiller}
-					/>
-				)}
-
-				<div
-					onClick={home}
-					className="nav-toia_icon app-opensans-normal"
-				>
-					TOIA
-				</div>
-				<div
-					onClick={about}
-					className="nav-about_icon app-monsterrat-black "
-				>
-					About Us
-				</div>
-				<div
-					onClick={library}
-					className="nav-talk_icon app-monsterrat-black "
-				>
-					Talk To TOIA
-				</div>
-				<div
-					onClick={garden}
-					className="nav-my_icon app-monsterrat-black "
-				>
-					My TOIA
-				</div>
-				<div
-					onClick={isLoggedIn ? logout : openModal}
-					className="nav-login_icon app-monsterrat-black"
-				>
-					{isLoggedIn ? "Logout" : "Login"}
-				</div>
-			</div>
+			{NavBar(toiaName, toiaID, toiaLanguage, isLoggedIn, history, dispatch, open, t)}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}

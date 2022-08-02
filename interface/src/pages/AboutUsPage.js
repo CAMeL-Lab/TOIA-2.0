@@ -19,7 +19,14 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 import toia_logo from "../images/TOIA_Logo.png";
 import Tracker from "../utils/tracker";
 
+import NavBar from './NavBar.js';
+
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
+
 function AvatarViewPage() {
+
+    const { t } = useTranslation();
 
     /*functions in charge of opening and closing the various pop up menus*/
     const [open, dispatch] = useState(false);
@@ -73,114 +80,6 @@ function AvatarViewPage() {
             </div>
         )
     };
-    /*navbar functions*/
-    function home() {
-        if(isLoggedIn){
-          history.push({
-            pathname: '/',
-            state: {
-              toiaName,
-              toiaLanguage,
-              toiaID
-            }
-          });
-        }else{
-          history.push({
-            pathname: '/',
-          });
-        }
-    }
-
-    function about() {
-        if(isLoggedIn){
-            history.push({
-            pathname: '/about',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-            }
-            });
-        }else{
-            history.push({
-            pathname: '/about',
-            });
-        }
-    }
-
-    function library() {
-        if(isLoggedIn){
-            history.push({
-            pathname: '/library',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-            }
-            });
-        }else{
-            history.push({
-            pathname: '/library',
-            });
-        }
-    }
-
-    function garden(e) {
-        if (isLoggedIn) {
-            history.push({
-            pathname: '/mytoia',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-                }
-            });
-        }else{
-            openModal(e);
-        }
-    }
-
-    function logout(){
-        history.push({
-            pathname: '/'
-        });
-    }
-     //
-
-     /*login popup functions*/
-    function signup(){
-        history.push({
-            pathname: '/signup',
-        });
-    }
-
-    function submitHandler(e){
-        e.preventDefault();
-
-        let params={
-            email:input1,
-            pwd:input2
-        }
-
-        axios.post(`/api/login`,params).then(res=>{
-            if(res.data==-1){
-                //alert('Email not found');
-                NotificationManager.error("Incorrect e-mail address.");
-            }else if(res.data==-2){
-                NotificationManager.error("Incorrect password.");
-            }else {
-                console.log(res.data);
-                history.push({
-                    pathname:'mytoia',
-                    state: {
-                    toiaName:res.data.firstName,
-                    toiaLanguage:res.data.language,
-                    toiaID: res.data.toia_id
-                    }
-                });
-            }
-        });
-    }
 
     const inlineStyle = {
         modal : {
@@ -193,80 +92,33 @@ function AvatarViewPage() {
 
     return (
         <div className="about-page">
-            <Modal //this is the new pop up menu
-                size='large'
-                style={inlineStyle.modal}
-                open={open}
-                onClose={() => dispatch(false)}
-            >
-                    <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
-                    <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
-                    </Modal.Header>
+        
+            {NavBar(toiaName, toiaID, toiaLanguage, isLoggedIn, history, dispatch, open, t)}
 
-                    <Modal.Content>
-                    <form className="login_popup" onSubmit={submitHandler}>
-                        <input
-                        className="login_email login-font-class-1"
-                        placeholder={"Email"}
-                        type={"email"}
-                        required={true}
-                        onChange={(e)=>(input1 = e.target.value)}
-                        name={"email"}
-                        />
-                        <input
-                        className="login_pass login-font-class-1"
-                        placeholder={"Password"}
-                        type={"password"}
-                        required={true}
-                        onChange={(e)=>(input2 = e.target.value)}
-                        name={"pass"}
-                        />
-                        <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
-                        <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
-                    </form>
-                    </Modal.Content>
-            </Modal>
-            <div className="nav-heading-bar">
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div onClick={about} className="nav-about_icon app-monsterrat-black nav-selected">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
-                    My TOIA
-                </div>
-                <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
-                   {isLoggedIn ? 'Logout' : 'Login'}
-                </div>
-            </div>
             <div className = "about-team">
-            {/*<h1 className="about-heading">Meet The Team</h1>*/}
-            <h1 className="about-heading">TOIA ... Communication reimagined</h1>
-            <p className="about-text">Imagine being able to share your story with your great grandchildren. <br/>
-            Imagine being able to interview for thousands of jobs simultaneously.
+            <h1 className={`about-heading ${t("alignment")}`}>{t("meet_the_team")}</h1>
+            <h1 className={`about-heading ${t("alignment")}`}>{t("product_tagline")}</h1>
+            <p className={`about-text ${t("alignment")}`}>{t("product_hook1")}<br/>
+            {t("product_hook2")}
             <br/>
             <br/>
-            TOIAs are interactive applications that allow communication across time and space.
+            {t("product_description")}
             <br/>
-            With TOIA, you can create an online stream from the comfort of your home and connect with millions of people, anywhere in the world, anytime in the future.
+            {t("product_purpose")}
             <br/>
             <br/>
-            TOIA is a project created at <a href="https://nyuad.nyu.edu/en/">New York Univeristy Abu Dhabi’s</a> <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html">Camel Lab.</a></p>
+            <Trans i18nKey="product_summary" components={[<a href="https://nyuad.nyu.edu/en/"/>, <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"/>]}/>
+            </p>
             <img src={toia_logo} className = "toiaImage"/>
             <div className = "reference-links">
-            <a href="#grid" className = "reference-item">Meet the Team</a>
-            <a href="#scholarly" className = "reference-item">Publications</a>
-            <a href="https://github.com/wahibkamran/TOIA-2.0" className = "reference-item">Github Repo</a>
+            <a href="#grid" className = "reference-item">{t("meet_the_team")}</a>
+            <a href="#scholarly" className = "reference-item">{t("publications")}</a>
+            <a href="https://github.com/wahibkamran/TOIA-2.0" className = "reference-item">{t("github_repo")}</a>
             </div>
             </div>
 
             <div id = "grid">
-            <h1 className="grid-heading">The TOIA Team</h1>
+            <h1 className={`grid-heading ${t("alignment")}`}>{t("toia_team")}</h1>
             <div className ="about-grid" //videos
             >
                 {team.map(renderTeam)}
@@ -275,7 +127,7 @@ function AvatarViewPage() {
 
 
             <div id = "scholarly">
-            <p className="publication-links">Publication Links </p>
+            <p className={`publication-links ${t("alignment")}`}>{t("publication_links")}</p>
             <ul className = "publications">
                 <li>
                 Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,
