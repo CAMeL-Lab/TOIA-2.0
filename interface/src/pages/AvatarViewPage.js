@@ -6,8 +6,14 @@ import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
 import Tracker from "../utils/tracker";
 
+import NavBar from './NavBar.js';
+
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 function AvatarViewPage() {
+
+    const { t } = useTranslation();
     
     function exampleReducer( state, action ) {
         switch (action.type) {
@@ -131,87 +137,37 @@ function AvatarViewPage() {
     
     return (
         <div className="view-page">
-            <Modal //this is the new pop up menu
-                size='large'
-                style={inlineStyle.modal}
-                open={open} 
-                onClose={() => dispatch({ type: 'close' })}
-            >
-                    <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
-                    <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
-                    </Modal.Header>
-
-                    <Modal.Content>
-                    <form className="login_popup" onSubmit={submitHandler1}>
-                        <input
-                        className="login_email login-font-class-1"
-                        placeholder={"Email"}
-                        type={"email"}
-                        required={true}
-                        onChange={myChangeHandler}
-                        name={"email"}
-                        />
-                        <input
-                        className="login_pass login-font-class-1"
-                        placeholder={"Password"}
-                        type={"password"}
-                        required={true}
-                        onChange={myChangeHandler}
-                        name={"pass"}
-                        />
-                        <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
-                        <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
-                    </form>
-                    </Modal.Content>
-            </Modal>
-            <div className="nav-heading-bar">
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div className="nav-about_icon app-monsterrat-black ">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
-                    My TOIA
-                </div>
-                <div onClick={isLogin ? logout : openModal}className="nav-login_icon app-monsterrat-black">
-                   {isLogin ? 'Logout' : 'Login'}
-                </div>
-            </div>
+            {NavBar(toiaName, toiaID, toiaLanguage, false, history, dispatch, open, t)}
             <h1 className="view-title view-font-class-1 ">Here is infromation on the TOIA selected</h1>
             <img className="view-still" src={video}/>
 
             <div className="view-group">
-                <div className="view-name view-font-class-1 ">Name: </div>
+                <div className="view-name view-font-class-1 ">{t("show_name")}</div>
                 <input
                     className="view-name_box view-font-class-1"
                     defaultValue = {name}
                     type={"text"}
                 />
-                <div className="view-creator view-font-class-1 ">Album: </div>
+                <div className="view-creator view-font-class-1 ">{t("show_album")}</div>
                 <input
                     className="view-creator_box view-font-class-1"
                     defaultValue = {name}
                     type={"text"}
                 />
-                <div className="view-lang view-font-class-1 ">Language: </div>
+                <div className="view-lang view-font-class-1 ">{t("show_language")}</div>
                 <input
                     className="view-lang_box view-font-class-1"
                     defaultValue = {language}
                     type={"text"}
                 />
-                <div className="view-bio view-font-class-1 ">Bio: </div>
+                <div className="view-bio view-font-class-1 ">{t("show_bio")}</div>
                 <textarea
                     className="view-bio_box view-font-class-1"
                     defaultValue = {bio}
                     type={"text"}
                 />
                 <select className="view-lang2_box view-font-class-1" >
-                    <option value="" disabled selected hidden>What language would you like to speak in..</option>
+                    <option value="" disabled selected hidden>{t("language_preference_input")}</option>
                     <option value="AF">Afrikaans</option>
                     <option value="SQ">Albanian</option>
                     <option value="AR">Arabic</option>

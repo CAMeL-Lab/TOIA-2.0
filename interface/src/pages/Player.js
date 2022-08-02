@@ -3,47 +3,25 @@ import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRound
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NotificationManager } from "react-notifications";
-import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { Modal } from "semantic-ui-react";
-import i18n from "i18next";
-import { useTranslation, initReactI18next, Trans } from "react-i18next";
 import history from "../services/history";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import Tracker from "../utils/tracker"
 
-import PopModal from "../userRating/popModal";
-import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
+import NavBar from './NavBar.js';
 
-const translationsEn = {
-  welcome: "Welcome!",
-  "sample-text": "Sample <bold><italic>text</italic></bold>.",
-  changed: "You have changed the language {{count}} time",
-  changed_plural: "You have changed the language {{count}} times",
-};
-
-const translationsFr = {
-  welcome: "Bienvenue!",
-  "sample-text": "Exemple de <bold><italic>texte</italic></bold>.",
-  changed: "Vous avez changé la langue {{count}} fois",
-};
-
-i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    resources: {
-      en: { translation: translationsEn },
-      fr: { translation: translationsFr },
-    },
-    lng: "en",
-    fallbackLng: "en",
-  });
+import i18n from "i18next";
+import { Trans, useTranslation } from "react-i18next";
+import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player"
 
 function Player() {
+
+	const { t } = useTranslation();
+
 	function exampleReducer(state, action) {
 		switch (action.type) {
 			case "close":
@@ -55,11 +33,14 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
+	const [interactionLanguage, setInteractionLanguage] = useState(null);
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
+	const [toiaIDToTalk, setTOIAIdToTalk] = useState(null);
 	const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] = useState(null);
 	const [toiaLastNameToTalk, setTOIALastNameToTalk] = useState(null);
+	const [streamIdToTalk, setStreamIdToTalk] = useState(null);
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
@@ -67,19 +48,28 @@ function Player() {
 	let allSuggestedQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
+	const [isInteracting, setIsInteracting] = useState(false);
+
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
+	const [ratingVal, setRatingVal] = useState(1);
+	const [videoURL, setVideoURL] = useState(null);
+
 	const [transcribedAudio, setTranscribedAudio] = useState("");
-	const [ratingParams, setRatingParams] = useState({active: false});
+
+	const [lastQAsked, setlastQAsked] = useState("");
+	const [lastPlayedVideo, setLastPlayedVideo] = useState(null);
 
 	// suggested questions for cards
 
 	const textInput = React.useRef("");
 	const question = React.useRef("");
 	const interacting = React.useRef("false");
+	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
 	const allQuestions = React.useRef([]);
 	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
+	const questionsLength = React.useRef(0);
 	const interimTextInput = React.useRef("");
 
 	var input1, input2;
@@ -110,9 +100,12 @@ function Player() {
 			setLanguage(history.location.state.toiaLanguage);
 		}
 
+		setTOIAIdToTalk(history.location.state.toiaToTalk);
 		setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
+		setStreamIdToTalk(history.location.state.streamToTalk);
 		setStreamNameToTalk(history.location.state.streamNameToTalk);
+
 
 		canAccessStream();
 
@@ -178,7 +171,21 @@ function Player() {
 			.then(function (response) {})
 			.catch(function (error) {
 				alert("You do not have permission to access this page");
-				library();
+				// Navigate to /library
+				if(isLoggedIn){
+					history.push({
+					pathname: '/library',
+					state: {
+						toiaName,
+						toiaLanguage,
+						toiaID
+					}
+					});
+				}else{
+					history.push({
+					pathname: '/library',
+					});
+				}
 			});
 	}
 	// if user asks one of the suggested questions
@@ -191,14 +198,16 @@ function Player() {
 		const mode = "CARD";
 
 		const oldQuestion = question;
+		console.log(oldQuestion);
 		axios
 			.post(`/api/player`, {
 				params: {
 					toiaIDToTalk: history.location.state.toiaToTalk,
-					toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
-					question: {
-						current: oldQuestion.question,
-					},
+					toiaFirstNameToTalk:
+						history.location.state.toiaFirstNameToTalk,
+						question: {
+							current: oldQuestion.question,
+						},
 					streamIdToTalk: history.location.state.streamToTalk,
 					record_log: "true",
 					...(history.location.state.toiaID && {
@@ -213,30 +222,26 @@ function Player() {
 					console.log("error");
 				} else {
 					setFillerPlaying(true);
+					setHasRated(false);
 
 					isFillerPlaying.current = "false";
-
+					newRating.current = "false";
+					setlastQAsked(oldQuestion.question);
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded: () => {
-							setRatingParams({
-								video_id: res.data.video_id,
-								question: oldQuestion.question
-							})
-							setHasRated(false);
-							fetchFiller()
-						},
+						onEnded:fetchFiller,
 						source: res.data.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
-						duration_seconds: res.data.duration_seconds || null,
-						question: oldQuestion.question,
-						video_id: res.data.video_id
+						duration_seconds: res.data.duration_seconds || null
 					});
 
+					setLastPlayedVideo(res.data.video_id);
 					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
+					setVideoURL(res.data.url); // setting the video ID
 					setTranscribedAudio("");
+					// question.current = "";
 				}
 			});
 	}
@@ -246,9 +251,16 @@ function Player() {
 	function handleDataReceived(data) {
 		// setting the transcribedAudio
 		if (data) {
+			// transcribedAudio.current = data.alternatives[0].transcript;
 			setTranscribedAudio(data.alternatives[0].transcript);
+			setHasRated(false);
+			// newRating.current = 'false';
 			if (data.isFinal) {
 				question.current = data.alternatives[0].transcript;
+
+				newRating.current = "false";
+				setlastQAsked(data.alternatives[0].transcript);
+				setHasRated(false);
 
 				speechToTextUtils.stopRecording();
 				fetchData("VOICE");
@@ -261,6 +273,7 @@ function Player() {
 	// Sets the value of 'allQuestions' array
 	// to be the string list of all questions of the stream
 	function fetchAllStreamQuestions(){
+		console.log("Fetching all questions!");
 		axios.get(`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`)
 		.then((res)=>{
 			allQuestions.current = res.data || [];
@@ -270,6 +283,7 @@ function Player() {
 	// question: the last question asked by the user
 	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question="", answer="") {
+		console.log(`Creating Smart Questions...\n question = ${question}\n`);
 		axios.post('/api/getSmartQuestions', {
 			params: {
 				toiaIDToTalk: history.location.state.toiaToTalk,
@@ -295,30 +309,28 @@ function Player() {
 					allSuggestedQuestions.push(q);
 				}
 			});
-
+			console.log("Created Smart Questions.");
+			console.log(answeredQuestions);
+			console.log("=========================")
 			shouldRefreshQuestions.current = true;
 			setAnsweredQuestions([...answeredQuestions]);
 		});
 	}
 
+
 	function textInputChange(val) {
 		if (val && val.question) {
 			textInput.current = val.question;
+			console.log("AYOOOO", textInput.current);
 		} else if (typeof val === "string") {
 			textInput.current = val;
 		}
 	}
 
-	useEffect(() => {
-		if (hasRated){
-			if (interacting.current == "true"){
-				speechToTextUtils.initRecording(handleDataReceived, (error) => {
-					console.error("Error when transcribing", error);
-				});
-			}
-	  	}
-	}, [hasRated])
-	
+	const recordUserRating = function (rate) {
+		// record the rating for the user
+		const vidID = lastPlayedVideo;
+		console.log(vidID);
 
 	const recordUserRating = function (ratingValue) {
 		const options = {
@@ -382,32 +394,29 @@ function Player() {
 					} else {
 						setFillerPlaying(true);
 
+						setHasRated(false);
+						newRating.current = "false";
+						setlastQAsked(oldQuestion);
 						isFillerPlaying.current = "false";
+						setVideoURL(res.data.url); // setting the video ID
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded:  () => {
-								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion
-								})
-								setHasRated(false);
-								fetchFiller();
-							},
+							onEnded:
+								interacting.current == "false"
+									? fetchFiller
+									: chatFiller,
 							source: res.data.url,
 							fetchFiller: fetchFiller,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
-							question: question.current,
-							video_id: res.data.video_id
+							duration_seconds: res.data.duration_seconds || null
 						});
+						setLastPlayedVideo(res.data.video_id);
 
 						setTranscribedAudio("");
 					}
-				}).catch((e) => {
-					console.error(e);
-				})
+				});
 		}
 	}
 
@@ -420,9 +429,10 @@ function Player() {
 			setMicStatus(false);
 
 			setMicString("STOP ASK BY VOICE");
+			setIsInteracting(true);
 			interacting.current = "true";
 
-			if (hasRated) {
+			if (newRating.current != "false") {
 				speechToTextUtils.initRecording(handleDataReceived, (error) => {
 					console.error("Error when transcribing", error);
 					// No further action needed, as stream already closes itself on error
@@ -440,6 +450,7 @@ function Player() {
 			setMicStatus(true);
 
 			setMicString("ASK BY VOICE");
+			setIsInteracting(false);
 			interacting.current = "false";
 		}
 	}
@@ -464,13 +475,17 @@ function Player() {
 
 					setVideoProperties({
 						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded:fetchFiller,
+						onEnded:
+							interacting.current == "false"
+								? fetchFiller
+								: chatFiller,
 						source: res.data,
 						muted: true,
 						filler: true,
 						duration_seconds: null
 					});
 
+					setVideoURL(res.data);
 
 					document.getElementById("vidmain").load();
 					const playPromise = document
@@ -516,6 +531,7 @@ function Player() {
 			: interimTextInput.current;
 
 		if (question.current != "") {
+			setHasRated(false);
 			const oldQuestion = question.current;
 			axios
 				.post(`/api/player`, {
@@ -533,29 +549,29 @@ function Player() {
 					},
 				})
 				.then((res) => {
-					setFillerPlaying(true);
-					if (res.data !== "error") {
+					if (res.data === "error") {
+						setFillerPlaying(true);
+					} else {
+						setFillerPlaying(true);
+						setHasRated(false);
+
+						newRating.current = "false";
+						setlastQAsked(oldQuestion)
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded:  () => {
-								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion
-								})
-								setHasRated(false);
-								fetchFiller()
-							},
+							onEnded: fetchFiller,
 							source: res.data.url,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
-							question: question.current,
-							video_id: res.data.video_id
+							duration_seconds: res.data.duration_seconds || null
 						});
+						setLastPlayedVideo(res.data.video_id);
 
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
+						setVideoURL(res.data.url); // setting the video ID
+						// transcribedAudio.current = '';
 						setTranscribedAudio("");
 						question.current = "";
 					}
@@ -566,212 +582,16 @@ function Player() {
 		}
 	}
 
-	function submitHandler(e) {
-		e.preventDefault();
-
-		let params = {
-			email: input1,
-			pwd: input2,
-		};
-
-		axios.post(`/api/login`, params).then((res) => {
-			if (res.data == -1) {
-				//alert('Email not found');
-				NotificationManager.error("Incorrect e-mail address.");
-			} else if (res.data == -2) {
-				NotificationManager.error("Incorrect password.");
-			} else {
-				history.push({
-					pathname: "/mytoia",
-					state: {
-						toiaName: res.data.firstName,
-						toiaLanguage: res.data.language,
-						toiaID: res.data.toia_id,
-					},
-				});
-			}
-		});
-	}
-
-	function home() {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/",
-			});
-		}
-	}
-
-	function about() {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/about",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/about",
-			});
-		}
-	}
-
-	function library() {
-		if (history.location.state.toiaID != undefined) {
-			endTranscription();
-			history.push({
-				pathname: "/library",
-				state: {
-					toiaName: history.location.state.toiaName,
-					toiaLanguage: history.location.state.toiaLanguage,
-					toiaID: history.location.state.toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/library",
-			});
-		}
-	}
-
-	function garden(e) {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/mytoia",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			openModal(e);
-		}
-	}
-
-	function logout() {
-		//logout function needs to be implemented (wahib)
-		history.push({
-			pathname: "/",
-		});
-		endTranscription();
-	}
-
-	function signup() {
-		history.push({
-			pathname: "/signup",
-		});
-		endTranscription();
-	}
-
-	const inlineStyle = {
-		modal: {
-			height: "560px",
-			width: "600px",
-		},
-	};
-
 	return (
 		<div className="player">
-			<Modal //this is the new pop up menu
-				size="large"
-				style={inlineStyle.modal}
-				open={open}
-				onClose={() => dispatch({ type: "close" })}
-			>
-				<Modal.Header className="login_header">
-					<h1 className="login_welcome login-opensans-normal">
-						Welcome Back
-					</h1>
-					<p className="login_blurb login-montserrat-black">
-						Enter the following information to login to your TOIA
-						account
-					</p>
-				</Modal.Header>
-
-				<Modal.Content>
-					<form className="login_popup" onSubmit={submitHandler}>
-						<input
-							className="login_email login-font-class-1"
-							placeholder={"Email"}
-							type={"email"}
-							required={true}
-							onChange={myChangeHandler}
-							name={"email"}
-						/>
-						<input
-							className="login_pass login-font-class-1"
-							placeholder={"Password"}
-							type={"password"}
-							required={true}
-							onChange={myChangeHandler}
-							name={"pass"}
-						/>
-						<input
-							className="login_button smart-layers-pointers "
-							type="image"
-							src={submitButton}
-							alt="Submit"
-						/>
-						<div
-							className="login_text login-montserrat-black"
-							onClick={signup}
-						>
-							Don't have an Account? Sign Up
-						</div>
-					</form>
-				</Modal.Content>
-			</Modal>
-			<div className="nav-heading-bar">
-				{(!hasRated) && (
-					<PopModal userRating={recordUserRating} />
-				)}
-
-				<div
-					onClick={home}
-					className="nav-toia_icon app-opensans-normal"
-				>
-					TOIA
-				</div>
-				<div
-					onClick={about}
-					className="nav-about_icon app-monsterrat-black "
-				>
-					About Us
-				</div>
-				<div
-					onClick={library}
-					className="nav-talk_icon app-monsterrat-black "
-				>
-					Talk To TOIA
-				</div>
-				<div
-					onClick={garden}
-					className="nav-my_icon app-monsterrat-black "
-				>
-					My TOIA
-				</div>
-				<div
-					onClick={isLoggedIn ? logout : openModal}
-					className="nav-login_icon app-monsterrat-black"
-				>
-					{isLoggedIn ? "Logout" : "Login"}
-				</div>
-			</div>
+			<NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={isLoggedIn}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={true}
+            />
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
@@ -833,7 +653,11 @@ function Player() {
 				{isFillerPlaying.current == "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
-						onClick={fetchFiller}
+						onClick={
+							interacting.current == "false"
+								? fetchFiller
+								: chatFiller
+						}
 					>
 						{" "}
 						Skip to End{" "}
