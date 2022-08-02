@@ -7,7 +7,15 @@ import {Modal} from 'semantic-ui-react';
 import axios from 'axios';
 import Tracker from "../utils/tracker";
 
+import NavBar from './NavBar.js'
+
+import i18n from "i18next";
+import { useTranslation } from "react-i18next";
+
+
 function AvatarLibraryPage() {
+
+  const { t } = useTranslation();
 
     /*functions in charge of opening and closing the various pop up menus*/
     function exampleReducer( state, action ) {
@@ -156,128 +164,6 @@ function AvatarLibraryPage() {
       setSearchData(filteredData);
     };
 
-    //login pop up functions
-    function myChangeHandler(event){
-        event.preventDefault();
-        var name = event.target.name;
-
-        switch(name) {
-          case "email":
-            input1 = event.target.value;
-            break;
-          case "pass":
-            input2 = event.target.value;
-            break;
-        }
-    }
-
-    function submitHandler(e){
-      e.preventDefault();
-
-      let params={
-        email:input1,
-        pwd:input2
-      }
-
-      axios.post(`/api/login`,params).then(res=>{
-        if(res.data==-1){
-          alert("Incorrect e-mail address.");
-        }else if(res.data==-2){
-          alert("Incorrect password");
-        }else {
-          history.push({
-            pathname: '/mytoia',
-            state: {
-              toiaName:res.data.firstName,
-              toiaLanguage:res.data.language,
-              toiaID: res.data.toia_id
-            }
-          });
-        }
-      });
-    }
-
-    // Nav bar functions
-    function home() {
-      if(isLoggedIn){
-        history.push({
-          pathname: '/',
-          state: {
-            toiaName,
-            toiaLanguage,
-            toiaID
-          }
-        });
-      }else{
-        history.push({
-          pathname: '/',
-        });
-      }
-    }
-
-    function about() {
-      if(isLoggedIn){
-          history.push({
-          pathname: '/about',
-          state: {
-              toiaName,
-              toiaLanguage,
-              toiaID
-          }
-          });
-      }else{
-          history.push({
-          pathname: '/about',
-          });
-      }
-    }
-
-    function library() {
-      if(isLoggedIn){
-          history.push({
-          pathname: '/library',
-          state: {
-              toiaName,
-              toiaLanguage,
-              toiaID
-          }
-          });
-      }else{
-          history.push({
-          pathname: '/library',
-          });
-      }
-    }
-
-    function garden(e) {
-      if (isLoggedIn) {
-          history.push({
-          pathname: '/mytoia',
-          state: {
-              toiaName,
-              toiaLanguage,
-              toiaID
-              }
-          });
-      }else{
-          openModal(e);
-      }
-    }
-
-    function logout(){
-        history.push({
-          pathname: '/',
-        });
-      }
-
-     // navigation functions from elements in webpage
-
-     function signup(){
-        history.push({
-          pathname: '/signup',
-        });
-      }
-
      const inlineStyle = {
         modal : {
             height: '560px',
@@ -298,39 +184,7 @@ function AvatarLibraryPage() {
 
     return (
         <div className="library-page">
-            <Modal //this is the login pop up menu
-                size='large'
-                style={inlineStyle.modal}
-                open={open}
-                onClose={() => dispatch({ type: 'close' })}
-            >
-                <Modal.Header className="login_header">
-                <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
-                <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
-                </Modal.Header>
-                <Modal.Content>
-                <form className="login_popup" onSubmit={submitHandler}>
-                    <input
-                    className="login_email login-font-class-1"
-                    placeholder={"Email"}
-                    type={"email"}
-                    required={true}
-                    onChange={myChangeHandler}
-                    name={"email"}
-                    />
-                    <input
-                    className="login_pass login-font-class-1"
-                    placeholder={"Password"}
-                    type={"password"}
-                    required={true}
-                    onChange={myChangeHandler}
-                    name={"pass"}
-                    />
-                    <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
-                    <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
-                </form>
-                </Modal.Content>
-             </Modal>
+            {NavBar(toiaName, toiaID, toiaLanguage, isLoggedIn, history, dispatch, open, t)}
              <Modal //this is the view pop up menu
                 size='large'
                 style={inlineStyle.modal}
@@ -463,28 +317,9 @@ function AvatarLibraryPage() {
 
                  </Modal.Content>
              </Modal>
-             <div className="nav-heading-bar" //nav bar
-             >
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div onClick={about} className="nav-about_icon app-monsterrat-black nav-deselect">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black nav-selected">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black nav-deselect">
-                    My TOIA
-                </div>
-                <div onClick={isLoggedIn ? logout : openModal}className="nav-login_icon app-monsterrat-black nav-deselect" //depending on whter user is logged in or not, the button will change from login to logout
-                >
-                   {isLoggedIn ? 'Logout' : 'Login'}
-                </div>
-            </div>
 
             <div className = "library-page-setup">
-            <h1 className = "library-heading">TOIA Stream Library</h1>
+            <h1 className = {`library-heading ${t("alignment")}`}>{t("page_title")}</h1>
             <input className="library-search" type="text" placeholder='&#xF002;  ' onChange={(event) => searchStreams(event.target.value)}/>
             <div className ="library-grid" //videos
             >

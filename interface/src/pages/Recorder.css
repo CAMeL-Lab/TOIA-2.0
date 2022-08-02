@@ -614,6 +614,7 @@ video {
 .question-selection-box-label{
     position: absolute;
     top:76%;
+    width: 100%;
 }
 
 .recorder-next-btn-wrapper{
