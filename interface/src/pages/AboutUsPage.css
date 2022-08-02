@@ -27,8 +27,10 @@
   position: relative;
   /* left: 50%; */
   top: 0%;
+  width: 65%;
   color: black;
-  margin: 0 auto;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .about-text{
   /* font-family: "Open Sans-Bold", Helvetica, Arial, serif;
@@ -126,6 +128,7 @@
   position: absolute;
   /* left: 50%; */
   top: 80px;
+  width: 100%;
   color: black;
   /* margin: 0 auto; */
 }
@@ -203,7 +206,7 @@
   font-size: 3rem;
   text-align: left;
   letter-spacing: -0.015em;
-  /* width: 70vw; */
+   width: 100%; 
   position: absolute;
   /* left: 10.7%; */
   top: 80px;
