@@ -72,7 +72,9 @@ def dialogue_manager(payload: DMpayload):
                                     'views',
                                     'ada_search',
                                 ])
-    
+
+    df_avatar['ada_search'] = df_avatar.ada_search.apply(eval).apply(np.array)  #needed when np array stored as txt
+
     # df_greetings = df_avatar[df_avatar['type'] == "greeting"]
 
     if query is None:
