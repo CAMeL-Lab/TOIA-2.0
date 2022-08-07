@@ -6,8 +6,9 @@ from google.cloud.sql.connector import connector
 import pandas as pd
 import numpy as np
 import os
-from utils import toia_answer, NLP, PS
-from utils_gpt3 import getFirstNSimilar
+# from utils import toia_answer, NLP, PS
+from utils_gpt3 import toia_answer
+# from utils_gpt3 import getFirstNSimilar
 from dotenv import load_dotenv
 import uvicorn
 from fastapi import FastAPI
@@ -47,7 +48,7 @@ def dialogue_manager(payload: DMpayload):
     print(avatar_id)
     print(stream_id)
 
-    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
+    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, videos_questions_streams.ada_search, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND videos_questions_streams.type NOT IN ('filler', 'exit');""")
@@ -69,14 +70,15 @@ def dialogue_manager(payload: DMpayload):
                                     'language',
                                     'likes',
                                     'views',
+                                    'ada_search',
                                 ])
     
-    df_greetings = df_avatar[df_avatar['type'] == "greeting"]
+    # df_greetings = df_avatar[df_avatar['type'] == "greeting"]
 
     if query is None:
         return 'Please enter a query', 400
 
-    response = toia_answer(query, df_avatar, df_greetings)
+    response = toia_answer(query, df_avatar)
 
     answer = response[0]
     id_video = response[1]
@@ -89,41 +91,41 @@ def dialogue_manager(payload: DMpayload):
     json.dumps(result)
     return result
 
-@app.post("/tfidfShortList")
-def tfidfShortList(payload: DMpayload, NUM_SHORTLIST=50):
-    raw_payload = payload.params
-    query = raw_payload.query
-    avatar_id = raw_payload.avatar_id
-    stream_id = raw_payload.stream_id
-    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
-                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
-                            INNER JOIN questions ON questions.id = videos_questions_streams.id_question
-                            WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND questions.trigger_suggester = 1;""")
+# @app.post("/tfidfShortList")
+# def tfidfShortList(payload: DMpayload, NUM_SHORTLIST=50):
+#     raw_payload = payload.params
+#     query = raw_payload.query
+#     avatar_id = raw_payload.avatar_id
+#     stream_id = raw_payload.stream_id
+#     statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
+#                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
+#                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
+#                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND questions.trigger_suggester = 1;""")
 
-    CONNECTION = ENGINE.connect()
-    result_proxy = CONNECTION.execute(statement,streamID=stream_id)
-    result_set = result_proxy.fetchall()
+#     CONNECTION = ENGINE.connect()
+#     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
+#     result_set = result_proxy.fetchall()
 
-    df_avatar = pd.DataFrame(result_set,
-                                columns=[
-                                    'stream_id_stream',
-                                    'type',
-                                    'question',
-                                    'id_video',
-                                    'toia_id',
-                                    'idx',
-                                    'private',
-                                    'answer',
-                                    'language',
-                                    'likes',
-                                    'views',
-                                ])
+#     df_avatar = pd.DataFrame(result_set,
+#                                 columns=[
+#                                     'stream_id_stream',
+#                                     'type',
+#                                     'question',
+#                                     'id_video',
+#                                     'toia_id',
+#                                     'idx',
+#                                     'private',
+#                                     'answer',
+#                                     'language',
+#                                     'likes',
+#                                     'views',
+#                                 ])
 
-    final_suggestions = getFirstNSimilar(df_avatar, query, NUM_SHORTLIST)
+#     final_suggestions = getFirstNSimilar(df_avatar, query, NUM_SHORTLIST)
 
-    print("TFIDF Shortlist:\n", final_suggestions)
+#     print("TFIDF Shortlist:\n", final_suggestions)
 
-    return {"suggestions_shortlist": json.dumps(final_suggestions.tolist())}
+#     return {"suggestions_shortlist": json.dumps(final_suggestions.tolist())}
 
 
 if __name__ == "__main__":
