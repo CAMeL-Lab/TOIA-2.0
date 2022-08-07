@@ -25,31 +25,31 @@ def toia_answer(query, data, k=1):
         else:
             return "You haven't recorded no-answers", "204", "No Content"
 
-def getFirstNSimilar(df_avatar, query, NUM_SHORTLIST):
-    final_suggestions = []
+# def getFirstNSimilar(df_avatar, query, NUM_SHORTLIST):
+#     final_suggestions = []
 
-    df_avatar['combined'] = "Question: " + df_avatar.question.str.strip() + "; Answer: " + df_avatar.answer.str.strip()
+#     df_avatar['combined'] = "Question: " + df_avatar.question.str.strip() + "; Answer: " + df_avatar.answer.str.strip()
 
-    df_avatar['ada_similarity'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-similarity-ada-001'))
-    df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-search-ada-doc-001'))
+#     df_avatar['ada_similarity'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-similarity-ada-001'))
+#     df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-search-ada-doc-001'))
 
-    if query == "" or query == " ": 
-        query = "Hello"
-    print("==========Getting similarities============", query)
-    df_response = getFreqByCosineSimilarity(query, df_avatar)
-    # return {"suggestions_shortlist": json.dumps(final_suggestions)}
-    print(query, "\tMost similar:", df_response["question"].values[0], df_response.similarities.values[0])
-    if len(df_response["question"].values) <= NUM_SHORTLIST:
-        final_suggestions = df_response["question"].values
-    else:
-        final_suggestions = df_response["question"].values[:NUM_SHORTLIST]
-    return final_suggestions
+#     if query == "" or query == " ": 
+#         query = "Hello"
+#     print("==========Getting similarities============", query)
+#     df_response = getFreqByCosineSimilarity(query, df_avatar)
+#     # return {"suggestions_shortlist": json.dumps(final_suggestions)}
+#     print(query, "\tMost similar:", df_response["question"].values[0], df_response.similarities.values[0])
+#     if len(df_response["question"].values) <= NUM_SHORTLIST:
+#         final_suggestions = df_response["question"].values
+#     else:
+#         final_suggestions = df_response["question"].values[:NUM_SHORTLIST]
+#     return final_suggestions
 
-def getFreqByCosineSimilarity(query, data):
-    data['combined'] = "Question: " + data.question.str.strip() + "; Answer: " + data.answer.str.strip()
+# def getFreqByCosineSimilarity(query, data):
+#     data['combined'] = "Question: " + data.question.str.strip() + "; Answer: " + data.answer.str.strip()
     
-    embedding = get_embedding(query, engine='text-search-ada-query-001')
-    data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
-    df_response = data.sort_values('similarities', ascending=False)
+#     embedding = get_embedding(query, engine='text-search-ada-query-001')
+#     data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
+#     df_response = data.sort_values('similarities', ascending=False)
 
-    return df_response;
+#     return df_response;

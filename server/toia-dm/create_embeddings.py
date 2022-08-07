@@ -52,17 +52,12 @@ if __name__ == "__main__":
         # This will take just under 2 minutes
         df_avatar['ada_similarity'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-similarity-ada-001'))
         df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-search-ada-doc-001'))
-        df_avatar['ada_search'] = df_avatar.ada_search.apply(eval).apply(np.array)
 
         for videoID in df_avatar.id_video:
-            adaSearch = df_avatar[df_avatar['id_video']==videoID].ada_search.values[0]
-            # Note 'AND v.toia_id = :toiaID' should be redundant becasue video ID should be unique already.
-
-            ############### Need to update the query once we fix the bug #######################
-            # update_statement = text("""
-            # UPDATE video v SET ada_search = :adaSearch
-            # WHERE v.id_video = :videoID
-            # AND v.toia_id = :toiaID;
-            # """)
-            # CONNECTION = ENGINE.connect()
-            # CONNECTION.execute(update_statement, adaSearch=adaSearch, videoID=videoID, toiaID=toiaID)
+            adaSearch = str(df_avatar[df_avatar['id_video']==videoID].ada_search.values[0])
+            update_statement = text("""
+            UPDATE videos_questions_streams vqs SET ada_search = :adaSearch
+            WHERE vqs.id_video = :videoID;
+            """)
+            CONNECTION = ENGINE.connect()
+            CONNECTION.execute(update_statement, adaSearch=adaSearch, videoID=videoID, toiaID=toiaID)
