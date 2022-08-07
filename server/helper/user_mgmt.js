@@ -395,8 +395,8 @@ const saveConversationLog = (interactor_id, toia_id, filler, question_asked, vid
 
 const canAccessStream = (user_id, stream_id) => {
     return new Promise((resolve)=>{
-        let query = `SELECT * FROM stream_view_permission WHERE toia_id = ? AND stream_id = ?`;
-        connection.query(query, [user_id, stream_id], (err, entry) => {
+        let query = `SELECT 1 FROM stream_view_permission WHERE toia_id = ? AND stream_id = ? UNION SELECT 1 FROM stream WHERE id_stream = ? AND toia_id = ?`;
+        connection.query(query, [user_id, stream_id, stream_id, user_id], (err, entry) => {
             if (err) throw err;
             if (entry.length === 1) {
                 resolve(true);
