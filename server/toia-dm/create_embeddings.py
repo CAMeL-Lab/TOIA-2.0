@@ -17,8 +17,14 @@ config = dotenv_values()
 # openai.organization = config['YOUR_ORG_ID']
 openai.api_key = config['OPENAI_API_KEY']
 
-SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
+SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(
+    dbconnection=config["DB_CONNECTION"],
+    dbusername=config["DB_USERNAME"],
+    dbpassword=config["DB_PASSWORD"],
+    dbhost=config["DB_HOST"],
+    dbname=config["DB_DATABASE"])
 # SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=config["DB_CONNECTION"],dbusername=config["DB_USERNAME"],dbpassword=config["DB_PASSWORD"],dbhost=config["DB_HOST"],dbname=config["DB_DATABASE"])
+print(SQL_URL)
 
 print("Connecting...")
 ENGINE = db.create_engine(SQL_URL)

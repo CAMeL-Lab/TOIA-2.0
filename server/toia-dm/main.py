@@ -61,6 +61,7 @@ def dialogue_manager(payload: DMpayload):
                                 columns=[
                                     'stream_id_stream',
                                     'type',
+                                    'ada_search',
                                     'question',
                                     'id_video',
                                     'toia_id',
@@ -70,7 +71,6 @@ def dialogue_manager(payload: DMpayload):
                                     'language',
                                     'likes',
                                     'views',
-                                    'ada_search',
                                 ])
 
     df_avatar['ada_search'] = df_avatar.ada_search.apply(eval).apply(np.array)  #needed when np array stored as txt
