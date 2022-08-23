@@ -667,7 +667,11 @@ router.post('/player', cors(), (req, res) => {
                 res.send("error")
                 return;
             }
-            res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`);
+            // res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`);
+            res.send({
+                url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
+                answer: videoDetails.data.answer
+            });
             return;
         }
 
@@ -899,6 +903,33 @@ router.post('/recorder', cors(), async (req, res) => {
             });
         }
     });
+});
+
+router.post('/getSmartQuestions', (req,res)=>{
+    const options = {
+        method: 'POST',
+        url: `${process.env.SMARTQ_ROUTE}`,
+        headers: {'Content-Type': 'application/json'},
+        data: {
+            new_q: req.body.params.latest_question,
+            new_a: req.body.params.latest_answer,
+            n_suggestions: 5,
+            avatar_id: req.body.params.avatar_id,
+            stream_id: req.body.params.stream_id,
+        }
+    };
+    axios.request(options)
+    .then((response)=>{
+        console.log("==========FINAL RESPONSE=========");
+        // console.log(response2);
+        console.log(response.data.suggestions);
+        res.send(response.data.suggestions);
+    })
+    .catch(function (error) {
+        console.log("=============== Error with Q_API ============")
+        console.log(error);
+    });
+
 });
 
 router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {

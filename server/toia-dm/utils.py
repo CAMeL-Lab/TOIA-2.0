@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.snowball import SnowballStemmer
-from nltk.stem.snowball import SnowballStemmer
+# from nltk.stem.snowball import SnowballStemmer
 import spacy
 
 NLP = spacy.load("en_core_web_lg")
