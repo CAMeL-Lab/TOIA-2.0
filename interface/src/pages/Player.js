@@ -187,15 +187,15 @@ function Player() {
 
 					isFillerPlaying.current = "false";
 					setVideoProperties({
-						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:fetchFiller,
-						source: res.data,
+						source: res.data.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
 					});
-
-					setVideoID(res.data); // setting the video ID
+					fetchAnsweredQuestions(oldQuestion, res.data.answer);
+					setVideoID(res.data.url); // setting the video ID
 					setTranscribedAudio("");
 					question.current = "";
 				}
@@ -225,29 +225,27 @@ function Player() {
 	}
 
 	// function to fetch answered user questions from the DB
-	function fetchAnsweredQuestions() {
-		axios
-			.get(
-				`http://localhost:3001/api/questions/answered/${history.location.state.toiaToTalk}`
-			)
-			.then((res) => {
-				let answeredQuestionsData = [];
-				res.data.forEach((answer) => {
-					if (answer.suggested_type == "answer") {
-						answeredQuestionsData.push({
-							question: answer.question,
-						});
-					}
-				});
-
-				setAnsweredQuestions([...answeredQuestionsData]);
-
-				questionsLength.current =
-					answeredQuestionsData.length >= 3
-						? 3
-						: answeredQuestionsData.length;
+	function fetchAnsweredQuestions(question="", answer="") {
+		console.log("Smart Q Creating...");
+		axios.post('/api/getSmartQuestions', {
+			params: {
+				avatar_id: history.location.state.toiaToTalk,
+				stream_id: history.location.state.streamToTalk,
+				latest_question: question,
+				latest_answer: answer
+			}
+		}).then((res)=>{
+			// res.data (Array)
+			let answeredQuestionsData = [];
+			res.data.forEach((q) => {
+				if (q != ''){
+					answeredQuestionsData.push({ question: q });
+				}
 			});
+			setAnsweredQuestions([...answeredQuestionsData, ...answeredQuestions]);
+		});
 	}
+
 
 	function textInputChange(val) {
 		if (val) {
@@ -319,6 +317,7 @@ function Player() {
 	};
 
 	function fetchData() {
+		const oldQuestion = question.current;
 		if (question.current == null || question.current == "") {
 			setFillerPlaying(true);
 			fetchFiller();
@@ -341,14 +340,15 @@ function Player() {
 						//setHasRated(false);
 						newRating.current = "false";
 						isFillerPlaying.current = "false";
-						setVideoID(res.data); // setting the video ID
+						setVideoID(res.data.url); // setting the video ID
+						fetchAnsweredQuestions(oldQuestion, res.data.answer);
 						setVideoProperties({
-							key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 							onEnded:
 								interacting.current == "false"
 									? fetchFiller
 									: chatFiller,
-							source: res.data,
+							source: res.data.url,
 							fetchFiller: fetchFiller,
 							muted: false,
 							filler: false,
@@ -454,6 +454,7 @@ function Player() {
 
 		if (question.current != "") {
 			setHasRated(false);
+			const oldQuestion = question.current;
 			axios
 				.post(`/api/player`, {
 					params: {
@@ -474,14 +475,14 @@ function Player() {
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
-							key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 							onEnded: fetchFiller,
-							source: res.data,
+							source: res.data.url,
 							muted: false,
 							filler: false,
 						});
-
-						setVideoID(res.data); // setting the video ID
+						fetchAnsweredQuestions(oldQuestion, res.data.answer);
+						setVideoID(res.data.url); // setting the video ID
 						// transcribedAudio.current = '';
 						setTranscribedAudio("");
 						question.current = "";
