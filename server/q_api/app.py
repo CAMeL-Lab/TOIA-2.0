@@ -24,7 +24,7 @@ load_dotenv()
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
-NUM_SHORTLIST = 50
+NUM_SHORTLIST = 50 #Shortlisting avatar questions for GPT-3
 
 #Local storage of the conversation data - will be deprecated once the database is in place
 SQL_URL = "{dbconnection}+pymysql://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"), dbusername=os.environ.get("DB_USERNAME"), dbpassword=os.environ.get("DB_PASSWORD"), dbhost=os.environ.get("DB_HOST"), dbname=os.environ.get("DB_DATABASE"))
@@ -110,11 +110,10 @@ A: {}""".format(new_q, new_a)
         
         prompt = prompt + "\n\nSelect the {} best follow-up questions from the following:".format(num_questions)
         for question in suggestions_shortlist:
-            prompt = prompt + "\n" + question.strip()
-        # prompt = prompt + "\n\n1."
+            prompt = prompt + "\n" + question.strip().replace('\n','')
 
 
-    print("=====Prompt=====\n",prompt)
+    # print("=====Prompt=====\n",prompt)
     return prompt
 
     
@@ -285,31 +284,21 @@ def generateNextQ(api=API):
 # Generating Smart Questions
 @app.route('/generateSmartQ', methods=['POST'])
 def generateSmartQ(api=API):
-    print("-------------Checkpoint 0: START--------------")
-    start_time = time.time()
-    # print("--- Start time: %s  ---" % (time.time()))
+    start_time = time.time() #timing for logs
     if not Service_Active:
         return {"error":"Inactive"}
 
     body_unicode = request.data.decode('utf-8')
     body = json.loads(body_unicode)
 
-    # print("Received body", body)
-    #### Delete after integration with backend ##############
-    # text=body['qa_pair']
-    # new_q, new_a = nltk.tokenize.sent_tokenize(text)
-    # n_suggestions = 5
-    # avatar_id = 1
-    #########################################################
-
-    #### Uncomment after integration with backend ####
     new_q = body['new_q']
     new_a = body['new_a']
     n_suggestions = body['n_suggestions']
     avatar_id = body['avatar_id']
     stream_id = body['stream_id']
-    ##################################################
 
+
+    # Get all questions answered by avatar
     statement = QueryText("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.ada_search, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
@@ -318,9 +307,6 @@ def generateSmartQ(api=API):
     CONNECTION = ENGINE.connect()
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
     result_set = result_proxy.fetchall()
-
-    time_1 = time.time()
-    print("--- Time taken to get from db: %ss ---" % (time_1-start_time))
 
     df_avatar = pd.DataFrame(result_set,
                                 columns=[
@@ -338,12 +324,8 @@ def generateSmartQ(api=API):
                                     'views',
                                 ])
 
-    # print("Checkpoint 1: Finished getting df_avatar")
 
     suggestions_shortlist = getFirstNSimilar(df_avatar, new_q, NUM_SHORTLIST)
-    # print("Checkpoint 2: Finished getting first 50 similar", suggestions_shortlist)
-    time_2 = time.time()
-    print("--- Time taken to shortlist: %ss---" % (time_2-time_1))
 
     # To use all questions without shortlisting:
     # suggestions_shortlist = df_avatar["question"].values
@@ -400,15 +382,26 @@ def generateSmartQ(api=API):
             temperature=0.7,
             max_tokens=250
         )
-        # print("Checkpoint 4: Received request!")
-        time_3 = time.time()
-        print("--- Time taken to get from GPT-3: %s ---" % (time_3-time_2))
         
         generation = response.choices[0]['text']
+
+        # # If GPT-3 did not return any values, use the last 7 questions from the shortlist
+        # generation = []
+        # if generation == []:
+        #     print("q-api/generateSmartQ: GPT-3 returned empty array. Using arbitrarily chosen questions from avatar as suggestions")
+        #     if len(suggestions_shortlist) <= 7:
+        #         generation = "\n".join(suggestions_shortlist)
+        #     else:
+        #         generation = "\n".join(suggestions_shortlist[:7])
+        #     # if len(df_avatar["question"].values) <= 7:
+        #     #     generation = df_avatar["question"].values
+        #     # else:
+        #     #     generation = df_avatar["question"].values[:7]
+
         # split sentences into list
         suggestions = nltk.tokenize.sent_tokenize(generation)
 
-        
+
         # Filter suggestions
         suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
         # Remove suggestions starting with "A:"
@@ -436,7 +429,7 @@ def generateSmartQ(api=API):
     if (n_suggestions and n_suggestions > 0 and len(suggestions) > n_suggestions):
         suggestions = random.sample(suggestions, n_suggestions)
 
-    print(prompt)
+    # print(prompt)
     if len(suggestions):
         print(suggestions)
     else:
@@ -451,9 +444,16 @@ def generateSmartQ(api=API):
     else:
         logging.warning("No callback_url provided!")
 
-    print("Checkpoint 5: Finished")
 
-    time_4 = time.time()
-    print("--- Total time taken to get smart suggestions: %s ---" % (time_4-start_time))
+    # If GPT-3 did not return any values, use the last 7 questions from the shortlist
+    if suggestions == []:
+        print("q-api/generateSmartQ: GPT-3 returned empty array. Using arbitrarily chosen questions from avatar as suggestions")
+        if len(suggestions_shortlist) <= 7:
+            suggestions = suggestions_shortlist.tolist()
+        else:
+            suggestions = suggestions_shortlist[:7].tolist()
+
+    end_time = time.time()
+    print("q-api/generateSmartQ:Total time taken to get smart suggestions: %s " % (end_time-start_time))
 
     return {"suggestions": json.dumps(suggestions)}

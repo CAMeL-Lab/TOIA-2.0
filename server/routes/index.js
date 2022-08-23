@@ -908,7 +908,7 @@ router.post('/recorder', cors(), async (req, res) => {
 router.post('/getSmartQuestions', (req,res)=>{
     const options = {
         method: 'POST',
-        url: "http://q_api:5000/generateSmartQ",
+        url: `${process.env.SMARTQ_ROUTE}`,
         headers: {'Content-Type': 'application/json'},
         data: {
             new_q: req.body.params.latest_question,

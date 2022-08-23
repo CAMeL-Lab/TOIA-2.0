@@ -242,9 +242,7 @@ function Player() {
 					answeredQuestionsData.push({ question: q });
 				}
 			});
-			console.log(answeredQuestionsData);
-			// (XMarker Ali)
-			setAnsweredQuestions([...answeredQuestionsData]);
+			setAnsweredQuestions([...answeredQuestionsData, ...answeredQuestions]);
 		});
 	}
 
