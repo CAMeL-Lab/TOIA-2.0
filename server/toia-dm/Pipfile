@@ -8,7 +8,7 @@ numpy = "*"
 pandas = "*"
 nltk = "*"
 sklearn = "*"
-spacy = "*"
+spacy = "==3.0.3"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 en-core-web-lg = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.0.0/en_core_web_lg-3.0.0.tar.gz"}
@@ -16,9 +16,14 @@ sqlalchemy = "*"
 pydantic = "*"
 cloud-sql-python-connector = "*"
 mysql = "*"
+spacy-transformers = "*"
+spacy-sentence-bert = "*"
 
 [dev-packages]
 jupyterlab = "*"
+openai = "*"
+matplotlib = "*"
+plotly = "*"
 
 [requires]
 python_version = "3.8"

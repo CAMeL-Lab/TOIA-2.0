@@ -1,3 +1,4 @@
+
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
@@ -44,6 +45,7 @@ function Player() {
 	const [streamIdToTalk, setStreamIdToTalk] = useState(null);
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
+
 	const [answeredQuestions, setAnsweredQuestions] = useState(["Loading ..."]);
 
 	const [videoProperties, setVideoProperties] = useState(null);
@@ -55,6 +57,7 @@ function Player() {
 
 	const [transcribedAudio, setTranscribedAudio] = useState("");
 
+
 	// suggested questions for cards
 	const [suggestion2, setSuggestion2] = React.useState("");
 
@@ -63,6 +66,7 @@ function Player() {
 	const interacting = React.useRef("false");
 	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
+
 	const questionsLength = React.useRef(0);
 	const interimTextInput = React.useRef("");
 
@@ -100,6 +104,7 @@ function Player() {
 		setStreamIdToTalk(history.location.state.streamToTalk);
 		setStreamNameToTalk(history.location.state.streamNameToTalk);
 
+
 		canAccessStream();
 
 		fetchAnsweredQuestions();
@@ -108,6 +113,7 @@ function Player() {
 		// Tracker
 		new Tracker().startTracking(history.location.state);
 	}, []);
+
 
 	useEffect(() => {
 		const listener = (event) => {
@@ -144,6 +150,7 @@ function Player() {
 				break;
 		}
 	}
+
 
 	function canAccessStream() {
 		let toiaID = history.location.state.toiaID;
@@ -226,6 +233,7 @@ function Player() {
 
 	// function to fetch answered user questions from the DB
 	function fetchAnsweredQuestions(question="", answer="") {
+
 		console.log("Smart Q Creating...");
 		axios.post('/api/getSmartQuestions', {
 			params: {
@@ -238,6 +246,7 @@ function Player() {
 			// res.data (Array)
 			let answeredQuestionsData = [];
 			res.data.forEach((q) => {
+
 				if (q != ''){
 					answeredQuestionsData.push({ question: q });
 				}
@@ -251,11 +260,13 @@ function Player() {
 		if (val) {
 			textInput.current = val.question;
 		}
+
 	}
 
 	const recordUserRating = function (rate) {
 		// record the rating for the user
 		const vidID = videoID.split("/"); // splitting by delimeter
+
 
 		const options = {
 			method: "POST",
@@ -266,6 +277,7 @@ function Player() {
 					user_id: history.location.state.toiaID,
 				}),
 				video_id: vidID[vidID.length - 1],
+
 				question: question.current,
 				rating: rate,
 			},
@@ -282,6 +294,7 @@ function Player() {
 	};
 
 	async function continueChat() {
+
 		if (newRating.current != "false") {
 			// if the user has rated then they can continue
 			if (interacting.current == "true") {
@@ -294,6 +307,7 @@ function Player() {
 		} else {
 			NotificationManager.warning("Please provide a rating", "", 3000);
 		}
+
 	}
 
 	async function chatFiller() {
@@ -317,6 +331,7 @@ function Player() {
 	};
 
 	function fetchData() {
+
 		const oldQuestion = question.current;
 		if (question.current == null || question.current == "") {
 			setFillerPlaying(true);
@@ -326,6 +341,7 @@ function Player() {
 				.post(`/api/player`, {
 					params: {
 						toiaIDToTalk: history.location.state.toiaToTalk,
+
 						toiaFirstNameToTalk:
 							history.location.state.toiaFirstNameToTalk,
 						question,
@@ -337,6 +353,7 @@ function Player() {
 						setFillerPlaying(true);
 					} else {
 						setFillerPlaying(true);
+
 						//setHasRated(false);
 						newRating.current = "false";
 						isFillerPlaying.current = "false";
@@ -367,6 +384,7 @@ function Player() {
 	function micStatusChange() {
 		if (micMute == true) {
 			setMicStatus(false);
+
 			setMicString("STOP ASK BY VOICE");
 			setIsInteracting(true);
 			interacting.current = "true";
@@ -377,6 +395,7 @@ function Player() {
 					// No further action needed, as stream already closes itself on error
 				});
 			} else {
+
 				NotificationManager.warning(
 					"Please provide a rating",
 					"",
@@ -386,6 +405,7 @@ function Player() {
 		} else {
 			speechToTextUtils.stopRecording();
 			setMicStatus(true);
+
 			setMicString("ASK BY VOICE");
 			setIsInteracting(false);
 			interacting.current = "false";
@@ -399,6 +419,7 @@ function Player() {
 				.post(`/api/fillerVideo`, {
 					params: {
 						toiaIDToTalk: history.location.state.toiaToTalk,
+
 						toiaFirstNameToTalk:
 							history.location.state.toiaFirstNameToTalk,
 						record_log: "true",
@@ -408,6 +429,7 @@ function Player() {
 					},
 				})
 				.then(async (res) => {
+
 					setVideoProperties({
 						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:
@@ -428,10 +450,12 @@ function Player() {
 							.then((_) => {
 								// Automatic playback started!
 								// Show playing UI.
+
 							})
 							.catch((error) => {
 								// Auto-play was prevented
 								// Show paused UI.
+
 
 								fetchFiller();
 							});
