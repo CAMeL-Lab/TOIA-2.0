@@ -112,7 +112,6 @@ A: {}""".format(new_q, new_a)
         for question in suggestions_shortlist:
             prompt = prompt + "\n" + question.strip().replace('\n','')
 
-
     # print("=====Prompt=====\n",prompt)
     return prompt
 
@@ -291,10 +290,12 @@ def generateSmartQ(api=API):
     body_unicode = request.data.decode('utf-8')
     body = json.loads(body_unicode)
 
+
     new_q = body['new_q']
     new_a = body['new_a']
     n_suggestions = body['n_suggestions']
     avatar_id = body['avatar_id']
+
     stream_id = body['stream_id']
 
 
@@ -428,6 +429,7 @@ def generateSmartQ(api=API):
 
     if (n_suggestions and n_suggestions > 0 and len(suggestions) > n_suggestions):
         suggestions = random.sample(suggestions, n_suggestions)
+
 
     # print(prompt)
     if len(suggestions):

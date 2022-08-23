@@ -662,7 +662,7 @@ router.post('/player', cors(), (req, res) => {
         }
 
         if (process.env.ENVIRONMENT === "development") {
-            console.log(videoDetails.data.id_video)
+            console.log("Video:", videoDetails)
             if (videoDetails.data.id_video === "204") {
                 res.send("error")
                 return;
@@ -679,7 +679,10 @@ router.post('/player', cors(), (req, res) => {
             if (err) {
                 console.error(err);
             } else {
-                res.send(url);
+                res.send({
+                    url,
+                    answer: videoDetails.data.answer
+                });
             }
         });
     }).catch((err) => {
