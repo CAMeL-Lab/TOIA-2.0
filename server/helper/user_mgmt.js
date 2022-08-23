@@ -372,12 +372,66 @@ const getUserTotalVideoDuration = (user_id) => {
 }
 
 const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
-    console.log("saving player feedback")
     return new Promise((resolve)=>{
         let query = `INSERT INTO player_feedback(video_id, user_id, question, rating) VALUES(?, ?, ?, ?)`;
         connection.query(query, [video_id, user_id, question, rating], (err) => {
             if (err) throw err;
             resolve();
+        })
+    })
+}
+
+const saveConversationLog = (interactor_id, toia_id, filler, question_asked, video_played) => {
+    return new Promise(((resolve) => {
+        let currentTimestamp = +new Date();
+        const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played) VALUES (?, ?, ?, ?, ?, ?)`;
+
+        connection.query(query, [interactor_id, toia_id, currentTimestamp, filler, question_asked, video_played], (err, res) => {
+            if (err) throw err;
+            resolve();
+        })
+    }))
+}
+
+const canAccessStream = (user_id, stream_id) => {
+    return new Promise((resolve)=>{
+        let query = `SELECT 1 FROM stream_view_permission WHERE toia_id = ? AND stream_id = ? UNION SELECT 1 FROM stream WHERE id_stream = ? AND toia_id = ?`;
+        connection.query(query, [user_id, stream_id, stream_id, user_id], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 1) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        })
+    })
+}
+
+const saveAdaSearch = (data, question_id, video_id) => {
+    let buff = new Buffer.from(data);
+    let base64data = buff.toString('base64');
+
+    let query = `UPDATE videos_questions_streams SET ada_search=? WHERE id_video=? AND id_question=?`;
+
+    return new Promise((resolve) => {
+        connection.query(query, [base64data, video_id, question_id], (err, result) => {
+            if (err) throw err;
+            resolve(true)
+        })
+    })
+}
+
+const getAdaSearch = (question_id, video_id) => {
+    let query = `SELECT ada_search FROM videos_questions_streams WHERE id_video=? AND id_question=?`;
+
+    return new Promise((resolve) => {
+        connection.query(query, [video_id, question_id], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 0) resolve(null);
+            
+            let ada_search_encoded = entry[0].ada_search;
+            let buff = new Buffer.from(ada_search_encoded, 'base64');
+            resolve(buff.toString('ascii'));
         })
     })
 }
@@ -405,3 +459,7 @@ module.exports.getUserTotalVideoDuration = getUserTotalVideoDuration;
 module.exports.searchSuggestion = searchSuggestion;
 module.exports.searchRecorded = searchRecorded;
 module.exports.savePlayerFeedback = savePlayerFeedback;
+module.exports.saveConversationLog = saveConversationLog;
+module.exports.canAccessStream = canAccessStream;
+module.exports.saveAdaSearch = saveAdaSearch;
+module.exports.getAdaSearch = getAdaSearch;

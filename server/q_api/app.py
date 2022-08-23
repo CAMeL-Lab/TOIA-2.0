@@ -17,10 +17,14 @@ from sqlalchemy.sql import text as QueryText
 from dotenv import load_dotenv
 import openai
 import logging
+from utils import getFirstNSimilar
+import pandas as pd
+import time
 load_dotenv()
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
+NUM_SHORTLIST = 50 #Shortlisting avatar questions for GPT-3
 
 #Local storage of the conversation data - will be deprecated once the database is in place
 SQL_URL = "{dbconnection}+pymysql://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"), dbusername=os.environ.get("DB_USERNAME"), dbpassword=os.environ.get("DB_PASSWORD"), dbhost=os.environ.get("DB_HOST"), dbname=os.environ.get("DB_DATABASE"))
@@ -106,10 +110,9 @@ A: {}""".format(new_q, new_a)
         
         prompt = prompt + "\n\nSelect the {} best follow-up questions from the following:".format(num_questions)
         for question in suggestions_shortlist:
-            prompt = prompt + "\n" + question
+            prompt = prompt + "\n" + question.strip().replace('\n','')
 
-
-    print("=====Prompt=====\n",prompt)
+    # print("=====Prompt=====\n",prompt)
     return prompt
 
     
@@ -277,32 +280,57 @@ def generateNextQ(api=API):
 
     return {"suggestions": json.dumps(suggestions)}
 
-
-# Generating Smart Question After Shortlisting with toia-dm
+# Generating Smart Questions
 @app.route('/generateSmartQ', methods=['POST'])
 def generateSmartQ(api=API):
-    print("-------------DEBUG--------------")
+    start_time = time.time() #timing for logs
     if not Service_Active:
         return {"error":"Inactive"}
 
     body_unicode = request.data.decode('utf-8')
     body = json.loads(body_unicode)
 
-    print("Received body", body)
-    #### Delete after integration with backend ##############
-    # text=body['qa_pair']
-    # new_q, new_a = nltk.tokenize.sent_tokenize(text)
-    # n_suggestions = 5
-    # avatar_id = 1
-    #########################################################
 
-    #### Uncomment after integration with backend ####
     new_q = body['new_q']
     new_a = body['new_a']
     n_suggestions = body['n_suggestions']
     avatar_id = body['avatar_id']
-    suggestions_shortlist = json.loads(body['suggestions_shortlist'])
-    ##################################################
+
+    stream_id = body['stream_id']
+
+
+    # Get all questions answered by avatar
+    statement = QueryText("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.ada_search, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
+                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
+                            INNER JOIN questions ON questions.id = videos_questions_streams.id_question
+                            WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND questions.trigger_suggester = 1;""")
+
+    CONNECTION = ENGINE.connect()
+    result_proxy = CONNECTION.execute(statement,streamID=stream_id)
+    result_set = result_proxy.fetchall()
+
+    df_avatar = pd.DataFrame(result_set,
+                                columns=[
+                                    'stream_id_stream',
+                                    'ada_search',
+                                    'type',
+                                    'question',
+                                    'id_video',
+                                    'toia_id',
+                                    'idx',
+                                    'private',
+                                    'answer',
+                                    'language',
+                                    'likes',
+                                    'views',
+                                ])
+
+
+    suggestions_shortlist = getFirstNSimilar(df_avatar, new_q, NUM_SHORTLIST)
+
+    # To use all questions without shortlisting:
+    # suggestions_shortlist = df_avatar["question"].values
+
     callback_url = None
     if 'callback_url' in body:
         callback_url = body['callback_url']
@@ -348,18 +376,32 @@ def generateSmartQ(api=API):
         suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
         
     elif api == "GPT-3":      
-        print("Sending request to AI...")
+        # print("Checkpoint 3: Sending request to AI...")
         response = openai.Completion.create(
             engine="text-davinci-001",
             prompt=prompt,
             temperature=0.7,
             max_tokens=250
         )
-        print("Received request!")
         
         generation = response.choices[0]['text']
+
+        # # If GPT-3 did not return any values, use the last 7 questions from the shortlist
+        # generation = []
+        # if generation == []:
+        #     print("q-api/generateSmartQ: GPT-3 returned empty array. Using arbitrarily chosen questions from avatar as suggestions")
+        #     if len(suggestions_shortlist) <= 7:
+        #         generation = "\n".join(suggestions_shortlist)
+        #     else:
+        #         generation = "\n".join(suggestions_shortlist[:7])
+        #     # if len(df_avatar["question"].values) <= 7:
+        #     #     generation = df_avatar["question"].values
+        #     # else:
+        #     #     generation = df_avatar["question"].values[:7]
+
         # split sentences into list
         suggestions = nltk.tokenize.sent_tokenize(generation)
+
 
         # Filter suggestions
         suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
@@ -388,7 +430,8 @@ def generateSmartQ(api=API):
     if (n_suggestions and n_suggestions > 0 and len(suggestions) > n_suggestions):
         suggestions = random.sample(suggestions, n_suggestions)
 
-    print(prompt)
+
+    # print(prompt)
     if len(suggestions):
         print(suggestions)
     else:
@@ -402,5 +445,17 @@ def generateSmartQ(api=API):
                 logging.error("Error when sending suggestions to server. Is the server running?")
     else:
         logging.warning("No callback_url provided!")
+
+
+    # If GPT-3 did not return any values, use the last 7 questions from the shortlist
+    if suggestions == []:
+        print("q-api/generateSmartQ: GPT-3 returned empty array. Using arbitrarily chosen questions from avatar as suggestions")
+        if len(suggestions_shortlist) <= 7:
+            suggestions = suggestions_shortlist.tolist()
+        else:
+            suggestions = suggestions_shortlist[:7].tolist()
+
+    end_time = time.time()
+    print("q-api/generateSmartQ:Total time taken to get smart suggestions: %s " % (end_time-start_time))
 
     return {"suggestions": json.dumps(suggestions)}
