@@ -66,13 +66,13 @@ def addAdaSearch(toiaID):
     df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: adaSearch(x))
 
     for videoID in df_avatar.id_video:
-        adaSearch = str(df_avatar[df_avatar['id_video']==videoID].ada_search.values[0])
+        adaSearchVar = str(df_avatar[df_avatar['id_video']==videoID].ada_search.values[0])
         update_statement = text("""
-        UPDATE videos_questions_streams vqs SET ada_search = :adaSearch
+        UPDATE videos_questions_streams vqs SET ada_search = :adaSearchVal
         WHERE vqs.id_video = :videoID;
         """)
         CONNECTION = ENGINE.connect()
-        CONNECTION.execute(update_statement, adaSearch=adaSearch, videoID=videoID, toiaID=toiaID)
+        CONNECTION.execute(update_statement, adaSearchVal=adaSearchVar, videoID=videoID, toiaID=toiaID)
 
 if __name__ == "__main__":
     for toiaID in args.t:
