@@ -906,6 +906,38 @@ router.post('/recorder', cors(), async (req, res) => {
 });
 
 router.post('/getSmartQuestions', (req,res)=>{
+
+    const avatar_id = req.body.params.avatar_id;
+
+    // If it is the beginning of the conversation, then return 'dumb' question suggestions
+    if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
+    {
+        isValidUser(avatar_id)
+        .then(
+            () => {
+                let query = `SELECT questions.question FROM questions 
+                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+                            WHERE videos_questions_streams.id_video IN (SELECT id_video FROM video WHERE toia_id = ?)
+                            AND questions.suggested_type IN ("answer", "y/n-answer")
+                            ORDER BY questions.id ASC
+                            LIMIT 5`;
+                connection.query(query, [avatar_id], (err, entries) => {
+                    if (err) throw err;
+                    let result = entries.map(object=>object.question);
+                    res.send(result);
+                })
+            },
+            (reject) => {
+                if (reject === false) console.log("Provided avatar_id doesn't exist");
+                res.sendStatus(404);
+        });
+        return;
+    }
+
+    console.log("Continuing....");
+
+
+
     const options = {
         method: 'POST',
         url: `${process.env.SMARTQ_ROUTE}`,
@@ -914,15 +946,17 @@ router.post('/getSmartQuestions', (req,res)=>{
             new_q: req.body.params.latest_question,
             new_a: req.body.params.latest_answer,
             n_suggestions: 5,
-            avatar_id: req.body.params.avatar_id,
+            avatar_id: avatar_id,
             stream_id: req.body.params.stream_id,
         }
     };
+
     axios.request(options)
     .then((response)=>{
-        console.log("==========FINAL RESPONSE=========");
+        console.log("==========Question Suggested=========");
         // console.log(response2);
         console.log(response.data.suggestions);
+        console.log("=====================================");
         res.send(response.data.suggestions);
     })
     .catch(function (error) {

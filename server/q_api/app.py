@@ -302,7 +302,8 @@ def generateSmartQ(api=API):
     statement = QueryText("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.ada_search, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
-                            WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND questions.trigger_suggester = 1;""")
+                            WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0
+                            AND questions.suggested_type IN ("answer", "y/n-answer");""")
 
     CONNECTION = ENGINE.connect()
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
