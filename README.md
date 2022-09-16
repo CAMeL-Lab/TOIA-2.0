@@ -3,7 +3,7 @@
 This is a repository for the TOIA 2.0 System.
 
 
-# Notes
+# Developer Setup
 
 ## Environment Variables
 
@@ -41,6 +41,10 @@ There are three `.env` files. One in the root directory, one in the `/interface`
    3. Do not change the locations defined in the `.env` file above as those are relative to `server/`
 4. Set the value for `OPENAI_API_KEY `
 
+### `.env` in toia-dm:
+
+Use same file as root
+
 ### `.env` in interface
 
     SKIP_PREFLIGHT_CHECK=true
@@ -48,6 +52,14 @@ There are three `.env` files. One in the root directory, one in the `/interface`
 ### `.env` in server is empty. Feel free to add any variable specific to server
 
 Note: It's probably a good idea to place Google cloud related environment variables to `.env` in `server/` but it would require some changes to the code. I'll update the ReadMe file when I make this change.
+
+## Database Migration
+
+1. Create a folder called `Accounts` in the server folder, if it does not exist. 
+2. Copy the video folders to the `Accounts` folder provided by admin.
+3. Navigate to [localhost:8080](localhost:8080) with the username and password provided in `.env` in the root folder.
+4. Drop all the tables in toia (if needed backup the current toia db using export).
+5. Import the database sql file into the toia table. 
 
 ## Running the app
 
