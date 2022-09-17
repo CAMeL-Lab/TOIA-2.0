@@ -20,6 +20,11 @@ linux
 
 Finally, run `nodemon app.js` to fire up the server!
 
+# Testing Instructions:
+
+1. Open Docker Terminal for Express API
+2. Run `npm test`
+
 
 # Important Notes
 

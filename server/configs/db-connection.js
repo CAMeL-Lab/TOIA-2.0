@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+const dotenv = require("dotenv").config({path: "../.env"});
 let connection;
 let config;
 
@@ -9,8 +10,11 @@ connection = mysql.createConnection({
     database: process.env.DB_DATABASE
 });
 
-
 connection.connect();
+
+if(process.env["ROLLBACK"]) {
+    connection.query("begin;");
+}
 
 function CloseDB(){
     connection.end();
