@@ -7,6 +7,7 @@ import numpy as np
 import sqlalchemy as db
 from sqlalchemy.sql import text
 import argparse
+import time
 
 parser = argparse.ArgumentParser(description='Pass toia_id to insert embeddings into the db.')
 parser.add_argument('-t', type=int, nargs='+',
@@ -34,35 +35,45 @@ VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
 
 print("Connected successfully!")
 
+def adaSimilarity(x):
+    time.sleep(1)
+    return get_embedding(x, engine='text-similarity-ada-001')
 
-if __name__ == "__main__":
-    for toiaID in args.t:
-        retrieve_statement = text("""
+def adaSearch(x):
+    time.sleep(1)
+    return get_embedding(x, engine='text-search-ada-doc-001')
+
+def addAdaSearch(toiaID):
+    retrieve_statement = text("""
         SELECT v.toia_id, q.question, v.answer, v.id_video, q.id as question_id FROM video v
         INNER JOIN videos_questions_streams vqs ON vqs.id_video = v.id_video
         INNER JOIN questions q ON q.id = vqs.id_question
         WHERE v.toia_id = :toiaID AND v.private = 0 AND vqs.type NOT IN ('filler', 'exit');""")
-        CONNECTION = ENGINE.connect()
-        result_proxy = CONNECTION.execute(retrieve_statement, toiaID=toiaID)
-        result_set = result_proxy.fetchall()
-        df_avatar = pd.DataFrame(result_set,
-                                    columns=[
-                                        'toia_id',
-                                        'question',
-                                        'answer',
-                                        'id_video',
-                                        'question_id'
-                                    ])
-        df_avatar['combined'] = "Question: " + df_avatar.question.str.strip() + "; Answer: " + df_avatar.answer.str.strip()
-        # This will take just under 2 minutes
-        df_avatar['ada_similarity'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-similarity-ada-001'))
-        df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: get_embedding(x, engine='text-search-ada-doc-001'))
+    CONNECTION = ENGINE.connect()
+    result_proxy = CONNECTION.execute(retrieve_statement, toiaID=toiaID)
+    result_set = result_proxy.fetchall()
+    df_avatar = pd.DataFrame(result_set,
+                                columns=[
+                                    'toia_id',
+                                    'question',
+                                    'answer',
+                                    'id_video',
+                                    'question_id'
+                                ])
+    df_avatar['combined'] = "Question: " + df_avatar.question.str.strip() + "; Answer: " + df_avatar.answer.str.strip()
+    # This will take just under 2 minutes
+    df_avatar['ada_similarity'] = df_avatar.combined.apply(lambda x: adaSimilarity(x))
+    df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: adaSearch(x))
 
-        for videoID in df_avatar.id_video:
-            adaSearch = str(df_avatar[df_avatar['id_video']==videoID].ada_search.values[0])
-            update_statement = text("""
-            UPDATE videos_questions_streams vqs SET ada_search = :adaSearch
-            WHERE vqs.id_video = :videoID;
-            """)
-            CONNECTION = ENGINE.connect()
-            CONNECTION.execute(update_statement, adaSearch=adaSearch, videoID=videoID, toiaID=toiaID)
+    for videoID in df_avatar.id_video:
+        adaSearchVar = str(df_avatar[df_avatar['id_video']==videoID].ada_search.values[0])
+        update_statement = text("""
+        UPDATE videos_questions_streams vqs SET ada_search = :adaSearchVal
+        WHERE vqs.id_video = :videoID;
+        """)
+        CONNECTION = ENGINE.connect()
+        CONNECTION.execute(update_statement, adaSearchVal=adaSearchVar, videoID=videoID, toiaID=toiaID)
+
+if __name__ == "__main__":
+    for toiaID in args.t:
+        addAdaSearch(toiaID)
