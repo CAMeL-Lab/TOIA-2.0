@@ -66,8 +66,9 @@ def createVariants():
 
     Attentive_Fillers = (1,2,3,4,5)
     Inattentive_Fillers = (6, 7, 8, 9, 10)
+    Other_onboarding = (11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
 
-    NumberOfVideos = (20, 40, 9999999999999) # Hardcoding the "all" version here since we don't run this script frequently
+    NumberOfVideos = (30, 60, 9999999999999) # Hardcoding the "all" version here since we don't run this script frequently
 
     # Tables
     stream_table = Table('stream', METADATA, autoload_with=ENGINE)
@@ -87,13 +88,22 @@ def createVariants():
                     """)
         CONNECTION.execute(query, new_stream_id=new_stream_id, old_stream_id=old_stream_id, filler_ids=filler)
 
+    def insertOtherOnboarding(old_stream_id, new_stream_id):
+        query = text("""INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type, ada_search)
+                        SELECT videos_questions_streams.id_video, videos_questions_streams.id_question, :new_stream_id, videos_questions_streams.type, videos_questions_streams.ada_search 
+                        FROM `videos_questions_streams` 
+                        WHERE videos_questions_streams.id_stream = :old_stream_id AND videos_questions_streams.id_question IN :other_required_ids 
+                        ORDER BY videos_questions_streams.id_question;
+                    """)
+        CONNECTION.execute(query, new_stream_id=new_stream_id, old_stream_id=old_stream_id, other_required_ids=Other_onboarding)
+
     def insertVideos(old_stream_id, new_stream_id, first_n):
         query = text("""INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type, ada_search)
                         SELECT videos_questions_streams.id_video, videos_questions_streams.id_question, :new_stream_id, videos_questions_streams.type, videos_questions_streams.ada_search 
                         FROM `videos_questions_streams` 
-                        LEFT JOIN tracker ON tracker.video_id = videos_questions_streams.id_video 
-                        WHERE tracker.activity = 'record-video' AND videos_questions_streams.id_stream = :old_stream_id AND videos_questions_streams.type NOT IN ('filler', 'exit') 
-                        ORDER BY tracker.end_time
+                        WHERE videos_questions_streams.id_stream = :old_stream_id AND videos_questions_streams.type NOT IN ('filler') AND 
+                        videos_questions_streams.id_question NOT IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+                        ORDER BY videos_questions_streams.id_question
                         LIMIT :first_n;""")
         CONNECTION.execute(query, new_stream_id=new_stream_id, old_stream_id=old_stream_id, first_n=first_n)
 
@@ -121,6 +131,7 @@ def createVariants():
             name = fw.generate(1) + "_" + str(user_id)
             new_stream_id = createStream(user_id, name)
             insertFiller(old_stream_id, new_stream_id, Attentive_Fillers)
+            insertOtherOnboarding(old_stream_id, new_stream_id)
             insertVideos(old_stream_id, new_stream_id, n)
             info["Attentive"][n] = [*info["Attentive"][n], name]
             print("New Stream: ", new_stream_id, name, "Type: Attentive  N=", n)
@@ -129,6 +140,7 @@ def createVariants():
             name = fw.generate(1) + "_" + str(user_id)
             new_stream_id = createStream(user_id, name)
             insertFiller(old_stream_id, new_stream_id, Inattentive_Fillers)
+            insertOtherOnboarding(old_stream_id, new_stream_id)
             insertVideos(old_stream_id, new_stream_id, n)
             info["Inattentive"][n] = [*info["Inattentive"][n], name]
             print("New Stream: ", new_stream_id, name, "Type: Attentive  N=", n)
@@ -148,5 +160,5 @@ def createVariants():
     with open('result.json', 'w') as fp:
         json.dump(info, fp)
 
-populateAllAdaSearch()
+# populateAllAdaSearch()
 createVariants()
