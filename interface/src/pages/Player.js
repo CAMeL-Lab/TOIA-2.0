@@ -47,6 +47,8 @@ function Player() {
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
 	const [answeredQuestions, setAnsweredQuestions] = useState(["Loading ..."]);
+	let previouslyAskedQuestions = [];
+	let possibleQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
 	const [isInteracting, setIsInteracting] = useState(false);
@@ -231,10 +233,18 @@ function Player() {
 		}
 	}
 
-	// function to fetch answered user questions from the DB
+	// function to fetch answered smart questions from the database
+	// question: the last question asked by the user
+	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question="", answer="") {
 
-		console.log("Smart Q Creating...");
+
+		if (question != ""){
+			// previouslyAskedQuestions is an array that keeps tracked of already asked questions
+			previouslyAskedQuestions.push(question); // question has now been asked
+		}
+
+		console.log("Creating Smart Questions...");
 		axios.post('/api/getSmartQuestions', {
 			params: {
 				avatar_id: history.location.state.toiaToTalk,
@@ -243,15 +253,28 @@ function Player() {
 				latest_answer: answer
 			}
 		}).then((res)=>{
-			// res.data (Array)
-			let answeredQuestionsData = [];
+			// res.data contains the smart questions generated
+			// If res.data is not an array, then there is an error, so stop.
+			if (res.data.constructor !== Array){
+				return;
+			}
+			
 			res.data.forEach((q) => {
 
-				if (q != ''){
-					answeredQuestionsData.push({ question: q });
+				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
+				// then add it to the list of possible suggestions
+				if (q != '' && !previouslyAskedQuestions.includes(q) && !answeredQuestions.includes(q)){
+					answeredQuestions.push({ question: q });
 				}
 			});
-			setAnsweredQuestions([...answeredQuestionsData, ...answeredQuestions]);
+
+			// Delete the card that says "Loading ..." in the beginning
+			// if there is another element in the list aside from "Loading..." (i.e. answeredQuestions.length > 1)
+			if(answeredQuestions.length > 1 && answeredQuestions[0]=="Loading ..."){
+				answeredQuestions.shift(); // destroy the card that says "Loading ..." in the beginning
+			}
+			console.log("Created Smart Questions.");
+			setAnsweredQuestions(answeredQuestions);
 		});
 	}
 
