@@ -3,10 +3,14 @@ import openai
 from openai.embeddings_utils import get_embedding, cosine_similarity
 import pandas as pd
 import numpy as np
+import os
 
 config = dotenv_values()
 # openai.organization = config['YOUR_ORG_ID']
-openai.api_key = config['OPENAI_API_KEY']
+try:
+    openai.api_key = config['OPENAI_API_KEY']
+except:
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
 # openai.Model.list()
 
 
