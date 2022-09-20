@@ -1,4 +1,5 @@
 const connection = require('../configs/db-connection');
+const logger = require('../logger');
 
 const QuestionTypes = ['filler', 'greeting', 'answer', 'exit', 'no-answer', 'y/n-answer'];
 
@@ -407,6 +408,19 @@ const canAccessStream = (user_id, stream_id) => {
     })
 }
 
+const getAccessibleStreams = (user_id) => {
+    return new Promise((resolve) => {
+        let query = `(SELECT id_stream FROM stream where toia_id = ?) UNION (SELECT stream_id FROM stream_view_permission WHERE toia_id = ?);`;
+        connection.query(query, [user_id, user_id], (err, entries) => {
+            if (err) throw err;
+            let stream_ids = entries.map(item => {
+                return item.id_stream;
+            })
+            resolve(stream_ids);
+        })
+    })
+}
+
 const saveAdaSearch = (data, question_id, video_id) => {
     let buff = new Buffer.from(data);
     let base64data = buff.toString('base64');
@@ -463,3 +477,4 @@ module.exports.saveConversationLog = saveConversationLog;
 module.exports.canAccessStream = canAccessStream;
 module.exports.saveAdaSearch = saveAdaSearch;
 module.exports.getAdaSearch = getAdaSearch;
+module.exports.getAccessibleStreams = getAccessibleStreams;

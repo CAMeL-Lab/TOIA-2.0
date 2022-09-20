@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -1346,6 +1346,22 @@ router.post("/permission/stream", cors(), async (req, res) => {
     }
 })
 
+// Returns all the streams that can be accessed by the user
+router.get("/permission/streams", async(req, res) => {
+    const user_id = req.query.user_id || null;
+
+    if (user_id === null){
+        logger.debug("User id not provided when requested for accessible streams");
+        res.sendStatus(401);
+    } else {
+        try {
+            res.send(await getAccessibleStreams(user_id))
+        } catch (e) {
+            logger.error("Something went wrong: ", e)
+            res.send(401);
+        }
+    }
+})
 
 router.post('/saveAdaSearch', cors(), async (req, res) => {
     const video_id = req.body.video_id;
