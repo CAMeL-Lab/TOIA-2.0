@@ -69,8 +69,16 @@ function AvatarLibraryPage() {
       }
 
       axios.get(`/api/getAllStreams`).then((res)=>{
-        setAllData(res.data);
-        setSearchData(res.data);
+        let user_id = history.location.state.toiaID;
+        axios.get(`/api/permission/streams?user_id=${user_id}`).then((permission_res) => {
+          let filtered_streams = (res.data).filter((item) => {
+            return permission_res.data.includes(item.id_stream);
+          })
+          // console.log(permission_res);
+          // console.log(filtered_streams);
+          setAllData(filtered_streams);
+          setSearchData(filtered_streams);
+        })
       });
 
       // Track

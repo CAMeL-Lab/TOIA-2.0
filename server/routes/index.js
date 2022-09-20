@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -662,12 +662,16 @@ router.post('/player', cors(), (req, res) => {
         }
 
         if (process.env.ENVIRONMENT === "development") {
-            console.log(videoDetails.data.id_video)
+            console.log("Video:", videoDetails)
             if (videoDetails.data.id_video === "204") {
                 res.send("error")
                 return;
             }
-            res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`);
+            // res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`);
+            res.send({
+                url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
+                answer: videoDetails.data.answer
+            });
             return;
         }
 
@@ -675,7 +679,10 @@ router.post('/player', cors(), (req, res) => {
             if (err) {
                 console.error(err);
             } else {
-                res.send(url);
+                res.send({
+                    url,
+                    answer: videoDetails.data.answer
+                });
             }
         });
     }).catch((err) => {
@@ -899,6 +906,67 @@ router.post('/recorder', cors(), async (req, res) => {
             });
         }
     });
+});
+
+router.post('/getSmartQuestions', (req,res)=>{
+
+    const avatar_id = req.body.params.avatar_id;
+
+    // If it is the beginning of the conversation, then return 'dumb' question suggestions
+    if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
+    {
+        isValidUser(avatar_id)
+        .then(
+            () => {
+                let query = `SELECT questions.question FROM questions 
+                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+                            WHERE videos_questions_streams.id_video IN (SELECT id_video FROM video WHERE toia_id = ?)
+                            AND questions.suggested_type IN ("answer", "y/n-answer")
+                            ORDER BY questions.id ASC
+                            LIMIT 5`;
+                connection.query(query, [avatar_id], (err, entries) => {
+                    if (err) throw err;
+                    let result = entries.map(object=>object.question);
+                    res.send(result);
+                })
+            },
+            (reject) => {
+                if (reject === false) console.log("Provided avatar_id doesn't exist");
+                res.sendStatus(404);
+        });
+        return;
+    }
+
+    console.log("Continuing....");
+
+
+
+    const options = {
+        method: 'POST',
+        url: `${process.env.SMARTQ_ROUTE}`,
+        headers: {'Content-Type': 'application/json'},
+        data: {
+            new_q: req.body.params.latest_question,
+            new_a: req.body.params.latest_answer,
+            n_suggestions: 5,
+            avatar_id: avatar_id,
+            stream_id: req.body.params.stream_id,
+        }
+    };
+
+    axios.request(options)
+    .then((response)=>{
+        console.log("==========Question Suggested=========");
+        // console.log(response2);
+        console.log(response.data.suggestions);
+        console.log("=====================================");
+        res.send(response.data.suggestions);
+    })
+    .catch(function (error) {
+        console.log("=============== Error with Q_API ============")
+        console.log(error);
+    });
+
 });
 
 router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
@@ -1278,6 +1346,22 @@ router.post("/permission/stream", cors(), async (req, res) => {
     }
 })
 
+// Returns all the streams that can be accessed by the user
+router.get("/permission/streams", async(req, res) => {
+    const user_id = req.query.user_id || null;
+
+    if (user_id === null){
+        logger.debug("User id not provided when requested for accessible streams");
+        res.sendStatus(401);
+    } else {
+        try {
+            res.send(await getAccessibleStreams(user_id))
+        } catch (e) {
+            logger.error("Something went wrong: ", e)
+            res.send(401);
+        }
+    }
+})
 
 router.post('/saveAdaSearch', cors(), async (req, res) => {
     const video_id = req.body.video_id;

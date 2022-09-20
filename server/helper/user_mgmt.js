@@ -1,4 +1,5 @@
 const connection = require('../configs/db-connection');
+const logger = require('../logger');
 
 const QuestionTypes = ['filler', 'greeting', 'answer', 'exit', 'no-answer', 'y/n-answer'];
 
@@ -395,14 +396,27 @@ const saveConversationLog = (interactor_id, toia_id, filler, question_asked, vid
 
 const canAccessStream = (user_id, stream_id) => {
     return new Promise((resolve)=>{
-        let query = `SELECT * FROM stream_view_permission WHERE toia_id = ? AND stream_id = ?`;
-        connection.query(query, [user_id, stream_id], (err, entry) => {
+        let query = `SELECT 1 FROM stream_view_permission WHERE toia_id = ? AND stream_id = ? UNION SELECT 1 FROM stream WHERE id_stream = ? AND toia_id = ?`;
+        connection.query(query, [user_id, stream_id, stream_id, user_id], (err, entry) => {
             if (err) throw err;
             if (entry.length === 1) {
                 resolve(true);
             } else {
                 resolve(false);
             }
+        })
+    })
+}
+
+const getAccessibleStreams = (user_id) => {
+    return new Promise((resolve) => {
+        let query = `(SELECT id_stream FROM stream where toia_id = ?) UNION (SELECT stream_id FROM stream_view_permission WHERE toia_id = ?);`;
+        connection.query(query, [user_id, user_id], (err, entries) => {
+            if (err) throw err;
+            let stream_ids = entries.map(item => {
+                return item.id_stream;
+            })
+            resolve(stream_ids);
         })
     })
 }
@@ -463,3 +477,4 @@ module.exports.saveConversationLog = saveConversationLog;
 module.exports.canAccessStream = canAccessStream;
 module.exports.saveAdaSearch = saveAdaSearch;
 module.exports.getAdaSearch = getAdaSearch;
+module.exports.getAccessibleStreams = getAccessibleStreams;
