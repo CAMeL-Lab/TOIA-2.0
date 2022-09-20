@@ -190,7 +190,7 @@ router.get('/getAllStreams', cors(), (req, res) => {
 
             const config = {
                 action: 'read',
-                expires: '07-14-2022',
+                expires: '07-14-2025',
             };
 
             function callback() {
@@ -264,7 +264,7 @@ router.post('/getUserSuggestedQs', cors(), (req, res) => {
 
             const config = {
                 action: 'read',
-                expires: '07-14-2022',
+                expires: '07-14-2025',
             };
 
             function callback() {
@@ -332,7 +332,7 @@ router.post('/getUserVideos', cors(), (req, res) => {
 
             const config = {
                 action: 'read',
-                expires: '07-14-2022',
+                expires: '07-14-2025',
             };
 
             function callback() {
@@ -391,7 +391,7 @@ router.post('/getUserStreams', cors(), async (req, res) => {
 
             const config = {
                 action: 'read',
-                expires: '07-14-2022',
+                expires: '07-14-2025',
             };
 
             function callback() {
@@ -485,7 +485,7 @@ router.post('/createNewStream', cors(), (req, res) => {
 
                         const config = {
                             action: 'read',
-                            expires: '07-14-2022',
+                            expires: '07-14-2025',
                         };
 
                         function callback() {
@@ -546,7 +546,7 @@ router.post('/getVideoPlayback', cors(), (req, res) => {
 
             const config = {
                 action: 'read',
-                expires: '07-14-2022',
+                expires: '07-14-2025',
             };
 
             if (process.env.ENVIRONMENT === "development") {
@@ -611,7 +611,7 @@ router.post('/fillerVideo', cors(), (req, res) => {
 
             const config = {
                 action: 'read',
-                expires: '07-14-2022',
+                expires: '07-14-2025',
             };
 
             const filler_video_id = entries[Math.floor(Math.random() * entries.length)].id_video;
@@ -650,7 +650,7 @@ router.post('/player', cors(), (req, res) => {
 
         const config = {
             action: 'read',
-            expires: '07-14-2022',
+            expires: '07-14-2025',
         };
 
 
@@ -986,7 +986,7 @@ router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
 
         const config = {
             action: 'read',
-            expires: '07-14-2022',
+            expires: '07-14-2025',
         };
 
         function callback() {
