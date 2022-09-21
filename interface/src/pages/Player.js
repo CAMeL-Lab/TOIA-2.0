@@ -467,6 +467,8 @@ function Player() {
 						duration_seconds: null
 					});
 
+					setVideoID(res.data);
+
 					document.getElementById("vidmain").load();
 					const playPromise = document
 						.getElementById("vidmain")
