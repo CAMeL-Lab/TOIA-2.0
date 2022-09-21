@@ -19,7 +19,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams, getVideoDetails
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -653,8 +653,8 @@ router.post('/player', cors(), (req, res) => {
             expires: '07-14-2025',
         };
 
-
         const player_video_id = videoDetails.data.id_video;
+        const videoInfo = await getVideoDetails(player_video_id);
 
         if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
             let interactor_id = req.body.params.interactor_id || null;
@@ -662,15 +662,14 @@ router.post('/player', cors(), (req, res) => {
         }
 
         if (process.env.ENVIRONMENT === "development") {
-            console.log("Video:", videoDetails)
             if (videoDetails.data.id_video === "204") {
                 res.send("error")
                 return;
             }
-            // res.send(`/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`);
             res.send({
                 url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
-                answer: videoDetails.data.answer
+                answer: videoDetails.data.answer,
+                duration_seconds: videoInfo.duration_seconds
             });
             return;
         }
@@ -681,7 +680,8 @@ router.post('/player', cors(), (req, res) => {
             } else {
                 res.send({
                     url,
-                    answer: videoDetails.data.answer
+                    answer: videoDetails.data.answer,
+                    duration_seconds: videoInfo.duration_seconds
                 });
             }
         });
