@@ -18,10 +18,17 @@ const user = {
     lastName: 'Dev',
     email: 'someone1249@example.com',
     pwd: 123,
+    wrong_pwd: 1234,
     language: 'English',
     profile_pic: path.join(__dirname , "./test_files/avatar.jpg"), // PATH to any image file
     video: path.join(__dirname , "./test_files/sample_video.mp4"), // Path to any video file
     videoType: 'greeting'
+};
+
+const wrong_user = {
+    email: 'iDoNotExist@someWrongDomain.com',
+    pwd: 123,
+    toia_id: -1,
 };
 
 const stream = {
@@ -43,6 +50,8 @@ const custom_questions = [
 ]
 
 const dummy_answer = "I hope these tests run well!";
+
+// 12 out of 33 routes being tested
 
 // jest.setTimeout(20000);
 // User Registration & Login
@@ -82,12 +91,67 @@ describe('register', () => {
                 return done();
             });
     });
-})
+});
 
-// TODO: Write test for user login
+// Login
+describe('login', () => {
+
+    it('returns 200 if user has logged in', (done) => {
+        request(app)
+            .post('/api/login')
+            .field('email', user.email)
+            .field('pwd', user.pwd)
+            .expect(200)
+            .end(function(err, res) {
+                if (err) return done(err);
+                expect(res.body.toia_id).toEqual(user.toiaID);
+                expect(res.body.firstName).toEqual(user.firstName);
+                return done();
+            });
+    });
+
+    it('returns -1 in body if email does not exist', (done) => {
+        request(app)
+            .post('/api/login')
+            .field('email', wrong_user.email)
+            .field('pwd', wrong_user.pwd)
+            .expect(400)
+            .end(function(err, res) {
+                if (err) return done(err);
+                expect(res.text).toEqual('-1');
+                return done();
+            });
+    });
+
+    it('returns -2 in body if the password is wrong', (done) => {
+        request(app)
+            .post('/api/createTOIA')
+            .field('email', user.email)
+            .field('pwd', user.wrong_pwd)
+            .expect(400)
+            .end(function(err, res) {
+                if (err) return done(err);
+                expect(res.text).toEqual('-2');
+                return done();
+            });
+    });
+});
 
 
 // Streams
+describe('GET /getAllStreams', () => {
+    it('returns at least one stream', (done) => {
+        request(app)
+            .post('/api/getAllStreams')
+            .expect(200)
+            .end(function (err, res){
+                if (err) return done(err);
+                expect(res.body.entries.length).toBeGreaterThanOrEqualTo(1);
+                done();
+            });
+    });
+});
+
 let totalStreams;
 let userStreams;
 describe('GET /getUserStreams', () => {
@@ -97,7 +161,6 @@ describe('GET /getUserStreams', () => {
             .send({
                 "params":{
                     "toiaID":user.toia_id,
-                    "toiaName":user.firstName
                 }
             })
             .expect(200)
@@ -109,7 +172,23 @@ describe('GET /getUserStreams', () => {
                 done();
             });
     });
-})
+
+    it('returns error when given invalid toia id', (done) => {
+        request(app)
+            .post('/api/getUserStreams')
+            .send({
+                "params":{
+                    "toiaID":wrong_user.toia_id,
+                }
+            })
+            .expect(200)
+            .end(function (err, res){
+                if (err) return done(err);
+                expect(res.text).toEqual("No streams!");
+                done();
+            });
+    });
+});
 
 describe('GET /createNewStream', () => {
     it('returns list of all streams including new one', (done) => {
