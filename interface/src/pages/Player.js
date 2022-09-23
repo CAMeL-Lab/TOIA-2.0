@@ -195,6 +195,7 @@ function Player() {
 					setHasRated(false);
 
 					isFillerPlaying.current = "false";
+					newRating.current = "false";
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:fetchFiller,
@@ -519,6 +520,7 @@ function Player() {
 						setFillerPlaying(true);
 						setHasRated(false);
 
+						newRating.current = "false";
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
