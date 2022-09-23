@@ -55,6 +55,9 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 Service_Active = True
 API = "GPT-3"
 
+def getYNQuestions(entry):
+    return entry.question
+
 def generate_prompt(new_q, new_a, avatar_id, api):
     
     statement = QueryText("""
@@ -306,9 +309,12 @@ def generateSmartQ(api=API):
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0
                             AND questions.suggested_type IN ("answer", "y/n-answer");""")
 
+    
+
     CONNECTION = ENGINE.connect()
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
     result_set = result_proxy.fetchall()
+    # Take out all questions in the y_n_answers array
 
     df_avatar = pd.DataFrame(result_set,
                                 columns=[
@@ -325,11 +331,19 @@ def generateSmartQ(api=API):
                                     'likes',
                                     'views',
                                 ])
+    onboarding_questions = open("../configs/onboarding-questions.json", "r")
+    onboarding_questions = json.load(onboarding_questions)
+    
+    # get all the y/n-answer questions in their string form
+    y_n_answers = [question_entry.question if question_entry.type == "y/n-answer" for question_entry in onboarding_questions]
 
+    # Take out all questions in the y_n_answers array. These questions are special exceptions that need to be excluded
+    df_avatar = [entry if entry['question'] not in y_n_answers for entry in df_avatar]
 
+    # Get shortlisting through ada_similarity
     suggestions_shortlist = getFirstNSimilar(df_avatar, new_q, NUM_SHORTLIST)
 
-    # To use all questions without shortlisting:
+    # Alternative: To use all questions without shortlisting, uncomment the following line:
     # suggestions_shortlist = df_avatar["question"].values
 
     callback_url = None
