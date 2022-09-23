@@ -46,7 +46,7 @@ function Player() {
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
-	const [answeredQuestions, setAnsweredQuestions] = useState(["Loading ..."]);
+	const [answeredQuestions, setAnsweredQuestions] = useState([]); // used to be ["Loading ..."]
 	let previouslyAskedQuestions = [];
 	let possibleQuestions = [];
 
@@ -271,10 +271,10 @@ function Player() {
 			});
 
 			// Delete the card that says "Loading ..." in the beginning
-			// if there is another element in the list aside from "Loading..." (i.e. answeredQuestions.length > 1)
-			if(answeredQuestions.length > 1 && answeredQuestions[0]=="Loading ..."){
-				answeredQuestions.shift(); // destroy the card that says "Loading ..." in the beginning
-			}
+			// if there is another element in the list aside from "Loading ..." (i.e. answeredQuestions.length > 1)
+			// if(answeredQuestions.length > 1 && answeredQuestions[0]=="Loading ..."){
+			// 	answeredQuestions.shift(); // destroy the card that says "Loading ..." in the beginning
+			// }
 			console.log("Created Smart Questions.");
 			setAnsweredQuestions(answeredQuestions);
 		});

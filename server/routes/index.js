@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const onboardingQuestions = require("../configs/onboarding-questions.json");
 
 const cors = require("cors");
 const multiparty = require("multiparty");
@@ -926,7 +927,13 @@ router.post('/getSmartQuestions', (req,res)=>{
                             LIMIT 5`;
                 connection.query(query, [avatar_id], (err, entries) => {
                     if (err) throw err;
-                    let result = entries.map(object=>object.question);
+                    
+                    // convert from array of objects to array of strings
+                    let result = entries.map(object=>object.question); 
+                    // get all the y/n-answer questions in their string form
+                    y_n_answers = (onboardingQuestions.filter(question_entry => question_entry.type == "y/n-answer")).map(question_entry => question_entry.question);
+                    // Take out all questions in the y_n_answers array
+                    result = result.filter(entry => !y_n_answers.includes(entry));
                     res.send(result);
                 })
             },
@@ -937,10 +944,10 @@ router.post('/getSmartQuestions', (req,res)=>{
         return;
     }
 
-    console.log("Continuing....");
+    // console.log("Continuing....");
 
-
-
+    // Actual smart question generation
+    // Using GPT-3 in the q_api
     const options = {
         method: 'POST',
         url: `${process.env.SMARTQ_ROUTE}`,
@@ -953,6 +960,7 @@ router.post('/getSmartQuestions', (req,res)=>{
             stream_id: req.body.params.stream_id,
         }
     };
+
 
     axios.request(options)
     .then((response)=>{
