@@ -450,6 +450,18 @@ const getAdaSearch = (question_id, video_id) => {
     })
 }
 
+const getVideoDetails = (id_video) => {
+    let query = `SELECT * FROM video WHERE id_video=?`;
+
+    return new Promise((resolve, reject) => {
+        connection.query(query, [id_video], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 0) reject();
+            resolve(entry[0]);
+        })
+    })
+}
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -478,3 +490,4 @@ module.exports.canAccessStream = canAccessStream;
 module.exports.saveAdaSearch = saveAdaSearch;
 module.exports.getAdaSearch = getAdaSearch;
 module.exports.getAccessibleStreams = getAccessibleStreams;
+module.exports.getVideoDetails = getVideoDetails;

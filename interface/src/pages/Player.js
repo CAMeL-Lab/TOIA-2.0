@@ -202,6 +202,7 @@ function Player() {
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
+						duration_seconds: res.data.duration_seconds || null
 					});
 					fetchAnsweredQuestions(oldQuestion, res.data.answer);
 					setVideoID(res.data.url); // setting the video ID
@@ -392,6 +393,7 @@ function Player() {
 							fetchFiller: fetchFiller,
 							muted: false,
 							filler: false,
+							duration_seconds: res.data.duration_seconds || null
 						});
 
 						setTranscribedAudio("");
@@ -462,7 +464,10 @@ function Player() {
 						source: res.data,
 						muted: true,
 						filler: true,
+						duration_seconds: null
 					});
+
+					setVideoID(res.data);
 
 					document.getElementById("vidmain").load();
 					const playPromise = document
@@ -527,6 +532,7 @@ function Player() {
 							source: res.data.url,
 							muted: false,
 							filler: false,
+							duration_seconds: res.data.duration_seconds || null
 						});
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
 						setVideoID(res.data.url); // setting the video ID
@@ -534,7 +540,10 @@ function Player() {
 						setTranscribedAudio("");
 						question.current = "";
 					}
-				});
+				})
+				.catch((e) => {
+					console.error(e);
+				})
 		}
 	}
 
@@ -774,6 +783,7 @@ function Player() {
 								}
 								source={videoProperties.source}
 								filler={videoProperties.filler}
+								duration_seconds={videoProperties.duration_seconds}
 							/>
 						</CSSTransition>
 					</TransitionGroup>
