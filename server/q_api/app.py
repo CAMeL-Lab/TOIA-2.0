@@ -307,6 +307,7 @@ def generateSmartQ(api=API):
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0
+                            AND questions.id NOT IN (19, 20)
                             AND questions.suggested_type IN ("answer", "y/n-answer");""")
 
     
@@ -331,14 +332,6 @@ def generateSmartQ(api=API):
                                     'likes',
                                     'views',
                                 ])
-    onboarding_questions = open("../configs/onboarding-questions.json", "r")
-    onboarding_questions = json.load(onboarding_questions)
-    
-    # get all the y/n-answer questions in their string form
-    y_n_answers = [question_entry.question if question_entry.type == "y/n-answer" for question_entry in onboarding_questions]
-
-    # Take out all questions in the y_n_answers array. These questions are special exceptions that need to be excluded
-    df_avatar = [entry if entry['question'] not in y_n_answers for entry in df_avatar]
 
     # Get shortlisting through ada_similarity
     suggestions_shortlist = getFirstNSimilar(df_avatar, new_q, NUM_SHORTLIST)

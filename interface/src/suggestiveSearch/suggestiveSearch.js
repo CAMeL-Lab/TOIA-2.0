@@ -33,7 +33,7 @@ export default function FreeSoloCreateOption(props) {
         const { inputValue } = params;
         // Suggest the creation of a new value
         const isExisting = options.some(
-          (option) => inputValue === option.question
+          (option) => inputValue === option
         );
         if (inputValue !== "" && !isExisting) {
           filtered.push({
@@ -61,7 +61,7 @@ export default function FreeSoloCreateOption(props) {
         // Regular option
         return option.question;
       }}
-      renderOption={(props, option) => <li {...props}>{option.question}</li>}
+      renderOption={(props, option) => <li {...props}>{option}</li>}
       sx={{ width: 200 }}
       freeSolo
       renderInput={(params) => (

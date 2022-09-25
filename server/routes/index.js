@@ -912,39 +912,26 @@ router.post('/recorder', cors(), async (req, res) => {
 router.post('/getSmartQuestions', (req,res)=>{
 
     const avatar_id = req.body.params.avatar_id;
+    const stream_id = req.body.params.stream_id;
 
     // If it is the beginning of the conversation, then return 'dumb' question suggestions
     if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
     {
-        isValidUser(avatar_id)
-        .then(
-            () => {
-                let query = `SELECT questions.question FROM questions 
-                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
-                            WHERE videos_questions_streams.id_video IN (SELECT id_video FROM video WHERE toia_id = ?)
-                            AND questions.suggested_type IN ("answer", "y/n-answer")
-                            ORDER BY questions.id ASC
-                            LIMIT 5`;
-                connection.query(query, [avatar_id], (err, entries) => {
-                    if (err) throw err;
-                    
-                    // convert from array of objects to array of strings
-                    let result = entries.map(object=>object.question); 
-                    // get all the y/n-answer questions in their string form
-                    y_n_answers = (onboardingQuestions.filter(question_entry => question_entry.type == "y/n-answer")).map(question_entry => question_entry.question);
-                    // Take out all questions in the y_n_answers array
-                    result = result.filter(entry => !y_n_answers.includes(entry));
-                    res.send(result);
-                })
-            },
-            (reject) => {
-                if (reject === false) console.log("Provided avatar_id doesn't exist");
-                res.sendStatus(404);
+        let query = `SELECT questions.question FROM questions 
+                    INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+                    WHERE videos_questions_streams.id_stream = ?
+                    AND questions.suggested_type IN ("answer", "y/n-answer")
+                    AND questions.id NOT IN (19, 20)
+                    ORDER BY questions.id ASC
+                    LIMIT 5`;
+
+        connection.query(query, [stream_id], (err, entries) => {
+            if (err) throw err;
+            result = entries.map(entry => entry.question);
+            res.send(result);
         });
         return;
     }
-
-    // console.log("Continuing....");
 
     // Actual smart question generation
     // Using GPT-3 in the q_api

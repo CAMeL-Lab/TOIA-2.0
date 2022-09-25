@@ -1,4 +1,5 @@
-import * as React from "react";
+// import * as React from "react";
+import React, { useState } from "react";
 import { Button, Card } from "semantic-ui-react";
 import '../pages/Player.css';
 
@@ -6,44 +7,70 @@ import '../pages/Player.css';
 export default function SuggestionCards(props) {
 
     // const suggestion1 = React.useRef(0)
-    const suggestion2 = React.useRef(0)
+    const suggestion2 = React.useRef(0);
 
     // keeping track of position of each of the five cards
-    const firstFifth = React.useRef(0);
-    const secondFifth = React.useRef(1);
-    const thirdFifth = React.useRef(2);
-    const fourthFifth = React.useRef(3);
-    const lastFifth = React.useRef(4);
+    // const firstQuestion = React.useRef(0);
+    const [firstQuestion, setFirstQuestion] = useState({current: 0, waiting:false, prevValue:0});
+
+    const [secondQuestion, setSecondQuestion] = useState({current: 1, waiting:false, prevValue:0});
+
+    const [thirdQuestion, setThirdQuestion] = useState({current: 2, waiting:false, prevValue:0});
+
+    const [fourthQuestion, setFourthQuestion] = useState({current: 3, waiting:false, prevValue:0});
+
+    const [fifthQuestion, setFifthQuestion] = useState({current: 4, waiting:false, prevValue:0});
+
+    // const cardQuestions = [firstQuestion, secondQuestion, thirdQuestion, fourthQuestion, fifthQuestion];
+    const setQuestion = [setFirstQuestion,setSecondQuestion,setThirdQuestion,setFourthQuestion,setFifthQuestion];
+
+    const waitingForNewQuestion = false; // variable to indicate whether we are waiting for a new question from express to come in
 
     if (props.questions.length > 2){
       suggestion2.current = Math.floor(props.questions.length/5);
     }
 
-      // Function to increment count by 1
-  const incrementCount1 = () => {
-    // Update state with incremented value
-    firstFifth.current = Math.max(firstFifth.current, secondFifth.current, thirdFifth.current, fourthFifth.current, lastFifth.current) +1;
-  };
-    // Function to increment count by 1
-    const incrementCount2 = () => {
-      // Update state with incremented value
-      secondFifth.current = Math.max(firstFifth.current, secondFifth.current, thirdFifth.current, fourthFifth.current, lastFifth.current) +1;
+    // Function to increment count of question card
+    // Increment count means to move to an index of a new question
+    const incrementCount = (questionCardIndex, cardNumber) => {
+      // Do not move to next question if we are currently waiting for a new question
+      if (questionCardIndex.current < props.questions.length && !waitingForNewQuestion) {
+        // First get the max index of each card. Then we add 1 to it to get the new questionCardIndex
+        const max_index = Math.max(firstQuestion.current, secondQuestion.current, thirdQuestion.current, fourthQuestion.current, fifthQuestion.current);
+
+        // If we are waiting for a question already in the given card, we do not do anything
+        if (!questionCardIndex.waiting){
+          // If the new value of the card exceeds the length, we wait for a new question, but show the previous value of the card as a placeholder
+          if (max_index + 1 >= props.questions.length){
+            questionCardIndex.waiting = true;
+            questionCardIndex.prevValue = questionCardIndex.current;
+          }
+          // The new value of the card is max_index+1
+          questionCardIndex.current = max_index + 1;
+          // We use setter function to update the values visually in the page
+          setQuestion[cardNumber-1](questionCardIndex);
+        }
+        
+      }
     };
-    // Function to increment count by 1
-  const incrementCount3 = () => {
-    // Update state with incremented value
-    thirdFifth.current = Math.max(firstFifth.current, secondFifth.current, thirdFifth.current, fourthFifth.current, lastFifth.current) +1;
-  };
 
-  const incrementCount4 = () => {
-    // Update state with incremented value
-    fourthFifth.current = Math.max(firstFifth.current, secondFifth.current, thirdFifth.current, fourthFifth.current, lastFifth.current) +1;
-  };
-
-  const incrementCount5 = () => {
-    // Update state with incremented value
-    lastFifth.current = Math.max(firstFifth.current, secondFifth.current, thirdFifth.current, fourthFifth.current, lastFifth.current) +1;
-  };
+    const getSuggestion = (questionCardIndex, cardNumber) => {
+      // If the index of the questionCard is beyond the length of the array, return previous question
+      // This shows we are waiting
+      if (questionCardIndex.current >= props.questions.length){
+        return props.questions[questionCardIndex.prevValue] || "Loading ...";
+      }
+      // If the length has now exceeded the new index of questionCardIndex AND we are waiting,
+      // then we set waiting to false and update values
+      else if (questionCardIndex.waiting){
+        questionCardIndex.waiting = false;
+        setQuestion[cardNumber-1](questionCardIndex);
+      }
+      // The following statement does one of two things:
+      // 1. If the length is greater than the card number (so we are not waiting), return the question
+      // 2. Otherwise, return "Loading ..." placeholder
+      return props.questions.length >= cardNumber ? props.questions[questionCardIndex.current] : "Loading ...";
+    };
 
 return props.questions ? (
   <Card.Group>
@@ -52,7 +79,7 @@ return props.questions ? (
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
 
-         {props.questions[firstFifth.current%props.questions.length].question || "Loading ..." }
+         {getSuggestion(firstQuestion, 1)}
 
         </Card.Description>
       </Card.Content>
@@ -61,15 +88,13 @@ return props.questions ? (
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
               
 
-              suggestion2.current = props.questions[firstFifth.current%props.questions.length].question;
-        
+              suggestion2.current = getSuggestion(firstQuestion, 1);
               props.askQuestion(suggestion2, 1);
-              incrementCount1();
+              incrementCount(firstQuestion, 1);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          
-          incrementCount1();
-          props.suggestedQuestion2(firstFifth.current);
+          incrementCount(firstQuestion, 1);
+          props.suggestedQuestion2(firstQuestion.current);
         }}/>
         </div>
       </Card.Content>
@@ -81,7 +106,7 @@ return props.questions ? (
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
 
-         {props.questions[secondFifth.current%props.questions.length].question || "Loading ..." }
+        {getSuggestion(secondQuestion, 2)}
 
         </Card.Description>
       </Card.Content>
@@ -90,15 +115,13 @@ return props.questions ? (
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
               
 
-              suggestion2.current = props.questions[secondFifth.current%props.questions.length].question;
-        
+              suggestion2.current = getSuggestion(secondQuestion, 2);
               props.askQuestion(suggestion2, 1);
-              incrementCount2();
+              incrementCount(secondQuestion, 2);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          
-          incrementCount2();
-          props.suggestedQuestion2(secondFifth.current);
+          incrementCount(secondQuestion, 2);
+          props.suggestedQuestion2(secondQuestion.current);
         }}/>
         </div>
       </Card.Content>
@@ -110,8 +133,7 @@ return props.questions ? (
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
 
-         {props.questions[thirdFifth.current%props.questions.length].question || "Loading ..." }
-
+        {getSuggestion(thirdQuestion, 3)}
         </Card.Description>
       </Card.Content>
       <Card.Content extra>
@@ -119,15 +141,15 @@ return props.questions ? (
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
               
 
-              suggestion2.current = props.questions[thirdFifth.current%props.questions.length].question;
-        
+              suggestion2.current = getSuggestion(thirdQuestion, 3);
+
               props.askQuestion(suggestion2, 1);
-              incrementCount3();
+              incrementCount(thirdQuestion, 3);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
           
-          incrementCount3();
-          props.suggestedQuestion2(thirdFifth.current);
+          incrementCount(thirdQuestion, 3);
+          props.suggestedQuestion2(thirdQuestion.current);
         }}/>
         </div>
       </Card.Content>
@@ -139,7 +161,7 @@ return props.questions ? (
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
 
-         {props.questions[fourthFifth.current%props.questions.length].question || "Loading ..." }
+        {getSuggestion(fourthQuestion, 4)}
 
         </Card.Description>
       </Card.Content>
@@ -148,15 +170,15 @@ return props.questions ? (
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
               
 
-              suggestion2.current = props.questions[fourthFifth.current%props.questions.length].question;
-        
+              suggestion2.current = getSuggestion(fourthQuestion, 4);
+
               props.askQuestion(suggestion2, 1);
-              incrementCount4();
+              incrementCount(fourthQuestion, 4);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
           
-          incrementCount4();
-          props.suggestedQuestion2(fourthFifth.current);
+          incrementCount(fourthQuestion, 4);
+          props.suggestedQuestion2(fourthQuestion.current);
         }}/>
         </div>
       </Card.Content>
@@ -168,7 +190,7 @@ return props.questions ? (
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
 
-         {props.questions[lastFifth.current%props.questions.length].question || "Loading ..." }
+        {getSuggestion(fifthQuestion, 5)}
 
         </Card.Description>
       </Card.Content>
@@ -177,15 +199,15 @@ return props.questions ? (
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
               
 
-              suggestion2.current = props.questions[lastFifth.current%props.questions.length].question;
-        
+              suggestion2.current = getSuggestion(fifthQuestion, 5);
+
               props.askQuestion(suggestion2, 1);
-              incrementCount5();
+              incrementCount(fifthQuestion, 5);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
           
-          incrementCount5();
-          props.suggestedQuestion2(lastFifth.current);
+          incrementCount(fifthQuestion, 5);
+          props.suggestedQuestion2(fifthQuestion.current);
         }}/>
         </div>
       </Card.Content>

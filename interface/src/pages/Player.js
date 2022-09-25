@@ -47,7 +47,6 @@ function Player() {
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
 	const [answeredQuestions, setAnsweredQuestions] = useState([]); // used to be ["Loading ..."]
-	let previouslyAskedQuestions = [];
 	let possibleQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
@@ -240,12 +239,6 @@ function Player() {
 	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question="", answer="") {
 
-
-		if (question != ""){
-			// previouslyAskedQuestions is an array that keeps tracked of already asked questions
-			previouslyAskedQuestions.push(question); // question has now been asked
-		}
-
 		console.log("Creating Smart Questions...");
 		axios.post('/api/getSmartQuestions', {
 			params: {
@@ -265,16 +258,13 @@ function Player() {
 
 				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
 				// then add it to the list of possible suggestions
-				if (q != '' && !previouslyAskedQuestions.includes(q) && !answeredQuestions.includes(q)){
-					answeredQuestions.push({ question: q });
+				if (q != '' && !answeredQuestions.includes(q)){
+					answeredQuestions.push(q);
 				}
 			});
 
 			// Delete the card that says "Loading ..." in the beginning
 			// if there is another element in the list aside from "Loading ..." (i.e. answeredQuestions.length > 1)
-			// if(answeredQuestions.length > 1 && answeredQuestions[0]=="Loading ..."){
-			// 	answeredQuestions.shift(); // destroy the card that says "Loading ..." in the beginning
-			// }
 			console.log("Created Smart Questions.");
 			setAnsweredQuestions(answeredQuestions);
 		});
@@ -844,12 +834,12 @@ function Player() {
 								<SuggestiveSearch
 									handleTextChange={textChange}
 									handleTextInputChange={textInputChange}
-									questions={[...answeredQuestions]}
+									questions={answeredQuestions}
 								/>
 							)}
 
 							<SuggestionCard
-								questions={[...answeredQuestions]}
+								questions={answeredQuestions}
 								suggestedQuestion2={setSuggestion2}
 								askQuestion={askQuestionFromCard}
 							/>
