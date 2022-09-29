@@ -51,7 +51,7 @@ const custom_questions = [
 
 const dummy_answer = "I hope these tests run well!";
 
-// 12 out of 33 routes being tested
+// 10 out of 33 routes being tested
 
 // jest.setTimeout(20000);
 // User Registration & Login
@@ -212,9 +212,9 @@ describe('GET /createNewStream', () => {
                 done();
             });
     });
-})
+});
 
-describe('GET /getUserStreams', () => {
+describe('GET /getUserStreams (check if adding new stream has worked)', () => {
     it('returns all streams of a user', (done) => {
         request(app)
             .post('/api/getUserStreams')
@@ -237,7 +237,7 @@ describe('GET /getUserStreams', () => {
                 done();
             });
     })
-})
+});
 
 // On-boarding Questions
 describe('GET /questions/onboarding/:user_id/pending', () => {
@@ -262,7 +262,7 @@ describe('GET /questions/onboarding/:user_id/pending', () => {
                 done();
             });
     })
-})
+});
 
 describe('GET /questions/onboarding/:user_id/completed', () => {
     it('returns empty array', (done) => {
@@ -277,7 +277,7 @@ describe('GET /questions/onboarding/:user_id/completed', () => {
                 done();
             });
     })
-})
+});
 
 // Suggestions
 describe('GET /questions/suggestions/:user_id/pending/', () => {
@@ -293,7 +293,7 @@ describe('GET /questions/suggestions/:user_id/pending/', () => {
                 done();
             });
     })
-})
+});
 
 describe('POST /saveSuggestedQuestion/:user_id', () => {
     it('returns empty array', (done) => {
@@ -306,10 +306,29 @@ describe('POST /saveSuggestedQuestion/:user_id', () => {
                 done();
             });
     })
-})
+});
+
+describe('POST /getUserSuggestedQs', () => {
+    it('returns non-empty array', (done) => {
+        request(app)
+            .post(`/api/getUserSuggestedQs`)
+            .send({
+                "params":{
+                    "toiaID":user.toia_id,
+                }
+            })
+            .expect(200)
+            .end(function (err, res){
+                if (err) return done(err);
+                console.log(res.body);
+                expect(res.body.length).toBeGreaterThanOrEqualTo(1);
+                done();
+            });
+    })
+});
 
 let suggested_questions;
-describe('GET /questions/suggestions/:user_id/pending/', () => {
+describe('GET /questions/suggestions/:user_id/pending/ (check if adding new question suggestion worked)', () => {
     it('returns array with 1 question object', (done) => {
         request(app)
             .get(`/api/questions/suggestions/${user.toia_id}/pending`)
@@ -328,7 +347,7 @@ describe('GET /questions/suggestions/:user_id/pending/', () => {
                 done();
             });
     })
-})
+});
 
 // Video Recorder
 describe('POST /recorder', () => {
@@ -373,7 +392,66 @@ describe('POST /recorder', () => {
                 done();
             });
     })
-})
+});
+
+// Videos
+describe('POST /getUserVideos', () => {
+    it('returns 1 video', (done) => {
+        request(app)
+            .post(`/api/getUserVideos`)
+            .send({
+                "params":{
+                    "toiaID":user.toia_id,
+                }
+            })
+            .expect(200)
+            .end(function (err, res){
+                if (err) return done(err);
+                console.log(res.body);
+                expect(res.body.length).toEqual(1);
+                expect(res.body[0].answer).toEqual(dummy_answer);
+                done();
+            });
+    });
+});
+
+describe('POST /getUserVideosCount', () => {
+    it('returns a count of 1 video', (done) => {
+        request(app)
+            .post(`/api/getUserVideosCount`)
+            .send({
+                "params":{
+                    "toiaID":user.toia_id,
+                }
+            })
+            .expect(200)
+            .end(function (err, res){
+                if (err) return done(err);
+                console.log(res.body);
+                expect(res.body.count).toEqual(1);
+                done();
+            });
+    });
+});
+
+describe('POST /getTotalVideoDuration', () => {
+    it('returns ~2 seconds', (done) => {
+        request(app)
+            .post(`/api/getUserVideosCount`)
+            .send({
+                "params":{
+                    "toiaID":user.toia_id,
+                }
+            })
+            .expect(200)
+            .end(function (err, res){
+                if (err) return done(err);
+                console.log(res.body);
+                expect(res.body.total_duration).toEqual(1);
+                done();
+            });
+    });
+});
 
 // TODO: Add further tests
 

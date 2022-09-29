@@ -123,7 +123,7 @@ router.post('/createTOIA', cors(), async (req, res) => {
             }
         });
     });
-});
+}); //done
 
 router.post('/login', cors(), (req, res) => {
 
@@ -164,7 +164,7 @@ router.post('/login', cors(), (req, res) => {
             }
         }
     });
-});
+}); //done
 
 router.get('/getAllStreams', cors(), (req, res) => {
     let query_allStreams = `SELECT toia_user.id,
@@ -229,7 +229,7 @@ router.get('/getAllStreams', cors(), (req, res) => {
             });
         }
     });
-});
+}); //done
 
 router.post('/getUserSuggestedQs', cors(), (req, res) => {
     let limitQuestions = 0;
@@ -303,7 +303,7 @@ router.post('/getUserSuggestedQs', cors(), (req, res) => {
             });
         }
     });
-});
+}); //done
 
 router.post('/removeSuggestedQ', cors(), (req, res) => {
     // TODO: don't remove. Mark as done
@@ -374,7 +374,7 @@ router.post('/getUserVideos', cors(), (req, res) => {
 
         }
     });
-});
+}); // done
 
 router.post('/getUserStreams', cors(), async (req, res) => {
     let query_userStreams = `SELECT *
@@ -431,7 +431,7 @@ router.post('/getUserStreams', cors(), async (req, res) => {
         }
     });
 
-});
+}); //done
 
 router.post('/createNewStream', cors(), (req, res) => {
 
@@ -527,7 +527,7 @@ router.post('/createNewStream', cors(), (req, res) => {
             }
         });
     });
-});
+}); //done
 
 router.post('/getVideoPlayback', cors(), (req, res) => {
 
@@ -593,7 +593,7 @@ router.post('/getVideoPlayback', cors(), (req, res) => {
             });
         }
     });
-});
+}); 
 
 router.post('/fillerVideo', cors(), (req, res) => {
     let query_getFiller = `SELECT * FROM questions 
@@ -726,7 +726,7 @@ router.use('/recorder', cors(), async (req, res, next) => {
             next();
         }
     })
-})
+}); //????????????????????????
 
 router.post('/recorder', cors(), async (req, res) => {
     let isPrivate;
@@ -909,7 +909,7 @@ router.post('/recorder', cors(), async (req, res) => {
             });
         }
     });
-});
+}); //done
 
 router.post('/getSmartQuestions', (req,res)=>{
 
@@ -1053,7 +1053,7 @@ router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+}); //done
 
 router.post('/questions/suggestions/:user_id/edit', async (req, res) => {
     const user_id = req.params.user_id || null;
@@ -1077,7 +1077,7 @@ router.post('/questions/suggestions/:user_id/edit', async (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     });
-})
+});
 
 router.post('/questions/suggestions/:user_id/discard', async (req, res) => {
     const user_id = req.params.user_id || null;
@@ -1109,7 +1109,7 @@ router.get('/questions/onboarding/:user_id/pending', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+}); //done
 
 router.get('/questions/onboarding/:user_id/completed', (req, res) => {
     const user_id = req.params.user_id;
@@ -1125,7 +1125,7 @@ router.get('/questions/onboarding/:user_id/completed', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+}); //done
 
 router.get('/questions/suggestions/:user_id/pending', (req, res) => {
     const user_id = req.params.user_id;
@@ -1141,7 +1141,7 @@ router.get('/questions/suggestions/:user_id/pending', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+});  //done
 
 router.post('/questions/answered/delete', (req, res) => {
     const user_id = req.body.user_id || null;
@@ -1164,7 +1164,7 @@ router.post('/questions/answered/delete', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+});
 
 router.get('/questions/answered/:user_id', (req, res) => {
     const user_id = req.params.user_id;
@@ -1180,7 +1180,7 @@ router.get('/questions/answered/:user_id', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+});
 
 router.get('/questions/answered/:user_id/:stream_id', (req, res) => {
     const user_id = req.params.user_id;
@@ -1195,7 +1195,7 @@ router.get('/questions/answered/:user_id/:stream_id', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+});
 
 router.get('/videos/:user_id/', async (req, res) => {
     const user_id = req.params.user_id;
@@ -1253,7 +1253,7 @@ router.post('/getUserData', cors(), (req, res) => {
         res.send(Object.values(entries))
 
     })
-})
+});
 
 // Get total number of videos that a user has recorded
 router.post('/getUserVideosCount', cors(), (req, res) => {
@@ -1266,7 +1266,7 @@ router.post('/getUserVideosCount', cors(), (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+}); //done
 
 // Get total number of videos that a user has recorded for a particular stream
 router.post('/getStreamVideosCount', cors(), (req, res) => {
@@ -1280,7 +1280,7 @@ router.post('/getStreamVideosCount', cors(), (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+});
 
 // Get total video duration of a user
 router.post('/getTotalVideoDuration', cors(), (req, res) => {
@@ -1293,7 +1293,7 @@ router.post('/getTotalVideoDuration', cors(), (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
-})
+}); //done
 
 
 router.post('/save_player_feedback', cors(), async (req, res) => {
@@ -1324,7 +1324,7 @@ router.post('/save_player_feedback', cors(), async (req, res) => {
     } else {
         res.sendStatus(401)
     }
-})
+});
 
 // route to check if a user can access certain stream. Replace when a proper authentication system is in place.
 router.post("/permission/stream", cors(), async (req, res) => {
@@ -1343,7 +1343,7 @@ router.post("/permission/stream", cors(), async (req, res) => {
             res.sendStatus(401);
         }
     }
-})
+});
 
 // Returns all the streams that can be accessed by the user
 router.get("/permission/streams", async(req, res) => {
@@ -1372,7 +1372,7 @@ router.post('/saveAdaSearch', cors(), async (req, res) => {
     } else {
         res.sendStatus(403);
     }
-})
+});
 
 router.post('/getAdaSearch', cors(), async (req, res) => {
     const video_id = req.body.video_id;
@@ -1384,7 +1384,7 @@ router.post('/getAdaSearch', cors(), async (req, res) => {
     } else {
         res.send(data);
     }
-})
+});
 
 
 module.exports = router;
