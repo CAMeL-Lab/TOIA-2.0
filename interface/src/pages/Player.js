@@ -183,6 +183,10 @@ function Player() {
 						history.location.state.toiaFirstNameToTalk,
 					question,
 					streamIdToTalk: history.location.state.streamToTalk,
+					record_log: "true",
+					...(history.location.state.toiaID && {
+						interactor_id: history.location.state.toiaID,
+					}),
 				},
 			})
 			.then((res) => {
@@ -361,6 +365,10 @@ function Player() {
 							history.location.state.toiaFirstNameToTalk,
 						question,
 						streamIdToTalk: history.location.state.streamToTalk,
+						record_log: "true",
+						...(history.location.state.toiaID && {
+							interactor_id: history.location.state.toiaID,
+						}),
 					},
 				})
 				.then((res) => {
@@ -506,6 +514,10 @@ function Player() {
 							history.location.state.toiaFirstNameToTalk,
 						question,
 						streamIdToTalk: history.location.state.streamToTalk,
+						record_log: "true",
+						...(history.location.state.toiaID && {
+							interactor_id: history.location.state.toiaID,
+						}),
 					},
 				})
 				.then((res) => {
