@@ -648,7 +648,9 @@ router.post('/player', cors(), (req, res) => {
         }
 
     }).then(async (videoDetails) => {
+        const ada_similarity_score = videoDetails.data.ada_similarity_score;
 
+        console.log(videoDetails);
         const config = {
             action: 'read',
             expires: '07-14-2025',
@@ -659,7 +661,7 @@ router.post('/player', cors(), (req, res) => {
 
         if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
             let interactor_id = req.body.params.interactor_id || null;
-            await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id);
+            await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id, ada_similarity_score);
         }
 
         if (process.env.ENVIRONMENT === "development") {

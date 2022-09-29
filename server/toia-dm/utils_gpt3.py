@@ -19,15 +19,16 @@ def toia_answer(query, data, k=1):
     data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
     res = data.sort_values('similarities', ascending=False).head(k)
 
-    if res.similarities.values[0] > 0.29:
-        return res['answer'].values[0], res['id_video'].values[0], f"""ada_search_sim: {res['similarities'].values[0]}"""
+    ada_similarity_score = res.similarities.values[0]
+    if ada_similarity_score > 0.29:
+        return res['answer'].values[0], res['id_video'].values[0], ada_similarity_score
     else:
         df_noanswers = data[data['type'] == "no-answer"]
         if df_noanswers.shape[0] > 0:
             answers = df_noanswers.sample(n=1)
-            return answers['answer'].values[0], answers['id_video'].values[0], f"""ada_search_sim: {res['similarities'].values[0]}<=0.29"""
+            return answers['answer'].values[0], answers['id_video'].values[0], ada_similarity_score
         else:
-            return "You haven't recorded no-answers", "204", "No Content"
+            return "You haven't recorded no-answers", "204", ada_similarity_score
 
 # def getFirstNSimilar(df_avatar, query, NUM_SHORTLIST):
 #     final_suggestions = []
