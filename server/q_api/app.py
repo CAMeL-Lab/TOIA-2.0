@@ -6,12 +6,12 @@ import os
 import re
 import json
 import linecache
-from transformers import pipeline, set_seed
-from transformers import BertTokenizer, BertForNextSentencePrediction
+# from transformers import pipeline, set_seed
+# from transformers import BertTokenizer, BertForNextSentencePrediction
 import nltk
 from nltk import tokenize
 import ssl
-import torch
+# import torch
 import sqlalchemy as db
 from sqlalchemy.sql import text as QueryText
 from dotenv import load_dotenv
@@ -22,8 +22,8 @@ import pandas as pd
 import time
 load_dotenv()
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
+# tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+# model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
 NUM_SHORTLIST = 50 #Shortlisting avatar questions for GPT-3
 
 #Local storage of the conversation data - will be deprecated once the database is in place
@@ -40,7 +40,7 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-nltk.download('punkt')
+# nltk.download('punkt')
 
 # To run this, type in terminal: `export FLASK_APP=main-app.py` (or whatever name of file is)
 # Then type flask run
@@ -48,7 +48,7 @@ nltk.download('punkt')
 # additionally you can add `--port=4000` after the previous command to run on port 4000
 app = Flask(__name__)
 
-generator = pipeline('text-generation', model='gpt2')
+# generator = pipeline('text-generation', model='gpt2')
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
@@ -76,28 +76,28 @@ def generate_prompt(new_q, new_a, avatar_id, api):
     result_proxy = CONNECTION.execute(statement, avatar_id=avatar_id)
     result_set = result_proxy.fetchall()
     
-    if api == "GPT-2":      
-        prompt = new_q + " " + new_a
-        if len(result_set) > 1:
-            prompt = """{} {} {}""".format(
-                result_set[1][0],
-                result_set[1][1],
-                prompt)
+    # if api == "GPT-2":      
+    #     prompt = new_q + " " + new_a
+    #     if len(result_set) > 1:
+    #         prompt = """{} {} {}""".format(
+    #             result_set[1][0],
+    #             result_set[1][1],
+    #             prompt)
         
-    elif api == "GPT-3":
-        prompt = """
+    # elif api == "GPT-3":
+    prompt = """
 Suggest five plausible questions for following up the conversation.
 {}
 Q: {}
 A: {}
 Possible questions:"""
-        if len(result_set) <= 1:
-            prompt = prompt.format("", new_q, new_a)
-        else:
-            prompt = prompt.format("""
+    if len(result_set) <= 1:
+        prompt = prompt.format("", new_q, new_a)
+    else:
+        prompt = prompt.format("""
 Q: {}
 A: {}""".format(result_set[1][0], result_set[1][1]),
-                new_q, new_a)
+            new_q, new_a)
 
     return prompt
 
@@ -147,11 +147,11 @@ def service_status():
     else:
         return "Service is not active"
 
-@app.route('/useGPT2')
-def activate_gpt2():
-    global API
-    API = "GPT-2"
-    return "Using GPT-2 API."
+# @app.route('/useGPT2')
+# def activate_gpt2():
+#     global API
+#     API = "GPT-2"
+#     return "Using GPT-2 API."
 
 @app.route('/useGPT3')
 def activate_gpt3():
@@ -195,73 +195,61 @@ def generateNextQ(api=API):
         avatar_id=avatar_id,
         api=API)
     
-    if api == "GPT-2":
-        q = generator(prompt, 
-                  num_return_sequences=n_suggestions, 
-                  max_length=50 + len(prompt))
+    # if api == "GPT-2":
+    #     q = generator(prompt, 
+    #               num_return_sequences=n_suggestions, 
+    #               max_length=50 + len(prompt))
 
-        #all generated examples 
-        allGenerations = ""
-        for i in range(n_suggestions):
-            allGenerations = allGenerations + " " + q[i]['generated_text'][len(prompt) - 4:]
+    #     #all generated examples 
+    #     allGenerations = ""
+    #     for i in range(n_suggestions):
+    #         allGenerations = allGenerations + " " + q[i]['generated_text'][len(prompt) - 4:]
 
-        #Separating all the sentences... 
-        sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
+    #     #Separating all the sentences... 
+    #     sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
 
-        #Filter out questions 
-        questionsList = []
-        for sentence in sentenceList :
-            if "?" in sentence:
-                questionsList.append(sentence.strip("\n").strip("\\").strip('"'))
+    #     #Filter out questions 
+    #     questionsList = []
+    #     for sentence in sentenceList :
+    #         if "?" in sentence:
+    #             questionsList.append(sentence.strip("\n").strip("\\").strip('"'))
 
-        #Bert evaluation
-        bert_filtered_qs = []
-        for sentence in questionsList:
-            encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A] using storage[-3:]
-            outputs = model(**encoding)
-            logits = outputs.logits
-            bert_filtered_qs.append((logits[0,0].item(), sentence))
+    #     #Bert evaluation
+    #     bert_filtered_qs = []
+    #     for sentence in questionsList:
+    #         encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A] using storage[-3:]
+    #         outputs = model(**encoding)
+    #         logits = outputs.logits
+    #         bert_filtered_qs.append((logits[0,0].item(), sentence))
 
-        bert_filtered_qs.sort(key=lambda tup: tup[0], reverse=True)
-        # Update number of suggestions in case there are less than n_suggestion questions identified
-        n_suggestions = min(len(bert_filtered_qs) - 1, n_suggestions)
-        suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
+    #     bert_filtered_qs.sort(key=lambda tup: tup[0], reverse=True)
+    #     # Update number of suggestions in case there are less than n_suggestion questions identified
+    #     n_suggestions = min(len(bert_filtered_qs) - 1, n_suggestions)
+    #     suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
         
-    elif api == "GPT-3":      
-        response = openai.Completion.create(
-            engine="text-davinci-001",
-            prompt=prompt,
-            temperature=0.7,
-            max_tokens=250
-        )
-        
-        generation = response.choices[0]['text']
-        # split sentences into list
-        suggestions = nltk.tokenize.sent_tokenize(generation)
+    # elif api == "GPT-3":      
+    response = openai.Completion.create(
+        engine="text-davinci-001",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=250
+    )
+    
+    generation = response.choices[0]['text']
+    # split sentences into list
+    suggestions = nltk.tokenize.sent_tokenize(generation)
 
-        # Filter suggestions
-        suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
-        # Remove suggestions starting with "A:"
-        suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
+    # Filter suggestions
+    suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
+    # Remove suggestions starting with "A:"
+    suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
 
-        # numbered lists, or - lists.
-        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
+    # numbered lists, or - lists.
+    reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
 
-        suggestions = list(map(lambda suggestion: re.sub(reg, "", suggestion), suggestions))
+    suggestions = list(map(lambda suggestion: re.sub(reg, "", suggestion), suggestions))
 
-#         # remove new line
-#         generation = generation.replace('\n', ' ').replace('\r', '').strip()
-
-#         # Remove - if any
-#         def removeHyphen(suggestion):
-#             if suggestion[:1] == '-':
-#                 return suggestion[1:len(suggestion)]
-#             else:
-#                 return suggestion
-#         suggestions = list(map(removeHyphen, suggestions))
-
-        # strip trailing white spaces
-        suggestions = [suggestion.strip() for suggestion in suggestions]
+    suggestions = [suggestion.strip() for suggestion in suggestions]
 
     if (n_suggestions and n_suggestions > 0 and len(suggestions) > n_suggestions):
         suggestions = random.sample(suggestions, n_suggestions)
@@ -351,89 +339,63 @@ def generateSmartQ(api=API):
         suggestions_shortlist=suggestions_shortlist,
         num_questions=7)
     
-    if api == "GPT-2":
-        q = generator(prompt, 
-                  num_return_sequences=n_suggestions, 
-                  max_length=50 + len(prompt))
+    # if api == "GPT-2":
+    #     q = generator(prompt, 
+    #               num_return_sequences=n_suggestions, 
+    #               max_length=50 + len(prompt))
 
-        #all generated examples 
-        allGenerations = ""
-        for i in range(n_suggestions):
-            allGenerations = allGenerations + " " + q[i]['generated_text'][len(prompt) - 4:]
+    #     #all generated examples 
+    #     allGenerations = ""
+    #     for i in range(n_suggestions):
+    #         allGenerations = allGenerations + " " + q[i]['generated_text'][len(prompt) - 4:]
 
-        #Separating all the sentences... 
-        sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
+    #     #Separating all the sentences... 
+    #     sentenceList = nltk.tokenize.sent_tokenize(allGenerations)
 
-        #Filter out questions 
-        questionsList = []
-        for sentence in sentenceList :
-            if "?" in sentence:
-                questionsList.append(sentence.strip("\n").strip("\\").strip('"'))
+    #     #Filter out questions 
+    #     questionsList = []
+    #     for sentence in sentenceList :
+    #         if "?" in sentence:
+    #             questionsList.append(sentence.strip("\n").strip("\\").strip('"'))
 
-        #Bert evaluation
-        bert_filtered_qs = []
-        for sentence in questionsList:
-            encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A] using storage[-3:]
-            outputs = model(**encoding)
-            logits = outputs.logits
-            bert_filtered_qs.append((logits[0,0].item(), sentence))
+    #     #Bert evaluation
+    #     bert_filtered_qs = []
+    #     for sentence in questionsList:
+    #         encoding = tokenizer(" ".join([new_q, new_a]), sentence, return_tensors='pt')  #[new_q, new_a] was initially [A, Q, A] using storage[-3:]
+    #         outputs = model(**encoding)
+    #         logits = outputs.logits
+    #         bert_filtered_qs.append((logits[0,0].item(), sentence))
 
-        bert_filtered_qs.sort(key=lambda tup: tup[0], reverse=True)
-        # Update number of suggestions in case there are less than n_suggestion questions identified
-        n_suggestions = min(len(bert_filtered_qs) - 1, n_suggestions)
-        suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
+    #     bert_filtered_qs.sort(key=lambda tup: tup[0], reverse=True)
+    #     # Update number of suggestions in case there are less than n_suggestion questions identified
+    #     n_suggestions = min(len(bert_filtered_qs) - 1, n_suggestions)
+    #     suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
         
-    elif api == "GPT-3":      
+    # elif api == "GPT-3":      
         # print("Checkpoint 3: Sending request to AI...")
-        response = openai.Completion.create(
-            engine="text-davinci-001",
-            prompt=prompt,
-            temperature=0.7,
-            max_tokens=250
-        )
-        
-        generation = response.choices[0]['text']
+    response = openai.Completion.create(
+        engine="text-davinci-001",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=250
+    )
+    
+    generation = response.choices[0]['text']
 
-        # # If GPT-3 did not return any values, use the last 7 questions from the shortlist
-        # generation = []
-        # if generation == []:
-        #     print("q-api/generateSmartQ: GPT-3 returned empty array. Using arbitrarily chosen questions from avatar as suggestions")
-        #     if len(suggestions_shortlist) <= 7:
-        #         generation = "\n".join(suggestions_shortlist)
-        #     else:
-        #         generation = "\n".join(suggestions_shortlist[:7])
-        #     # if len(df_avatar["question"].values) <= 7:
-        #     #     generation = df_avatar["question"].values
-        #     # else:
-        #     #     generation = df_avatar["question"].values[:7]
-
-        # split sentences into list
-        suggestions = nltk.tokenize.sent_tokenize(generation)
+    suggestions = nltk.tokenize.sent_tokenize(generation)
 
 
-        # Filter suggestions
-        suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
-        # Remove suggestions starting with "A:"
-        suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
+    # Filter suggestions
+    suggestions = list(map(lambda suggestion: suggestion.strip(), suggestions))
+    # Remove suggestions starting with "A:"
+    suggestions = list(filter(lambda suggestion: suggestion[:2] != "A:", suggestions))
 
-        # numbered lists, or - lists.
-        reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
+    # numbered lists, or - lists.
+    reg = re.compile(r"^([0-9]*\.|[0-9]*\)|[a-z]*[\.)]|-|Q:|Possible questions: Q:)", re.MULTILINE)
 
-        suggestions = list(map(lambda suggestion: re.sub(reg, "", suggestion), suggestions))
+    suggestions = list(map(lambda suggestion: re.sub(reg, "", suggestion), suggestions))
 
-#         # remove new line
-#         generation = generation.replace('\n', ' ').replace('\r', '').strip()
-
-#         # Remove - if any
-#         def removeHyphen(suggestion):
-#             if suggestion[:1] == '-':
-#                 return suggestion[1:len(suggestion)]
-#             else:
-#                 return suggestion
-#         suggestions = list(map(removeHyphen, suggestions))
-
-        # strip trailing white spaces
-        suggestions = [suggestion.strip() for suggestion in suggestions]
+    suggestions = [suggestion.strip() for suggestion in suggestions]
 
     if (n_suggestions and n_suggestions > 0 and len(suggestions) > n_suggestions):
         suggestions = random.sample(suggestions, n_suggestions)
