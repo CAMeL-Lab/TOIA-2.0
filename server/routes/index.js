@@ -1303,6 +1303,8 @@ router.post('/save_player_feedback', cors(), async (req, res) => {
     let rating = req.body.rating || null;
     let userValid = false;
 
+    console.log(video_id, question, rating)
+
     if (video_id != null && question != null && rating !=null){
         try {
             userValid = await isValidUser(user_id);

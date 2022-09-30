@@ -51,6 +51,8 @@ services:
         condition: service_healthy
     env_file:
       - ./.env
+    environment:
+      - PYTHONUNBUFFERED=1
 
   express-api:
     depends_on:
