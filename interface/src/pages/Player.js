@@ -58,6 +58,7 @@ function Player() {
 
 	const [transcribedAudio, setTranscribedAudio] = useState("");
 
+	const [lastQAsked, setlastQAsked] = useState("");
 
 	// suggested questions for cards
 	const [suggestion2, setSuggestion2] = React.useState("");
@@ -199,6 +200,7 @@ function Player() {
 
 					isFillerPlaying.current = "false";
 					newRating.current = "false";
+					setlastQAsked(oldQuestion);
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:fetchFiller,
@@ -229,6 +231,7 @@ function Player() {
 				question.current = data.alternatives[0].transcript;
 
 				newRating.current = "false";
+				setlastQAsked(data.alternatives[0].transcript);
 
 				speechToTextUtils.stopRecording();
 				fetchData();
@@ -297,7 +300,7 @@ function Player() {
 				}),
 				video_id: vidID[vidID.length - 1],
 
-				question: question.current,
+				question: lastQAsked,
 				rating: rate,
 			},
 		};
@@ -379,6 +382,7 @@ function Player() {
 
 						//setHasRated(false);
 						newRating.current = "false";
+						setlastQAsked(oldQuestion);
 						isFillerPlaying.current = "false";
 						setVideoID(res.data.url); // setting the video ID
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
@@ -528,6 +532,7 @@ function Player() {
 						setHasRated(false);
 
 						newRating.current = "false";
+						setlastQAsked(oldQuestion)
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
