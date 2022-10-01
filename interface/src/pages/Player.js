@@ -182,6 +182,7 @@ function Player() {
 
 		isFillerPlaying.current = "false";
 		newRating.current = "false";
+		setlastQAsked(question.question);
 		setVideoProperties({
 			key: question.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 			onEnded:fetchFiller,
