@@ -377,18 +377,18 @@ def generateSmartQ(api=API):
     #     suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
         
     # elif api == "GPT-3":      
-        # print("Checkpoint 3: Sending request to AI...")
-        response = openai.Completion.create(
-            engine="text-davinci-002",
-            prompt=prompt,
-            temperature=0,
-            max_tokens=250,
-        )
-        
-        generation = response.choices[0]['text']
-
-        # split sentences into list
-        suggestions = nltk.tokenize.sent_tokenize(generation)
+    # print("Checkpoint 3: Sending request to AI...")
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        temperature=0,
+        max_tokens=250,
+    )
+    
+    generation = response.choices[0]['text']
+    
+    # split sentences into list
+    suggestions = nltk.tokenize.sent_tokenize(generation)
 
 
     # Filter suggestions
