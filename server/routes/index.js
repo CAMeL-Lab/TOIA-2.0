@@ -917,8 +917,9 @@ router.post('/getSmartQuestions', (req,res)=>{
     // If it is the beginning of the conversation, then return 'dumb' question suggestions
     if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
     {
-        let query = `SELECT questions.question FROM questions 
+        let query = `SELECT questions.question, videos_questions_streams.id_video as url, video.answer, video.duration_seconds FROM questions 
                     INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+                    INNER JOIN video ON video.id_video = videos_questions_streams.id_video
                     WHERE videos_questions_streams.id_stream = ?
                     AND questions.suggested_type IN ("answer", "y/n-answer")
                     AND questions.id NOT IN (19, 20)
@@ -927,7 +928,7 @@ router.post('/getSmartQuestions', (req,res)=>{
 
         connection.query(query, [stream_id], (err, entries) => {
             if (err) throw err;
-            result = entries.map(entry => entry.question);
+            const result = entries.map(question_object => ({...question_object, url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${question_object.url}`}));
             res.send(result);
         });
         return;
@@ -945,17 +946,18 @@ router.post('/getSmartQuestions', (req,res)=>{
             n_suggestions: 5,
             avatar_id: avatar_id,
             stream_id: req.body.params.stream_id,
-        }
+        },
+    timeout: 20000,
     };
-
-
+    console.log("Using q-api for smarter questions\n")
     axios.request(options)
     .then((response)=>{
         console.log("==========Question Suggested=========");
         // console.log(response2);
         console.log(response.data.suggestions);
         console.log("=====================================");
-        res.send(response.data.suggestions);
+        const result = JSON.parse(response.data.suggestions).map(question_object => ({...question_object, url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${question_object.url}`}));
+        res.send(result);
     })
     .catch(function (error) {
         console.log("=============== Error with Q_API ============")
@@ -1185,6 +1187,31 @@ router.get('/questions/answered/:user_id/:stream_id', (req, res) => {
     const stream_id = req.params.stream_id;
     isValidUser(user_id).then(() => {
         let query = `SELECT questions.*, videos_questions_streams.id_video, videos_questions_streams.type FROM questions INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id WHERE videos_questions_streams.id_stream = ?`;
+        connection.query(query, [stream_id], (err, entries) => {
+            if (err) throw err;
+            res.send(entries);
+        })
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
+});
+
+// Special route to get questions that have well-formed questions
+// Filter questions that are of type "answer" and "y/n-answer"
+// E.g.:
+// -- How are you today?
+// -- Do you have siblings?
+// -- Tell me about X.
+router.get('/questions/answered_filtered/:user_id/:stream_id', (req, res) => {
+    const user_id = req.params.user_id;
+    const stream_id = req.params.stream_id;
+    isValidUser(user_id).then(() => {
+        let query = `SELECT DISTINCT questions.question FROM questions 
+        INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+        WHERE videos_questions_streams.id_stream = ?
+        AND questions.id NOT IN (19, 20) 
+        AND questions.suggested_type IN ("answer", "y/n-answer");`;
         connection.query(query, [stream_id], (err, entries) => {
             if (err) throw err;
             res.send(entries);
