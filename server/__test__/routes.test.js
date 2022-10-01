@@ -25,6 +25,50 @@ const user = {
     videoType: 'greeting'
 };
 
+const user_videos = {
+    filler_1: {
+        video: path.join(__dirname , "./test_files/filler_1.mp4"),
+        answer: ".",
+        videoType: 'filler',
+    },
+    filler_2: {
+        video: path.join(__dirname , "./test_files/filler_2.mp4"),
+        answer: ".",
+        videoType: 'filler',
+    },
+    filler_3: {
+        video: path.join(__dirname , "./test_files/filler_3.mp4"),
+        answer: ".",
+        videoType: 'filler',
+    },
+    filler_4: {
+        video: path.join(__dirname , "./test_files/filler_4.mp4"),
+        answer: ".",
+        videoType: 'filler',
+    },
+    answer_1: {
+        video: path.join(__dirname , "./test_files/answer_16.mp4"),
+        answer: "My name is Muhammad Ali.",
+        videoType: 'answer',
+        
+    },
+    answer_2: {
+        video: path.join(__dirname , "./test_files/answer_17.mp4"),
+        answer: "I was born in Pakistan in the city of Faisalabad on the 28th of August 2001.",
+        videoType: 'answer',
+    },
+    answer_3: {
+        video: path.join(__dirname , "./test_files/answer_18.mp4"),
+        answer: "Currently, I\'m a student at NYU Abu Dhabi and  I am double majoring in Mathematics and Computer Science.",
+        videoType: 'answer',
+    },
+    greeting: {
+        video: path.join(__dirname , "./test_files/greeting.mp4"),
+        answer: "Hi there.",
+        videoType: 'answer',
+    },
+}
+
 const wrong_user = {
     email: 'iDoNotExist@someWrongDomain.com',
     pwd: 123,
@@ -476,8 +520,9 @@ describe('POST /getTotalVideoDuration', () => {
 // --- /getStreamVideosCount
 // --- /save_player_feedback
 // --- /permission/stream
+// --- /permission/streams
 // --- /saveAdaSearch
-// --- 
+// --- /getAdaSearch
 // --- 
 // --- 
 // --- 
