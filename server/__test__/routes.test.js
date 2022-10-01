@@ -167,6 +167,7 @@ describe('GET /getUserStreams', () => {
             .end(function (err, res){
                 if (err) return done(err);
                 expect(res.body[0].toia_id).toEqual(user.toia_id);
+                expect(res.body[0].name).toEqual("ALL");
                 // assert(res.body[0].toia_id === user.toia_id);
                 totalStreams = res.body.length;
                 done();
@@ -454,6 +455,32 @@ describe('POST /getTotalVideoDuration', () => {
 });
 
 // TODO: Add further tests
+// TODO: 
+// - Add 2-4 more videos as questions
+// - Add 2-4 filler videos
+// - Routes to check:
+// --- /removeSuggestedQ ???
+// --- /getVideoPlayback
+// --- /fillerVideo
+// --- /player
+// --- /recorder (need to check if previous video id gets deleted)
+// --- /getSmartQuestions
+// --- /getLastestQuestionSuggestion'
+// --- /questions/suggestions/:user_id/edit ???
+// --- /questions/suggestions/:user_id/discard
+// --- /questions/answered/delete
+// --- /questions/answered/:user_id
+// --- /questions/answered/:user_id/:stream_id
+// --- /videos/:user_id/
+// --- /getUserData
+// --- /getStreamVideosCount
+// --- /save_player_feedback
+// --- /permission/stream
+// --- /saveAdaSearch
+// --- 
+// --- 
+// --- 
+// --- 
 
 afterAll(() => {
     connection.query("ROLLBACK;");
