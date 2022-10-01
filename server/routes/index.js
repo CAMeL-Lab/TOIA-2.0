@@ -20,7 +20,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams, getVideoDetails
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams, getVideoDetails, getExactMatchVideo
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -596,6 +596,7 @@ router.post('/getVideoPlayback', cors(), (req, res) => {
 });
 
 router.post('/fillerVideo', cors(), (req, res) => {
+    console.log(req.body.params.toiaIDToTalk);
     let query_getFiller = `SELECT * FROM questions 
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id
                             INNER JOIN video ON video.id_video = videos_questions_streams.id_video
@@ -638,59 +639,76 @@ router.post('/fillerVideo', cors(), (req, res) => {
     });
 });
 
-router.post('/player', cors(), (req, res) => {
-    // TODO: Review DM API calls
-    axios.post(`${process.env.DM_ROUTE}`, {
-        params: {
-            query: req.body.params.question.current,
-            avatar_id: req.body.params.toiaIDToTalk,
-            stream_id: req.body.params.streamIdToTalk
+router.post('/player', cors(), async (req, res) => {
+    const question = req.body.params.question.current;
+    const stream_id = req.body.params.streamIdToTalk;
+    const avatar_id = req.body.params.toiaIDToTalk;
+
+    const exactMatch = await getExactMatchVideo(stream_id, question);
+
+    let videoDetails;
+    if (exactMatch === null) {
+        try {
+            videoDetails = await axios.post(`${process.env.DM_ROUTE}`, {
+                params: {
+                    query: question,
+                    avatar_id: avatar_id,
+                    stream_id: stream_id,
+                },
+            });
+        } catch (err){
+            res.send("error");
+            console.log(err)
+            return;
         }
-
-    }).then(async (videoDetails) => {
-        const ada_similarity_score = videoDetails.data.ada_similarity_score;
-
-        console.log(videoDetails);
-        const config = {
-            action: 'read',
-            expires: '07-14-2025',
-        };
-
-        const player_video_id = videoDetails.data.id_video;
-        const videoInfo = await getVideoDetails(player_video_id);
-
-        if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
-            let interactor_id = req.body.params.interactor_id || null;
-            await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id, ada_similarity_score);
-        }
-
-        if (process.env.ENVIRONMENT === "development") {
-            if (videoDetails.data.id_video === "204") {
-                res.send("error")
-                return;
+    } else {
+        videoDetails = {
+            data: {
+                ada_similarity_score: null,
+                id_video: exactMatch["id_video"],
+                answer: exactMatch["answer"]
             }
+        }
+    }
+
+    const ada_similarity_score = videoDetails.data.ada_similarity_score;
+
+    const config = {
+        action: 'read',
+        expires: '07-14-2025',
+    };
+
+    const player_video_id = videoDetails.data.id_video;
+    const videoInfo = await getVideoDetails(player_video_id);
+
+    if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
+        let interactor_id = req.body.params.interactor_id || null;
+        await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id, ada_similarity_score);
+    }
+
+    if (process.env.ENVIRONMENT === "development") {
+        if (videoDetails.data.id_video === "204") {
+            res.send("error")
+            return;
+        }
+        res.send({
+            url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
+            answer: videoDetails.data.answer,
+            duration_seconds: videoInfo.duration_seconds
+        });
+        return;
+    }
+
+    videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`).getSignedUrl(config, function (err, url) {
+        if (err) {
+            console.error(err);
+        } else {
             res.send({
-                url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
+                url,
                 answer: videoDetails.data.answer,
                 duration_seconds: videoInfo.duration_seconds
             });
-            return;
         }
-
-        videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`).getSignedUrl(config, function (err, url) {
-            if (err) {
-                console.error(err);
-            } else {
-                res.send({
-                    url,
-                    answer: videoDetails.data.answer,
-                    duration_seconds: videoInfo.duration_seconds
-                });
-            }
-        });
-    }).catch((err) => {
-        res.send("error");
-        console.log(err)
     });
 });
 
