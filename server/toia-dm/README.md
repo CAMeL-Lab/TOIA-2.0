@@ -76,3 +76,7 @@ When you finish, remember to turn MySQL off:
 ```bash
 mysql.server stop
 ```
+
+# Testing
+
+Go to `localhost:5001/docs` to test the dialogue manager
