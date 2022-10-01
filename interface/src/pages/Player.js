@@ -58,6 +58,7 @@ function Player() {
 
 	const [transcribedAudio, setTranscribedAudio] = useState("");
 
+	const [lastQAsked, setlastQAsked] = useState("");
 
 	// suggested questions for cards
 
@@ -209,6 +210,7 @@ function Player() {
 				question.current = data.alternatives[0].transcript;
 
 				newRating.current = "false";
+				setlastQAsked(data.alternatives[0].transcript);
 
 				speechToTextUtils.stopRecording();
 				fetchData();
@@ -290,7 +292,7 @@ function Player() {
 				}),
 				video_id: vidID[vidID.length - 1],
 
-				question: question.current,
+				question: lastQAsked,
 				rating: rate,
 			},
 		};
@@ -358,6 +360,10 @@ function Player() {
 							history.location.state.toiaFirstNameToTalk,
 						question,
 						streamIdToTalk: history.location.state.streamToTalk,
+						record_log: "true",
+						...(history.location.state.toiaID && {
+							interactor_id: history.location.state.toiaID,
+						}),
 					},
 				})
 				.then((res) => {
@@ -368,6 +374,7 @@ function Player() {
 
 						//setHasRated(false);
 						newRating.current = "false";
+						setlastQAsked(oldQuestion);
 						isFillerPlaying.current = "false";
 						setVideoID(res.data.url); // setting the video ID
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
@@ -507,6 +514,10 @@ function Player() {
 							history.location.state.toiaFirstNameToTalk,
 						question,
 						streamIdToTalk: history.location.state.streamToTalk,
+						record_log: "true",
+						...(history.location.state.toiaID && {
+							interactor_id: history.location.state.toiaID,
+						}),
 					},
 				})
 				.then((res) => {
@@ -517,6 +528,7 @@ function Player() {
 						setHasRated(false);
 
 						newRating.current = "false";
+						setlastQAsked(oldQuestion)
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
