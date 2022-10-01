@@ -83,10 +83,12 @@ def dialogue_manager(payload: DMpayload):
 
     answer = response[0]
     id_video = response[1]
+    ada_similarity_score = response[2]
 
     result = {
         'answer': answer,
-        'id_video': id_video
+        'id_video': id_video,
+        'ada_similarity_score': ada_similarity_score
     }
 
     json.dumps(result)
