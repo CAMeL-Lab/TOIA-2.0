@@ -310,7 +310,7 @@ function Player() {
 
 		const options = {
 			method: "POST",
-			url: "http://localhost:3001/api/save_player_feedback",
+			url: "/api/save_player_feedback",
 			headers: { "Content-Type": "application/json" },
 			data: {
 				...(history.location.state.toiaID && {
