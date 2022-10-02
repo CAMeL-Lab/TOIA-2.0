@@ -204,17 +204,18 @@ function Player() {
 
 					isFillerPlaying.current = "false";
 					newRating.current = "false";
+					setlastQAsked(question.question);
 					setVideoProperties({
-						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+						key: question.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:fetchFiller,
-						source: res.data.url,
+						source: question.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
-						duration_seconds: res.data.duration_seconds || null
+						duration_seconds: question.duration_seconds || null
 					});
-					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
-					setVideoID(res.data.url); // setting the video ID
+					fetchAnsweredQuestions(question.question, question.answer || '');
+					setVideoID(question.url); // setting the video ID
 					setTranscribedAudio("");
 					question.current = "";
 				}

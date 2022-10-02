@@ -463,6 +463,26 @@ const getVideoDetails = (id_video) => {
     })
 }
 
+const getExactMatchVideo = (stream_id, question) => {
+    let query = `SELECT videos_questions_streams.*, video.answer FROM videos_questions_streams
+                LEFT JOIN questions ON questions.id = videos_questions_streams.id_question
+                INNER JOIN video ON video.id_video = videos_questions_streams.id_video
+                WHERE videos_questions_streams.id_stream = ? AND
+                questions.question = ? LIMIT 1;`
+    
+    return new Promise((resolve) => {
+        connection.query(query, [stream_id, question], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 0) {
+                resolve(null);
+            } else {
+                resolve(entry[0]);
+            }
+        })
+    })
+}
+
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -492,3 +512,4 @@ module.exports.saveAdaSearch = saveAdaSearch;
 module.exports.getAdaSearch = getAdaSearch;
 module.exports.getAccessibleStreams = getAccessibleStreams;
 module.exports.getVideoDetails = getVideoDetails;
+module.exports.getExactMatchVideo = getExactMatchVideo;
