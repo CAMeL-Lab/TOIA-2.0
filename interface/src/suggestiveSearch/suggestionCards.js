@@ -87,7 +87,7 @@ export default function SuggestionCards(props) {
 
 return props.questions ? (
   <Card.Group>
-
+    <h4 className="cards-suggestion-header">Some things you can ask me…</h4>
     <div className="card-5">
     <Card className={`card-overview card-waiting-${fifthQuestion.highlighBackground}`}>
       <Card.Content>
