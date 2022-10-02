@@ -595,8 +595,7 @@ router.post('/getVideoPlayback', cors(), (req, res) => {
     });
 });
 
-router.post('/fillerVideo', cors(), (req, res) => {
-    console.log(req.body.params.toiaIDToTalk);
+router.post('/fillerVideo', cors(), (req, res) => { 
     let query_getFiller = `SELECT * FROM questions 
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id
                             INNER JOIN video ON video.id_video = videos_questions_streams.id_video
