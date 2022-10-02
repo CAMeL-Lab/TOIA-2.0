@@ -178,6 +178,7 @@ function Player() {
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
 		const oldQuestion = question;
+		console.log(oldQuestion);
 		axios
 			.post(`/api/player`, {
 				params: {
@@ -204,20 +205,20 @@ function Player() {
 
 					isFillerPlaying.current = "false";
 					newRating.current = "false";
-					setlastQAsked(question.question);
+					setlastQAsked(oldQuestion.question);
 					setVideoProperties({
-						key: question.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:fetchFiller,
-						source: question.url,
+						source: res.data.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
-						duration_seconds: question.duration_seconds || null
+						duration_seconds: res.data.duration_seconds || null
 					});
-					fetchAnsweredQuestions(question.question, question.answer || '');
-					setVideoID(question.url); // setting the video ID
+					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
+					setVideoID(res.data.url); // setting the video ID
 					setTranscribedAudio("");
-					question.current = "";
+					// question.current = "";
 				}
 			});
 	}

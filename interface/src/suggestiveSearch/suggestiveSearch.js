@@ -107,7 +107,6 @@ export default function FreeSoloCreateOption(props) {
           label="Type a question to ask"
           onChange={(value) => {
             disableTyping.current = Boolean(!value.target.value); // if string is empty, return true. Otherwise, false
-            console.log("and now you can", disableTyping.current);
             props.handleTextChange(value);
           }}
         

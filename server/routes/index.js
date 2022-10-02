@@ -969,7 +969,6 @@ router.post('/getSmartQuestions', (req,res)=>{
         },
     timeout: 20000,
     };
-    console.log("Using q-api for smarter questions\n")
     axios.request(options)
     .then((response)=>{
         console.log("==========Question Suggested=========");

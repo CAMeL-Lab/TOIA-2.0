@@ -275,7 +275,6 @@ def generateNextQ(api=API):
 # Generating Smart Questions
 @app.route('/generateSmartQ', methods=['POST'])
 def generateSmartQ(api=API):
-    print("HERE!")
     start_time = time.time() #timing for logs
     if not Service_Active:
         return {"error":"Inactive"}
@@ -301,7 +300,6 @@ def generateSmartQ(api=API):
                             AND questions.id NOT IN (19, 20)
                             AND questions.suggested_type IN ("answer", "y/n-answer");""")
 
-    print("A")
     CONNECTION = ENGINE.connect()
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
     result_set = result_proxy.fetchall()
@@ -324,9 +322,7 @@ def generateSmartQ(api=API):
                                 ])
 
     # Get shortlisting through ada_similarity
-    print("B")
     suggestions_shortlist = getFirstNSimilar(df_avatar, new_q, NUM_SHORTLIST)
-    print("C")
 
     # Alternative: To use all questions without shortlisting, uncomment the following line:
     # suggestions_shortlist = df_avatar["question"].values
@@ -342,7 +338,6 @@ def generateSmartQ(api=API):
         api=API,
         suggestions_shortlist=suggestions_shortlist,
         num_questions=5)
-    print("q-api/generateSmartQ:prompt:\n%s \n==================" % prompt, flush=True)
     
     # if api == "GPT-2":
     #     q = generator(prompt, 
