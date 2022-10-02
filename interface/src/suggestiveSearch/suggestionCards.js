@@ -1,155 +1,108 @@
 // import * as React from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card } from "semantic-ui-react";
 import '../pages/Player.css';
 
   
 export default function SuggestionCards(props) {
 
-    // const suggestion1 = React.useRef(0)
-    const suggestion2 = React.useRef(0);
-
     // keeping track of position of each of the five cards
     // const firstQuestion = React.useRef(0);
-    const [firstQuestion, setFirstQuestion] = useState({current: 0, waiting:false, prevValue:0});
+    const [firstQuestion, setFirstQuestion] = useState({questionData: null, waiting:true, highlighBackground:false});
 
-    const [secondQuestion, setSecondQuestion] = useState({current: 1, waiting:false, prevValue:0});
+    const [secondQuestion, setSecondQuestion] = useState({questionData: null, waiting:true, highlighBackground:false});
 
-    const [thirdQuestion, setThirdQuestion] = useState({current: 2, waiting:false, prevValue:0});
+    const [thirdQuestion, setThirdQuestion] = useState({questionData: null, waiting:true, highlighBackground:false});
 
-    const [fourthQuestion, setFourthQuestion] = useState({current: 3, waiting:false, prevValue:0});
+    const [fourthQuestion, setFourthQuestion] = useState({questionData: null, waiting:true, highlighBackground:false});
 
-    const [fifthQuestion, setFifthQuestion] = useState({current: 4, waiting:false, prevValue:0});
+    const [fifthQuestion, setFifthQuestion] = useState({questionData: null, waiting:true, highlighBackground:false});
 
-    // const cardQuestions = [firstQuestion, secondQuestion, thirdQuestion, fourthQuestion, fifthQuestion];
-    const setQuestion = [setFirstQuestion,setSecondQuestion,setThirdQuestion,setFourthQuestion,setFifthQuestion];
+    const cardQuestions = [firstQuestion, secondQuestion, thirdQuestion, fourthQuestion, fifthQuestion];
+    // const setQuestion = [setFirstQuestion,setSecondQuestion,setThirdQuestion,setFourthQuestion,setFifthQuestion];
 
-    const waitingForNewQuestion = false; // variable to indicate whether we are waiting for a new question from express to come in
+    const getSuggestion = (questionCard) => {
+      // console.log("getSuggestion:");
+      // console.log(questionCard.questionData && questionCard.questionData.question ? questionCard.questionData.question : "No question loaded!");
+      return questionCard.questionData && questionCard.questionData.question ? questionCard.questionData.question : "Loading ...";
+    };
 
-    if (props.questions.length > 2){
-      suggestion2.current = Math.floor(props.questions.length/5);
+    const delayedQuestionCardChange = (questionCard, setQuestionCard) => {
+      return () => {
+        questionCard.highlighBackground = false;
+        if(questionCard.waiting){
+          questionCard.questionData = null;
+          setQuestionCard({...questionCard});
+        }
+      }
     }
 
-    // Function to increment count of question card
-    // Increment count means to move to an index of a new question
-    const incrementCount = (questionCardIndex, cardNumber) => {
-      // Do not move to next question if we are currently waiting for a new question
-      if (questionCardIndex.current < props.questions.length && !waitingForNewQuestion) {
-        // First get the max index of each card. Then we add 1 to it to get the new questionCardIndex
-        const max_index = Math.max(firstQuestion.current, secondQuestion.current, thirdQuestion.current, fourthQuestion.current, fifthQuestion.current);
+    const askQuestion = (questionCard, setQuestionCard) => {
+      // console.log("askQuestion:");
+      props.askQuestion(questionCard.questionData);
+      questionCard.waiting = true;
+      questionCard.highlighBackground = true;
+      setTimeout(delayedQuestionCardChange(questionCard, setQuestionCard), 3000);
+      setQuestionCard({...questionCard});
+    }
 
-        // If we are waiting for a question already in the given card, we do not do anything
-        if (!questionCardIndex.waiting){
-          // If the new value of the card exceeds the length, we wait for a new question, but show the previous value of the card as a placeholder
-          if (max_index + 1 >= props.questions.length){
-            questionCardIndex.waiting = true;
-            questionCardIndex.prevValue = questionCardIndex.current;
-          }
-          // The new value of the card is max_index+1
-          questionCardIndex.current = max_index + 1;
-          // We use setter function to update the values visually in the page
-          setQuestion[cardNumber-1](questionCardIndex);
+    const getNextQuestion = (questionCard, setQuestionCard) => {
+      // console.log("getNextQuestion:");
+      if (props.questions.length > 0){
+        // console.log("getNextQuestion: got question");
+        questionCard.questionData = props.questions.pop();
+        setQuestionCard({...questionCard});
+      }
+    };
+
+    const refreshQuestion = (questionCard, setQuestionCard) => {
+      // console.log("refreshQuestion: refreshing question...");
+      if (props.questions.length > 0 && questionCard.waiting && props.shouldRefreshQuestions?.current){
+        // console.log("refreshQuestion: refreshed question...");
+        questionCard.waiting = false;
+        questionCard.highlighBackground = false;
+        questionCard.questionData = props.questions.pop();
+        // console.log("refreshQuestion: new question: ", questionCard.questionData.question);
+        setQuestionCard({...questionCard});
+      }
+    };
+
+    const shouldStopRefreshing = ()=>{
+      for (let questionCard in cardQuestions) {
+        // If any card question is still waiting, even after updating the questions
+        // Then we still want to refresh questions where possible
+        if (questionCard.waiting && props.shouldRefreshQuestions?.current){
+          return false;
         }
-        
       }
-    };
+      return true;
+    }
 
-    const getSuggestion = (questionCardIndex, cardNumber) => {
-      // If the index of the questionCard is beyond the length of the array, return previous question
-      // This shows we are waiting
-      if (questionCardIndex.current >= props.questions.length){
-        return props.questions[questionCardIndex.prevValue] || "Loading ...";
-      }
-      // If the length has now exceeded the new index of questionCardIndex AND we are waiting,
-      // then we set waiting to false and update values
-      else if (questionCardIndex.waiting){
-        questionCardIndex.waiting = false;
-        setQuestion[cardNumber-1](questionCardIndex);
-      }
-      // The following statement does one of two things:
-      // 1. If the length is greater than the card number (so we are not waiting), return the question
-      // 2. Otherwise, return "Loading ..." placeholder
-      return props.questions.length >= cardNumber ? props.questions[questionCardIndex.current] : "Loading ...";
-    };
+    useEffect(()=>{
+      getNextQuestion(firstQuestion, setFirstQuestion);
+      getNextQuestion(secondQuestion, setSecondQuestion);
+    }, []);
+
+
 
 return props.questions ? (
   <Card.Group>
-    <div className="card-1">
-    <Card>
+    <h4 className="cards-suggestion-header">Some things you can ask me…</h4>
+    <div className="card-5">
+    <Card className={`card-overview card-waiting-${fifthQuestion.highlighBackground}`}>
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
-
-         {getSuggestion(firstQuestion, 1)}
-
+        {refreshQuestion(fifthQuestion, setFifthQuestion)}
+        {getSuggestion(fifthQuestion)}
         </Card.Description>
       </Card.Content>
       <Card.Content extra>
         <div className="ui two buttons">
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
-              
-
-              suggestion2.current = getSuggestion(firstQuestion, 1);
-              props.askQuestion(suggestion2, 1);
-              incrementCount(firstQuestion, 1);
+              askQuestion(fifthQuestion, setFifthQuestion);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          incrementCount(firstQuestion, 1);
-          props.suggestedQuestion2(firstQuestion.current);
-        }}/>
-        </div>
-      </Card.Content>
-    </Card>
-    </div>
-
-    <div className="card-2">
-    <Card>
-      <Card.Content>
-        <Card.Description size="mini" className="player-font-class-2">
-
-        {getSuggestion(secondQuestion, 2)}
-
-        </Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <div className="ui two buttons">
-        <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
-              
-
-              suggestion2.current = getSuggestion(secondQuestion, 2);
-              props.askQuestion(suggestion2, 1);
-              incrementCount(secondQuestion, 2);
-        }}/>
-        <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          incrementCount(secondQuestion, 2);
-          props.suggestedQuestion2(secondQuestion.current);
-        }}/>
-        </div>
-      </Card.Content>
-    </Card>
-    </div>
-
-    <div className="card-3">
-    <Card>
-      <Card.Content>
-        <Card.Description size="mini" className="player-font-class-2">
-
-        {getSuggestion(thirdQuestion, 3)}
-        </Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <div className="ui two buttons">
-        <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
-              
-
-              suggestion2.current = getSuggestion(thirdQuestion, 3);
-
-              props.askQuestion(suggestion2, 1);
-              incrementCount(thirdQuestion, 3);
-        }}/>
-        <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          
-          incrementCount(thirdQuestion, 3);
-          props.suggestedQuestion2(thirdQuestion.current);
+          getNextQuestion(fifthQuestion, setFifthQuestion);
         }}/>
         </div>
       </Card.Content>
@@ -157,62 +110,90 @@ return props.questions ? (
     </div>
 
     <div className="card-4">
-    <Card>
+    <Card className={`card-overview card-waiting-${fourthQuestion.highlighBackground}`}>
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
-
-        {getSuggestion(fourthQuestion, 4)}
-
+        {refreshQuestion(fourthQuestion, setFourthQuestion)}
+        {getSuggestion(fourthQuestion)}
         </Card.Description>
       </Card.Content>
       <Card.Content extra>
         <div className="ui two buttons">
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
-              
-
-              suggestion2.current = getSuggestion(fourthQuestion, 4);
-
-              props.askQuestion(suggestion2, 1);
-              incrementCount(fourthQuestion, 4);
+              askQuestion(fourthQuestion, setFourthQuestion);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          
-          incrementCount(fourthQuestion, 4);
-          props.suggestedQuestion2(fourthQuestion.current);
+          getNextQuestion(fourthQuestion, setFourthQuestion);
         }}/>
         </div>
       </Card.Content>
     </Card>
     </div>
 
-    <div className="card-5">
-    <Card>
+    <div className="card-3">
+    <Card className={`card-overview card-waiting-${thirdQuestion.highlighBackground}`}>
       <Card.Content>
         <Card.Description size="mini" className="player-font-class-2">
-
-        {getSuggestion(fifthQuestion, 5)}
-
+        {refreshQuestion(thirdQuestion, setThirdQuestion)}
+        {getSuggestion(thirdQuestion)}
         </Card.Description>
       </Card.Content>
       <Card.Content extra>
         <div className="ui two buttons">
         <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
-              
-
-              suggestion2.current = getSuggestion(fifthQuestion, 5);
-
-              props.askQuestion(suggestion2, 1);
-              incrementCount(fifthQuestion, 5);
+              askQuestion(thirdQuestion, setThirdQuestion);
         }}/>
         <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
-          
-          incrementCount(fifthQuestion, 5);
-          props.suggestedQuestion2(fifthQuestion.current);
+          getNextQuestion(thirdQuestion, setThirdQuestion);
         }}/>
         </div>
       </Card.Content>
     </Card>
     </div>
+
+    <div className="card-2">
+    <Card className={`card-overview card-waiting-${secondQuestion.highlighBackground}`}>
+      <Card.Content>
+        <Card.Description size="mini" className="player-font-class-2">
+        {refreshQuestion(secondQuestion, setSecondQuestion)}
+        {getSuggestion(secondQuestion)}
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <div className="ui two buttons">
+        <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
+              askQuestion(secondQuestion, setSecondQuestion);
+        }}/>
+        <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
+          getNextQuestion(secondQuestion, setSecondQuestion);
+        }}/>
+        </div>
+      </Card.Content>
+    </Card>
+    </div>
+
+    <div className="card-1">
+    <Card className={`card-overview card-waiting-${firstQuestion.highlighBackground}`}>
+      <Card.Content>
+        <Card.Description size="mini" className="player-font-class-2">
+        {refreshQuestion(firstQuestion, setFirstQuestion)}
+        {getSuggestion(firstQuestion)}
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <div className="ui two buttons">
+        <Button content='ASK' color="linkedin" icon='send' labelPosition='left' onClick={()=>{
+              askQuestion(firstQuestion, setFirstQuestion);
+        }}/>
+        <Button content='NEW' color="green" icon='undo alternate' labelPosition='right' onClick={()=>{
+          getNextQuestion(firstQuestion, setFirstQuestion);
+        }}/>
+        </div>
+      </Card.Content>
+    </Card>
+    </div>
+
+    {shouldStopRefreshing() ? props.setRefreshQuestionsFalse() : ''}
 
   </Card.Group>
   

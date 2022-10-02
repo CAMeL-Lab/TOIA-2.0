@@ -2,10 +2,13 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
-const filter = createFilterOptions();
+const filter = createFilterOptions({
+  matchFrom: 'start',
+});
 
 export default function FreeSoloCreateOption(props) {
   const [value, setValue] = React.useState(null);
+  const disableTyping = React.useRef(true);
 
   return (
     <Autocomplete
@@ -28,12 +31,15 @@ export default function FreeSoloCreateOption(props) {
         }
       }}
       filterOptions={(options, params) => {
+        if (disableTyping.current){ // if disable typing, then stop showing the suggestions
+          return [];
+        }
         const filtered = filter(options, params);
 
         const { inputValue } = params;
         // Suggest the creation of a new value
         const isExisting = options.some(
-          (option) => inputValue === option
+          (option) => inputValue === option.question
         );
         if (inputValue !== "" && !isExisting) {
           filtered.push({
@@ -61,7 +67,7 @@ export default function FreeSoloCreateOption(props) {
         // Regular option
         return option.question;
       }}
-      renderOption={(props, option) => <li {...props}>{option}</li>}
+      renderOption={(props, option) => <li {...props}>{option.question}</li>}
       sx={{ width: 200 }}
       freeSolo
       renderInput={(params) => (
@@ -100,7 +106,8 @@ export default function FreeSoloCreateOption(props) {
           {...params}
           label="Type a question to ask"
           onChange={(value) => {
-           props.handleTextChange(value);
+            disableTyping.current = Boolean(!value.target.value); // if string is empty, return true. Otherwise, false
+            props.handleTextChange(value);
           }}
         
         />

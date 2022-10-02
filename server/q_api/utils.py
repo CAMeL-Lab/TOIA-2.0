@@ -29,6 +29,7 @@ def getFirstNSimilar(df_avatar, query, NUM_SHORTLIST):
     df_avatar['ada_search'] = df_avatar['ada_search'].apply(json_loads_with_null)
 
     # If conversation has not started, assume it starts with hello
+    
     if query == "" or query == " ":  
         query = "Hello"
     
@@ -42,11 +43,10 @@ def getFirstNSimilar(df_avatar, query, NUM_SHORTLIST):
 
 def getFreqByCosineSimilarity(query, data):
     # Creating embedding for query
-    data['combined'] = "Question: " + data.question.str.strip() + "; Answer: " + data.answer.str.strip()
     embedding = get_embedding(query, engine='text-search-ada-query-001')
 
     # Searching query embedding through avatar's questions' embeddings using cosine similarity
     data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
     df_response = data.sort_values('similarities', ascending=False)
 
-    return df_response;
+    return df_response

@@ -139,10 +139,15 @@
   color: #49769c;
 }
 
+.cards-suggestion-header{
+  position: absolute;
+  left: 75.5%;
+}
+
 .card-1{
   position: absolute;
   left: 75.5%;
-  top: -2%;
+  top: 3%;
 }
 
 .card-2{
@@ -167,6 +172,16 @@
   position: absolute;
   left: 75.5%;
   top: 86%;
+}
+
+.card-overview{
+  transition: background 1s !important;
+}
+
+.card-waiting-true{
+  background: #D7F5FF !important; 
+  box-shadow: 0px 4px 4px rgba(46,122,210,0.25) !important;
+  border-radius: 5px !important;
 }
 
 .card-width-control{

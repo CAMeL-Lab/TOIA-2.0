@@ -40,7 +40,7 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-# nltk.download('punkt')
+nltk.download('punkt')
 
 # To run this, type in terminal: `export FLASK_APP=main-app.py` (or whatever name of file is)
 # Then type flask run
@@ -101,12 +101,12 @@ A: {}""".format(result_set[1][0], result_set[1][1]),
 
     return prompt
 
-def generate_prompt_for_smart_questions(new_q, new_a, avatar_id, api, suggestions_shortlist, num_questions=3):
+def generate_prompt_for_smart_questions(new_q, new_a, avatar_id, api, suggestions_shortlist, num_questions=5):
     
     
     prompt=""
     if api == "GPT-3":
-        prompt = """
+        prompt = """\
 Understand the following conversation:
 Q: {}
 A: {}""".format(new_q, new_a)
@@ -114,6 +114,7 @@ A: {}""".format(new_q, new_a)
         prompt = prompt + "\n\nSelect the {} best follow-up questions from the following:".format(num_questions)
         for question in suggestions_shortlist:
             prompt = prompt + "\n" + question.strip().replace('\n','')
+        prompt = prompt +"\n\n"
 
     # print("=====Prompt=====\n",prompt)
     return prompt
@@ -288,17 +289,16 @@ def generateSmartQ(api=API):
     avatar_id = body['avatar_id']
 
     stream_id = body['stream_id']
+    print("params", new_q, "and", new_a)
 
 
     # Get all questions answered by avatar
-    statement = QueryText("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.ada_search, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.language, video.likes, video.views FROM video
+    statement = QueryText("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.ada_search, videos_questions_streams.type, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0
                             AND questions.id NOT IN (19, 20)
                             AND questions.suggested_type IN ("answer", "y/n-answer");""")
-
-    
 
     CONNECTION = ENGINE.connect()
     result_proxy = CONNECTION.execute(statement,streamID=stream_id)
@@ -316,7 +316,7 @@ def generateSmartQ(api=API):
                                     'idx',
                                     'private',
                                     'answer',
-                                    'language',
+                                    # 'language',
                                     'likes',
                                     'views',
                                 ])
@@ -337,7 +337,7 @@ def generateSmartQ(api=API):
         avatar_id=avatar_id,
         api=API,
         suggestions_shortlist=suggestions_shortlist,
-        num_questions=7)
+        num_questions=5)
     
     # if api == "GPT-2":
     #     q = generator(prompt, 
@@ -372,16 +372,17 @@ def generateSmartQ(api=API):
     #     suggestions = [bert_filtered_qs[i][1] for i in range(n_suggestions) if bert_filtered_qs[i][1] != bert_filtered_qs[i + 1][1]]     
         
     # elif api == "GPT-3":      
-        # print("Checkpoint 3: Sending request to AI...")
+    # print("Checkpoint 3: Sending request to AI...")
     response = openai.Completion.create(
-        engine="text-davinci-001",
+        engine="text-davinci-002",
         prompt=prompt,
-        temperature=0.7,
-        max_tokens=250
+        temperature=0,
+        max_tokens=250,
     )
     
     generation = response.choices[0]['text']
-
+    
+    # split sentences into list
     suggestions = nltk.tokenize.sent_tokenize(generation)
 
 
@@ -424,8 +425,10 @@ def generateSmartQ(api=API):
             suggestions = suggestions_shortlist.tolist()
         else:
             suggestions = suggestions_shortlist[:7].tolist()
-
+    
     end_time = time.time()
-    print("q-api/generateSmartQ:Total time taken to get smart suggestions: %s " % (end_time-start_time))
+    print("q-api/generateSmartQ: Total time taken to get smart suggestions: %s " % (end_time-start_time), flush=True)
 
     return {"suggestions": json.dumps(suggestions)}
+
+    # return {"suggestions": json.dumps(suggestions)}
