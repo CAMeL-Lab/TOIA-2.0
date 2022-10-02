@@ -46,8 +46,8 @@ function Player() {
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
-	const [answeredQuestions, setAnsweredQuestions] = useState([]); // used to be ["Loading ..."]
-	let possibleQuestions = [];
+	const [answeredQuestions, setAnsweredQuestions] = useState([]);
+	let allSuggestedQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
 	const [isInteracting, setIsInteracting] = useState(false);
@@ -61,13 +61,14 @@ function Player() {
 	const [lastQAsked, setlastQAsked] = useState("");
 
 	// suggested questions for cards
-	const [suggestion2, setSuggestion2] = React.useState("");
 
 	const textInput = React.useRef("");
 	const question = React.useRef("");
 	const interacting = React.useRef("false");
 	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
+	const allQuestions = React.useRef([]);
+	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
 	const questionsLength = React.useRef(0);
 	const interimTextInput = React.useRef("");
@@ -110,6 +111,7 @@ function Player() {
 		canAccessStream();
 
 		fetchAnsweredQuestions();
+		fetchAllStreamQuestions();
 
 		fetchFiller();
 		// Tracker
@@ -174,15 +176,18 @@ function Player() {
 			});
 	}
 	// if user asks one of the suggested questions
-	function askQuestionFromCard(question, suggestionNumber) {
-		const oldQuestion = question.current;
+	function askQuestionFromCard(question) {
+		const oldQuestion = question;
+		console.log(oldQuestion);
 		axios
 			.post(`/api/player`, {
 				params: {
 					toiaIDToTalk: history.location.state.toiaToTalk,
 					toiaFirstNameToTalk:
 						history.location.state.toiaFirstNameToTalk,
-					question,
+						question: {
+							current: oldQuestion.question,
+						},
 					streamIdToTalk: history.location.state.streamToTalk,
 					record_log: "true",
 					...(history.location.state.toiaID && {
@@ -200,7 +205,7 @@ function Player() {
 
 					isFillerPlaying.current = "false";
 					newRating.current = "false";
-					setlastQAsked(oldQuestion);
+					setlastQAsked(oldQuestion.question);
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded:fetchFiller,
@@ -210,10 +215,10 @@ function Player() {
 						filler: false,
 						duration_seconds: res.data.duration_seconds || null
 					});
-					fetchAnsweredQuestions(oldQuestion, res.data.answer);
+					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
 					setVideoID(res.data.url); // setting the video ID
 					setTranscribedAudio("");
-					question.current = "";
+					// question.current = "";
 				}
 			});
 	}
@@ -241,14 +246,24 @@ function Player() {
 		}
 	}
 
+	// Sets the value of 'allQuestions' array
+	// to be the string list of all questions of the stream
+	function fetchAllStreamQuestions(){
+		console.log("Fetching all questions!");
+		axios.get(`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`)
+		.then((res)=>{
+			allQuestions.current = res.data || [];
+		});
+	}
 	// function to fetch answered smart questions from the database
 	// question: the last question asked by the user
 	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question="", answer="") {
-
-		console.log("Creating Smart Questions...");
+		console.log(`Creating Smart Questions...\n question = ${question}\n`);
 		axios.post('/api/getSmartQuestions', {
 			params: {
+				toiaIDToTalk: history.location.state.toiaToTalk,
+				toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
 				avatar_id: history.location.state.toiaToTalk,
 				stream_id: history.location.state.streamToTalk,
 				latest_question: question,
@@ -265,24 +280,27 @@ function Player() {
 
 				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
 				// then add it to the list of possible suggestions
-				if (q != '' && !answeredQuestions.includes(q)){
+				if (q.question != '' && !allSuggestedQuestions.includes(q)){
 					answeredQuestions.push(q);
+					allSuggestedQuestions.push(q);
 				}
 			});
-
-			// Delete the card that says "Loading ..." in the beginning
-			// if there is another element in the list aside from "Loading ..." (i.e. answeredQuestions.length > 1)
 			console.log("Created Smart Questions.");
-			setAnsweredQuestions(answeredQuestions);
+			console.log(answeredQuestions);
+			console.log("=========================")
+			shouldRefreshQuestions.current = true;
+			setAnsweredQuestions([...answeredQuestions]);
 		});
 	}
 
 
 	function textInputChange(val) {
-		if (val) {
+		if (val && val.question) {
 			textInput.current = val.question;
+			console.log("AYOOOO", textInput.current);
+		} else if (typeof val === "string") {
+			textInput.current = val;
 		}
-
 	}
 
 	const recordUserRating = function (rate) {
@@ -292,7 +310,7 @@ function Player() {
 
 		const options = {
 			method: "POST",
-			url: "http://localhost:3001/api/save_player_feedback",
+			url: "/api/save_player_feedback",
 			headers: { "Content-Type": "application/json" },
 			data: {
 				...(history.location.state.toiaID && {
@@ -493,6 +511,10 @@ function Player() {
 					}
 				});
 		}
+	}
+
+	function setRefreshQuestionsFalse(){
+		shouldRefreshQuestions.current = false;
 	}
 
 	function textChange(e) {
@@ -851,14 +873,16 @@ function Player() {
 								<SuggestiveSearch
 									handleTextChange={textChange}
 									handleTextInputChange={textInputChange}
-									questions={answeredQuestions}
+									// questions={latestSuggestedQuestions}
+									questions={allQuestions.current}
 								/>
 							)}
 
 							<SuggestionCard
 								questions={answeredQuestions}
-								suggestedQuestion2={setSuggestion2}
 								askQuestion={askQuestionFromCard}
+								shouldRefreshQuestions = {shouldRefreshQuestions}
+								setRefreshQuestionsFalse = {setRefreshQuestionsFalse}
 							/>
 
 							<button

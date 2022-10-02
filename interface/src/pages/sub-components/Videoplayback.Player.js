@@ -1,15 +1,26 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function VideoPlaybackPlayer(props) {
     const videoRef = useRef(null);
 
-    const onTimeUpdate = () => {
-        if (!props.filler && props.duration_seconds && props.duration_seconds > 3){
-            if ((props.duration_seconds - videoRef.current.currentTime) <= 1){
-                props.onEnded();
-            }
-        }
-    }
+    // let skippedLastSecond = false;
+    
+    // useEffect(() => {
+    //   skippedLastSecond = false;
+    // }, [props])
+    
+
+    // const onTimeUpdate = () => {
+    //     if (!props.filler && props.duration_seconds && props.duration_seconds > 3){
+    //         if ((props.duration_seconds - videoRef.current.currentTime) <= 1){
+    //             if (!skippedLastSecond){
+    //                 skippedLastSecond = true;
+    //                 props.onEnded();
+    //                 console.log("Ending:", props.duration_seconds)
+    //             }
+    //         }
+    //     }
+    // }
 
     return (
         <div>
@@ -19,7 +30,7 @@ export default function VideoPlaybackPlayer(props) {
                 id="vidmain"
                 key={props.key}
                 onEnded={props.onEnded}
-                onTimeUpdate={onTimeUpdate}
+                // onTimeUpdate={onTimeUpdate}
                 ref={videoRef}
                 autoPlay
             >
