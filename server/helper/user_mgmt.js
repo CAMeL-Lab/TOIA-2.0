@@ -383,6 +383,7 @@ const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
 }
 
 const saveConversationLog = (interactor_id, toia_id, filler, question_asked, video_played, ada_similarity_score=null) => {
+    return true;
     return new Promise(((resolve) => {
         let currentTimestamp = +new Date();
         const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score) VALUES (?, ?, ?, ?, ?, ?, ?)`;

@@ -919,7 +919,7 @@ router.post('/getSmartQuestions', (req,res)=>{
     // If it is the beginning of the conversation, then return 'dumb' question suggestions
     if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
     {
-        let query = `SELECT questions.question, videos_questions_streams.id_video as url, video.answer, video.duration_seconds FROM questions 
+        let query = `SELECT questions.question FROM questions 
                     INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
                     INNER JOIN video ON video.id_video = videos_questions_streams.id_video
                     WHERE videos_questions_streams.id_stream = ?
@@ -930,7 +930,7 @@ router.post('/getSmartQuestions', (req,res)=>{
 
         connection.query(query, [stream_id], (err, entries) => {
             if (err) throw err;
-            const result = entries.map(question_object => ({...question_object, url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${question_object.url}`}));
+            const result = entries.map(question_object => ({question: question_object.question}));
             res.send(result);
         });
         return;
@@ -958,7 +958,8 @@ router.post('/getSmartQuestions', (req,res)=>{
         // console.log(response2);
         console.log(response.data.suggestions);
         console.log("=====================================");
-        const result = JSON.parse(response.data.suggestions).map(question_object => ({...question_object, url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${question_object.url}`}));
+        const data = JSON.parse(response.data.suggestions);
+        const result = data.map(question_string => ({question: question_string}));
         res.send(result);
     })
     .catch(function (error) {
