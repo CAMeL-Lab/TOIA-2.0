@@ -434,36 +434,6 @@ def generateSmartQ(api=API):
     end_time = time.time()
     print("q-api/generateSmartQ: Total time taken to get smart suggestions: %s " % (end_time-start_time), flush=True)
 
-    # Get video url of each question as well
-    # Security issue
-    suggestions_length = len(suggestions)
-    
-
-    query_dict = {
-        "streamID": stream_id
-    }
-    suggestions_tuple = "(" + ",".join([' :' + str(i) + ' ' for i in range(suggestions_length)]) + ")"
-    for i in range(suggestions_length):
-        query_dict[str(i)] = suggestions[i]
-
-    statement = QueryText(f"""SELECT questions.question, videos_questions_streams.id_video as url, video.answer, video.duration_seconds FROM questions 
-                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id
-                            INNER JOIN video ON video.id_video = videos_questions_streams.id_video
-                            WHERE videos_questions_streams.id_stream = :streamID
-                            AND questions.question IN {suggestions_tuple}
-                            AND questions.id NOT IN (19, 20) 
-                            AND questions.suggested_type IN ("answer", "y/n-answer");""")
-                            # Last two lines are redundant (questions.id and questions.suggested_type conditions)
-    
-    result_proxy = CONNECTION.execute(statement,query_dict)
-    result_set = result_proxy.fetchall()
-
-    print(result_set)
-
-    suggestions_result =  [{"question": row.question, "url": row.url, "answer": row.answer, "duration_seconds": row.duration_seconds} for row in result_set]
-    end_time = time.time()
-    print("q-api/generateSmartQ:Total time taken to get smart suggestions with appropriate information: %s " % (end_time-start_time), flush=True)
-
-    return {"suggestions": json.dumps(suggestions_result)}
+    return {"suggestions": json.dumps(suggestions)}
 
     # return {"suggestions": json.dumps(suggestions)}

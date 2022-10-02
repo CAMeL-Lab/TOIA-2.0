@@ -68,7 +68,7 @@ function Player() {
 	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
 	const allQuestions = React.useRef([]);
-	const shouldRefreshQuestions = React.useRef(false);
+	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
 	const questionsLength = React.useRef(0);
 	const interimTextInput = React.useRef("");
@@ -177,24 +177,48 @@ function Player() {
 	}
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
-		setFillerPlaying(true);
-		setHasRated(false);
+		const oldQuestion = question;
+		axios
+			.post(`/api/player`, {
+				params: {
+					toiaIDToTalk: history.location.state.toiaToTalk,
+					toiaFirstNameToTalk:
+						history.location.state.toiaFirstNameToTalk,
+						question: {
+							current: oldQuestion.question,
+						},
+					streamIdToTalk: history.location.state.streamToTalk,
+					record_log: "true",
+					...(history.location.state.toiaID && {
+						interactor_id: history.location.state.toiaID,
+					}),
+				},
+			})
+			.then((res) => {
+				if (res.data === "error") {
+					setFillerPlaying(true);
+					console.log("error");
+				} else {
+					setFillerPlaying(true);
+					setHasRated(false);
 
-		isFillerPlaying.current = "false";
-		newRating.current = "false";
-		setVideoProperties({
-			key: question.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-			onEnded:fetchFiller,
-			source: question.url,
-			fetchFiller: fetchFiller,
-			muted: false,
-			filler: false,
-			duration_seconds: question.duration_seconds || null
-		});
-		fetchAnsweredQuestions(question.question, question.answer || '');
-		setVideoID(question.url); // setting the video ID
-		setTranscribedAudio("");
-		question.current = "";
+					isFillerPlaying.current = "false";
+					newRating.current = "false";
+					setVideoProperties({
+						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+						onEnded:fetchFiller,
+						source: res.data.url,
+						fetchFiller: fetchFiller,
+						muted: false,
+						filler: false,
+						duration_seconds: res.data.duration_seconds || null
+					});
+					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
+					setVideoID(res.data.url); // setting the video ID
+					setTranscribedAudio("");
+					question.current = "";
+				}
+			});
 	}
 	// Function ends here
 
@@ -262,8 +286,8 @@ function Player() {
 			console.log("Created Smart Questions.");
 			console.log(answeredQuestions);
 			console.log("=========================")
-			setAnsweredQuestions([...answeredQuestions]);
 			shouldRefreshQuestions.current = true;
+			setAnsweredQuestions([...answeredQuestions]);
 		});
 	}
 
