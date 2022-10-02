@@ -382,12 +382,12 @@ const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
     })
 }
 
-const saveConversationLog = (interactor_id, toia_id, filler, question_asked, video_played) => {
+const saveConversationLog = (interactor_id, toia_id, filler, question_asked, video_played, ada_similarity_score=null) => {
     return new Promise(((resolve) => {
         let currentTimestamp = +new Date();
-        const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played) VALUES (?, ?, ?, ?, ?, ?)`;
+        const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-        connection.query(query, [interactor_id, toia_id, currentTimestamp, filler, question_asked, video_played], (err, res) => {
+        connection.query(query, [interactor_id, toia_id, currentTimestamp, filler, question_asked, video_played, ada_similarity_score], (err, res) => {
             if (err) throw err;
             resolve();
         })
@@ -462,6 +462,26 @@ const getVideoDetails = (id_video) => {
     })
 }
 
+const getExactMatchVideo = (stream_id, question) => {
+    let query = `SELECT videos_questions_streams.*, video.answer FROM videos_questions_streams
+                LEFT JOIN questions ON questions.id = videos_questions_streams.id_question
+                INNER JOIN video ON video.id_video = videos_questions_streams.id_video
+                WHERE videos_questions_streams.id_stream = ? AND
+                questions.question = ? LIMIT 1;`
+    
+    return new Promise((resolve) => {
+        connection.query(query, [stream_id, question], (err, entry) => {
+            if (err) throw err;
+            if (entry.length === 0) {
+                resolve(null);
+            } else {
+                resolve(entry[0]);
+            }
+        })
+    })
+}
+
+
 module.exports.addQuestion = addQuestion;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
@@ -491,3 +511,4 @@ module.exports.saveAdaSearch = saveAdaSearch;
 module.exports.getAdaSearch = getAdaSearch;
 module.exports.getAccessibleStreams = getAccessibleStreams;
 module.exports.getVideoDetails = getVideoDetails;
+module.exports.getExactMatchVideo = getExactMatchVideo;

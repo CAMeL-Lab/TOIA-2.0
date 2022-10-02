@@ -23,6 +23,7 @@ services:
       - "8080:80"
     environment:
       - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT=350M
 
   q_api:
     build: server/q_api
@@ -50,6 +51,8 @@ services:
         condition: service_healthy
     env_file:
       - ./.env
+    environment:
+      - PYTHONUNBUFFERED=1
 
   express-api:
     depends_on:

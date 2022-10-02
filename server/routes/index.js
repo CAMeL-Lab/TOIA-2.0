@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const onboardingQuestions = require("../configs/onboarding-questions.json");
 
 const cors = require("cors");
 const multiparty = require("multiparty");
@@ -19,7 +20,7 @@ const {
     saveSuggestedQuestion,
     updateSuggestedQuestion,
     getStreamInfo, getStreamTotalVideosCount, getUserTotalVideosCount, getUserTotalVideoDuration, searchRecorded,
-    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams, getVideoDetails
+    searchSuggestion, savePlayerFeedback, saveConversationLog, canAccessStream, saveAdaSearch, getAdaSearch, getAccessibleStreams, getVideoDetails, getExactMatchVideo
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -594,7 +595,7 @@ router.post('/getVideoPlayback', cors(), (req, res) => {
     });
 });
 
-router.post('/fillerVideo', cors(), (req, res) => {
+router.post('/fillerVideo', cors(), (req, res) => { 
     let query_getFiller = `SELECT * FROM questions 
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id
                             INNER JOIN video ON video.id_video = videos_questions_streams.id_video
@@ -637,57 +638,76 @@ router.post('/fillerVideo', cors(), (req, res) => {
     });
 });
 
-router.post('/player', cors(), (req, res) => {
-    // TODO: Review DM API calls
-    axios.post(`${process.env.DM_ROUTE}`, {
-        params: {
-            query: req.body.params.question.current,
-            avatar_id: req.body.params.toiaIDToTalk,
-            stream_id: req.body.params.streamIdToTalk
+router.post('/player', cors(), async (req, res) => {
+    const question = req.body.params.question.current;
+    const stream_id = req.body.params.streamIdToTalk;
+    const avatar_id = req.body.params.toiaIDToTalk;
+
+    const exactMatch = await getExactMatchVideo(stream_id, question);
+
+    let videoDetails;
+    if (exactMatch === null) {
+        try {
+            videoDetails = await axios.post(`${process.env.DM_ROUTE}`, {
+                params: {
+                    query: question,
+                    avatar_id: avatar_id,
+                    stream_id: stream_id,
+                },
+            });
+        } catch (err){
+            res.send("error");
+            console.log(err)
+            return;
         }
-
-    }).then(async (videoDetails) => {
-
-        const config = {
-            action: 'read',
-            expires: '07-14-2025',
-        };
-
-        const player_video_id = videoDetails.data.id_video;
-        const videoInfo = await getVideoDetails(player_video_id);
-
-        if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
-            let interactor_id = req.body.params.interactor_id || null;
-            await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id);
-        }
-
-        if (process.env.ENVIRONMENT === "development") {
-            if (videoDetails.data.id_video === "204") {
-                res.send("error")
-                return;
+    } else {
+        videoDetails = {
+            data: {
+                ada_similarity_score: null,
+                id_video: exactMatch["id_video"],
+                answer: exactMatch["answer"]
             }
+        }
+    }
+
+    const ada_similarity_score = videoDetails.data.ada_similarity_score;
+
+    const config = {
+        action: 'read',
+        expires: '07-14-2025',
+    };
+
+    const player_video_id = videoDetails.data.id_video;
+    const videoInfo = await getVideoDetails(player_video_id);
+
+    if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
+        let interactor_id = req.body.params.interactor_id || null;
+        await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id, ada_similarity_score);
+    }
+
+    if (process.env.ENVIRONMENT === "development") {
+        if (videoDetails.data.id_video === "204") {
+            res.send("error")
+            return;
+        }
+        res.send({
+            url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
+            answer: videoDetails.data.answer,
+            duration_seconds: videoInfo.duration_seconds
+        });
+        return;
+    }
+
+    videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`).getSignedUrl(config, function (err, url) {
+        if (err) {
+            console.error(err);
+        } else {
             res.send({
-                url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
+                url,
                 answer: videoDetails.data.answer,
                 duration_seconds: videoInfo.duration_seconds
             });
-            return;
         }
-
-        videoStore.file(`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`).getSignedUrl(config, function (err, url) {
-            if (err) {
-                console.error(err);
-            } else {
-                res.send({
-                    url,
-                    answer: videoDetails.data.answer,
-                    duration_seconds: videoInfo.duration_seconds
-                });
-            }
-        });
-    }).catch((err) => {
-        res.send("error");
-        console.log(err)
     });
 });
 
@@ -911,36 +931,30 @@ router.post('/recorder', cors(), async (req, res) => {
 router.post('/getSmartQuestions', (req,res)=>{
 
     const avatar_id = req.body.params.avatar_id;
+    const stream_id = req.body.params.stream_id;
 
     // If it is the beginning of the conversation, then return 'dumb' question suggestions
     if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
     {
-        isValidUser(avatar_id)
-        .then(
-            () => {
-                let query = `SELECT questions.question FROM questions 
-                            INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
-                            WHERE videos_questions_streams.id_video IN (SELECT id_video FROM video WHERE toia_id = ?)
-                            AND questions.suggested_type IN ("answer", "y/n-answer")
-                            ORDER BY questions.id ASC
-                            LIMIT 5`;
-                connection.query(query, [avatar_id], (err, entries) => {
-                    if (err) throw err;
-                    let result = entries.map(object=>object.question);
-                    res.send(result);
-                })
-            },
-            (reject) => {
-                if (reject === false) console.log("Provided avatar_id doesn't exist");
-                res.sendStatus(404);
+        let query = `SELECT questions.question FROM questions 
+                    INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+                    INNER JOIN video ON video.id_video = videos_questions_streams.id_video
+                    WHERE videos_questions_streams.id_stream = ?
+                    AND questions.suggested_type IN ("answer", "y/n-answer")
+                    AND questions.id NOT IN (19, 20)
+                    ORDER BY questions.id ASC
+                    LIMIT 5`;
+
+        connection.query(query, [stream_id], (err, entries) => {
+            if (err) throw err;
+            const result = entries.map(question_object => ({question: question_object.question}));
+            res.send(result);
         });
         return;
     }
 
-    console.log("Continuing....");
-
-
-
+    // Actual smart question generation
+    // Using GPT-3 in the q_api
     const options = {
         method: 'POST',
         url: `${process.env.SMARTQ_ROUTE}`,
@@ -951,16 +965,18 @@ router.post('/getSmartQuestions', (req,res)=>{
             n_suggestions: 5,
             avatar_id: avatar_id,
             stream_id: req.body.params.stream_id,
-        }
+        },
+    timeout: 20000,
     };
-
     axios.request(options)
     .then((response)=>{
         console.log("==========Question Suggested=========");
         // console.log(response2);
         console.log(response.data.suggestions);
         console.log("=====================================");
-        res.send(response.data.suggestions);
+        const data = JSON.parse(response.data.suggestions);
+        const result = data.map(question_string => ({question: question_string}));
+        res.send(result);
     })
     .catch(function (error) {
         console.log("=============== Error with Q_API ============")
@@ -1198,6 +1214,31 @@ router.get('/questions/answered/:user_id/:stream_id', (req, res) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
     })
+});
+
+// Special route to get questions that have well-formed questions
+// Filter questions that are of type "answer" and "y/n-answer"
+// E.g.:
+// -- How are you today?
+// -- Do you have siblings?
+// -- Tell me about X.
+router.get('/questions/answered_filtered/:user_id/:stream_id', (req, res) => {
+    const user_id = req.params.user_id;
+    const stream_id = req.params.stream_id;
+    isValidUser(user_id).then(() => {
+        let query = `SELECT DISTINCT questions.question FROM questions 
+        INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
+        WHERE videos_questions_streams.id_stream = ?
+        AND questions.id NOT IN (19, 20) 
+        AND questions.suggested_type IN ("answer", "y/n-answer");`;
+        connection.query(query, [stream_id], (err, entries) => {
+            if (err) throw err;
+            res.send(entries);
+        })
+    }, (reject) => {
+        if (reject === false) console.log("Provided user id doesn't exist");
+        res.sendStatus(404);
+    })
 })
 
 router.get('/videos/:user_id/', async (req, res) => {
@@ -1305,6 +1346,8 @@ router.post('/save_player_feedback', cors(), async (req, res) => {
     let question = req.body.question.toString() || null;
     let rating = req.body.rating || null;
     let userValid = false;
+
+    console.log(video_id, question, rating)
 
     if (video_id != null && question != null && rating !=null){
         try {
