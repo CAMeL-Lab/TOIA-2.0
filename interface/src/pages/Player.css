@@ -169,6 +169,16 @@
   top: 86%;
 }
 
+.card-overview{
+  transition: background 1s !important;
+}
+
+.card-waiting-true{
+  background: #D7F5FF !important; 
+  box-shadow: 0px 4px 4px rgba(46,122,210,0.25) !important;
+  border-radius: 5px !important;
+}
+
 .card-width-control{
   max-height: 30%;
   min-height: 24%;
