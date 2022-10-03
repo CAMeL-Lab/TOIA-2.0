@@ -26,13 +26,6 @@ function Player() {
 		}
 	}
 
-	const commands = [
-		{
-			command: "*",
-			callback: fetchData,
-		},
-	];
-
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
 	const [interactionLanguage, setInteractionLanguage] = useState(null);
@@ -125,7 +118,7 @@ function Player() {
 			if (event.code === "Enter" || event.code === "NumpadEnter") {
 				event.preventDefault();
 
-				submitResponse();
+				submitResponse(event, "SEARCH");
 			}
 		};
 		document.addEventListener("keydown", listener);
@@ -183,6 +176,8 @@ function Player() {
 			return;
 		}
 
+		const mode = "CARD";
+
 		const oldQuestion = question;
 		console.log(oldQuestion);
 		axios
@@ -199,6 +194,7 @@ function Player() {
 					...(history.location.state.toiaID && {
 						interactor_id: history.location.state.toiaID,
 					}),
+					mode: mode
 				},
 			})
 			.then((res) => {
@@ -248,7 +244,7 @@ function Player() {
 				setHasRated(false);
 
 				speechToTextUtils.stopRecording();
-				fetchData();
+				fetchData("VOICE");
 			}
 		} else {
 			console.log("no data received from server");
@@ -384,7 +380,7 @@ function Player() {
 		}
 	};
 
-	function fetchData() {
+	function fetchData(mode="UNKNOWN") {
 		if (!hasRated){
 			NotificationManager.warning("Please provide a rating", "", 3000);
 			return;
@@ -409,6 +405,7 @@ function Player() {
 						...(history.location.state.toiaID && {
 							interactor_id: history.location.state.toiaID,
 						}),
+						mode: mode
 					},
 				})
 				.then((res) => {
@@ -542,7 +539,7 @@ function Player() {
 		interimTextInput.current = textInput.current;
 	}
 
-	function submitResponse(e) {
+	function submitResponse(e, mode="UNKNOWN") {
 		if (!hasRated){
 			NotificationManager.warning("Please provide a rating", "", 3000);
 			return;
@@ -568,6 +565,7 @@ function Player() {
 						...(history.location.state.toiaID && {
 							interactor_id: history.location.state.toiaID,
 						}),
+						mode: mode
 					},
 				})
 				.then((res) => {
@@ -916,7 +914,9 @@ function Player() {
 							<button
 								color="green"
 								className="ui linkedin button submit-button"
-								onClick={submitResponse}
+								onClick={(e) => {
+									submitResponse(e, "SEARCH");
+								}}
 							>
 								<i aria-hidden="true" class="send icon"></i>ASK
 							</button>
