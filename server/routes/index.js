@@ -679,10 +679,11 @@ router.post('/player', cors(), async (req, res) => {
 
     const player_video_id = videoDetails.data.id_video;
     const videoInfo = await getVideoDetails(player_video_id);
+    const conversation_mode = req.body.params.mode || null;
 
     if (req.body.params.record_log && req.body.params.record_log === "true" && player_video_id !== "204") {
         let interactor_id = req.body.params.interactor_id || null;
-        await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id, ada_similarity_score);
+        await saveConversationLog(interactor_id, req.body.params.toiaIDToTalk, false, req.body.params.question.current, player_video_id, ada_similarity_score, conversation_mode);
     }
 
     if (process.env.ENVIRONMENT === "development") {
@@ -693,7 +694,8 @@ router.post('/player', cors(), async (req, res) => {
         res.send({
             url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
             answer: videoDetails.data.answer,
-            duration_seconds: videoInfo.duration_seconds
+            duration_seconds: videoInfo.duration_seconds,
+            video_id: player_video_id
         });
         return;
     }
@@ -705,7 +707,8 @@ router.post('/player', cors(), async (req, res) => {
             res.send({
                 url,
                 answer: videoDetails.data.answer,
-                duration_seconds: videoInfo.duration_seconds
+                duration_seconds: videoInfo.duration_seconds,
+                video_id: player_video_id
             });
         }
     });

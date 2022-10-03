@@ -139,10 +139,15 @@
   color: #49769c;
 }
 
+.cards-suggestion-header{
+  position: absolute;
+  left: 75.5%;
+}
+
 .card-1{
   position: absolute;
   left: 75.5%;
-  top: -2%;
+  top: 3%;
 }
 
 .card-2{
