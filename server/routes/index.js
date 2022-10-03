@@ -693,7 +693,8 @@ router.post('/player', cors(), async (req, res) => {
         res.send({
             url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
             answer: videoDetails.data.answer,
-            duration_seconds: videoInfo.duration_seconds
+            duration_seconds: videoInfo.duration_seconds,
+            video_id: player_video_id
         });
         return;
     }
@@ -705,7 +706,8 @@ router.post('/player', cors(), async (req, res) => {
             res.send({
                 url,
                 answer: videoDetails.data.answer,
-                duration_seconds: videoInfo.duration_seconds
+                duration_seconds: videoInfo.duration_seconds,
+                video_id: player_video_id
             });
         }
     });
