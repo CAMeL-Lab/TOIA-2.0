@@ -105,6 +105,18 @@ services:
       MB_DB_FILE: /data/metabase
       MB_DB_INIT_SQL_FILE: /data/metabase.db.sql
       MB_DB_SAVE_TO_SQL_FILE: /data/metabase.db.sql
+  
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
 
 volumes:
   mysql-vol:
