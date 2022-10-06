@@ -595,13 +595,20 @@ router.post('/getVideoPlayback', cors(), (req, res) => {
     });
 });
 
-router.post('/fillerVideo', cors(), (req, res) => { 
+router.post('/fillerVideo', cors(), (req, res) => {
+    const streamID = req.body.params.streamIdToTalk || null;
+
+    if (!streamID) {
+        res.sendStatus(417);
+        return;
+    }
+
     let query_getFiller = `SELECT * FROM questions 
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id
                             INNER JOIN video ON video.id_video = videos_questions_streams.id_video
-                            WHERE video.toia_id = ? AND videos_questions_streams.type = ?`
+                            WHERE videos_questions_streams.type = ? AND videos_questions_streams.id_stream = ?`
 
-    connection.query(query_getFiller, [req.body.params.toiaIDToTalk, "filler"], async (err, entries) => {
+    connection.query(query_getFiller, ["filler", streamID], async (err, entries) => {
         if (err) {
             throw err;
         } else {
