@@ -482,7 +482,7 @@ function Player() {
 				.post(`/api/fillerVideo`, {
 					params: {
 						toiaIDToTalk: history.location.state.toiaToTalk,
-
+						streamIdToTalk: history.location.state.streamToTalk,
 						toiaFirstNameToTalk:
 							history.location.state.toiaFirstNameToTalk,
 						record_log: "true",
