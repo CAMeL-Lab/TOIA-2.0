@@ -1,11 +1,15 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const cssDir = 'build/static/css/';
+const cssDir = "build/static/css/";
 
 const fileNames = fs.readdirSync(cssDir);
 
-const cssNames = fileNames.filter((name) => {return name.slice(-3) === "css"})
-const mapNames = fileNames.filter((name) => {return name.slice(-3) === "map"})
+const cssNames = fileNames.filter(name => {
+	return name.slice(-3) === "css";
+});
+const mapNames = fileNames.filter(name => {
+	return name.slice(-3) === "map";
+});
 
 console.assert(cssNames.length === 2);
 console.assert(mapNames.length === 2);

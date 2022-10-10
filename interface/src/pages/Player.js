@@ -1,11 +1,13 @@
-
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import {
+	CSSTransition,
+	TransitionGroup,
+} from "react-transition-group";
 import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
@@ -27,22 +29,32 @@ function Player() {
 	}
 
 	const [toiaName, setName] = React.useState(null);
-	const [toiaLanguage, setLanguage] = React.useState(null);
+	const [toiaLanguage, setLanguage] =
+		React.useState(null);
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
-	const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] = useState(null);
-	const [toiaLastNameToTalk, setTOIALastNameToTalk] = useState(null);
-	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
-	const [fillerPlaying, setFillerPlaying] = useState(true);
+	const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] =
+		useState(null);
+	const [toiaLastNameToTalk, setTOIALastNameToTalk] =
+		useState(null);
+	const [streamNameToTalk, setStreamNameToTalk] =
+		useState(null);
+	const [fillerPlaying, setFillerPlaying] =
+		useState(true);
 
-	const [answeredQuestions, setAnsweredQuestions] = useState([]);
+	const [answeredQuestions, setAnsweredQuestions] =
+		useState([]);
 	let allSuggestedQuestions = [];
 
-	const [videoProperties, setVideoProperties] = useState(null);
+	const [videoProperties, setVideoProperties] =
+		useState(null);
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
-	const [transcribedAudio, setTranscribedAudio] = useState("");
-	const [ratingParams, setRatingParams] = useState({active: false});
+	const [transcribedAudio, setTranscribedAudio] =
+		useState("");
+	const [ratingParams, setRatingParams] = useState({
+		active: false,
+	});
 
 	// suggested questions for cards
 
@@ -57,17 +69,21 @@ function Player() {
 
 	var input1, input2;
 	let [micMute, setMicStatus] = React.useState(true);
-	let [micString, setMicString] = React.useState("ASK BY VOICE");
+	let [micString, setMicString] =
+		React.useState("ASK BY VOICE");
 
 	useEffect(() => {
 		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
 		if (
 			history.location.state === undefined ||
 			history.location.state.toiaName === undefined ||
-			history.location.state.toiaLanguage === undefined ||
+			history.location.state.toiaLanguage ===
+				undefined ||
 			history.location.state.toiaID === undefined
 		) {
-			alert("You must be logged in to access this page");
+			alert(
+				"You must be logged in to access this page",
+			);
 			history.push({
 				pathname: "/",
 			});
@@ -80,12 +96,20 @@ function Player() {
 			setLoginState(true);
 			setTOIAid(history.location.state.toiaID);
 			setName(history.location.state.toiaName);
-			setLanguage(history.location.state.toiaLanguage);
+			setLanguage(
+				history.location.state.toiaLanguage,
+			);
 		}
 
-		setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
-		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
-		setStreamNameToTalk(history.location.state.streamNameToTalk);
+		setTOIAFirstNameToTalk(
+			history.location.state.toiaFirstNameToTalk,
+		);
+		setTOIALastNameToTalk(
+			history.location.state.toiaLastNameToTalk,
+		);
+		setStreamNameToTalk(
+			history.location.state.streamNameToTalk,
+		);
 
 		canAccessStream();
 
@@ -97,10 +121,12 @@ function Player() {
 		new Tracker().startTracking(history.location.state);
 	}, []);
 
-
 	useEffect(() => {
-		const listener = (event) => {
-			if (event.code === "Enter" || event.code === "NumpadEnter") {
+		const listener = event => {
+			if (
+				event.code === "Enter" ||
+				event.code === "NumpadEnter"
+			) {
 				event.preventDefault();
 
 				submitResponse(event, "SEARCH");
@@ -108,11 +134,17 @@ function Player() {
 		};
 		document.addEventListener("keydown", listener);
 		return () => {
-			document.removeEventListener("keydown", listener);
+			document.removeEventListener(
+				"keydown",
+				listener,
+			);
 		};
 	}, []);
 
-	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
+	const [state, dispatch] = React.useReducer(
+		exampleReducer,
+		{ open: false },
+	);
 	const { open } = state;
 
 	function openModal(e) {
@@ -134,7 +166,6 @@ function Player() {
 		}
 	}
 
-
 	function canAccessStream() {
 		let toiaID = history.location.state.toiaID;
 		let streamID = history.location.state.streamToTalk;
@@ -150,14 +181,20 @@ function Player() {
 			.request(options)
 			.then(function (response) {})
 			.catch(function (error) {
-				alert("You do not have permission to access this page");
+				alert(
+					"You do not have permission to access this page",
+				);
 				library();
 			});
 	}
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
-		if (!hasRated){
-			NotificationManager.warning("Please provide a rating", "", 3000);
+		if (!hasRated) {
+			NotificationManager.warning(
+				"Please provide a rating",
+				"",
+				3000,
+			);
 			return;
 		}
 
@@ -167,20 +204,25 @@ function Player() {
 		axios
 			.post(`/api/player`, {
 				params: {
-					toiaIDToTalk: history.location.state.toiaToTalk,
-					toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
+					toiaIDToTalk:
+						history.location.state.toiaToTalk,
+					toiaFirstNameToTalk:
+						history.location.state
+							.toiaFirstNameToTalk,
 					question: {
 						current: oldQuestion.question,
 					},
-					streamIdToTalk: history.location.state.streamToTalk,
+					streamIdToTalk:
+						history.location.state.streamToTalk,
 					record_log: "true",
 					...(history.location.state.toiaID && {
-						interactor_id: history.location.state.toiaID,
+						interactor_id:
+							history.location.state.toiaID,
 					}),
-					mode: mode
+					mode: mode,
 				},
 			})
-			.then((res) => {
+			.then(res => {
 				if (res.data === "error") {
 					setFillerPlaying(true);
 					console.log("error");
@@ -194,21 +236,27 @@ function Player() {
 						onEnded: () => {
 							setRatingParams({
 								video_id: res.data.video_id,
-								question: oldQuestion.question
-							})
+								question:
+									oldQuestion.question,
+							});
 							setHasRated(false);
-							fetchFiller()
+							fetchFiller();
 						},
 						source: res.data.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
-						duration_seconds: res.data.duration_seconds || null,
+						duration_seconds:
+							res.data.duration_seconds ||
+							null,
 						question: oldQuestion.question,
-						video_id: res.data.video_id
+						video_id: res.data.video_id,
 					});
 
-					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
+					fetchAnsweredQuestions(
+						oldQuestion.question,
+						res.data.answer || "",
+					);
 					setTranscribedAudio("");
 				}
 			});
@@ -219,9 +267,12 @@ function Player() {
 	function handleDataReceived(data) {
 		// setting the transcribedAudio
 		if (data) {
-			setTranscribedAudio(data.alternatives[0].transcript);
+			setTranscribedAudio(
+				data.alternatives[0].transcript,
+			);
 			if (data.isFinal) {
-				question.current = data.alternatives[0].transcript;
+				question.current =
+					data.alternatives[0].transcript;
 
 				speechToTextUtils.stopRecording();
 				fetchData("VOICE");
@@ -233,45 +284,62 @@ function Player() {
 
 	// Sets the value of 'allQuestions' array
 	// to be the string list of all questions of the stream
-	function fetchAllStreamQuestions(){
-		axios.get(`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`)
-		.then((res)=>{
-			allQuestions.current = res.data || [];
-		});
+	function fetchAllStreamQuestions() {
+		axios
+			.get(
+				`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`,
+			)
+			.then(res => {
+				allQuestions.current = res.data || [];
+			});
 	}
 	// function to fetch answered smart questions from the database
 	// question: the last question asked by the user
 	// answer: the answer given by the avatar
-	function fetchAnsweredQuestions(question="", answer="") {
-		axios.post('/api/getSmartQuestions', {
-			params: {
-				toiaIDToTalk: history.location.state.toiaToTalk,
-				toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
-				avatar_id: history.location.state.toiaToTalk,
-				stream_id: history.location.state.streamToTalk,
-				latest_question: question,
-				latest_answer: answer
-			}
-		}).then((res)=>{
-			// res.data contains the smart questions generated
-			// If res.data is not an array, then there is an error, so stop.
-			if (res.data.constructor !== Array){
-				return;
-			}
-			
-			res.data.forEach((q) => {
-
-				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
-				// then add it to the list of possible suggestions
-				if (q.question != '' && !allSuggestedQuestions.includes(q)){
-					answeredQuestions.push(q);
-					allSuggestedQuestions.push(q);
+	function fetchAnsweredQuestions(
+		question = "",
+		answer = "",
+	) {
+		axios
+			.post("/api/getSmartQuestions", {
+				params: {
+					toiaIDToTalk:
+						history.location.state.toiaToTalk,
+					toiaFirstNameToTalk:
+						history.location.state
+							.toiaFirstNameToTalk,
+					avatar_id:
+						history.location.state.toiaToTalk,
+					stream_id:
+						history.location.state.streamToTalk,
+					latest_question: question,
+					latest_answer: answer,
+				},
+			})
+			.then(res => {
+				// res.data contains the smart questions generated
+				// If res.data is not an array, then there is an error, so stop.
+				if (res.data.constructor !== Array) {
+					return;
 				}
-			});
 
-			shouldRefreshQuestions.current = true;
-			setAnsweredQuestions([...answeredQuestions]);
-		});
+				res.data.forEach(q => {
+					// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
+					// then add it to the list of possible suggestions
+					if (
+						q.question != "" &&
+						!allSuggestedQuestions.includes(q)
+					) {
+						answeredQuestions.push(q);
+						allSuggestedQuestions.push(q);
+					}
+				});
+
+				shouldRefreshQuestions.current = true;
+				setAnsweredQuestions([
+					...answeredQuestions,
+				]);
+			});
 	}
 
 	function textInputChange(val) {
@@ -283,15 +351,20 @@ function Player() {
 	}
 
 	useEffect(() => {
-		if (hasRated){
-			if (interacting.current == "true"){
-				speechToTextUtils.initRecording(handleDataReceived, (error) => {
-					console.error("Error when transcribing", error);
-				});
+		if (hasRated) {
+			if (interacting.current == "true") {
+				speechToTextUtils.initRecording(
+					handleDataReceived,
+					error => {
+						console.error(
+							"Error when transcribing",
+							error,
+						);
+					},
+				);
 			}
-	  	}
-	}, [hasRated])
-	
+		}
+	}, [hasRated]);
 
 	const recordUserRating = function (ratingValue) {
 		const options = {
@@ -316,54 +389,73 @@ function Player() {
 			})
 			.catch(function (error) {
 				console.error(error);
-			}).finally(() => {
-				setHasRated(true);
 			})
+			.finally(() => {
+				setHasRated(true);
+			});
 	};
 
-	function fetchData(mode="UNKNOWN") {
-		if (!hasRated){
-			NotificationManager.warning("Please provide a rating", "", 3000);
+	function fetchData(mode = "UNKNOWN") {
+		if (!hasRated) {
+			NotificationManager.warning(
+				"Please provide a rating",
+				"",
+				3000,
+			);
 			return;
 		}
 
-
 		const oldQuestion = question.current;
-		if (question.current == null || question.current == "") {
+		if (
+			question.current == null ||
+			question.current == ""
+		) {
 			setFillerPlaying(true);
 			fetchFiller();
 		} else {
 			axios
 				.post(`/api/player`, {
 					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
+						toiaIDToTalk:
+							history.location.state
+								.toiaToTalk,
 
 						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
+							history.location.state
+								.toiaFirstNameToTalk,
 						question,
-						streamIdToTalk: history.location.state.streamToTalk,
+						streamIdToTalk:
+							history.location.state
+								.streamToTalk,
 						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
+						...(history.location.state
+							.toiaID && {
+							interactor_id:
+								history.location.state
+									.toiaID,
 						}),
-						mode: mode
+						mode: mode,
 					},
 				})
-				.then((res) => {
+				.then(res => {
 					if (res.data === "error") {
 						setFillerPlaying(true);
 					} else {
 						setFillerPlaying(true);
 
 						isFillerPlaying.current = "false";
-						fetchAnsweredQuestions(oldQuestion, res.data.answer);
+						fetchAnsweredQuestions(
+							oldQuestion,
+							res.data.answer,
+						);
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded:  () => {
+							onEnded: () => {
 								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion
-								})
+									video_id:
+										res.data.video_id,
+									question: oldQuestion,
+								});
 								setHasRated(false);
 								fetchFiller();
 							},
@@ -371,16 +463,19 @@ function Player() {
 							fetchFiller: fetchFiller,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
+							duration_seconds:
+								res.data.duration_seconds ||
+								null,
 							question: question.current,
-							video_id: res.data.video_id
+							video_id: res.data.video_id,
 						});
 
 						setTranscribedAudio("");
 					}
-				}).catch((e) => {
-					console.error(e);
 				})
+				.catch(e => {
+					console.error(e);
+				});
 		}
 	}
 
@@ -396,16 +491,21 @@ function Player() {
 			interacting.current = "true";
 
 			if (hasRated) {
-				speechToTextUtils.initRecording(handleDataReceived, (error) => {
-					console.error("Error when transcribing", error);
-					// No further action needed, as stream already closes itself on error
-				});
+				speechToTextUtils.initRecording(
+					handleDataReceived,
+					error => {
+						console.error(
+							"Error when transcribing",
+							error,
+						);
+						// No further action needed, as stream already closes itself on error
+					},
+				);
 			} else {
-
 				NotificationManager.warning(
 					"Please provide a rating",
 					"",
-					3000
+					3000,
 				);
 			}
 		} else {
@@ -423,43 +523,49 @@ function Player() {
 			axios
 				.post(`/api/fillerVideo`, {
 					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
-						streamIdToTalk: history.location.state.streamToTalk,
+						toiaIDToTalk:
+							history.location.state
+								.toiaToTalk,
+						streamIdToTalk:
+							history.location.state
+								.streamToTalk,
 						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
+							history.location.state
+								.toiaFirstNameToTalk,
 						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
+						...(history.location.state
+							.toiaID && {
+							interactor_id:
+								history.location.state
+									.toiaID,
 						}),
 					},
 				})
-				.then(async (res) => {
-
+				.then(async res => {
 					setVideoProperties({
 						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded:fetchFiller,
+						onEnded: fetchFiller,
 						source: res.data,
 						muted: true,
 						filler: true,
-						duration_seconds: null
+						duration_seconds: null,
 					});
 
-
-					document.getElementById("vidmain").load();
+					document
+						.getElementById("vidmain")
+						.load();
 					const playPromise = document
 						.getElementById("vidmain")
 						.play();
 					if (playPromise !== undefined) {
 						playPromise
-							.then((_) => {
+							.then(_ => {
 								// Automatic playback started!
 								// Show playing UI.
-
 							})
-							.catch((error) => {
+							.catch(error => {
 								// Auto-play was prevented
 								// Show paused UI.
-
 
 								fetchFiller();
 							});
@@ -468,7 +574,7 @@ function Player() {
 		}
 	}
 
-	function setRefreshQuestionsFalse(){
+	function setRefreshQuestionsFalse() {
 		shouldRefreshQuestions.current = false;
 	}
 
@@ -477,12 +583,15 @@ function Player() {
 		interimTextInput.current = textInput.current;
 	}
 
-	function submitResponse(e, mode="UNKNOWN") {
-		if (!hasRated){
-			NotificationManager.warning("Please provide a rating", "", 3000);
+	function submitResponse(e, mode = "UNKNOWN") {
+		if (!hasRated) {
+			NotificationManager.warning(
+				"Please provide a rating",
+				"",
+				3000,
+			);
 			return;
 		}
-
 
 		question.current = textInput.current
 			? textInput.current
@@ -493,49 +602,63 @@ function Player() {
 			axios
 				.post(`/api/player`, {
 					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
+						toiaIDToTalk:
+							history.location.state
+								.toiaToTalk,
 						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
+							history.location.state
+								.toiaFirstNameToTalk,
 						question,
-						streamIdToTalk: history.location.state.streamToTalk,
+						streamIdToTalk:
+							history.location.state
+								.streamToTalk,
 						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
+						...(history.location.state
+							.toiaID && {
+							interactor_id:
+								history.location.state
+									.toiaID,
 						}),
-						mode: mode
+						mode: mode,
 					},
 				})
-				.then((res) => {
+				.then(res => {
 					setFillerPlaying(true);
 					if (res.data !== "error") {
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded:  () => {
+							onEnded: () => {
 								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion
-								})
+									video_id:
+										res.data.video_id,
+									question: oldQuestion,
+								});
 								setHasRated(false);
-								fetchFiller()
+								fetchFiller();
 							},
 							source: res.data.url,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
+							duration_seconds:
+								res.data.duration_seconds ||
+								null,
 							question: question.current,
-							video_id: res.data.video_id
+							video_id: res.data.video_id,
 						});
 
-						fetchAnsweredQuestions(oldQuestion, res.data.answer);
+						fetchAnsweredQuestions(
+							oldQuestion,
+							res.data.answer,
+						);
 						setTranscribedAudio("");
 						question.current = "";
 					}
 				})
-				.catch((e) => {
+				.catch(e => {
 					console.error(e);
-				})
+				});
 		}
 	}
 
@@ -547,12 +670,16 @@ function Player() {
 			pwd: input2,
 		};
 
-		axios.post(`/api/login`, params).then((res) => {
+		axios.post(`/api/login`, params).then(res => {
 			if (res.data == -1) {
 				//alert('Email not found');
-				NotificationManager.error("Incorrect e-mail address.");
+				NotificationManager.error(
+					"Incorrect e-mail address.",
+				);
 			} else if (res.data == -2) {
-				NotificationManager.error("Incorrect password.");
+				NotificationManager.error(
+					"Incorrect password.",
+				);
 			} else {
 				history.push({
 					pathname: "/mytoia",
@@ -608,8 +735,10 @@ function Player() {
 			history.push({
 				pathname: "/library",
 				state: {
-					toiaName: history.location.state.toiaName,
-					toiaLanguage: history.location.state.toiaLanguage,
+					toiaName:
+						history.location.state.toiaName,
+					toiaLanguage:
+						history.location.state.toiaLanguage,
 					toiaID: history.location.state.toiaID,
 				},
 			});
@@ -671,13 +800,16 @@ function Player() {
 						Welcome Back
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Enter the following information to login to your TOIA
-						account
+						Enter the following information to
+						login to your TOIA account
 					</p>
 				</Modal.Header>
 
 				<Modal.Content>
-					<form className="login_popup" onSubmit={submitHandler}>
+					<form
+						className="login_popup"
+						onSubmit={submitHandler}
+					>
 						<input
 							className="login_email login-font-class-1"
 							placeholder={"Email"}
@@ -710,8 +842,10 @@ function Player() {
 				</Modal.Content>
 			</Modal>
 			<div className="nav-heading-bar">
-				{(!hasRated) && (
-					<PopModal userRating={recordUserRating} />
+				{!hasRated && (
+					<PopModal
+						userRating={recordUserRating}
+					/>
 				)}
 
 				<div
@@ -739,7 +873,9 @@ function Player() {
 					My TOIA
 				</div>
 				<div
-					onClick={isLoggedIn ? logout : openModal}
+					onClick={
+						isLoggedIn ? logout : openModal
+					}
 					className="nav-login_icon app-monsterrat-black"
 				>
 					{isLoggedIn ? "Logout" : "Login"}
@@ -747,7 +883,8 @@ function Player() {
 			</div>
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
-					{toiaFirstNameToTalk} {toiaLastNameToTalk}
+					{toiaFirstNameToTalk}{" "}
+					{toiaLastNameToTalk}
 				</h1>
 				<p className="player-lang player-font-class-2 ">
 					{streamNameToTalk}
@@ -760,16 +897,24 @@ function Player() {
 							classNames="fade"
 						>
 							<VideoPlaybackPlayer
-								onEnded={videoProperties.onEnded}
+								onEnded={
+									videoProperties.onEnded
+								}
 								key={videoProperties.key}
 								muted={
 									videoProperties.muted
 										? videoProperties.muted
 										: false
 								}
-								source={videoProperties.source}
-								filler={videoProperties.filler}
-								duration_seconds={videoProperties.duration_seconds}
+								source={
+									videoProperties.source
+								}
+								filler={
+									videoProperties.filler
+								}
+								duration_seconds={
+									videoProperties.duration_seconds
+								}
 							/>
 						</CSSTransition>
 					</TransitionGroup>
@@ -822,30 +967,53 @@ function Player() {
 						<>
 							{micMute && (
 								<SuggestiveSearch
-									handleTextChange={textChange}
-									handleTextInputChange={textInputChange}
+									handleTextChange={
+										textChange
+									}
+									handleTextInputChange={
+										textInputChange
+									}
 									// questions={latestSuggestedQuestions}
-									questions={allQuestions.current}
+									questions={
+										allQuestions.current
+									}
 								/>
 							)}
 
 							<SuggestionCard
-								questions={answeredQuestions}
-								askQuestion={askQuestionFromCard}
-								shouldRefreshQuestions = {shouldRefreshQuestions}
-								setRefreshQuestionsFalse = {setRefreshQuestionsFalse}
-								hasRated = {hasRated}
-								notificationManager = {NotificationManager}
+								questions={
+									answeredQuestions
+								}
+								askQuestion={
+									askQuestionFromCard
+								}
+								shouldRefreshQuestions={
+									shouldRefreshQuestions
+								}
+								setRefreshQuestionsFalse={
+									setRefreshQuestionsFalse
+								}
+								hasRated={hasRated}
+								notificationManager={
+									NotificationManager
+								}
 							/>
 
 							<button
 								color="green"
 								className="ui linkedin button submit-button"
-								onClick={(e) => {
-									submitResponse(e, "SEARCH");
+								onClick={e => {
+									submitResponse(
+										e,
+										"SEARCH",
+									);
 								}}
 							>
-								<i aria-hidden="true" class="send icon"></i>ASK
+								<i
+									aria-hidden="true"
+									class="send icon"
+								></i>
+								ASK
 							</button>
 						</>
 					) : (
