@@ -3,24 +3,27 @@ import "./popModal.css";
 import RatingWords from "./ratingWords";
 
 function PopModal({ userRating }) {
-    return (
-        <div className="modalBackground">
-            <div className="modalContainer">
-                <div className="title">
-                    <h2>
-                        How well does this answer fit with your question or the
-                        conversation you're having with the avatar?
-                    </h2>
-                </div>
+	return (
+		<div className="modalBackground">
+			<div className="modalContainer">
+				<div className="title">
+					<h2>
+						How well does this answer fit with
+						your question or the conversation
+						you're having with the avatar?
+					</h2>
+				</div>
 
-                <div className="body">
-                    <h3>
-                        <RatingWords recUserRating={userRating} />
-                    </h3>
-                </div>
-            </div>
-        </div>
-    );
+				<div className="body">
+					<h3>
+						<RatingWords
+							recUserRating={userRating}
+						/>
+					</h3>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default PopModal;

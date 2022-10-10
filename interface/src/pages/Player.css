@@ -1,218 +1,217 @@
 .player {
-  background-color: white;
-  height: 100%;
-  margin: 0px;
-  min-height: 700px;
-  min-width: 1440px;
-  position: relative;
-  width: 100%;
+	background-color: white;
+	height: 100%;
+	margin: 0px;
+	min-height: 700px;
+	min-width: 1440px;
+	position: relative;
+	width: 100%;
 }
 
 /*elements and icons*/
 .player-back_icon {
-  background-color: transparent;
-  height: 30px;
-  left: 2%;
-  top: 2%;
-  width: 30px;
-  position: absolute;
-  pointer-events: auto;
-  cursor: pointer;
+	background-color: transparent;
+	height: 30px;
+	left: 2%;
+	top: 2%;
+	width: 30px;
+	position: absolute;
+	pointer-events: auto;
+	cursor: pointer;
 }
 .player-group {
-  /* background-color: transparent;
+	/* background-color: transparent;
   height: 700px;
   left: 50px;
   position: absolute;
   top: 80px;
   width: 1180px; */
-  background-color: transparent;
-  height: 700px;
-  left: 40px;
-  position: absolute;
-  top: 80px;
-  width: 1200px;
+	background-color: transparent;
+	height: 700px;
+	left: 40px;
+	position: absolute;
+	top: 80px;
+	width: 1200px;
 }
 .player-vid {
-  background-color: transparent;
-  left: 1%;
-  position: absolute;
-  top: 5.5%;
-  width: 70%;
-  height: 69%;
-  border-radius: 5px;
+	background-color: transparent;
+	left: 1%;
+	position: absolute;
+	top: 5.5%;
+	width: 70%;
+	height: 69%;
+	border-radius: 5px;
 }
 
 /*text*/
 .player-name {
-  background-color: transparent;
-  height: 50px;
-  /* left: 21.5%; */
-  position: absolute;
-  text-align: center;
-  top: 0px;
-  /* left: 0.5%; */
-  width: 70%;
-  /* width: 100%; */
+	background-color: transparent;
+	height: 50px;
+	/* left: 21.5%; */
+	position: absolute;
+	text-align: center;
+	top: 0px;
+	/* left: 0.5%; */
+	width: 70%;
+	/* width: 100%; */
 }
 .player-lang {
-  background-color: transparent;
-  display: block;
-  height: 29px;
-  /* left: 36.5%; */
-  position: absolute;
-  text-align: center;
-  /* left: 2%; */
-  top: 7%;
-  width: 10%;
-  /* width: 100%; */
+	background-color: transparent;
+	display: block;
+	height: 29px;
+	/* left: 36.5%; */
+	position: absolute;
+	text-align: center;
+	/* left: 2%; */
+	top: 7%;
+	width: 10%;
+	/* width: 100%; */
 }
 
 /*fonts*/
 .player-font-class-2 {
-  color: black;
-  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-size: 17px;
-  font-style: normal;
-  font-weight: 500;
-  top: 8%;
-  left: 1%;
-  letter-spacing: -0.18px;
-  z-index: 9;
+	color: black;
+	font-family: "Montserrat-Medium", Helvetica, Arial,
+		serif;
+	font-size: 17px;
+	font-style: normal;
+	font-weight: 500;
+	top: 8%;
+	left: 1%;
+	letter-spacing: -0.18px;
+	z-index: 9;
 }
 .player-font-class-3 {
-  color: black;
-  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-size: 34px;
-  font-style: normal;
-  font-weight: 700;
-  top: -3%;
-  letter-spacing: -0.54px;
+	color: black;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+	font-size: 34px;
+	font-style: normal;
+	font-weight: 700;
+	top: -3%;
+	letter-spacing: -0.54px;
 }
 
 .player-font-class-4 {
-  color: black;
-  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: -0.54px;
+	color: black;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+	font-size: 32px;
+	font-style: normal;
+	font-weight: 600;
+	letter-spacing: -0.54px;
 }
-
 
 .mute-button {
-  position: absolute;
-  top: 80.4%;
-  left: 1%;
-  width: 70%;
-  height: 7%;
-  font-size: 1.5rem;
-  /* background-color: var(--check-green); */
+	position: absolute;
+	top: 80.4%;
+	left: 1%;
+	width: 70%;
+	height: 7%;
+	font-size: 1.5rem;
+	/* background-color: var(--check-green); */
 }
 
-.recording-button{
-  position: absolute;
-  top: 4%;
-  left: 15%;
-  width: 15%;
-  height: 7%;
-  font-size: 1.5rem;
+.recording-button {
+	position: absolute;
+	top: 4%;
+	left: 15%;
+	width: 15%;
+	height: 7%;
+	font-size: 1.5rem;
 }
 
 .skip-end-button {
-  position: absolute;
-  top: 65%;
-  left: 57%;
-  width: 15%;
-  height: 7%;
-  font-size: 1.8rem;
-  z-index: 9;
+	position: absolute;
+	top: 65%;
+	left: 57%;
+	width: 15%;
+	height: 7%;
+	font-size: 1.8rem;
+	z-index: 9;
 }
 
-.submit-button{
-  position: absolute;
-  top: 93.7%;
-  left: 57.5%;
-  width: 13.5%;
-  height: 7.5%;
-  font-size: 1.5rem;
-  color: #49769c;
+.submit-button {
+	position: absolute;
+	top: 93.7%;
+	left: 57.5%;
+	width: 13.5%;
+	height: 7.5%;
+	font-size: 1.5rem;
+	color: #49769c;
 }
 
-.cards-suggestion-header{
-  position: absolute;
-  left: 75.5%;
+.cards-suggestion-header {
+	position: absolute;
+	left: 75.5%;
 }
 
-.card-1{
-  position: absolute;
-  left: 75.5%;
-  top: 3%;
+.card-1 {
+	position: absolute;
+	left: 75.5%;
+	top: 3%;
 }
 
-.card-2{
-  position: absolute;
-  left: 75.5%;
-  top: 20%;
+.card-2 {
+	position: absolute;
+	left: 75.5%;
+	top: 20%;
 }
 
-.card-3{
-  position: absolute;
-  left: 75.5%;
-  top: 42%;
+.card-3 {
+	position: absolute;
+	left: 75.5%;
+	top: 42%;
 }
 
-.card-4{
-  position: absolute;
-  left: 75.5%;
-  top: 64%;
+.card-4 {
+	position: absolute;
+	left: 75.5%;
+	top: 64%;
 }
 
-.card-5{
-  position: absolute;
-  left: 75.5%;
-  top: 86%;
+.card-5 {
+	position: absolute;
+	left: 75.5%;
+	top: 86%;
 }
 
-.card-overview{
-  transition: background 1s !important;
+.card-overview {
+	transition: background 1s !important;
 }
 
-.card-waiting-true{
-  background: #D7F5FF !important; 
-  box-shadow: 0px 4px 4px rgba(46,122,210,0.25) !important;
-  border-radius: 5px !important;
+.card-waiting-true {
+	background: #d7f5ff !important;
+	box-shadow: 0px 4px 4px rgba(46, 122, 210, 0.25) !important;
+	border-radius: 5px !important;
 }
 
-.card-width-control{
-  max-height: 30%;
-  min-height: 24%;
+.card-width-control {
+	max-height: 30%;
+	min-height: 24%;
 }
 .cursor-disabled {
-  cursor: not-allowed !important;
+	cursor: not-allowed !important;
 }
 
-.redo-icon{
-  color:#006a94;
+.redo-icon {
+	color: #006a94;
 }
-
 
 .transcript {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 41px;
-  /* left: 39%; */
-  left: 1%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  /* top: 75%; */
-  top: 89.75%;
-  width: 70%;
-  color: #707070;
-  font-size: 1.5rem;
-  padding-top: 25px;
-  padding-bottom: 25px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 41px;
+	/* left: 39%; */
+	left: 1%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	/* top: 75%; */
+	top: 89.75%;
+	width: 70%;
+	color: #707070;
+	font-size: 1.5rem;
+	padding-top: 25px;
+	padding-bottom: 25px;
 }

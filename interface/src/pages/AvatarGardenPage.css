@@ -1,231 +1,229 @@
 .garden-page {
-  background-color: white;
-  height: 100vh;
-  margin: 0px;
-  min-height: 700px;
-  min-width: 1440px;
-  position: relative;
-  width: 100%;
+	background-color: white;
+	height: 100vh;
+	margin: 0px;
+	min-height: 700px;
+	min-width: 1440px;
+	position: relative;
+	width: 100%;
 }
 .garden-add:hover {
-  transform: scale(1.1);
+	transform: scale(1.1);
 }
 .garden-stream:hover {
-  transform: scale(1.1);
+	transform: scale(1.1);
 }
 .garden-trash:hover {
-  transform: scale(1.07);
+	transform: scale(1.07);
 }
 .garden-move_icon:hover {
-  transform: scale(1.07);
+	transform: scale(1.07);
 }
 .garden-settings:hover {
-  transform: scale(1.1);
+	transform: scale(1.1);
 }
 .garden-settings-delete:hover {
-  transform: scale(1.1);
+	transform: scale(1.1);
 }
 .garden-settings-save:hover {
-  transform: scale(1.1);
+	transform: scale(1.1);
 }
-
 
 /*elements*/
 .garden-title {
-  background-color: transparent;
-  height: auto;
-  /* left: 35%; */
-  position: absolute;
-  top: 45%;
-  font-size: 3rem;
-  /* margin: auto; */
-  width: 1020px;
-  text-align: center;
-  /* left:0% */
-  display:flex;
-  left: 2.5%;
+	background-color: transparent;
+	height: auto;
+	/* left: 35%; */
+	position: absolute;
+	top: 45%;
+	font-size: 3rem;
+	/* margin: auto; */
+	width: 1020px;
+	text-align: center;
+	/* left:0% */
+	display: flex;
+	left: 2.5%;
 }
 
 .garden-subtitle {
-  background-color: transparent;
-  height: auto;
-  /* left: 35%; */
-  position: absolute;
-  top: 77.5%;
-  font-size: 1.25rem;
-  /* margin: auto; */
-  /* width: 1020px; */
-  text-align: center;
-  left:3%
+	background-color: transparent;
+	height: auto;
+	/* left: 35%; */
+	position: absolute;
+	top: 77.5%;
+	font-size: 1.25rem;
+	/* margin: auto; */
+	/* width: 1020px; */
+	text-align: center;
+	left: 3%;
 }
-.stream-heading{
-  /* left: 1%; */
-  position: absolute;
-  top: 13.5%;
-  font-size: 1.65rem;
+.stream-heading {
+	/* left: 1%; */
+	position: absolute;
+	top: 13.5%;
+	font-size: 1.65rem;
 
-  /* margin: 0 auto; */
+	/* margin: 0 auto; */
 }
-.garden-settings{
-  color: #7E7C7C;
-  font-size: 45px;
-  transition: all 0.2s ease-out;
-  background-color: transparent;
-  border: transparent;
-  cursor: pointer;
-  position: absolute;
-  top: 44.5%;
-  left: 94%;
+.garden-settings {
+	color: #7e7c7c;
+	font-size: 45px;
+	transition: all 0.2s ease-out;
+	background-color: transparent;
+	border: transparent;
+	cursor: pointer;
+	position: absolute;
+	top: 44.5%;
+	left: 94%;
 }
-.garden-carousel{
-
-  left: 0%;
-  top: 30%;
-  position: absolute;
+.garden-carousel {
+	left: 0%;
+	top: 30%;
+	position: absolute;
 }
-.garden-carousel-card{
-  text-align: center;
-  align-items: center;
-  /* height: 250px;
+.garden-carousel-card {
+	text-align: center;
+	align-items: center;
+	/* height: 250px;
   width: 250px; */
 }
-.t1{
-  font-size: 1.5rem;
-  margin-bottom: 0px;
+.t1 {
+	font-size: 1.5rem;
+	margin-bottom: 0px;
 }
-.t2{
-  font-size: 18px;
-  color: #707070;
+.t2 {
+	font-size: 18px;
+	color: #707070;
 }
-.garden-settings-buttons{
-  display: inline;
-  position: relative;
-    left: 98%;
-    bottom: 65%;
+.garden-settings-buttons {
+	display: inline;
+	position: relative;
+	left: 98%;
+	bottom: 65%;
 }
 .garden-settings-buttons button {
-  display: block;
+	display: block;
 }
-.garden-carousel-menu{
-  color: #7E7C7C;
-  font-size: 18px;
+.garden-carousel-menu {
+	color: #7e7c7c;
+	font-size: 18px;
 }
-.garden-carousel-menu p{
-  display: inline;
+.garden-carousel-menu p {
+	display: inline;
 }
-.stream-text{
-  left: 940px;
-  /* 61.5%; */
-  position: absolute;
-  top: 400px;
-  /* 45%; */
-  font-size: 20px;
-  color:#707070;
+.stream-text {
+	left: 940px;
+	/* 61.5%; */
+	position: absolute;
+	top: 400px;
+	/* 45%; */
+	font-size: 20px;
+	color: #707070;
 }
 .elem-1 {
-  background-color: #7E7C7C;
-  border-radius: 30px;
-  height: 20vh;
-  left: 65%;
-  top: 30%;
-  width: 26vw;
-  position: absolute;
+	background-color: #7e7c7c;
+	border-radius: 30px;
+	height: 20vh;
+	left: 65%;
+	top: 30%;
+	width: 26vw;
+	position: absolute;
 }
 .elem-2 {
-  background-color: #7E7C7C;
-  border-radius: 30px;
-  height: 20vh;
-  left: 65%;
-  top: 60%;
-  width: 26vw;
-  position: absolute;
+	background-color: #7e7c7c;
+	border-radius: 30px;
+	height: 20vh;
+	left: 65%;
+	top: 60%;
+	width: 26vw;
+	position: absolute;
 }
 .elem-text-1 {
-  color: white;
-  width: 35%;
-  text-align: center;
-  position: absolute;
-  font-size: 100px;
+	color: white;
+	width: 35%;
+	text-align: center;
+	position: absolute;
+	font-size: 100px;
 }
 .elem-text-2 {
-  color: white;
-  width: 60%;
-  left: 35%;
-  top: 13%;
-  text-align: center;
-  position: absolute;
-  font-size: 30px;
+	color: white;
+	width: 60%;
+	left: 35%;
+	top: 13%;
+	text-align: center;
+	position: absolute;
+	font-size: 30px;
 }
 .section1 {
-  background-color: transparent;
-  position: absolute;
-  /* left: 2.5%;
+	background-color: transparent;
+	position: absolute;
+	/* left: 2.5%;
   top: 10%;
   height: 87vh;
   width: 95vw; */
-  left: 50px;
-  top: 0px;
-  height: 800px;
-  width: 215px;
-  border-right:  2px solid;
-  border-color: rgba(229,229,229,0.56);
-  /* border-right: solid 1px rgba(229,229,229,0.16); */
+	left: 50px;
+	top: 0px;
+	height: 800px;
+	width: 215px;
+	border-right: 2px solid;
+	border-color: rgba(229, 229, 229, 0.56);
+	/* border-right: solid 1px rgba(229,229,229,0.16); */
 }
 .section2 {
-  background-color: transparent;
-  position: absolute;
-  /* left: 2.5%;
+	background-color: transparent;
+	position: absolute;
+	/* left: 2.5%;
   top: 87%;
   height: 87vh;
   width: 95vw; */
-  left: 265px;
-  top: 200px;
-  height: 550px;
-  width: 1005px;
+	left: 265px;
+	top: 200px;
+	height: 550px;
+	width: 1005px;
 }
 
 .section3 {
-  background-color: transparent;
-  position: absolute;
-  /* left: 2.5%;
+	background-color: transparent;
+	position: absolute;
+	/* left: 2.5%;
   top: 87%;
   height: 87vh;
   width: 95vw; */
-  left: 265px;
-  top: 0px;
-  height: 200px;
-  width: 1005px;
-  border-bottom:  2px solid;
-  border-color: rgba(229,229,229,0.56);
+	left: 265px;
+	top: 0px;
+	height: 200px;
+	width: 1005px;
+	border-bottom: 2px solid;
+	border-color: rgba(229, 229, 229, 0.56);
 }
 .garden-hidden {
-  position: relative;
-  left: 92.5%;
-  top: 50%;
-  height: 100px;
+	position: relative;
+	left: 92.5%;
+	top: 50%;
+	height: 100px;
 }
-.video-text{
-  left: 8%;
-  position: absolute;
-  top: 18.5%;
-  font-size: 18px;
-  color:#707070;
+.video-text {
+	left: 8%;
+	position: absolute;
+	top: 18.5%;
+	font-size: 18px;
+	color: #707070;
 }
 
-.stream-add-text{
-  left: 20.5%;
-  position: absolute;
-  top: 78%;
-  font-size: 18px;
-  color:#707070;
-  /* width: 25%; */
-  text-align: center;
-  margin: auto;
+.stream-add-text {
+	left: 20.5%;
+	position: absolute;
+	top: 78%;
+	font-size: 18px;
+	color: #707070;
+	/* width: 25%; */
+	text-align: center;
+	margin: auto;
 }
 
 /*buttons*/
 .garden-delete {
-  /* color: white;
+	/* color: white;
   font-size: 15px;
   background-color: transparent;
   border: transparent;
@@ -233,22 +231,22 @@
   position: relative;
   top: 43%;
   left: 2%; */
-  color: white;
-  font-size: 15px;
-  background-color: transparent;
-  border: transparent;
-  cursor: pointer;
-  position: relative;
-  /* top: 50px; */
-  left: 53px;
-  /* right: 15px; */
-  padding: 0;
-  width: 15px;
-  height: 15px;
-  bottom: 1px;
+	color: white;
+	font-size: 15px;
+	background-color: transparent;
+	border: transparent;
+	cursor: pointer;
+	position: relative;
+	/* top: 50px; */
+	left: 53px;
+	/* right: 15px; */
+	padding: 0;
+	width: 15px;
+	height: 15px;
+	bottom: 1px;
 }
 .garden-edit {
-  /* color: white;
+	/* color: white;
   font-size: 12px;
   background-color: transparent;
   border: transparent;
@@ -256,552 +254,550 @@
   position: relative;
   top: 44.5%;
   right: 17%; */
-  color: white;
-  font-size: 15px;
-  background-color: transparent;
-  border: transparent;
-  cursor: pointer;
-  position: relative;
-  /* top: 44.5%; */
-  /* right: 17%; */
-  padding: 0;
-  left: 28px;
-  width: 15px;
-  text-align: center;
+	color: white;
+	font-size: 15px;
+	background-color: transparent;
+	border: transparent;
+	cursor: pointer;
+	position: relative;
+	/* top: 44.5%; */
+	/* right: 17%; */
+	padding: 0;
+	left: 28px;
+	width: 15px;
+	text-align: center;
 }
 .garden-checkbox {
-  /* position: relative;
+	/* position: relative;
   left: 2%;
   top: 43%;
   height: 15px;
   width: 20px;
   cursor: pointer; */
-  position: relative;
-    left: 5px;
-    /* top: 85%; */
-    height: 12px;
-    width: 15px;
-    cursor: pointer;
+	position: relative;
+	left: 5px;
+	/* top: 85%; */
+	height: 12px;
+	width: 15px;
+	cursor: pointer;
 }
 .garden-trash {
-  background-color: transparent;
-  height: 35px;
-  top: 60%;
-  position: absolute;
-  cursor: pointer;
-  transition: all 0.2s ease-out;
-
+	background-color: transparent;
+	height: 35px;
+	top: 60%;
+	position: absolute;
+	cursor: pointer;
+	transition: all 0.2s ease-out;
 }
 .garden-move_icon {
-  background-color: transparent;
-  height: 27px;
-  cursor: pointer;
-  transition: all 0.2s ease-out;
-  position: absolute;
-  top: 5%;
-  left: 0px;
+	background-color: transparent;
+	height: 27px;
+	cursor: pointer;
+	transition: all 0.2s ease-out;
+	position: absolute;
+	top: 5%;
+	left: 0px;
 }
 .garden-add {
-  background-color: transparent;
-  height: 98px;
-  left: 8.5%;
-  top: 2.5%;
-  width: 75px;
-  position: absolute;
-  cursor: pointer;
-  pointer-events: auto;
-  transition: all 0.2s ease-out;
+	background-color: transparent;
+	height: 98px;
+	left: 8.5%;
+	top: 2.5%;
+	width: 75px;
+	position: absolute;
+	cursor: pointer;
+	pointer-events: auto;
+	transition: all 0.2s ease-out;
 }
 .garden-stream {
-  background-color: transparent;
-  left: 25.5%;
-  /* 61%; */
-  top: 68%;
-  /* 30%; */
-  width: 70px;
-  position: absolute;
-  cursor: pointer;
-  pointer-events: auto;
-  transition: all 0.2s ease-out;
+	background-color: transparent;
+	left: 25.5%;
+	/* 61%; */
+	top: 68%;
+	/* 30%; */
+	width: 70px;
+	position: absolute;
+	cursor: pointer;
+	pointer-events: auto;
+	transition: all 0.2s ease-out;
 }
 
 /*grid*/
 .garden-box {
-  margin: 20px;
-  text-align: center;
-  border-radius: 15px;
-  height: 250px;
-  width: 250px;
+	margin: 20px;
+	text-align: center;
+	border-radius: 15px;
+	height: 250px;
+	width: 250px;
 }
 .garden-grid {
-  /* padding: 10px; */
-  overflow-y: scroll;
-  height: 82%;
-  width: 97%;
-  left: 0.5%;
-  top: 11%;
-  position: absolute;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-content: baseline;
+	/* padding: 10px; */
+	overflow-y: scroll;
+	height: 82%;
+	width: 97%;
+	left: 0.5%;
+	top: 11%;
+	position: absolute;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-content: baseline;
 }
 .garden-grid > div {
-    padding: 10.2px;
+	padding: 10.2px;
 }
 .column {
-  float: left;
-  width: 48%;
-  height: 126.73px;
-  margin-bottom: 50px;
-  background-size:auto;
-  background-position: center;
+	float: left;
+	width: 48%;
+	height: 126.73px;
+	margin-bottom: 50px;
+	background-size: auto;
+	background-position: center;
 }
 .row:after {
-  content: "";
-  display: table;
-  clear: both;
+	content: "";
+	display: table;
+	clear: both;
 }
 .garden-question {
-  background-color: black;
-  /* text-align: center;
+	background-color: black;
+	/* text-align: center;
   display: flex;
   justify-content: center;
   align-items: center; */
 }
 .garden-name {
-  /* color: white;
+	/* color: white;
   font-size: 13.5px;
   /* height: 83%; */
-  /* left: 10%; */
-  /* text-align: left; */
-  /* height: 72%;
+	/* left: 10%; */
+	/* text-align: left; */
+	/* height: 72%;
   width: 100%;
   overflow: auto;
   position: relative;
   left: 25%;
   margin-top: 15px; */
-  /* text-align: left; */
-  /* word-wrap: break-word; */
-  /* bottom: 6%;  */
+	/* text-align: left; */
+	/* word-wrap: break-word; */
+	/* bottom: 6%;  */
 
-  color: white;
-  font-size: 13.5px;
-  /* height: 83%; */
-  /* left: 10%; */
-  /* text-align: left; */
-  height: 100px;
-  width: 100%;
-  overflow: auto;
-  position: relative;
-  left: 0;
-  /* margin-top: 15px; */
-  text-align: center;
-  /* word-wrap: break-word; */
-  /* bottom: 6%; */
-  margin-bottom: 0;
-  top: 0%;
-  /* margin: 10px 2px 0px 8px; */
-  padding: 0 1px 0 1px;
+	color: white;
+	font-size: 13.5px;
+	/* height: 83%; */
+	/* left: 10%; */
+	/* text-align: left; */
+	height: 100px;
+	width: 100%;
+	overflow: auto;
+	position: relative;
+	left: 0;
+	/* margin-top: 15px; */
+	text-align: center;
+	/* word-wrap: break-word; */
+	/* bottom: 6%; */
+	margin-bottom: 0;
+	top: 0%;
+	/* margin: 10px 2px 0px 8px; */
+	padding: 0 1px 0 1px;
 }
 
-
 .stream-image-sizing {
-  /* max-width:150px;
+	/* max-width:150px;
   max-height:150px; */
-  width: 180px;
-  height: 230px;
-  border-radius:5px;
-  /* max-width: 85%; */
-  /* max-height: 85%; */
-  object-fit: cover;
+	width: 180px;
+	height: 230px;
+	border-radius: 5px;
+	/* max-width: 85%; */
+	/* max-height: 85%; */
+	object-fit: cover;
 }
 
 .round-styling-first {
-  border-radius: 5px 0 0 5px;
+	border-radius: 5px 0 0 5px;
 }
 
 .round-styling-second {
-  border-radius: 0 5px 5px 0;
+	border-radius: 0 5px 5px 0;
 }
 
 /*searchbar*/
 .garden-search {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 1.5%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 1.5%;
-  width: 96%;
-  padding: 2px;
-  font-size: 1.25rem;
-  margin: 5px 0;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 1.5%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 1.5%;
+	width: 96%;
+	padding: 2px;
+	font-size: 1.25rem;
+	margin: 5px 0;
 }
 
 .garden-search-text {
-  /* font-style: italic; */
-  font-weight: 300;
-  color: #515151;
-  font-family: "Montserrat-Medium", Helvetica, Arial, sans-serif;
-  font-style: normal;
-  font-weight: 300;
-  letter-spacing: -0.015em;
-
+	/* font-style: italic; */
+	font-weight: 300;
+	color: #515151;
+	font-family: "Montserrat-Medium", Helvetica, Arial,
+		sans-serif;
+	font-style: normal;
+	font-weight: 300;
+	letter-spacing: -0.015em;
 }
 .garden-search::-webkit-input-placeholder {
-  font-family: FontAwesome;
-  font-weight: normal;
-  overflow: visible;
-  vertical-align: top;
-  display: inline-block !important;
-  padding-left: 5px;
-  padding-top: 2px;
-  color: #636363;
+	font-family: FontAwesome;
+	font-weight: normal;
+	overflow: visible;
+	vertical-align: top;
+	display: inline-block !important;
+	padding-left: 5px;
+	padding-top: 2px;
+	color: #636363;
 }
 .garden-search::-moz-placeholder {
-  font-family: FontAwesome;
-  font-weight: normal;
-  overflow: visible;
-  vertical-align: top;
-  display: inline-block !important;
-  padding-left: 5px;
-  padding-top: 2px;
-  color: #636363;
+	font-family: FontAwesome;
+	font-weight: normal;
+	overflow: visible;
+	vertical-align: top;
+	display: inline-block !important;
+	padding-left: 5px;
+	padding-top: 2px;
+	color: #636363;
 }
 .garden-search:-ms-input-placeholder {
-  font-family: FontAwesome;
-  font-weight: normal;
-  overflow: visible;
-  vertical-align: top;
-  display: inline-block !important;
-  padding-left: 5px;
-  padding-top: 2px;
-  color: #636363;
+	font-family: FontAwesome;
+	font-weight: normal;
+	overflow: visible;
+	vertical-align: top;
+	display: inline-block !important;
+	padding-left: 5px;
+	padding-top: 2px;
+	color: #636363;
 }
 
 /*Settings Popup Menu*/
 .garden-settings-name {
-  background-color: transparent;
-  height: 17px;
-  left: 24%;
-  position: absolute;
-  text-align: left;
-  top: 32%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 24%;
+	position: absolute;
+	text-align: left;
+	top: 32%;
+	width: 78px;
 }
 .garden-settings-name_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 30%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 30%;
+	width: 400px;
 }
 .garden-settings-email {
-  background-color: transparent;
-  height: 17px;
-  left: 24%;
-  position: absolute;
-  text-align: left;
-  top: 42%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 24%;
+	position: absolute;
+	text-align: left;
+	top: 42%;
+	width: 78px;
 }
 .garden-settings-email_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 40%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 40%;
+	width: 400px;
 }
 .garden-settings-pass {
-  background-color: transparent;
-  height: 17px;
-  left: 20%;
-  position: absolute;
-  text-align: left;
-  top: 52%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 20%;
+	position: absolute;
+	text-align: left;
+	top: 52%;
+	width: 78px;
 }
 .garden-settings-pass_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 50%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 50%;
+	width: 400px;
 }
 .garden-settings-lang {
-  background-color: transparent;
-  height: 17px;
-  left: 20%;
-  position: absolute;
-  text-align: left;
-  top: 62%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 20%;
+	position: absolute;
+	text-align: left;
+	top: 62%;
+	width: 78px;
 }
 .garden-settings-lang_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 60%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 60%;
+	width: 400px;
 }
-.garden-settings-delete{
-  color: white;
-  background-color: red;
-  border-radius: 20px;
-  height: 5vh;
-  width: 10vw;
-  text-align: center;
-  display: flex;
-  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
-  justify-content: center;
-  transition: all 0.2s ease-out;
-  cursor: pointer;
-  align-items: center;
-  position: absolute;
-  top: 75%;
-  left: 17%;
+.garden-settings-delete {
+	color: white;
+	background-color: red;
+	border-radius: 20px;
+	height: 5vh;
+	width: 10vw;
+	text-align: center;
+	display: flex;
+	box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+	justify-content: center;
+	transition: all 0.2s ease-out;
+	cursor: pointer;
+	align-items: center;
+	position: absolute;
+	top: 75%;
+	left: 17%;
 }
-.garden-settings-text{
-  font-size: 18px;
+.garden-settings-text {
+	font-size: 18px;
 }
-.garden-settings-save{
-  color: white;
-  background-color: #7E7C7C;
-  border-radius: 20px;
-  height: 5vh;
-  width: 10vw;
-  text-align: center;
-  display: flex;
-  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  justify-content: center;
-  transition: all 0.2s ease-out;
-  align-items: center;
-  position: absolute;
-  top: 75%;
-  left: 70%;
+.garden-settings-save {
+	color: white;
+	background-color: #7e7c7c;
+	border-radius: 20px;
+	height: 5vh;
+	width: 10vw;
+	text-align: center;
+	display: flex;
+	box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+	cursor: pointer;
+	justify-content: center;
+	transition: all 0.2s ease-out;
+	align-items: center;
+	position: absolute;
+	top: 75%;
+	left: 70%;
 }
 
 /*Stream Settings Popup Menu*/
 .stream-settings-name {
-  background-color: transparent;
-  height: 17px;
-  left: 24%;
-  position: absolute;
-  text-align: left;
-  top: 32%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 24%;
+	position: absolute;
+	text-align: left;
+	top: 32%;
+	width: 78px;
 }
 .stream-settings-name_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 30%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 30%;
+	width: 400px;
 }
 .stream-settings-email {
-  background-color: transparent;
-  height: 17px;
-  left: 23%;
-  position: absolute;
-  text-align: left;
-  top: 42%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 23%;
+	position: absolute;
+	text-align: left;
+	top: 42%;
+	width: 78px;
 }
 .stream-settings-email_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 40%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 40%;
+	width: 400px;
 }
 .stream-settings-pass {
-  background-color: transparent;
-  height: 17px;
-  left: 20%;
-  position: absolute;
-  text-align: left;
-  top: 52%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 20%;
+	position: absolute;
+	text-align: left;
+	top: 52%;
+	width: 78px;
 }
 .stream-settings-pass_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 31px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 50%;
-  width: 400px;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 31px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 50%;
+	width: 400px;
 }
 .stream-settings-lang {
-  background-color: transparent;
-  height: 17px;
-  left: 26.5%;
-  position: absolute;
-  text-align: left;
-  top: 52%;
-  width: 78px;
+	background-color: transparent;
+	height: 17px;
+	left: 26.5%;
+	position: absolute;
+	text-align: left;
+	top: 52%;
+	width: 78px;
 }
 .stream-settings-lang_box {
-  background-color: rgba(126, 124, 124, 0.1);
-  border: 0;
-  border-radius: 3px;
-  height: 60px;
-  left: 33%;
-  padding: 5px;
-  position: absolute;
-  resize: none;
-  text-align: left;
-  top: 52%;
-  width: 400px;
-  /* resize: none; */
-  resize: both;
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 60px;
+	left: 33%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	top: 52%;
+	width: 400px;
+	/* resize: none; */
+	resize: both;
 }
 
 .stream-photo-upload {
-  background-color: transparent;
-  height: 55px;
-  left: 17.5%;
-  position: absolute;
-  text-align: left;
-  top: 68%;
-  width: 500px;
+	background-color: transparent;
+	height: 55px;
+	left: 17.5%;
+	position: absolute;
+	text-align: left;
+	top: 68%;
+	width: 500px;
 }
 
 .stream-photo-upload-choose {
-  position: absolute;
-  text-align: left;
-  left: 20%;
+	position: absolute;
+	text-align: left;
+	left: 20%;
 }
 
 .stream-photo-upload-submit {
-  position: absolute;
-  text-align: left;
-  top:2%;
-  left: 88%;
+	position: absolute;
+	text-align: left;
+	top: 2%;
+	left: 88%;
 }
 
-
-.stream-settings-delete{
-  color: white;
-  background-color: red;
-  border-radius: 20px;
-  height: 5vh;
-  width: 10vw;
-  text-align: center;
-  display: flex;
-  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
-  justify-content: center;
-  transition: all 0.2s ease-out;
-  cursor: pointer;
-  align-items: center;
-  position: absolute;
-  top: 85%;
-  left: 17%;
+.stream-settings-delete {
+	color: white;
+	background-color: red;
+	border-radius: 20px;
+	height: 5vh;
+	width: 10vw;
+	text-align: center;
+	display: flex;
+	box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+	justify-content: center;
+	transition: all 0.2s ease-out;
+	cursor: pointer;
+	align-items: center;
+	position: absolute;
+	top: 85%;
+	left: 17%;
 }
-.stream-settings-text{
-  font-size: 18px;
+.stream-settings-text {
+	font-size: 18px;
 }
-.stream-settings-save{
-  color: white;
-  background-color: #7E7C7C;
-  border-radius: 20px;
-  height: 5vh;
-  width: 10vw;
-  text-align: center;
-  display: flex;
-  box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  justify-content: center;
-  transition: all 0.2s ease-out;
-  align-items: center;
-  position: absolute;
-  top: 90%;
-  left: 35%;
+.stream-settings-save {
+	color: white;
+	background-color: #7e7c7c;
+	border-radius: 20px;
+	height: 5vh;
+	width: 10vw;
+	text-align: center;
+	display: flex;
+	box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.15);
+	cursor: pointer;
+	justify-content: center;
+	transition: all 0.2s ease-out;
+	align-items: center;
+	position: absolute;
+	top: 90%;
+	left: 35%;
 }
 
 /*fonts*/
 .garden-font-class-2 {
-  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-style: normal;
-  font-weight: 300;
-  letter-spacing: -0.015em;
+	font-family: "Montserrat-Medium", Helvetica, Arial,
+		serif;
+	font-style: normal;
+	font-weight: 300;
+	letter-spacing: -0.015em;
 }
 
 .garden-font-class-5 {
-  font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-  font-style: normal;
-  /* font-weight: 300; */
-  letter-spacing: -0.015em;
+	font-family: "Montserrat-Medium", Helvetica, Arial,
+		serif;
+	font-style: normal;
+	/* font-weight: 300; */
+	letter-spacing: -0.015em;
 }
 
 .garden-font-class-3 {
-  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-style: normal;
-  font-weight: 200;
-  letter-spacing: -0.015em;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+	font-style: normal;
+	font-weight: 200;
+	letter-spacing: -0.015em;
 }
 
 .garden-font-class-4 {
-  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-style: normal;
-  font-weight: 300;
-  letter-spacing: -0.015em;
-  font-size: 1.25rem;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+	font-style: normal;
+	font-weight: 300;
+	letter-spacing: -0.015em;
+	font-size: 1.25rem;
 }
 
 .garden-font-class-1 {
-  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+	font-style: normal;
+	font-weight: 700;
+	letter-spacing: -0.015em;
 }
-
 
 /* .BrainhubCarousel {
   display: grid;
@@ -812,203 +808,197 @@
 } */
 
 .carousel.slide {
-  width: 120px;
-  height: 220px;
-  margin-top: 230px;
-  margin-left: 40px;
+	width: 120px;
+	height: 220px;
+	margin-top: 230px;
+	margin-left: 40px;
 }
 
 .carousel-inner {
-  width: 220px;
+	width: 220px;
 }
-
 
 /* .Test {
   width: 250px;
   top: 12%;
 } */
 
-
 .rec.rec-carousel-wrapper {
-  width: 250px;
-  position: relative;
-  top: 17.5%;
-  /* right:11%; */
-  /* margin: 0 auto; */
-  right: 17.5%;
-
+	width: 250px;
+	position: relative;
+	top: 17.5%;
+	/* right:11%; */
+	/* margin: 0 auto; */
+	right: 17.5%;
 }
 
 .rec.rec-dot_active {
-  background-color: rgba(229,229,229,1);
-  box-shadow: 0 0 1px 3px rgb(229,229,229);
+	background-color: rgba(229, 229, 229, 1);
+	box-shadow: 0 0 1px 3px rgb(229, 229, 229);
 }
 
 .ejXxNI:hover {
-  cursor: pointer;
-  box-shadow: 0 0 1px 3px rgb(229 229 229)
+	cursor: pointer;
+	box-shadow: 0 0 1px 3px rgb(229 229 229);
 }
 
 .ejXxNI:focus {
-cursor: pointer;
-box-shadow: 0 0 1px 3px rgb(229 229 229)
+	cursor: pointer;
+	box-shadow: 0 0 1px 3px rgb(229 229 229);
 }
 
 /* .rec.rec-slider-container {
   top:42%;
 } */
 
-
 .stream-settings {
-  color: #7E7C7C;
-  opacity: 0.3;
-  font-size: 22.5px;
-  transition: all 0.2s ease-out;
-  background-color: transparent;
-  border: transparent;
-  cursor: pointer;
-  position: absolute;
-  top: 105.5%;
-  /* left: 42.5%; */
-  z-index: 100;
-
+	color: #7e7c7c;
+	opacity: 0.3;
+	font-size: 22.5px;
+	transition: all 0.2s ease-out;
+	background-color: transparent;
+	border: transparent;
+	cursor: pointer;
+	position: absolute;
+	top: 105.5%;
+	/* left: 42.5%; */
+	z-index: 100;
 }
 
-.stream-settings:hover{
-  transform: scale(1.1);
-  opacity: 0.7;
+.stream-settings:hover {
+	transform: scale(1.1);
+	opacity: 0.7;
 }
 
 .stream-private {
-  color: #7E7C7C;
-  opacity: 0.5;
-  font-size: 18px;
-  transition: all 0.2s ease-out;
-  background-color: transparent;
-  border: transparent;
-  cursor: pointer;
-  position: absolute;
-  top: 245.5%;
-  /* left: 2.75%; */
-  z-index: 100;
-
+	color: #7e7c7c;
+	opacity: 0.5;
+	font-size: 18px;
+	transition: all 0.2s ease-out;
+	background-color: transparent;
+	border: transparent;
+	cursor: pointer;
+	position: absolute;
+	top: 245.5%;
+	/* left: 2.75%; */
+	z-index: 100;
 }
 
-.stream-private:hover{
-  transform: scale(1.1);
-  opacity: 0.7;
+.stream-private:hover {
+	transform: scale(1.1);
+	opacity: 0.7;
 }
 
 .garden-notifications {
-  background-color: var(--nv-color);
-  height: 50%;
-  /* left: 35%; */
-  position: absolute;
-  top: 25.5%;
-  font-size: 1.5rem;
-  /* margin: auto; */
-  width: 39.5%;
-  text-align: center;
-  /* left:0% */
-  display:flex;
-  left: 52.5%;
-  border-radius: 10px;
-  color: white;
-  padding: 10px 0px 0px 10px;
-  font-weight: 550
+	background-color: var(--nv-color);
+	height: 50%;
+	/* left: 35%; */
+	position: absolute;
+	top: 25.5%;
+	font-size: 1.5rem;
+	/* margin: auto; */
+	width: 39.5%;
+	text-align: center;
+	/* left:0% */
+	display: flex;
+	left: 52.5%;
+	border-radius: 10px;
+	color: white;
+	padding: 10px 0px 0px 10px;
+	font-weight: 550;
 }
 
 .cards-wrapper .card {
-  width: 226px !important;
-  height: 120px !important;
-  margin: 5px !important;
+	width: 226px !important;
+	height: 120px !important;
+	margin: 5px !important;
 }
 
 .cards-wrapper .card .image {
-  height: 84px !important;
+	height: 84px !important;
 }
 
 .cards-wrapper .card img {
-  height: 100% !important;
-  padding: 10px;
+	height: 100% !important;
+	padding: 10px;
 }
 
 .two-line-ellipsis {
-  width: 100%;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+	width: 100%;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 }
 
 .three-line-ellipsis {
-  width: 100%;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+	width: 100%;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
 }
 
 .bg-toia-theme {
-  --bs-bg-opacity: 1;
-  background-color: #00587a !important;
+	--bs-bg-opacity: 1;
+	background-color: #00587a !important;
 }
 
 .text-white {
-  color: white !important;
+	color: white !important;
 }
 
 .text-red {
-  color: red;
+	color: red;
 }
 
 .cursor-pointer {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .cursor-disabled {
-  cursor: not-allowed;
+	cursor: not-allowed;
 }
 
 .text-center {
-  text-align: center;
+	text-align: center;
 }
 
-.margin-bottom-2px{
-  margin-bottom: 2px !important;
+.margin-bottom-2px {
+	margin-bottom: 2px !important;
 }
 
-.stats-container{
-  display:flex;
-  position: absolute;
-  top:40%;
-  right:12%;
-  text-align: center;
+.stats-container {
+	display: flex;
+	position: absolute;
+	top: 40%;
+	right: 12%;
+	text-align: center;
 }
 
-.stats-wrapper{
-  margin:5px;
-  width:120px;
-  height:60px;
-  border:solid 1px #d1d1d1;
-  display:flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  font-family:monospace;
-  background-color:#e9e9e9;
+.stats-wrapper {
+	margin: 5px;
+	width: 120px;
+	height: 60px;
+	border: solid 1px #d1d1d1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	font-family: monospace;
+	background-color: #e9e9e9;
 }
 
-.stats-number{
-  font-size:20px
+.stats-number {
+	font-size: 20px;
 }
 
-.stats-label{
-  font-size: 12px;
-  line-height: 1;
+.stats-label {
+	font-size: 12px;
+	line-height: 1;
 }
 
-.search-box-mytoia{
-  margin: 10px;
-  margin-left: 14px;
-  margin-right: 55px;
+.search-box-mytoia {
+	margin: 10px;
+	margin-left: 14px;
+	margin-right: 55px;
 }

@@ -1,110 +1,106 @@
 .modalBackground {
-  /* width: 100vw;
+	/* width: 100vw;
   height: 100vh; */
-  /* background-color: rgba(200, 200, 200); */
-  position: relative;
-  display: flex;
-  justify-content: start;
-  align-items: start;
+	/* background-color: rgba(200, 200, 200); */
+	position: relative;
+	display: flex;
+	justify-content: start;
+	align-items: start;
 }
 
 .modalContainer {
-  width: 700px;
-  height: 120px;
-  border-radius: 12px;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  z-index: 9;
-  /* top: 0; */
+	width: 700px;
+	height: 120px;
+	border-radius: 12px;
+	background-color: white;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	display: flex;
+	flex-direction: column;
+	padding: 5px;
+	z-index: 9;
+	/* top: 0; */
 }
 
 .modalContainer .title {
-  display: inline-block;
-  text-align: center;
-  margin: 0px;
-  padding: 0;
-  width: 100%;
-  font-size: 0.5rem;
-  
+	display: inline-block;
+	text-align: center;
+	margin: 0px;
+	padding: 0;
+	width: 100%;
+	font-size: 0.5rem;
 }
 
 .modalContainer .title h2 {
-  margin: 7px 10px 7px 5px;
-  font-weight: normal;
-  font-size: 1.3rem;
-  
-  /* justify-self: center; */
+	margin: 7px 10px 7px 5px;
+	font-weight: normal;
+	font-size: 1.3rem;
+
+	/* justify-self: center; */
 }
 
 .titleCloseBtn {
-  display: flex;
-  justify-content: flex-end;
-  height: 30px;
+	display: flex;
+	justify-content: flex-end;
+	height: 30px;
 }
 
 .titleCloseBtn button {
-  background-color: transparent;
-  border: none;
-  font-size: 35px;
-  cursor: pointer;
+	background-color: transparent;
+	border: none;
+	font-size: 35px;
+	cursor: pointer;
 }
 
 .css-d0uhtl {
-  margin-left: 16px;
-  white-space: nowrap;
-
+	margin-left: 16px;
+	white-space: nowrap;
 }
-
 
 .modalContainer .body {
-  flex: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  text-align: center;
-  margin-top: 70px;
+	flex: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 2rem;
+	text-align: center;
+	margin-top: 70px;
 }
 
-.modalContainer .body h3{
-  /* flex: 50%;
+.modalContainer .body h3 {
+	/* flex: 50%;
   display: flex;
   margin:auto; */
-  font-weight: normal;
-  /* size: 2.5rem; */
-  font-size: 1.3rem;
-  
-  /* justify-content: center;
+	font-weight: normal;
+	/* size: 2.5rem; */
+	font-size: 1.3rem;
+
+	/* justify-content: center;
   align-items: center;
   text-align: center; */
-  margin: 0px;
-
+	margin: 0px;
 }
 
 .modalContainer .footer {
-  flex: 20%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	flex: 20%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .modalContainer .footer button {
-  width: 150px;
-  height: 40px;
-  margin: 0px;
-  border: none;
-  background-color: cornflowerblue;
-  color: white;
-  border-radius: 8px;
-  font-size: 20px;
-  cursor: pointer;
+	width: 150px;
+	height: 40px;
+	margin: 0px;
+	border: none;
+	background-color: cornflowerblue;
+	color: white;
+	border-radius: 8px;
+	font-size: 20px;
+	cursor: pointer;
 }
 
 #cancelBtn {
-  background-color: #21ba45;
-  /* size: 30px; */
-  width: 190px;
+	background-color: #21ba45;
+	/* size: 30px; */
+	width: 190px;
 }
