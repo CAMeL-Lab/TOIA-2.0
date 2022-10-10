@@ -11,9 +11,7 @@ class Tracker {
 
 		this.active = true;
 		if (Ping_Interval < 5000) {
-			console.error(
-				"Cannot ping with interval less than 5 seconds!",
-			);
+			console.error("Cannot ping with interval less than 5 seconds!");
 			this.active = false;
 		}
 	}
@@ -27,14 +25,10 @@ class Tracker {
 							this.setup(state.toiaID);
 						}, Ping_Interval);
 					} else {
-						console.warn(
-							"Cannot track. Language missing!",
-						);
+						console.warn("Cannot track. Language missing!");
 					}
 				} else {
-					console.warn(
-						"Cannot track. Name missing!",
-					);
+					console.warn("Cannot track. Name missing!");
 				}
 			} else {
 				console.warn("Cannot track. ID missing!");

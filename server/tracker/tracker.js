@@ -53,22 +53,11 @@ const getActivity = track_id => {
 	});
 };
 
-const TrackRecordVideo = (
-	user_id,
-	start_time,
-	end_time,
-	video_id,
-) => {
+const TrackRecordVideo = (user_id, start_time, end_time, video_id) => {
 	let activity = Activity.RecordVideo;
 	return new Promise(resolve => {
 		resolve(
-			RecordActivity(
-				user_id,
-				activity,
-				start_time,
-				end_time,
-				video_id,
-			),
+			RecordActivity(user_id, activity, start_time, end_time, video_id),
 		);
 	});
 };
@@ -100,12 +89,7 @@ const RegisterLogin = (
 	start_time = +new Date(),
 	end_time = +new Date(),
 ) => {
-	return RecordActivity(
-		user_id,
-		Activity.Login,
-		start_time,
-		end_time,
-	);
+	return RecordActivity(user_id, Activity.Login, start_time, end_time);
 };
 
 const getLastActivityEndTime = (user_id, activity) => {
@@ -137,40 +121,26 @@ const Ping = user_id => {
 	return new Promise(resolve => {
 		isValidUser(user_id)
 			.then(() => {
-				getLastActivityEndTime(
-					user_id,
-					Activity.Login,
-				).then(result => {
+				getLastActivityEndTime(user_id, Activity.Login).then(result => {
 					if (result === -1) {
 						// First login
-						console.log(
-							"Tracker: First Login!",
-						);
-						RegisterLogin(user_id).then(
-							track_id => {
-								resolve(track_id);
-							},
-						);
+						console.log("Tracker: First Login!");
+						RegisterLogin(user_id).then(track_id => {
+							resolve(track_id);
+						});
 					} else {
 						// Not first login. Check inactivity duration
-						const last_end_time =
-							result.end_time;
+						const last_end_time = result.end_time;
 						const track_id = result.track_id;
 						let diff =
 							new Date(currentTimestamp) -
 							new Date(last_end_time);
-						if (
-							diff <=
-							Inactivity_Min_Length_Milliseconds
-						) {
+						if (diff <= Inactivity_Min_Length_Milliseconds) {
 							// Active
 							let query = `UPDATE tracker SET end_time = ? WHERE track_id = ?`;
 							connection.query(
 								query,
-								[
-									currentTimestamp,
-									track_id,
-								],
+								[currentTimestamp, track_id],
 								(err, result) => {
 									if (err) throw err;
 									resolve(track_id);
@@ -178,23 +148,17 @@ const Ping = user_id => {
 							);
 						} else {
 							// Inactive
-							console.log(
-								"Tracker: New Login!",
-							);
-							RegisterLogin(user_id).then(
-								track_id => {
-									resolve(track_id);
-								},
-							);
+							console.log("Tracker: New Login!");
+							RegisterLogin(user_id).then(track_id => {
+								resolve(track_id);
+							});
 						}
 					}
 				});
 			})
 			.catch(reject => {
 				if (reject === false)
-					console.log(
-						"Activity tracker: user doesn't exist!",
-					);
+					console.log("Activity tracker: user doesn't exist!");
 				resolve();
 			});
 	});

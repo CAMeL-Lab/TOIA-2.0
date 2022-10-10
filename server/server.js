@@ -71,19 +71,13 @@ for (let i = 0; i < process.argv.length; i++) {
 		force_load_onboard_questions = true;
 	}
 }
-require("./configs/setup-database")(
-	connection,
-	force_load_onboard_questions,
-);
+require("./configs/setup-database")(connection, force_load_onboard_questions);
 
 //################################################################
 // SOCKET.IO implementation
 //################################################################
 io.on("connect", function (socket) {
-	console.log(
-		"frontend connected to server!: ",
-		socket.id,
-	);
+	console.log("frontend connected to server!: ", socket.id);
 	// Track Session Activity
 	socket.on("ping", async function (user_id) {
 		await Ping(user_id);
@@ -97,10 +91,7 @@ io.on("connect", function (socket) {
 	let recognizeStream = null;
 
 	socket.on("join", function () {
-		socket.emit(
-			"message",
-			"socket connected to server",
-		);
+		socket.emit("message", "socket connected to server");
 		console.log("handshake successfull");
 	});
 
@@ -127,9 +118,7 @@ io.on("connect", function (socket) {
 	});
 
 	socket.on("connect_error", err => {
-		console.log(
-			`server: connect_error due to ${err.message}`,
-		);
+		console.log(`server: connect_error due to ${err.message}`);
 	});
 
 	//   socket.on("disconnect", () => {
@@ -146,8 +135,7 @@ io.on("connect", function (socket) {
 			.on("data", data => {
 				console.log("data recieved: ");
 				process.stdout.write(
-					data.results[0] &&
-						data.results[0].alternatives[0]
+					data.results[0] && data.results[0].alternatives[0]
 						? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
 						: "\n\nReached transcription time limit, press Ctrl+C\n",
 				);
@@ -157,10 +145,7 @@ io.on("connect", function (socket) {
 				onResponse(data.results[0]);
 
 				// if end of utterance, let's restart stream
-				if (
-					data.results[0] &&
-					data.results[0].isFinal
-				) {
+				if (data.results[0] && data.results[0].isFinal) {
 					endRecognitionStream();
 					createStream(socket);
 					// console.log('restarted stream serverside');
@@ -184,20 +169,10 @@ app.use("/api", MainRoute);
 
 if (process.env.ENVIRONMENT === "production") {
 	// Serve react files
-	app.use(
-		express.static(
-			path.join(__dirname, "interface/build"),
-		),
-	);
+	app.use(express.static(path.join(__dirname, "interface/build")));
 
 	app.get("/*", function (req, res) {
-		res.sendFile(
-			path.join(
-				__dirname,
-				"interface/build",
-				"index.html",
-			),
-		);
+		res.sendFile(path.join(__dirname, "interface/build", "index.html"));
 	});
 }
 

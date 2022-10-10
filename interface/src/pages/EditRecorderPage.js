@@ -32,25 +32,19 @@ function EditRecorder() {
 		}
 	}
 
-	const { transcript, resetTranscript } =
-		useSpeechRecognition({ command: "*" });
+	const { transcript, resetTranscript } = useSpeechRecognition({
+		command: "*",
+	});
 
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	const { open } = state;
 
-	const [fillerColor, setFillerColor] =
-		useState("#e5e5e5");
-	const [answerColor, setAnswerColor] =
-		useState("#e5e5e5");
+	const [fillerColor, setFillerColor] = useState("#e5e5e5");
+	const [answerColor, setAnswerColor] = useState("#e5e5e5");
 	const [yesNoColor, setYesNoColor] = useState("#e5e5e5");
 	const [exitColor, setExitColor] = useState("#e5e5e5");
-	const [greetingColor, setGreetingColor] =
-		useState("#e5e5e5");
-	const [privacyColor, setPrivacyColor] =
-		useState("#e5e5e5");
+	const [greetingColor, setGreetingColor] = useState("#e5e5e5");
+	const [privacyColor, setPrivacyColor] = useState("#e5e5e5");
 
 	//vtype.includes('filler') ? '#7E7C7C':
 
@@ -74,9 +68,7 @@ function EditRecorder() {
 	const webcamRef = useRef(null);
 	const mediaRecorderRef = useRef(null);
 	const [capturing, setCapturing] = useState(false);
-	const [recordedChunks, setRecordedChunks] = useState(
-		[],
-	);
+	const [recordedChunks, setRecordedChunks] = useState([]);
 
 	const [toiaName, setName] = useState(null);
 	const [toiaLanguage, setLanguage] = useState(null);
@@ -88,8 +80,7 @@ function EditRecorder() {
 	const [videoStreams, setVideoStreams] = useState([]);
 	const [videoIsPrivate, setIsPrivate] = useState(false);
 
-	const [sideButtonElements, setSideButtonElements] =
-		useState([]);
+	const [sideButtonElements, setSideButtonElements] = useState([]);
 
 	React.useEffect(() => {
 		setName(history.location.state.toiaName);
@@ -100,9 +91,7 @@ function EditRecorder() {
 		setQuestion(history.location.state.question);
 		setAnswer(history.location.state.answer);
 
-		makeSideButtonElements(
-			history.location.state.videoType,
-		);
+		makeSideButtonElements(history.location.state.videoType);
 	});
 
 	function makeSideButtonElements(vtype) {}
@@ -145,9 +134,7 @@ function EditRecorder() {
 	const handleDataAvailable = React.useCallback(
 		({ data }) => {
 			if (data.size > 0) {
-				setRecordedChunks(prev =>
-					prev.concat(data),
-				);
+				setRecordedChunks(prev => prev.concat(data));
 			}
 		},
 		[setRecordedChunks],
@@ -183,13 +170,11 @@ function EditRecorder() {
 					form.append("question", question);
 					form.append("answer", transcript);
 					console.log(form);
-					axios
-						.post(`/api/recorder`, form)
-						.then(() => {
-							history.push({
-								pathname: "/mytoia",
-							});
+					axios.post(`/api/recorder`, form).then(() => {
+						history.push({
+							pathname: "/mytoia",
 						});
+					});
 
 					// axios({
 					//   method: 'post',
@@ -323,10 +308,7 @@ function EditRecorder() {
 	};
 
 	const customStyles = {
-		option: (
-			styles,
-			{ isDisabled, isFocused, isSelected },
-		) => {
+		option: (styles, { isDisabled, isFocused, isSelected }) => {
 			return {
 				...styles,
 				backgroundColor: isDisabled
@@ -339,8 +321,7 @@ function EditRecorder() {
 				":active": {
 					...styles[":active"],
 					backgroundColor:
-						!isDisabled &&
-						(isSelected ? "#7E7C7C" : null),
+						!isDisabled && (isSelected ? "#7E7C7C" : null),
 				},
 			};
 		},
@@ -372,9 +353,7 @@ function EditRecorder() {
 					<div
 						contentEditable="true"
 						className="edit-modal-ans edit-modal-text"
-						onChange={e =>
-							setAnswer(e.target.value)
-						}
+						onChange={e => setAnswer(e.target.value)}
 					>
 						{transcript}
 					</div>
@@ -417,9 +396,7 @@ function EditRecorder() {
 					Logout
 				</div>
 			</div>
-			<h1 className="edit-title edit-font-class-3 ">
-				Edit Recording
-			</h1>
+			<h1 className="edit-title edit-font-class-3 ">Edit Recording</h1>
 			<div className="side-bar">
 				<div
 					className="side-button b1"
@@ -513,31 +490,16 @@ function EditRecorder() {
 				videoConstraints={videoConstraints}
 			/>
 			{capturing ? (
-				<button
-					className="edit-icon"
-					onClick={handleStopCaptureClick}
-				>
-					<i
-						class="fa fa-stop"
-						style={{ fontSize: 34 }}
-					></i>
+				<button className="edit-icon" onClick={handleStopCaptureClick}>
+					<i class="fa fa-stop" style={{ fontSize: 34 }}></i>
 				</button>
 			) : (
-				<button
-					className="edit-icon"
-					onClick={handleStartCaptureClick}
-				>
-					<i
-						class="fa fa-video-camera"
-						style={{ fontSize: 34 }}
-					></i>
+				<button className="edit-icon" onClick={handleStartCaptureClick}>
+					<i class="fa fa-video-camera" style={{ fontSize: 34 }}></i>
 				</button>
 			)}
 			{recordedChunks.length > 0 && (
-				<button
-					className="edit-check"
-					onClick={openModal}
-				>
+				<button className="edit-check" onClick={openModal}>
 					<i class="fa fa-check"></i>
 				</button>
 			)}

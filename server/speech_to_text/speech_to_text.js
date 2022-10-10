@@ -24,10 +24,7 @@ const clientConfig = {
 		"google.cloud.speech.v1p1beta1.Speech": {
 			// google.cloud.speech.rpc
 			retry_codes: {
-				idempotent: [
-					"DEADLINE_EXCEEDED",
-					"UNAVAILABLE",
-				],
+				idempotent: ["DEADLINE_EXCEEDED", "UNAVAILABLE"],
 			},
 			methods: {
 				Recognize: {},
@@ -37,7 +34,6 @@ const clientConfig = {
 		},
 	},
 };
-
 
 module.exports.request = request;
 module.exports.clientConfig = clientConfig;

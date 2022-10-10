@@ -314,16 +314,14 @@
 /*Alignment and Fonts*/
 .settings-font-class-1 {
 	color: rgba(0, 0, 0, 0.75);
-	font-family: "Montserrat-Medium", Helvetica, Arial,
-		serif;
+	font-family: "Montserrat-Medium", Helvetica, Arial, serif;
 	font-size: 1.5rem;
 	font-style: normal;
 	font-weight: 500;
 	letter-spacing: -0.21px;
 }
 .settings-font-class-2 {
-	font-family: "Montserrat-Medium", Helvetica, Arial,
-		serif;
+	font-family: "Montserrat-Medium", Helvetica, Arial, serif;
 	font-size: 18px;
 	font-style: normal;
 	font-weight: 500;

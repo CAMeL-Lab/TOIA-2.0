@@ -11,14 +11,10 @@ import nizar from "../images/nizar.jpg";
 var cardSelected = []; //the videos selected to be edited or deleted
 
 function AvatarSettings() {
-	const [currentUserFullname, setCurrentUserFullname] =
-		useState(null);
-	const [currentUserLanguage, setCurrentUserLanguage] =
-		useState(null);
-	const [currentUserEmail, setCurrentUserEmail] =
-		useState(null);
-	const [currentStream, setCurrentStream] =
-		useState(undefined);
+	const [currentUserFullname, setCurrentUserFullname] = useState(null);
+	const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
+	const [currentUserEmail, setCurrentUserEmail] = useState(null);
+	const [currentStream, setCurrentStream] = useState(undefined);
 	const [toiaName, setName] = useState(null);
 	const [toiaLanguage, setLanguage] = useState(null);
 	const [toiaID, setTOIAid] = useState(null);
@@ -69,14 +65,12 @@ function AvatarSettings() {
 		},
 		{
 			still: sampleVideo,
-			question:
-				"This text serves as a placeholder for a question.",
+			question: "This text serves as a placeholder for a question.",
 			album: "default personal",
 		},
 		{
 			still: sampleVideo,
-			question:
-				"This text serves as a placeholder for a question.",
+			question: "This text serves as a placeholder for a question.",
 			album: "default fun",
 		},
 		{
@@ -86,8 +80,7 @@ function AvatarSettings() {
 		},
 		{
 			still: sampleVideo,
-			question:
-				"This text serves as a placeholder for a question.",
+			question: "This text serves as a placeholder for a question.",
 			album: "default personal",
 		},
 		{
@@ -103,14 +96,12 @@ function AvatarSettings() {
 		},
 		{
 			still: sampleVideo,
-			question:
-				"This text serves as a placeholder for a question.",
+			question: "This text serves as a placeholder for a question.",
 			album: "default fun personal",
 		},
 		{
 			still: sampleVideo,
-			question:
-				"This text serves as a placeholder for a question.",
+			question: "This text serves as a placeholder for a question.",
 			album: "default business",
 		},
 		{
@@ -120,8 +111,7 @@ function AvatarSettings() {
 		},
 		{
 			still: sampleVideo,
-			question:
-				"This text serves as a placeholder for a question.",
+			question: "This text serves as a placeholder for a question.",
 			album: "default fun",
 		},
 		{
@@ -146,18 +136,14 @@ function AvatarSettings() {
 				return { open: true };
 		}
 	}
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	const { open } = state;
 
 	function openModal(e) {
 		dispatch({ type: "open" });
 		e.preventDefault();
 	}
-	const [selectedIndex, setSelectedIndex] =
-		useState(null);
+	const [selectedIndex, setSelectedIndex] = useState(null);
 	//
 
 	const [data, setData] = useState(avatars); //this sets data to the state of the avatars list
@@ -201,9 +187,7 @@ function AvatarSettings() {
 					<input
 						className="settings-checkbox"
 						type="checkbox"
-						onClick={event =>
-							handleClick(event, index)
-						} // checkbox
+						onClick={event => handleClick(event, index)} // checkbox
 					/>
 					<h1
 						className="settings-q settings-font-class-2" //question
@@ -212,9 +196,7 @@ function AvatarSettings() {
 					</h1>
 					<button
 						onClick={event => {
-							cardSelected.push(
-								avatars[index].question,
-							);
+							cardSelected.push(avatars[index].question);
 							openModal(event);
 						}}
 						className="settings-delete" //trashcan
@@ -235,9 +217,7 @@ function AvatarSettings() {
 			setDisplayItem("block");
 		} else {
 			cardSelected.splice(
-				cardSelected.indexOf(
-					avatars[index].question,
-				),
+				cardSelected.indexOf(avatars[index].question),
 				1,
 			); //else video is being deselected, deletes from list
 			if (cardSelected.length == 0) {
@@ -290,13 +270,9 @@ function AvatarSettings() {
 			})
 			.then(res => {
 				setCurrentUserFullname(
-					res.data[0].first_name +
-						" " +
-						res.data[0].last_name,
+					res.data[0].first_name + " " + res.data[0].last_name,
 				);
-				setCurrentUserLanguage(
-					res.data[0].language,
-				);
+				setCurrentUserLanguage(res.data[0].language);
 				setCurrentUserEmail(res.data[0].email);
 			});
 	}
@@ -306,10 +282,8 @@ function AvatarSettings() {
 			axios
 				.post(`/api/getUserStreams`, {
 					params: {
-						toiaID: history.location.state
-							.toiaID,
-						toiaName:
-							history.location.state.toiaName,
+						toiaID: history.location.state.toiaID,
+						toiaName: history.location.state.toiaName,
 					},
 				})
 				.then(res => {
@@ -418,11 +392,7 @@ function AvatarSettings() {
 					</p>
 				</Modal.Header>
 				<Modal.Actions>
-					<Button
-						color="green"
-						inverted
-						onClick={groupSelect}
-					>
+					<Button color="green" inverted onClick={groupSelect}>
 						<i class="fa fa-check"></i>
 					</Button>
 				</Modal.Actions>
@@ -479,10 +449,7 @@ function AvatarSettings() {
 					defaultValue={stream[0].name}
 					type={"text"}
 					onChange={e =>
-						changehandler(
-							e.target.className,
-							e.target.value,
-						)
+						changehandler(e.target.className, e.target.value)
 					}
 				/>
 				<div
@@ -493,18 +460,10 @@ function AvatarSettings() {
 				<select
 					className="settings-priv_box settings-font-class-1"
 					onChange={e =>
-						changehandler(
-							e.target.className,
-							e.target.value,
-						)
+						changehandler(e.target.className, e.target.value)
 					} /*required={true}*/
 				>
-					<option
-						value=""
-						disabled
-						selected
-						hidden
-					>
+					<option value="" disabled selected hidden>
 						{stream[0].privacy}
 					</option>
 					<option value="public">Public</option>
@@ -518,18 +477,10 @@ function AvatarSettings() {
 				<select
 					className="settings-lang_box settings-font-class-1"
 					onChange={e =>
-						changehandler(
-							e.target.className,
-							e.target.value,
-						)
+						changehandler(e.target.className, e.target.value)
 					} /*required={true}*/
 				>
-					<option
-						value=""
-						disabled
-						selected
-						hidden
-					>
+					<option value="" disabled selected hidden>
 						{stream[0].language}
 					</option>
 					<option value="AF">Afrikaans</option>
@@ -541,9 +492,7 @@ function AvatarSettings() {
 					<option value="BG">Bulgarian</option>
 					<option value="CA">Catalan</option>
 					<option value="KM">Cambodian</option>
-					<option value="ZH">
-						Chinese (Mandarin)
-					</option>
+					<option value="ZH">Chinese (Mandarin)</option>
 					<option value="HR">Croatian</option>
 					<option value="CS">Czech</option>
 					<option value="DA">Danish</option>
@@ -617,10 +566,7 @@ function AvatarSettings() {
 					defaultValue={stream[0].bio}
 					type={"text"}
 					onChange={e =>
-						changehandler(
-							e.target.className,
-							e.target.value,
-						)
+						changehandler(e.target.className, e.target.value)
 					}
 				/>
 				<img
@@ -651,9 +597,7 @@ function AvatarSettings() {
 					className="settings-search"
 					type="text"
 					placeholder="&#xF002;"
-					onChange={event =>
-						searchData(event.target.value)
-					} //search bar
+					onChange={event => searchData(event.target.value)} //search bar
 				/>
 				<div
 					className="settings-grid" //videos
@@ -665,10 +609,7 @@ function AvatarSettings() {
 					style={{ display: displayItem }} //the hidden menu that appears when you select a function
 				>
 					<div onClick={openModal}>
-						<img
-							className="settings-trash"
-							src={trashIcon}
-						/>
+						<img className="settings-trash" src={trashIcon} />
 					</div>
 				</div>
 				<div onClick={add}>

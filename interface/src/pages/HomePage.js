@@ -25,10 +25,7 @@ function HomePage() {
 	let blurb = " communication reimagined.";
 	var input1, input2; //these hold all the user login data
 
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 
 	const [toiaName, setName] = useState(null);
 	const [toiaLanguage, setLanguage] = useState(null);
@@ -41,9 +38,7 @@ function HomePage() {
 		if (history.location.state != undefined) {
 			setLoginState(true);
 			setName(history.location.state.toiaName);
-			setLanguage(
-				history.location.state.toiaLanguage,
-			);
+			setLanguage(history.location.state.toiaLanguage);
 			setTOIAid(history.location.state.toiaID);
 		}
 
@@ -89,13 +84,9 @@ function HomePage() {
 			console.log(res.data);
 			if (res.data == -1) {
 				//alert('Email not found');
-				NotificationManager.error(
-					"Incorrect e-mail address.",
-				);
+				NotificationManager.error("Incorrect e-mail address.");
 			} else if (res.data == -2) {
-				NotificationManager.error(
-					"Incorrect password",
-				);
+				NotificationManager.error("Incorrect password");
 				// setHasPasswordError(true);
 			} else {
 				history.push({
@@ -218,16 +209,13 @@ function HomePage() {
 						Welcome Back
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Enter the following information to
-						login to your TOIA account
+						Enter the following information to login to your TOIA
+						account
 					</p>
 				</Modal.Header>
 
 				<Modal.Content>
-					<form
-						className="login_popup"
-						onSubmit={submitHandler}
-					>
+					<form className="login_popup" onSubmit={submitHandler}>
 						<input
 							className="login_email login-font-class-1"
 							placeholder={"Email"}
@@ -286,9 +274,7 @@ function HomePage() {
 					My TOIA
 				</div>
 				<div
-					onClick={
-						isLoggedIn ? logout : openModal
-					}
+					onClick={isLoggedIn ? logout : openModal}
 					className="nav-login_icon app-monsterrat-black"
 				>
 					{isLoggedIn ? "Logout" : "Login"}
@@ -302,28 +288,18 @@ function HomePage() {
 				autoPlay
 				muted
 			>
-				<source
-					src={toia_home_vid}
-					type="video/mp4"
-				/>
+				<source src={toia_home_vid} type="video/mp4" />
 				Your browser does not support the video tag.
 			</video>
 
 			<div className="home-overlap-group">
-				<div className="home-des home-montserrat-black">
-					{blurb}
-				</div>
-				<h1 className="home-toia home-opensans-normal">
-					{toia_text}
-				</h1>
+				<div className="home-des home-montserrat-black">{blurb}</div>
+				<h1 className="home-toia home-opensans-normal">{toia_text}</h1>
 				<div className="home-welcome-text home-montserrat-black">
 					{welcome_text}
 				</div>
 				<div onClick={signup}>
-					<img
-						className="home-signup"
-						src={signupButton}
-					/>
+					<img className="home-signup" src={signupButton} />
 				</div>
 			</div>
 			<NotificationContainer />

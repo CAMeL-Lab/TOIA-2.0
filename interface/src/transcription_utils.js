@@ -31,17 +31,11 @@ let AudioStreamer = {
 	 */
 	initRecording: function (onData, onError) {
 		socket.emit("transcribeAudio", "");
-		AudioContext =
-			window.AudioContext ||
-			window.webkitAudioContext;
+		AudioContext = window.AudioContext || window.webkitAudioContext;
 		context = new AudioContext({
 			latencyHint: "interactive",
 		});
-		processor = context.createScriptProcessor(
-			bufferSize,
-			1,
-			1,
-		);
+		processor = context.createScriptProcessor(bufferSize, 1, 1);
 		processor.connect(context.destination);
 		context.resume();
 
@@ -103,11 +97,7 @@ function microphoneProcess(e) {
 	//console.log(e.inputBuffer)
 	const left = e.inputBuffer.getChannelData(0);
 	//const left16 = convertFloat32ToInt16(left);
-	var left16 = downsampleBuffer(
-		left,
-		e.inputBuffer.sampleRate,
-		16000,
-	);
+	var left16 = downsampleBuffer(left, e.inputBuffer.sampleRate, 16000);
 	socket.emit("audioData", left16);
 }
 
@@ -136,9 +126,7 @@ function closeAll() {
 	// Clear the listeners (prevents issue if opening and closing repeatedly)
 	socket.off("transcript");
 	socket.off("googleCloudStreamError");
-	let tracks = globalStream
-		? globalStream.getTracks()
-		: null;
+	let tracks = globalStream ? globalStream.getTracks() : null;
 	let track = tracks ? tracks[0] : null;
 	if (track) {
 		track.stop();
@@ -150,9 +138,7 @@ function closeAll() {
 				try {
 					input.disconnect(processor);
 				} catch (error) {
-					console.warn(
-						"Attempt to disconnect input failed.",
-					);
+					console.warn("Attempt to disconnect input failed.");
 				}
 			}
 			processor.disconnect(context.destination);
@@ -175,11 +161,7 @@ function closeAll() {
 }
 
 // downsample the biffer to 16000Hz
-var downsampleBuffer = function (
-	buffer,
-	sampleRate,
-	outSampleRate,
-) {
+var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
 	if (outSampleRate === sampleRate) {
 		return buffer;
 	}
@@ -187,16 +169,12 @@ var downsampleBuffer = function (
 		throw "downsampling rate show be smaller than original sample rate";
 	}
 	var sampleRateRatio = sampleRate / outSampleRate;
-	var newLength = Math.round(
-		buffer.length / sampleRateRatio,
-	);
+	var newLength = Math.round(buffer.length / sampleRateRatio);
 	var result = new Int16Array(newLength);
 	var offsetResult = 0;
 	var offsetBuffer = 0;
 	while (offsetResult < result.length) {
-		var nextOffsetBuffer = Math.round(
-			(offsetResult + 1) * sampleRateRatio,
-		);
+		var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
 		var accum = 0,
 			count = 0;
 		for (
@@ -208,8 +186,7 @@ var downsampleBuffer = function (
 			count++;
 		}
 
-		result[offsetResult] =
-			Math.min(1, accum / count) * 0x7fff;
+		result[offsetResult] = Math.min(1, accum / count) * 0x7fff;
 		offsetResult++;
 		offsetBuffer = nextOffsetBuffer;
 	}

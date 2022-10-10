@@ -16,21 +16,12 @@ export default function Routes() {
 		<Switch>
 			<Route path="/" exact component={Home} />
 			<Route path="/signup" component={SignUp} />
-			<Route
-				path="/mytoia"
-				component={AvatarGarden}
-			/>
-			<Route
-				path="/library"
-				component={AvatarLibrary}
-			/>
+			<Route path="/mytoia" component={AvatarGarden} />
+			<Route path="/library" component={AvatarLibrary} />
 			<Route path="/stream" component={Settings} />
 			<Route path="/about" component={AboutUs} />
 			<Route path="/recorder" component={Recorder} />
-			<Route
-				path="/editrecorder"
-				component={EditRecorder}
-			/>
+			<Route path="/editrecorder" component={EditRecorder} />
 			<Route path="/player" component={Player} />
 
 			{/* redirect user to SignIn page if route does not exist and user is not authenticated */}

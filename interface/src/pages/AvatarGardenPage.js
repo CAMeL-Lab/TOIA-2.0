@@ -7,12 +7,7 @@ import addButton from "../icons/add-button.svg";
 import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
 import history from "../services/history";
-import {
-	Modal,
-	Button,
-	Confirm,
-	Input,
-} from "semantic-ui-react";
+import { Modal, Button, Confirm, Input } from "semantic-ui-react";
 import {
 	NotificationContainer,
 	NotificationManager,
@@ -25,11 +20,7 @@ import Tracker from "../utils/tracker";
 
 import { useBottomScrollListener } from "react-bottom-scroll-listener";
 
-export const renderSuggestedQsCard = (
-	card,
-	index,
-	onClickFunc,
-) => {
+export const renderSuggestedQsCard = (card, index, onClickFunc) => {
 	return (
 		<div className="row" id={card.id_question}>
 			<div
@@ -55,16 +46,11 @@ export const renderSuggestedQsCard = (
 	);
 };
 
-export const RecordAVideoCard = ({
-	onClick,
-	isDisabled,
-}) => {
+export const RecordAVideoCard = ({ onClick, isDisabled }) => {
 	return (
 		<div
 			data-tooltip={
-				isDisabled
-					? "Please record the required ones first"
-					: undefined
+				isDisabled ? "Please record the required ones first" : undefined
 			}
 			data-inverted=""
 			onClick={e => {
@@ -74,9 +60,7 @@ export const RecordAVideoCard = ({
 			<div
 				className={
 					"ui card " +
-					(isDisabled
-						? "cursor-disabled"
-						: "cursor-pointer")
+					(isDisabled ? "cursor-disabled" : "cursor-pointer")
 				}
 			>
 				<div className="image">
@@ -100,10 +84,7 @@ export const RecordAVideoCard = ({
 export const OnBoardingQCard = ({ data, onClick }) => {
 	return (
 		<div>
-			<div
-				className="ui red card cursor-pointer"
-				onClick={onClick}
-			>
+			<div className="ui red card cursor-pointer" onClick={onClick}>
 				<div className="content">
 					<div className="description three-line-ellipsis">
 						{data.question}
@@ -128,18 +109,14 @@ export const SuggestedQCard = ({
 	return (
 		<div
 			data-tooltip={
-				isDisabled
-					? "Please record the required ones first"
-					: undefined
+				isDisabled ? "Please record the required ones first" : undefined
 			}
 			data-inverted=""
 		>
 			<div
 				className={
 					"ui grey card " +
-					(isDisabled
-						? "cursor-disabled"
-						: "cursor-pointer")
+					(isDisabled ? "cursor-disabled" : "cursor-pointer")
 				}
 			>
 				<div className="content" onClick={onClick}>
@@ -172,24 +149,15 @@ export const SuggestedQCard = ({
 	);
 };
 
-export const SuggestedQCardNoAction = ({
-	data,
-	onClick,
-	isDisabled,
-}) => {
+export const SuggestedQCardNoAction = ({ data, onClick, isDisabled }) => {
 	return (
 		<div
 			data-tooltip={
-				isDisabled
-					? "Please record the required ones first"
-					: undefined
+				isDisabled ? "Please record the required ones first" : undefined
 			}
 			data-inverted=""
 		>
-			<div
-				className="ui grey card cursor-pointer"
-				onClick={onClick}
-			>
+			<div className="ui grey card cursor-pointer" onClick={onClick}>
 				<div className="content">
 					<div className="description three-line-ellipsis">
 						{data.question}
@@ -204,12 +172,7 @@ export const SuggestedQCardNoAction = ({
 	);
 };
 
-export const RecordedQCard = ({
-	data,
-	onClick,
-	onEdit,
-	onDelete,
-}) => {
+export const RecordedQCard = ({ data, onClick, onEdit, onDelete }) => {
 	return (
 		<div>
 			<div className="ui card bg-toia-theme cursor-pointer">
@@ -246,76 +209,44 @@ function AvatarGardenPage() {
 	const [toiaLanguage, setLanguage] = useState(null);
 	const [toiaID, setTOIAid] = useState(null);
 	const [streamList, setStreamList] = useState([]);
-	const [currentStream, setCurrentStream] =
-		useState(undefined);
-	const [suggestedQsList, setSuggestedQsList] = useState(
-		[],
-	);
-	const [pendingOnBoardingQs, setPendingOnBoardingQs] =
-		useState([]);
-	const [recordedQsList, setRecordedQsList] = useState(
-		[],
-	);
+	const [currentStream, setCurrentStream] = useState(undefined);
+	const [suggestedQsList, setSuggestedQsList] = useState([]);
+	const [pendingOnBoardingQs, setPendingOnBoardingQs] = useState([]);
+	const [recordedQsList, setRecordedQsList] = useState([]);
 
-	const [newStreamName, setNewStreamName] =
-		useState(null);
-	const [newStreamPrivacy, setNewStreamPrivacy] =
-		useState("public");
+	const [newStreamName, setNewStreamName] = useState(null);
+	const [newStreamPrivacy, setNewStreamPrivacy] = useState("public");
 	const [newStreamBio, setNewStreamBio] = useState(null);
 	const [newStreamPic, setNewStreamPic] = useState();
 
-	const [isPlaybackActive, setPlaybackActive] =
-		useState(false);
-	const [playbackVideo, setPlaybackVideo] =
-		useState(null);
-	const [playbackVideoType, setPlaybackVideoType] =
-		useState(null);
-	const [
-		playbackVideoQuestion,
-		setPlaybackVideoQuestion,
-	] = useState(null);
-	const [playbackVideoAnswer, setPlaybackVideoAnswer] =
-		useState(null);
-	const [playbackVideoPrivacy, setPlaybackVideoPrivacy] =
-		useState(null);
+	const [isPlaybackActive, setPlaybackActive] = useState(false);
+	const [playbackVideo, setPlaybackVideo] = useState(null);
+	const [playbackVideoType, setPlaybackVideoType] = useState(null);
+	const [playbackVideoQuestion, setPlaybackVideoQuestion] = useState(null);
+	const [playbackVideoAnswer, setPlaybackVideoAnswer] = useState(null);
+	const [playbackVideoPrivacy, setPlaybackVideoPrivacy] = useState(null);
 
-	const [showVideoDeletePopup, setShowVideoDeletePopup] =
-		useState(false);
-	const [questionBeingDeleted, setQuestionBeingDeleted] =
-		useState(null);
-	const [currentUserFullname, setCurrentUserFullname] =
-		useState(null);
-	const [currentUserLanguage, setCurrentUserLanguage] =
-		useState(null);
-	const [currentUserEmail, setCurrentUserEmail] =
-		useState(null);
+	const [showVideoDeletePopup, setShowVideoDeletePopup] = useState(false);
+	const [questionBeingDeleted, setQuestionBeingDeleted] = useState(null);
+	const [currentUserFullname, setCurrentUserFullname] = useState(null);
+	const [currentUserLanguage, setCurrentUserLanguage] = useState(null);
+	const [currentUserEmail, setCurrentUserEmail] = useState(null);
 
-	const [
-		isEditSuggestionModalActive,
-		setIsEditSuggestionModalActive,
-	] = useState(false);
-	const [
-		currentlyEditingSuggestion,
-		setCurrentlyEditingSuggestion,
-	] = useState(undefined);
-	const [waitingServerResponse, setWaitingServerReponse] =
+	const [isEditSuggestionModalActive, setIsEditSuggestionModalActive] =
 		useState(false);
-	const [suggestionNewValue, setSuggestionNewValue] =
-		useState("");
+	const [currentlyEditingSuggestion, setCurrentlyEditingSuggestion] =
+		useState(undefined);
+	const [waitingServerResponse, setWaitingServerReponse] = useState(false);
+	const [suggestionNewValue, setSuggestionNewValue] = useState("");
 
 	const [videosCount, setVideosCount] = useState(0);
-	const [videosTotalDuration, setVideosTotalDuration] =
-		useState(null);
+	const [videosTotalDuration, setVideosTotalDuration] = useState(null);
 
 	const [searchTerm, setSearchTerm] = useState("");
 
-	const [
-		numberOfVideosDisplayed,
-		setNumberOfVideosDisplayed,
-	] = useState(10);
+	const [numberOfVideosDisplayed, setNumberOfVideosDisplayed] = useState(10);
 
-	const [loadingVideos, setLoadingVideos] =
-		useState(false);
+	const [loadingVideos, setLoadingVideos] = useState(false);
 	//sample video entry: {question:What is your name?, stream: "fun business"}
 
 	React.useEffect(() => {
@@ -351,10 +282,8 @@ function AvatarGardenPage() {
 			axios
 				.post(`/api/getUserStreams`, {
 					params: {
-						toiaID: history.location.state
-							.toiaID,
-						toiaName:
-							history.location.state.toiaName,
+						toiaID: history.location.state.toiaID,
+						toiaName: history.location.state.toiaName,
 					},
 				})
 				.then(res => {
@@ -364,10 +293,7 @@ function AvatarGardenPage() {
 		});
 	}
 
-	function fetchOnBoardingQuestions(
-		cb_success = null,
-		cb_fail = null,
-	) {
+	function fetchOnBoardingQuestions(cb_success = null, cb_fail = null) {
 		const toiaID = history.location.state.toiaID;
 		const options = {
 			method: "GET",
@@ -382,9 +308,7 @@ function AvatarGardenPage() {
 
 					if (cb_success) cb_success();
 				} else {
-					NotificationManager.error(
-						"Something went wrong",
-					);
+					NotificationManager.error("Something went wrong");
 
 					if (cb_fail) cb_fail();
 				}
@@ -396,10 +320,7 @@ function AvatarGardenPage() {
 			});
 	}
 
-	function fetchSuggestedQuestions(
-		cb_success = null,
-		cb_fail = null,
-	) {
+	function fetchSuggestedQuestions(cb_success = null, cb_fail = null) {
 		const toiaID = history.location.state.toiaID;
 		const options = {
 			method: "GET",
@@ -465,9 +386,7 @@ function AvatarGardenPage() {
 				setVideosCount(response.data.count);
 			})
 			.catch(function (error) {
-				NotificationManager.error(
-					"An error occurred!",
-				);
+				NotificationManager.error("An error occurred!");
 				console.error(error);
 			});
 	}
@@ -485,14 +404,10 @@ function AvatarGardenPage() {
 		axios
 			.request(options)
 			.then(function (response) {
-				setVideosTotalDuration(
-					response.data.total_duration,
-				);
+				setVideosTotalDuration(response.data.total_duration);
 			})
 			.catch(function (error) {
-				NotificationManager.error(
-					"Couldn't fetch videos duration!",
-				);
+				NotificationManager.error("Couldn't fetch videos duration!");
 				console.error(error);
 			});
 	}
@@ -513,15 +428,11 @@ function AvatarGardenPage() {
 
 	const reachedScrollBottom = () => {
 		setLoadingVideos(true);
-		setNumberOfVideosDisplayed(
-			numberOfVideosDisplayed + 8,
-		);
+		setNumberOfVideosDisplayed(numberOfVideosDisplayed + 8);
 		setLoadingVideos(false);
 	};
 
-	const scrollRef = useBottomScrollListener(
-		reachedScrollBottom,
-	);
+	const scrollRef = useBottomScrollListener(reachedScrollBottom);
 
 	/*functions in charge of opening and closing the various pop up menus*/
 	function exampleReducer(state, action) {
@@ -534,10 +445,7 @@ function AvatarGardenPage() {
 		}
 	}
 
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	const { open } = state;
 
 	function openModal(e) {
@@ -555,10 +463,9 @@ function AvatarGardenPage() {
 		}
 	}
 
-	const [state2, dispatch2] = React.useReducer(
-		exampleReducer2,
-		{ open2: false },
-	);
+	const [state2, dispatch2] = React.useReducer(exampleReducer2, {
+		open2: false,
+	});
 	const { open2 } = state2;
 
 	function openModal2(e) {
@@ -576,10 +483,9 @@ function AvatarGardenPage() {
 		}
 	}
 
-	const [state3, dispatch3] = React.useReducer(
-		exampleReducer3,
-		{ open3: false },
-	);
+	const [state3, dispatch3] = React.useReducer(exampleReducer3, {
+		open3: false,
+	});
 	const { open3 } = state3;
 
 	function openModal3(e) {
@@ -597,10 +503,9 @@ function AvatarGardenPage() {
 		}
 	}
 
-	const [state4, dispatch4] = React.useReducer(
-		exampleReducer4,
-		{ open4: false },
-	);
+	const [state4, dispatch4] = React.useReducer(exampleReducer4, {
+		open4: false,
+	});
 	const { open4 } = state4;
 
 	function openModal4(e) {
@@ -614,23 +519,17 @@ function AvatarGardenPage() {
 			.post(`/api/getVideoPlayback`, {
 				params: {
 					playbackVideoID: card.id_video,
-					playbackTOIAId:
-						history.location.state.toiaID,
+					playbackTOIAId: history.location.state.toiaID,
 				},
 			})
 			.then(res => {
 				setPlaybackVideo(res.data.videoURL);
 				setPlaybackVideoType(
-					card.type.charAt(0).toUpperCase() +
-						card.type.slice(1),
+					card.type.charAt(0).toUpperCase() + card.type.slice(1),
 				);
 				setPlaybackVideoQuestion(card.question);
-				setPlaybackVideoAnswer(
-					res.data.videoAnswer,
-				);
-				setPlaybackVideoPrivacy(
-					res.data.videoPrivacy,
-				);
+				setPlaybackVideoAnswer(res.data.videoAnswer);
+				setPlaybackVideoPrivacy(res.data.videoPrivacy);
 				setPlaybackActive(true);
 			});
 	}
@@ -660,20 +559,15 @@ function AvatarGardenPage() {
 			})
 			.then(res => {
 				setCurrentUserFullname(
-					res.data[0].first_name +
-						" " +
-						res.data[0].last_name,
+					res.data[0].first_name + " " + res.data[0].last_name,
 				);
-				setCurrentUserLanguage(
-					res.data[0].language,
-				);
+				setCurrentUserLanguage(res.data[0].language);
 				setCurrentUserEmail(res.data[0].email);
 			});
 	}
 
 	const [anchorEl, setAnchorEl] = useState(null); //for list of streams drop down menu when you click on move icon
-	const [selectedIndex, setSelectedIndex] =
-		useState(null);
+	const [selectedIndex, setSelectedIndex] = useState(null);
 
 	const handleMenuClick = event => {
 		setAnchorEl(event.currentTarget);
@@ -705,37 +599,25 @@ function AvatarGardenPage() {
 			.request(options)
 			.then(function (response) {
 				setShowVideoDeletePopup(false);
-				NotificationManager.info(
-					"Deleting video...",
-				);
+				NotificationManager.info("Deleting video...");
 				if (response.status === 200) {
 					if (currentStream) {
-						fetchRecordedQuestions(
-							currentStream.id,
-						);
+						fetchRecordedQuestions(currentStream.id);
 					} else {
-						fetchRecordedQuestions(
-							streamList[0].id_stream,
-						);
+						fetchRecordedQuestions(streamList[0].id_stream);
 					}
 					fetchOnBoardingQuestions();
 					fetchStreamList();
 					fetchVideosCount();
 					fetchVideosTotalDuration();
-					NotificationManager.info(
-						"Video removed!",
-					);
+					NotificationManager.info("Video removed!");
 				} else {
-					NotificationManager.error(
-						"Couldn't delete video!",
-					);
+					NotificationManager.error("Couldn't delete video!");
 					console.error(response);
 				}
 			})
 			.catch(function (error) {
-				NotificationManager.error(
-					"Couldn't delete video!",
-				);
+				NotificationManager.error("Couldn't delete video!");
 				console.error(error);
 			});
 	};
@@ -753,18 +635,14 @@ function AvatarGardenPage() {
 			.then(function (response) {
 				if (response.status === 200) {
 					fetchSuggestedQuestions(() => {
-						NotificationManager.info(
-							"Suggestion Removed!",
-						);
+						NotificationManager.info("Suggestion Removed!");
 					});
 				} else {
 					console.log(response);
 				}
 			})
 			.catch(function (error) {
-				NotificationManager.error(
-					"Couldn't delete suggestion!",
-				);
+				NotificationManager.error("Couldn't delete suggestion!");
 				console.error(error);
 			});
 	};
@@ -789,26 +667,16 @@ function AvatarGardenPage() {
 					fetchSuggestedQuestions(
 						() => {
 							setWaitingServerReponse(false);
-							setIsEditSuggestionModalActive(
-								false,
-							);
-							setCurrentlyEditingSuggestion(
-								null,
-							);
+							setIsEditSuggestionModalActive(false);
+							setCurrentlyEditingSuggestion(null);
 							setSuggestionNewValue("");
 
-							NotificationManager.info(
-								"Suggestion updated!",
-							);
+							NotificationManager.info("Suggestion updated!");
 						},
 						() => {
 							setWaitingServerReponse(false);
-							setIsEditSuggestionModalActive(
-								false,
-							);
-							setCurrentlyEditingSuggestion(
-								null,
-							);
+							setIsEditSuggestionModalActive(false);
+							setCurrentlyEditingSuggestion(null);
 							setSuggestionNewValue("");
 
 							NotificationManager.error(
@@ -829,9 +697,7 @@ function AvatarGardenPage() {
 		const term = searchTerm.toLowerCase();
 		if (term.trim().length > 0) {
 			return suggestedQsList.filter(
-				q =>
-					q.question.toLowerCase().search(term) >
-					-1,
+				q => q.question.toLowerCase().search(term) > -1,
 			);
 		}
 		return suggestedQsList;
@@ -841,17 +707,13 @@ function AvatarGardenPage() {
 		const term = searchTerm.toLowerCase();
 		if (term.trim().length > 0) {
 			return recordedQsList.filter(
-				q =>
-					q.question.toLowerCase().search(term) >
-					-1,
+				q => q.question.toLowerCase().search(term) > -1,
 			);
 		}
 		return recordedQsList;
 	};
 
-	var settingData = [
-		{ name: "", email: "", password: "", language: "" },
-	];
+	var settingData = [{ name: "", email: "", password: "", language: "" }];
 
 	var settingData = [
 		{
@@ -869,9 +731,7 @@ function AvatarGardenPage() {
 			<Modal
 				onClose={() => {
 					if (!waitingServerResponse) {
-						setIsEditSuggestionModalActive(
-							false,
-						);
+						setIsEditSuggestionModalActive(false);
 					}
 				}}
 				open={isEditSuggestionModalActive}
@@ -883,9 +743,7 @@ function AvatarGardenPage() {
 						placeholder="Type something..."
 						disabled={waitingServerResponse}
 						onChange={e => {
-							setSuggestionNewValue(
-								e.target.value,
-							);
+							setSuggestionNewValue(e.target.value);
 						}}
 						value={suggestionNewValue}
 					/>
@@ -894,11 +752,7 @@ function AvatarGardenPage() {
 					<Button
 						color="black"
 						disabled={waitingServerResponse}
-						onClick={() =>
-							setIsEditSuggestionModalActive(
-								false,
-							)
-						}
+						onClick={() => setIsEditSuggestionModalActive(false)}
 					>
 						Cancel
 					</Button>
@@ -935,10 +789,7 @@ function AvatarGardenPage() {
 						}}
 						className="stream-private"
 					>
-						<i
-							className={privacy_eye}
-							aria-hidden="true"
-						/>
+						<i className={privacy_eye} aria-hidden="true" />
 					</button>
 				</div>
 			);
@@ -951,10 +802,7 @@ function AvatarGardenPage() {
 						}}
 						className="stream-private"
 					>
-						<i
-							className={privacy_eye}
-							aria-hidden="true"
-						/>
+						<i className={privacy_eye} aria-hidden="true" />
 					</button>
 				</div>
 			);
@@ -986,14 +834,9 @@ function AvatarGardenPage() {
 					</p>
 
 					<div className="ui gray label medium">
-						<i
-							aria-hidden="true"
-							className="video icon"
-						/>
+						<i aria-hidden="true" className="video icon" />
 						Total Videos In Stream:
-						<div className="detail">
-							{card.videos_count}
-						</div>
+						<div className="detail">{card.videos_count}</div>
 					</div>
 				</div>
 				<br />
@@ -1018,21 +861,12 @@ function AvatarGardenPage() {
 	};
 
 	let videoPlayback = (
-		<video
-			id="playbackVideo"
-			width="496"
-			height="324"
-			autoPlay
-			controls
-		>
+		<video id="playbackVideo" width="496" height="324" autoPlay controls>
 			<source src={playbackVideo} type="video/mp4" />
 		</video>
 	);
 
-	function handleSelectCurrentStream(
-		currentItemObject,
-		currentPageIndex,
-	) {
+	function handleSelectCurrentStream(currentItemObject, currentPageIndex) {
 		setCurrentStream(currentItemObject.item);
 		fetchRecordedQuestions(currentItemObject.item.id);
 	}
@@ -1146,16 +980,12 @@ function AvatarGardenPage() {
 		form.append("toiaID", toiaID);
 		form.append("toiaName", toiaName);
 
-		axios
-			.post(`/api/createNewStream`, form)
-			.then(res => {
-				setStreamList(res.data);
-				dispatch4({ type: "close" });
+		axios.post(`/api/createNewStream`, form).then(res => {
+			setStreamList(res.data);
+			dispatch4({ type: "close" });
 
-				NotificationManager.success(
-					"Stream Created!",
-				);
-			});
+			NotificationManager.success("Stream Created!");
+		});
 		e.preventDefault();
 	}
 
@@ -1174,10 +1004,8 @@ function AvatarGardenPage() {
 	};
 
 	// let privacy_eye = "fa fa-eye"
-	const [privacy_eye, setPrivacyEye] =
-		useState("fa fa-eye");
-	const [stream_privacy, setStreamPrivacy] =
-		useState("Public");
+	const [privacy_eye, setPrivacyEye] = useState("fa fa-eye");
+	const [stream_privacy, setStreamPrivacy] = useState("Public");
 
 	function toggleEye(card) {
 		console.log(card);
@@ -1214,11 +1042,7 @@ function AvatarGardenPage() {
 					</p>
 				</Modal.Header>
 				<Modal.Actions>
-					<Button
-						color="green"
-						inverted
-						onClick={groupSelect}
-					>
+					<Button color="green" inverted onClick={groupSelect}>
 						<i className="fa fa-check" />
 					</Button>
 				</Modal.Actions>
@@ -1235,8 +1059,7 @@ function AvatarGardenPage() {
 						Account Settings
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Edit the following information about
-						your account
+						Edit the following information about your account
 					</p>
 				</Modal.Header>
 				<Modal.Content>
@@ -1249,10 +1072,7 @@ function AvatarGardenPage() {
 						className="garden-settings-name_box garden-font-class-2"
 						defaultValue={settingData[0].name}
 						type={"text"}
-						onChange={e =>
-							(settingData[0].name =
-								e.target.value)
-						}
+						onChange={e => (settingData[0].name = e.target.value)}
 					/>
 					<div
 						className="garden-settings-email garden-font-class-2" //the email input field
@@ -1263,10 +1083,7 @@ function AvatarGardenPage() {
 						className="garden-settings-email_box garden-font-class-2"
 						defaultValue={settingData[0].email}
 						type={"email"}
-						onChange={e =>
-							(settingData[0].email =
-								e.target.value)
-						}
+						onChange={e => (settingData[0].email = e.target.value)}
 					/>
 					<div
 						className="garden-settings-pass garden-font-class-2" //the password input field
@@ -1275,13 +1092,10 @@ function AvatarGardenPage() {
 					</div>
 					<input
 						className="garden-settings-pass_box garden-font-class-2"
-						defaultValue={
-							settingData[0].password
-						}
+						defaultValue={settingData[0].password}
 						type={"password"}
 						onChange={e =>
-							(settingData[0].password =
-								e.target.value)
+							(settingData[0].password = e.target.value)
 						}
 					/>
 					<div
@@ -1292,36 +1106,22 @@ function AvatarGardenPage() {
 					<select
 						className="garden-settings-lang_box garden-font-class-2"
 						onChange={e =>
-							(settingData[0].language =
-								e.target.value)
+							(settingData[0].language = e.target.value)
 						} /*required={true}*/
 					>
-						<option
-							value=""
-							disabled
-							selected
-							hidden
-						>
+						<option value="" disabled selected hidden>
 							{settingData[0].language}
 						</option>
-						<option value="AF">
-							Afrikaans
-						</option>
+						<option value="AF">Afrikaans</option>
 						<option value="SQ">Albanian</option>
 						<option value="AR">Arabic</option>
 						<option value="HY">Armenian</option>
 						<option value="EU">Basque</option>
 						<option value="BN">Bengali</option>
-						<option value="BG">
-							Bulgarian
-						</option>
+						<option value="BG">Bulgarian</option>
 						<option value="CA">Catalan</option>
-						<option value="KM">
-							Cambodian
-						</option>
-						<option value="ZH">
-							Chinese (Mandarin)
-						</option>
+						<option value="KM">Cambodian</option>
+						<option value="ZH">Chinese (Mandarin)</option>
 						<option value="HR">Croatian</option>
 						<option value="CS">Czech</option>
 						<option value="DA">Danish</option>
@@ -1337,15 +1137,9 @@ function AvatarGardenPage() {
 						<option value="GU">Gujarati</option>
 						<option value="HE">Hebrew</option>
 						<option value="HI">Hindi</option>
-						<option value="HU">
-							Hungarian
-						</option>
-						<option value="IS">
-							Icelandic
-						</option>
-						<option value="ID">
-							Indonesian
-						</option>
+						<option value="HU">Hungarian</option>
+						<option value="IS">Icelandic</option>
+						<option value="ID">Indonesian</option>
 						<option value="GA">Irish</option>
 						<option value="IT">Italian</option>
 						<option value="JA">Japanese</option>
@@ -1353,31 +1147,19 @@ function AvatarGardenPage() {
 						<option value="KO">Korean</option>
 						<option value="LA">Latin</option>
 						<option value="LV">Latvian</option>
-						<option value="LT">
-							Lithuanian
-						</option>
-						<option value="MK">
-							Macedonian
-						</option>
+						<option value="LT">Lithuanian</option>
+						<option value="MK">Macedonian</option>
 						<option value="MS">Malay</option>
-						<option value="ML">
-							Malayalam
-						</option>
+						<option value="ML">Malayalam</option>
 						<option value="MT">Maltese</option>
 						<option value="MI">Maori</option>
 						<option value="MR">Marathi</option>
-						<option value="MN">
-							Mongolian
-						</option>
+						<option value="MN">Mongolian</option>
 						<option value="NE">Nepali</option>
-						<option value="NO">
-							Norwegian
-						</option>
+						<option value="NO">Norwegian</option>
 						<option value="FA">Persian</option>
 						<option value="PL">Polish</option>
-						<option value="PT">
-							Portuguese
-						</option>
+						<option value="PT">Portuguese</option>
 						<option value="PA">Punjabi</option>
 						<option value="QU">Quechua</option>
 						<option value="RO">Romanian</option>
@@ -1385,9 +1167,7 @@ function AvatarGardenPage() {
 						<option value="SM">Samoan</option>
 						<option value="SR">Serbian</option>
 						<option value="SK">Slovak</option>
-						<option value="SL">
-							Slovenian
-						</option>
+						<option value="SL">Slovenian</option>
 						<option value="ES">Spanish</option>
 						<option value="SW">Swahili</option>
 						<option value="SV">Swedish</option>
@@ -1398,14 +1178,10 @@ function AvatarGardenPage() {
 						<option value="BO">Tibetan</option>
 						<option value="TO">Tonga</option>
 						<option value="TR">Turkish</option>
-						<option value="UK">
-							Ukrainian
-						</option>
+						<option value="UK">Ukrainian</option>
 						<option value="UR">Urdu</option>
 						<option value="UZ">Uzbek</option>
-						<option value="VI">
-							Vietnamese
-						</option>
+						<option value="VI">Vietnamese</option>
 						<option value="CY">Welsh</option>
 						<option value="XH">Xhosa</option>
 					</select>
@@ -1439,8 +1215,7 @@ function AvatarGardenPage() {
 						Edit Stream{" "}
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Edit the following information about
-						your stream
+						Edit the following information about your stream
 					</p>
 				</Modal.Header>
 				<Modal.Content>
@@ -1453,9 +1228,7 @@ function AvatarGardenPage() {
 						className="stream-settings-name_box garden-font-class-2"
 						placeholder="Enter a new stream name"
 						type={"text"}
-						onChange={e =>
-							setNewStreamName(e.target.value)
-						}
+						onChange={e => setNewStreamName(e.target.value)}
 						required={true}
 					/>
 					<div
@@ -1465,27 +1238,14 @@ function AvatarGardenPage() {
 					</div>
 					<select
 						className="stream-settings-email_box garden-font-class-2"
-						onChange={e =>
-							setNewStreamPrivacy(
-								e.target.value,
-							)
-						}
+						onChange={e => setNewStreamPrivacy(e.target.value)}
 						required={true}
 					>
-						<option
-							value=""
-							disabled
-							selected
-							hidden
-						>
+						<option value="" disabled selected hidden>
 							{stream_privacy}
 						</option>
-						<option value="public">
-							Public
-						</option>
-						<option value="private">
-							Private
-						</option>
+						<option value="public">Public</option>
+						<option value="private">Private</option>
 					</select>
 
 					<div
@@ -1498,9 +1258,7 @@ function AvatarGardenPage() {
 						className="stream-settings-lang_box garden-font-class-2"
 						placeholder="Enter what your new stream will be about"
 						type={"text"}
-						onChange={e =>
-							setNewStreamBio(e.target.value)
-						}
+						onChange={e => setNewStreamBio(e.target.value)}
 						rows="4"
 						cols="50"
 						required={true}
@@ -1509,9 +1267,7 @@ function AvatarGardenPage() {
 						className="stream-photo-upload garden-font-class-2" //delete button, function TBD
 					>
 						<form>
-							<label htmlFor="img">
-								Select image:
-							</label>
+							<label htmlFor="img">Select image:</label>
 							<input
 								className="stream-photo-upload-choose garden-font-class-2"
 								type="file"
@@ -1541,8 +1297,7 @@ function AvatarGardenPage() {
 						Add Stream{" "}
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Add the following information about
-						your stream
+						Add the following information about your stream
 					</p>
 				</Modal.Header>
 				<Modal.Content>
@@ -1555,9 +1310,7 @@ function AvatarGardenPage() {
 						className="stream-settings-name_box garden-font-class-2"
 						placeholder="Enter a new stream name"
 						type={"text"}
-						onChange={e =>
-							setNewStreamName(e.target.value)
-						}
+						onChange={e => setNewStreamName(e.target.value)}
 						required={true}
 					/>
 					<div
@@ -1567,27 +1320,14 @@ function AvatarGardenPage() {
 					</div>
 					<select
 						className="stream-settings-email_box garden-font-class-2"
-						onChange={e =>
-							setNewStreamPrivacy(
-								e.target.value,
-							)
-						}
+						onChange={e => setNewStreamPrivacy(e.target.value)}
 						required={true}
 					>
-						<option
-							value=""
-							disabled
-							selected
-							hidden
-						>
+						<option value="" disabled selected hidden>
 							Public
 						</option>
-						<option value="public">
-							Public
-						</option>
-						<option value="private">
-							Private
-						</option>
+						<option value="public">Public</option>
+						<option value="private">Private</option>
 					</select>
 
 					<div
@@ -1600,9 +1340,7 @@ function AvatarGardenPage() {
 						className="stream-settings-lang_box garden-font-class-2"
 						placeholder="Enter what your new stream will be about"
 						type={"text"}
-						onChange={e =>
-							setNewStreamBio(e.target.value)
-						}
+						onChange={e => setNewStreamBio(e.target.value)}
 						rows="4"
 						cols="50"
 						required={true}
@@ -1611,9 +1349,7 @@ function AvatarGardenPage() {
 						className="stream-photo-upload garden-font-class-2" //delete button, function TBD
 					>
 						<form>
-							<label htmlFor="img">
-								Select image:
-							</label>
+							<label htmlFor="img">Select image:</label>
 							<input
 								className="stream-photo-upload-choose garden-font-class-2"
 								type="file"
@@ -1649,24 +1385,18 @@ function AvatarGardenPage() {
 					<div>Video entry</div>
 				</Modal.Header>
 				<Modal.Content>
-					<div id="typeOfVideo">
-						Video Type: {playbackVideoType}
-					</div>
+					<div id="typeOfVideo">Video Type: {playbackVideoType}</div>
 					<div id="questionOfVideo">
-						Question being answered: "
-						{playbackVideoQuestion}"
+						Question being answered: "{playbackVideoQuestion}"
 					</div>
 					<div id="privacyOfVideo">
-						Privacy Settings:{" "}
-						{playbackVideoPrivacy}
+						Privacy Settings: {playbackVideoPrivacy}
 					</div>
 					<div id="divider" />
 					<div className={"ui row centered grid"}>
 						{videoPlayback}
 					</div>
-					<div id="answerCorrection">
-						The answer provided:
-					</div>
+					<div id="answerCorrection">The answer provided:</div>
 					<input
 						className="modal-ans font-class-1"
 						value={playbackVideoAnswer}
@@ -1729,27 +1459,18 @@ function AvatarGardenPage() {
 
 				<div className="stats-container">
 					<div className="stats-wrapper">
-						<div className="stats-number">
-							{videosCount}
-						</div>
-						<div className="stats-label">
-							Total Videos
-						</div>
+						<div className="stats-number">{videosCount}</div>
+						<div className="stats-label">Total Videos</div>
 					</div>
 
 					<div className="stats-wrapper">
 						<div className="stats-number">
 							{videosTotalDuration
-								? (
-										videosTotalDuration /
-										60
-								  ).toFixed(1)
+								? (videosTotalDuration / 60).toFixed(1)
 								: 0}
 							Min
 						</div>
-						<div className="stats-label">
-							Total Videos Length
-						</div>
+						<div className="stats-label">Total Videos Length</div>
 					</div>
 				</div>
 				<button
@@ -1802,42 +1523,28 @@ function AvatarGardenPage() {
 						}}
 						value={searchTerm}
 					/>
-					<i
-						aria-hidden="true"
-						className="search icon"
-					/>
+					<i aria-hidden="true" className="search icon" />
 				</div>
 
-				<div
-					className="garden-grid"
-					ref={scrollRef}
-				>
+				<div className="garden-grid" ref={scrollRef}>
 					<div className="cards-wrapper ui">
 						<div className="ui cards">
 							<RecordAVideoCard
 								onClick={add}
-								isDisabled={
-									pendingOnBoardingQs.length !==
-									0
-								}
+								isDisabled={pendingOnBoardingQs.length !== 0}
 							/>
 
-							{pendingOnBoardingQs.map(
-								(q, index) => {
-									return (
-										<OnBoardingQCard
-											data={q}
-											onClick={e => {
-												openSuggestion(
-													e,
-													q,
-												);
-											}}
-											key={index}
-										/>
-									);
-								},
-							)}
+							{pendingOnBoardingQs.map((q, index) => {
+								return (
+									<OnBoardingQCard
+										data={q}
+										onClick={e => {
+											openSuggestion(e, q);
+										}}
+										key={index}
+									/>
+								);
+							})}
 
 							{getFilteredSuggestionsList()
 								.slice(0, 5)
@@ -1846,14 +1553,10 @@ function AvatarGardenPage() {
 										<SuggestedQCard
 											data={q}
 											onClick={e => {
-												openSuggestion(
-													e,
-													q,
-												);
+												openSuggestion(e, q);
 											}}
 											isDisabled={
-												pendingOnBoardingQs.length !==
-												0
+												pendingOnBoardingQs.length !== 0
 											}
 											onEdit={() => {
 												setSuggestionNewValue(
@@ -1867,9 +1570,7 @@ function AvatarGardenPage() {
 												);
 											}}
 											onDelete={() => {
-												handleDeleteSuggestion(
-													q,
-												);
+												handleDeleteSuggestion(q);
 											}}
 											key={index}
 										/>
@@ -1877,33 +1578,21 @@ function AvatarGardenPage() {
 								})}
 
 							{getFilteredRecordedQsList()
-								.slice(
-									0,
-									numberOfVideosDisplayed,
-								)
+								.slice(0, numberOfVideosDisplayed)
 								.map((q, index) => {
 									return (
 										<RecordedQCard
 											data={q}
 											onClick={e => {
-												openPlayback(
-													e,
-													q,
-												);
+												openPlayback(e, q);
 											}}
 											key={index}
 											onEdit={() => {
-												handleEditRecordedVideoClick(
-													q,
-												);
+												handleEditRecordedVideoClick(q);
 											}}
 											onDelete={() => {
-												setQuestionBeingDeleted(
-													q,
-												);
-												setShowVideoDeletePopup(
-													true,
-												);
+												setQuestionBeingDeleted(q);
+												setShowVideoDeletePopup(true);
 											}}
 										/>
 									);
@@ -1963,15 +1652,9 @@ function AvatarGardenPage() {
 									index, // this is the menu, its a list of the stream names I took form the streams variable
 								) => (
 									<MenuItem
-										selected={
-											index ===
-											selectedIndex
-										}
+										selected={index === selectedIndex}
 										onClick={event =>
-											handleMenuClose(
-												event,
-												index,
-											)
+											handleMenuClose(event, index)
 										}
 										key={index}
 									>

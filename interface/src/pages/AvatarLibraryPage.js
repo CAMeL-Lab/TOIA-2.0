@@ -17,10 +17,7 @@ function AvatarLibraryPage() {
 				return { open: true };
 		}
 	}
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	const { open } = state;
 
 	function openModal(e) {
@@ -37,10 +34,9 @@ function AvatarLibraryPage() {
 				return { open3: true };
 		}
 	}
-	const [state3, dispatch3] = React.useReducer(
-		exampleReducer3,
-		{ open3: false },
-	);
+	const [state3, dispatch3] = React.useReducer(exampleReducer3, {
+		open3: false,
+	});
 	const { open3 } = state3;
 
 	function openModal3(e) {
@@ -62,33 +58,24 @@ function AvatarLibraryPage() {
 	const [allData, setAllData] = useState([]);
 	const [searchData, setSearchData] = useState([]);
 
-	const [interactionLanguage, setInteractionLanguage] =
-		useState(null);
+	const [interactionLanguage, setInteractionLanguage] = useState(null);
 
 	useEffect(() => {
 		if (history.location.state != undefined) {
 			setLoginState(true);
 			setName(history.location.state.toiaName);
-			setLanguage(
-				history.location.state.toiaLanguage,
-			);
+			setLanguage(history.location.state.toiaLanguage);
 			setTOIAid(history.location.state.toiaID);
 		}
 
 		axios.get(`/api/getAllStreams`).then(res => {
 			let user_id = history.location.state.toiaID;
 			axios
-				.get(
-					`/api/permission/streams?user_id=${user_id}`,
-				)
+				.get(`/api/permission/streams?user_id=${user_id}`)
 				.then(permission_res => {
-					let filtered_streams = res.data.filter(
-						item => {
-							return permission_res.data.includes(
-								item.id_stream,
-							);
-						},
-					);
+					let filtered_streams = res.data.filter(item => {
+						return permission_res.data.includes(item.id_stream);
+					});
 					// console.log(permission_res);
 					// console.log(filtered_streams);
 					setAllData(filtered_streams);
@@ -114,8 +101,7 @@ function AvatarLibraryPage() {
 					toiaFirstNameToTalk: element.first_name,
 					toiaLastNameToTalk: element.last_name,
 					streamToTalk: element.id_stream,
-					streamNameToTalk:
-						element.name + " stream",
+					streamNameToTalk: element.name + " stream",
 				},
 			});
 		} else {
@@ -126,8 +112,7 @@ function AvatarLibraryPage() {
 					toiaFirstNameToTalk: element.first_name,
 					toiaLastNameToTalk: element.last_name,
 					streamToTalk: element.id_stream,
-					streamNameToTalk:
-						element.name + " stream",
+					streamNameToTalk: element.name + " stream",
 				},
 			});
 		}
@@ -137,10 +122,7 @@ function AvatarLibraryPage() {
 		//cards for streams
 
 		return (
-			<div
-				className="garden-carousel-card"
-				id={card.id_stream}
-			>
+			<div className="garden-carousel-card" id={card.id_stream}>
 				<img
 					onClick={() => {
 						goToPlayer(card);
@@ -152,9 +134,7 @@ function AvatarLibraryPage() {
 					<h1
 						className="t1 garden-font-class-2" //name of user
 					>
-						{card.first_name +
-							" " +
-							card.last_name}
+						{card.first_name + " " + card.last_name}
 					</h1>
 					<p
 						className="t2 garden-font-class-2" //individual stream name
@@ -162,8 +142,7 @@ function AvatarLibraryPage() {
 						<button
 							onClick={openModal3}
 							style={{
-								backgroundColor:
-									"transparent",
+								backgroundColor: "transparent",
 								border: "transparent",
 								cursor: "pointer",
 							}}
@@ -191,24 +170,18 @@ function AvatarLibraryPage() {
 			return;
 		}
 
-		const filteredData = allData.filter(
-			(item, index) => {
-				let searchTerms = searchval.split(" ");
-				for (let term of searchTerms) {
-					if (
-						(
-							item.first_name +
-							item.last_name +
-							item.name
-						)
-							.toLowerCase()
-							.includes(term.toLowerCase())
-					)
-						return true;
-				}
-				return false;
-			},
-		);
+		const filteredData = allData.filter((item, index) => {
+			let searchTerms = searchval.split(" ");
+			for (let term of searchTerms) {
+				if (
+					(item.first_name + item.last_name + item.name)
+						.toLowerCase()
+						.includes(term.toLowerCase())
+				)
+					return true;
+			}
+			return false;
+		});
 
 		setSearchData(filteredData);
 	};
@@ -364,15 +337,12 @@ function AvatarLibraryPage() {
 						Welcome Back
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Enter the following information to
-						login to your TOIA account
+						Enter the following information to login to your TOIA
+						account
 					</p>
 				</Modal.Header>
 				<Modal.Content>
-					<form
-						className="login_popup"
-						onSubmit={submitHandler}
-					>
+					<form className="login_popup" onSubmit={submitHandler}>
 						<input
 							className="login_email login-font-class-1"
 							placeholder={"Email"}
@@ -424,39 +394,21 @@ function AvatarLibraryPage() {
                   <p className="library-view-text text" style={{top: '42%'}}>{allData[viewIndex].bio}</p> */}
 					<select
 						className="library-lang-box"
-						onChange={e =>
-							setInteractionLanguage(
-								e.target.value,
-							)
-						}
+						onChange={e => setInteractionLanguage(e.target.value)}
 					>
-						<option
-							value=""
-							disabled
-							selected
-							hidden
-						>
-							What language would you like to
-							speak in..
+						<option value="" disabled selected hidden>
+							What language would you like to speak in..
 						</option>
-						<option value="AF">
-							Afrikaans
-						</option>
+						<option value="AF">Afrikaans</option>
 						<option value="SQ">Albanian</option>
 						<option value="AR">Arabic</option>
 						<option value="HY">Armenian</option>
 						<option value="EU">Basque</option>
 						<option value="BN">Bengali</option>
-						<option value="BG">
-							Bulgarian
-						</option>
+						<option value="BG">Bulgarian</option>
 						<option value="CA">Catalan</option>
-						<option value="KM">
-							Cambodian
-						</option>
-						<option value="ZH">
-							Chinese (Mandarin)
-						</option>
+						<option value="KM">Cambodian</option>
+						<option value="ZH">Chinese (Mandarin)</option>
 						<option value="HR">Croatian</option>
 						<option value="CS">Czech</option>
 						<option value="DA">Danish</option>
@@ -472,15 +424,9 @@ function AvatarLibraryPage() {
 						<option value="GU">Gujarati</option>
 						<option value="HE">Hebrew</option>
 						<option value="HI">Hindi</option>
-						<option value="HU">
-							Hungarian
-						</option>
-						<option value="IS">
-							Icelandic
-						</option>
-						<option value="ID">
-							Indonesian
-						</option>
+						<option value="HU">Hungarian</option>
+						<option value="IS">Icelandic</option>
+						<option value="ID">Indonesian</option>
 						<option value="GA">Irish</option>
 						<option value="IT">Italian</option>
 						<option value="JA">Japanese</option>
@@ -488,31 +434,19 @@ function AvatarLibraryPage() {
 						<option value="KO">Korean</option>
 						<option value="LA">Latin</option>
 						<option value="LV">Latvian</option>
-						<option value="LT">
-							Lithuanian
-						</option>
-						<option value="MK">
-							Macedonian
-						</option>
+						<option value="LT">Lithuanian</option>
+						<option value="MK">Macedonian</option>
 						<option value="MS">Malay</option>
-						<option value="ML">
-							Malayalam
-						</option>
+						<option value="ML">Malayalam</option>
 						<option value="MT">Maltese</option>
 						<option value="MI">Maori</option>
 						<option value="MR">Marathi</option>
-						<option value="MN">
-							Mongolian
-						</option>
+						<option value="MN">Mongolian</option>
 						<option value="NE">Nepali</option>
-						<option value="NO">
-							Norwegian
-						</option>
+						<option value="NO">Norwegian</option>
 						<option value="FA">Persian</option>
 						<option value="PL">Polish</option>
-						<option value="PT">
-							Portuguese
-						</option>
+						<option value="PT">Portuguese</option>
 						<option value="PA">Punjabi</option>
 						<option value="QU">Quechua</option>
 						<option value="RO">Romanian</option>
@@ -520,9 +454,7 @@ function AvatarLibraryPage() {
 						<option value="SM">Samoan</option>
 						<option value="SR">Serbian</option>
 						<option value="SK">Slovak</option>
-						<option value="SL">
-							Slovenian
-						</option>
+						<option value="SL">Slovenian</option>
 						<option value="ES">Spanish</option>
 						<option value="SW">Swahili</option>
 						<option value="SV">Swedish </option>
@@ -533,14 +465,10 @@ function AvatarLibraryPage() {
 						<option value="BO">Tibetan</option>
 						<option value="TO">Tonga</option>
 						<option value="TR">Turkish</option>
-						<option value="UK">
-							Ukrainian
-						</option>
+						<option value="UK">Ukrainian</option>
 						<option value="UR">Urdu</option>
 						<option value="UZ">Uzbek</option>
-						<option value="VI">
-							Vietnamese
-						</option>
+						<option value="VI">Vietnamese</option>
 						<option value="CY">Welsh</option>
 						<option value="XH">Xhosa</option>
 					</select>
@@ -561,8 +489,7 @@ function AvatarLibraryPage() {
 						All Stream{" "}
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Here is the following information
-						about your stream
+						Here is the following information about your stream
 					</p>
 				</Modal.Header>
 				<Modal.Content>
@@ -622,9 +549,7 @@ function AvatarLibraryPage() {
 					My TOIA
 				</div>
 				<div
-					onClick={
-						isLoggedIn ? logout : openModal
-					}
+					onClick={isLoggedIn ? logout : openModal}
 					className="nav-login_icon app-monsterrat-black nav-deselect" //depending on whter user is logged in or not, the button will change from login to logout
 				>
 					{isLoggedIn ? "Logout" : "Login"}
@@ -632,16 +557,12 @@ function AvatarLibraryPage() {
 			</div>
 
 			<div className="library-page-setup">
-				<h1 className="library-heading">
-					TOIA Stream Library
-				</h1>
+				<h1 className="library-heading">TOIA Stream Library</h1>
 				<input
 					className="library-search"
 					type="text"
 					placeholder="&#xF002;  "
-					onChange={event =>
-						searchStreams(event.target.value)
-					}
+					onChange={event => searchStreams(event.target.value)}
 				/>
 				<div
 					className="library-grid" //videos

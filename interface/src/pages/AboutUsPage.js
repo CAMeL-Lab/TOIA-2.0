@@ -42,9 +42,7 @@ function AvatarViewPage() {
 		if (history.location.state != undefined) {
 			setLoginState(true);
 			setName(history.location.state.toiaName);
-			setLanguage(
-				history.location.state.toiaLanguage,
-			);
+			setLanguage(history.location.state.toiaLanguage);
 			setTOIAid(history.location.state.toiaID);
 		}
 
@@ -175,13 +173,9 @@ function AvatarViewPage() {
 		axios.post(`/api/login`, params).then(res => {
 			if (res.data == -1) {
 				//alert('Email not found');
-				NotificationManager.error(
-					"Incorrect e-mail address.",
-				);
+				NotificationManager.error("Incorrect e-mail address.");
 			} else if (res.data == -2) {
-				NotificationManager.error(
-					"Incorrect password.",
-				);
+				NotificationManager.error("Incorrect password.");
 			} else {
 				console.log(res.data);
 				history.push({
@@ -218,24 +212,19 @@ function AvatarViewPage() {
 						Welcome Back
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Enter the following information to
-						login to your TOIA account
+						Enter the following information to login to your TOIA
+						account
 					</p>
 				</Modal.Header>
 
 				<Modal.Content>
-					<form
-						className="login_popup"
-						onSubmit={submitHandler}
-					>
+					<form className="login_popup" onSubmit={submitHandler}>
 						<input
 							className="login_email login-font-class-1"
 							placeholder={"Email"}
 							type={"email"}
 							required={true}
-							onChange={e =>
-								(input1 = e.target.value)
-							}
+							onChange={e => (input1 = e.target.value)}
 							name={"email"}
 						/>
 						<input
@@ -243,9 +232,7 @@ function AvatarViewPage() {
 							placeholder={"Password"}
 							type={"password"}
 							required={true}
-							onChange={e =>
-								(input2 = e.target.value)
-							}
+							onChange={e => (input2 = e.target.value)}
 							name={"pass"}
 						/>
 						<input
@@ -289,9 +276,7 @@ function AvatarViewPage() {
 					My TOIA
 				</div>
 				<div
-					onClick={
-						isLoggedIn ? logout : openModal
-					}
+					onClick={isLoggedIn ? logout : openModal}
 					className="nav-login_icon app-monsterrat-black"
 				>
 					{isLoggedIn ? "Logout" : "Login"}
@@ -303,21 +288,18 @@ function AvatarViewPage() {
 					TOIA ... Communication reimagined
 				</h1>
 				<p className="about-text">
-					Imagine being able to share your story
-					with your great grandchildren. <br />
-					Imagine being able to interview for
-					thousands of jobs simultaneously.
+					Imagine being able to share your story with your great
+					grandchildren. <br />
+					Imagine being able to interview for thousands of jobs
+					simultaneously.
 					<br />
 					<br />
-					TOIAs are interactive applications that
-					allow communication across time and
-					space.
+					TOIAs are interactive applications that allow communication
+					across time and space.
 					<br />
-					With TOIA, you can create an online
-					stream from the comfort of your home and
-					connect with millions of people,
-					anywhere in the world, anytime in the
-					future.
+					With TOIA, you can create an online stream from the comfort
+					of your home and connect with millions of people, anywhere
+					in the world, anytime in the future.
 					<br />
 					<br />
 					TOIA is a project created at{" "}
@@ -328,21 +310,12 @@ function AvatarViewPage() {
 						Camel Lab.
 					</a>
 				</p>
-				<img
-					src={toia_logo}
-					className="toiaImage"
-				/>
+				<img src={toia_logo} className="toiaImage" />
 				<div className="reference-links">
-					<a
-						href="#grid"
-						className="reference-item"
-					>
+					<a href="#grid" className="reference-item">
 						Meet the Team
 					</a>
-					<a
-						href="#scholarly"
-						className="reference-item"
-					>
+					<a href="#scholarly" className="reference-item">
 						Publications
 					</a>
 					<a
@@ -355,9 +328,7 @@ function AvatarViewPage() {
 			</div>
 
 			<div id="grid">
-				<h1 className="grid-heading">
-					The TOIA Team
-				</h1>
+				<h1 className="grid-heading">The TOIA Team</h1>
 				<div
 					className="about-grid" //videos
 				>
@@ -366,27 +337,20 @@ function AvatarViewPage() {
 			</div>
 
 			<div id="scholarly">
-				<p className="publication-links">
-					Publication Links{" "}
-				</p>
+				<p className="publication-links">Publication Links </p>
 				<ul className="publications">
 					<li>
-						Alberto Chierici, Tyeece Hensley,
-						Wahib Kamran, Kertu Koss, Armaan
-						Agrawal, Erin Collins, Goffredo
-						Puccetti and Nizar Habash, A
-						Cloud-based User-Centered
-						Time-Offset Interaction Application,
-						SIGdial, April 2021{" "}
+						Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu
+						Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti
+						and Nizar Habash, A Cloud-based User-Centered
+						Time-Offset Interaction Application, SIGdial, April 2021{" "}
 						<a href={sigDail}>[PDF]</a>
 					</li>
 					<li>
-						Nizar Habash and Alberto Chierchi, A
-						View From the Crowd: Evaluation
-						Challenges for Time-Offset
-						Interaction Applications,
-						Association for Computational
-						Linguistics, April 2021,{" "}
+						Nizar Habash and Alberto Chierchi, A View From the
+						Crowd: Evaluation Challenges for Time-Offset Interaction
+						Applications, Association for Computational Linguistics,
+						April 2021,{" "}
 						<a href="https://www.aclweb.org/anthology/2021.humeval-1.9.pdf">
 							[PDF]
 						</a>
@@ -395,14 +359,11 @@ function AvatarViewPage() {
 						</a>
 					</li>
 					<li>
-						Alberto Chierici, Nizar Habash,
-						Margarita Bicec, The Margarita
-						Dialogue Corpus: A Data Set for
-						Time-Offset Interactions and
-						Unstructured Dialogue Systems,
-						Proceedings of the 12th Language
-						Resources and Evaluation Conference,
-						May 2020,{" "}
+						Alberto Chierici, Nizar Habash, Margarita Bicec, The
+						Margarita Dialogue Corpus: A Data Set for Time-Offset
+						Interactions and Unstructured Dialogue Systems,
+						Proceedings of the 12th Language Resources and
+						Evaluation Conference, May 2020,{" "}
 						<a href="https://www.aclweb.org/anthology/2020.lrec-1.60.pdf">
 							[PDF]
 						</a>
@@ -411,13 +372,11 @@ function AvatarViewPage() {
 						</a>
 					</li>
 					<li>
-						Dana Abu Ali, Muaz Ahmad, Hayat Al
-						Hassan, Paula Dozsa, Ming Hu, Jose
-						Varias, Nizar Habash, A Bilingual
-						Interactive Human Avatar Dialogue
-						System, Proceedings of the 19th
-						Annual SIGdial Meeting on Discourse
-						and Dialogue, July 2018,{" "}
+						Dana Abu Ali, Muaz Ahmad, Hayat Al Hassan, Paula Dozsa,
+						Ming Hu, Jose Varias, Nizar Habash, A Bilingual
+						Interactive Human Avatar Dialogue System, Proceedings of
+						the 19th Annual SIGdial Meeting on Discourse and
+						Dialogue, July 2018,{" "}
 						<a href="https://www.aclweb.org/anthology/W18-5027.pdf">
 							[PDF]
 						</a>
@@ -430,17 +389,11 @@ function AvatarViewPage() {
 
 			<div className="logos">
 				<a href="https://nyuad.nyu.edu/en/">
-					<img
-						src={nyuad}
-						className="nyuadImage"
-					/>
+					<img src={nyuad} className="nyuadImage" />
 				</a>
 
 				<a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html">
-					<img
-						src={camel}
-						className="camelImage"
-					/>
+					<img src={camel} className="camelImage" />
 				</a>
 			</div>
 

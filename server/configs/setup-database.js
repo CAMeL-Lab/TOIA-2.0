@@ -10,16 +10,13 @@ const loadOnBoardingQuestions = async (
 		if (!force_load) {
 			await new Promise(resolve => {
 				let get_query = `SELECT * FROM questions WHERE onboarding = 1`;
-				connectionInstance.query(
-					get_query,
-					(err, result) => {
-						if (err) throw err;
-						if (result.length > 0) {
-							questions_already_loaded = true;
-						}
-						resolve();
-					},
-				);
+				connectionInstance.query(get_query, (err, result) => {
+					if (err) throw err;
+					if (result.length > 0) {
+						questions_already_loaded = true;
+					}
+					resolve();
+				});
 			});
 		}
 	})();
@@ -35,21 +32,10 @@ const loadOnBoardingQuestions = async (
 			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester) VALUES(?,?,?,?,?)`;
 
 			for (let ques of onboardingQuestions) {
-				const {
-					question,
-					type,
-					priority,
-					trigger_suggester,
-				} = ques;
+				const { question, type, priority, trigger_suggester } = ques;
 				connectionInstance.query(
 					query,
-					[
-						question,
-						type,
-						true,
-						priority,
-						trigger_suggester,
-					],
+					[question, type, true, priority, trigger_suggester],
 					function (err, result) {
 						if (err) {
 							throw err;

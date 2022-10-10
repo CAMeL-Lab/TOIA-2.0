@@ -71,8 +71,7 @@ video {
 
 .videoControlButtons i {
 	font-size: 2.75rem;
-	text-shadow: -2px 0 black, 0 2px black, 2px 0 black,
-		0 -2px black;
+	text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 
 /*Side Buttons*/
@@ -513,9 +512,7 @@ video {
 	background: rgb(255 255 255 / 0%);
 }
 
-.question-selection-box
-	.multiselect-inner-wrapper
-	.multiselect-selected-item {
+.question-selection-box .multiselect-inner-wrapper .multiselect-selected-item {
 	background: #00587a;
 	font-family: "Montserrat", Helvetica, Arial, serif;
 	font-size: 1.25rem;
@@ -572,8 +569,7 @@ video {
 
 .recorder-check-btn i {
 	font-size: 2.75rem;
-	text-shadow: -2px 0 black, 0 2px black, 2px 0 black,
-		0 -2px black;
+	text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 
 .video-layout-player-top {

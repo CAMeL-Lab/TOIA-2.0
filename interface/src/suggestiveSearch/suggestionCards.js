@@ -48,16 +48,12 @@ export default function SuggestionCards(props) {
 	const getSuggestion = questionCard => {
 		// console.log("getSuggestion:");
 		// console.log(questionCard.questionData && questionCard.questionData.question ? questionCard.questionData.question : "No question loaded!");
-		return questionCard.questionData &&
-			questionCard.questionData.question
+		return questionCard.questionData && questionCard.questionData.question
 			? questionCard.questionData.question
 			: "Loading ...";
 	};
 
-	const delayedQuestionCardChange = (
-		questionCard,
-		setQuestionCard,
-	) => {
+	const delayedQuestionCardChange = (questionCard, setQuestionCard) => {
 		return () => {
 			questionCard.highlighBackground = false;
 			if (questionCard.waiting) {
@@ -82,32 +78,22 @@ export default function SuggestionCards(props) {
 		questionCard.waiting = true;
 		questionCard.highlighBackground = true;
 		setTimeout(
-			delayedQuestionCardChange(
-				questionCard,
-				setQuestionCard,
-			),
+			delayedQuestionCardChange(questionCard, setQuestionCard),
 			3000,
 		);
 		setQuestionCard({ ...questionCard });
 	};
 
-	const getNextQuestion = (
-		questionCard,
-		setQuestionCard,
-	) => {
+	const getNextQuestion = (questionCard, setQuestionCard) => {
 		// console.log("getNextQuestion:");
 		if (props.questions.length > 0) {
 			// console.log("getNextQuestion: got question");
-			questionCard.questionData =
-				props.questions.pop();
+			questionCard.questionData = props.questions.pop();
 			setQuestionCard({ ...questionCard });
 		}
 	};
 
-	const refreshQuestion = (
-		questionCard,
-		setQuestionCard,
-	) => {
+	const refreshQuestion = (questionCard, setQuestionCard) => {
 		// console.log("refreshQuestion: refreshing question...");
 		if (
 			props.questions.length > 0 &&
@@ -117,8 +103,7 @@ export default function SuggestionCards(props) {
 			// console.log("refreshQuestion: refreshed question...");
 			questionCard.waiting = false;
 			questionCard.highlighBackground = false;
-			questionCard.questionData =
-				props.questions.pop();
+			questionCard.questionData = props.questions.pop();
 			// console.log("refreshQuestion: new question: ", questionCard.questionData.question);
 			setQuestionCard({ ...questionCard });
 		}
@@ -128,10 +113,7 @@ export default function SuggestionCards(props) {
 		for (let questionCard in cardQuestions) {
 			// If any card question is still waiting, even after updating the questions
 			// Then we still want to refresh questions where possible
-			if (
-				questionCard.waiting &&
-				props.shouldRefreshQuestions?.current
-			) {
+			if (questionCard.waiting && props.shouldRefreshQuestions?.current) {
 				return false;
 			}
 		}
@@ -157,10 +139,7 @@ export default function SuggestionCards(props) {
 							size="mini"
 							className="player-font-class-2"
 						>
-							{refreshQuestion(
-								fifthQuestion,
-								setFifthQuestion,
-							)}
+							{refreshQuestion(fifthQuestion, setFifthQuestion)}
 							{getSuggestion(fifthQuestion)}
 						</Card.Description>
 					</Card.Content>
@@ -204,10 +183,7 @@ export default function SuggestionCards(props) {
 							size="mini"
 							className="player-font-class-2"
 						>
-							{refreshQuestion(
-								fourthQuestion,
-								setFourthQuestion,
-							)}
+							{refreshQuestion(fourthQuestion, setFourthQuestion)}
 							{getSuggestion(fourthQuestion)}
 						</Card.Description>
 					</Card.Content>
@@ -251,10 +227,7 @@ export default function SuggestionCards(props) {
 							size="mini"
 							className="player-font-class-2"
 						>
-							{refreshQuestion(
-								thirdQuestion,
-								setThirdQuestion,
-							)}
+							{refreshQuestion(thirdQuestion, setThirdQuestion)}
 							{getSuggestion(thirdQuestion)}
 						</Card.Description>
 					</Card.Content>
@@ -298,10 +271,7 @@ export default function SuggestionCards(props) {
 							size="mini"
 							className="player-font-class-2"
 						>
-							{refreshQuestion(
-								secondQuestion,
-								setSecondQuestion,
-							)}
+							{refreshQuestion(secondQuestion, setSecondQuestion)}
 							{getSuggestion(secondQuestion)}
 						</Card.Description>
 					</Card.Content>
@@ -345,10 +315,7 @@ export default function SuggestionCards(props) {
 							size="mini"
 							className="player-font-class-2"
 						>
-							{refreshQuestion(
-								firstQuestion,
-								setFirstQuestion,
-							)}
+							{refreshQuestion(firstQuestion, setFirstQuestion)}
 							{getSuggestion(firstQuestion)}
 						</Card.Description>
 					</Card.Content>
@@ -383,9 +350,7 @@ export default function SuggestionCards(props) {
 				</Card>
 			</div>
 
-			{shouldStopRefreshing()
-				? props.setRefreshQuestionsFalse()
-				: ""}
+			{shouldStopRefreshing() ? props.setRefreshQuestionsFalse() : ""}
 		</Card.Group>
 	) : null;
 }
