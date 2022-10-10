@@ -1,8 +1,6 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
-import Autocomplete, {
-	createFilterOptions,
-} from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
 const filter = createFilterOptions({
 	matchFrom: "start",
@@ -21,10 +19,7 @@ export default function FreeSoloCreateOption(props) {
 						question: newValue,
 					});
 					props.handleTextInputChange(newValue);
-				} else if (
-					newValue &&
-					newValue.inputValue
-				) {
+				} else if (newValue && newValue.inputValue) {
 					// Create a new value from the user input
 					setValue({
 						question: newValue.inputValue,
@@ -45,8 +40,7 @@ export default function FreeSoloCreateOption(props) {
 				const { inputValue } = params;
 				// Suggest the creation of a new value
 				const isExisting = options.some(
-					option =>
-						inputValue === option.question,
+					option => inputValue === option.question,
 				);
 				if (inputValue !== "" && !isExisting) {
 					filtered.push({
@@ -114,9 +108,7 @@ export default function FreeSoloCreateOption(props) {
 					{...params}
 					label="Type a question to ask"
 					onChange={value => {
-						disableTyping.current = Boolean(
-							!value.target.value,
-						); // if string is empty, return true. Otherwise, false
+						disableTyping.current = Boolean(!value.target.value); // if string is empty, return true. Otherwise, false
 						props.handleTextChange(value);
 					}}
 				/>

@@ -8,17 +8,14 @@ function PopModal({ userRating }) {
 			<div className="modalContainer">
 				<div className="title">
 					<h2>
-						How well does this answer fit with
-						your question or the conversation
-						you're having with the avatar?
+						How well does this answer fit with your question or the
+						conversation you're having with the avatar?
 					</h2>
 				</div>
 
 				<div className="body">
 					<h3>
-						<RatingWords
-							recUserRating={userRating}
-						/>
+						<RatingWords recUserRating={userRating} />
 					</h3>
 				</div>
 			</div>

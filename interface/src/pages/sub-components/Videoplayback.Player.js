@@ -33,10 +33,7 @@ export default function VideoPlaybackPlayer(props) {
 				ref={videoRef}
 				autoPlay
 			>
-				<source
-					src={props.source}
-					type="video/mp4"
-				></source>
+				<source src={props.source} type="video/mp4"></source>
 			</video>
 		</div>
 	);

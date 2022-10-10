@@ -10,8 +10,7 @@
 
 /*animation*/
 .home-animate-enter {
-	animation: home-animate-enter-frames 1s ease-in-out 0s 1
-		normal forwards;
+	animation: home-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
 }
 @keyframes home-animate-enter-frames {
 	from {

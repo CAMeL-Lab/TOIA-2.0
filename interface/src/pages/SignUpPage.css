@@ -12,8 +12,7 @@
 	transform: scale(1.1);
 }
 .signup-animate-enter {
-	animation: signup-animate-enter-frames 1s ease-in-out 0s
-		1 normal forwards;
+	animation: signup-animate-enter-frames 1s ease-in-out 0s 1 normal forwards;
 	display: block;
 	opacity: 0;
 	transform: translate(0, 25px);
@@ -156,8 +155,7 @@
 /*Alignment and Fonts*/
 .signup-font-class-1 {
 	color: var(--black);
-	font-family: "Montserrat-Medium", Helvetica, Arial,
-		serif;
+	font-family: "Montserrat-Medium", Helvetica, Arial, serif;
 	font-size: 1.2rem;
 	font-style: normal;
 	font-weight: 500;
@@ -165,8 +163,7 @@
 }
 .signup-font-class-2 {
 	color: var(--black);
-	font-family: "Montserrat-Medium", Helvetica, Arial,
-		serif;
+	font-family: "Montserrat-Medium", Helvetica, Arial, serif;
 	font-size: 1.35rem;
 	font-style: normal;
 	font-weight: 500;

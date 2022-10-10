@@ -29,13 +29,9 @@ function SignUpPage() {
 	const [cpass, setCPass] = useState("");
 	const [profilePic, setProfilePic] = useState();
 
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	var [hasEmailError, setHasEmailError] = useState(false);
-	var [hasPasswordError, setHasPasswordError] =
-		useState(false);
+	var [hasPasswordError, setHasPasswordError] = useState(false);
 	const { open } = state;
 
 	function openModal(e) {
@@ -58,30 +54,23 @@ function SignUpPage() {
 				.post(`/api/createTOIA`, form)
 				.then(res => {
 					if (res.status === 200) {
-						console.log(
-							`Account created successfully ${res.data}`,
-						);
+						console.log(`Account created successfully ${res.data}`);
 						history.push({
 							pathname: "/mytoia",
 							state: {
 								toiaName: fname,
 								toiaLanguage: language,
-								toiaID: res.data
-									.new_toia_ID,
+								toiaID: res.data.new_toia_ID,
 							},
 						});
 					}
 				})
 				.catch(err => {
 					console.log(err);
-					NotificationManager.error(
-						"Email already exists!",
-					);
+					NotificationManager.error("Email already exists!");
 				});
 		} else {
-			NotificationManager.error(
-				"Passwords need to match",
-			);
+			NotificationManager.error("Passwords need to match");
 		}
 	}
 
@@ -95,13 +84,9 @@ function SignUpPage() {
 
 		axios.post(`/api/login`, params).then(res => {
 			if (res.data === -1) {
-				NotificationManager.error(
-					"Incorrect email address.",
-				);
+				NotificationManager.error("Incorrect email address.");
 			} else if (res.data === -2) {
-				NotificationManager.error(
-					"Incorrect password.",
-				);
+				NotificationManager.error("Incorrect password.");
 			} else {
 				console.log(res.data);
 				history.push({
@@ -189,16 +174,13 @@ function SignUpPage() {
 						Welcome Back
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Enter the following information to
-						login to your TOIA account
+						Enter the following information to login to your TOIA
+						account
 					</p>
 				</Modal.Header>
 
 				<Modal.Content>
-					<form
-						className="login_popup"
-						onSubmit={loginHandler}
-					>
+					<form className="login_popup" onSubmit={loginHandler}>
 						<input
 							className="login_email login-font-class-1"
 							placeholder={"Email"}
@@ -230,10 +212,7 @@ function SignUpPage() {
 					</form>
 				</Modal.Content>
 			</Modal>
-			<form
-				className="signup-page"
-				onSubmit={submitHandler}
-			>
+			<form className="signup-page" onSubmit={submitHandler}>
 				<div className="nav-heading-bar">
 					<div
 						onClick={home}
@@ -268,35 +247,29 @@ function SignUpPage() {
 						Get Started
 					</h1>
 					<p className="signup_text signup-font-class-2 signup-animate-enter">
-						Enter the following information to
-						create your TOIA account
+						Enter the following information to create your TOIA
+						account
 					</p>
 					<input
 						className="signup-fname signup-font-class-1"
 						placeholder={"First Name"}
 						type={"text"}
 						required={true}
-						onChange={e =>
-							setFName(e.target.value)
-						}
+						onChange={e => setFName(e.target.value)}
 					/>
 					<input
 						className="signup-lname signup-font-class-1"
 						placeholder={"Last Name"}
 						type={"text"}
 						required={true}
-						onChange={e =>
-							setLname(e.target.value)
-						}
+						onChange={e => setLname(e.target.value)}
 					/>
 					<input
 						className="signup-email signup-font-class-1"
 						placeholder={"Email"}
 						type={"email"}
 						required={true}
-						onChange={e =>
-							setEmail(e.target.value)
-						}
+						onChange={e => setEmail(e.target.value)}
 					/>
 
 					<div className="signup-language signup-font-class-1 ">
@@ -304,37 +277,22 @@ function SignUpPage() {
 					</div>
 					<select
 						className="signup-lang signup-font-class-1"
-						onChange={e =>
-							setLanguage(e.target.value)
-						}
+						onChange={e => setLanguage(e.target.value)}
 						required={true}
 					>
-						<option
-							value=""
-							disabled
-							selected
-							hidden
-						>
+						<option value="" disabled selected hidden>
 							Select Language...
 						</option>
-						<option value="AF">
-							Afrikaans
-						</option>
+						<option value="AF">Afrikaans</option>
 						<option value="SQ">Albanian</option>
 						<option value="AR">Arabic</option>
 						<option value="HY">Armenian</option>
 						<option value="EU">Basque</option>
 						<option value="BN">Bengali</option>
-						<option value="BG">
-							Bulgarian
-						</option>
+						<option value="BG">Bulgarian</option>
 						<option value="CA">Catalan</option>
-						<option value="KM">
-							Cambodian
-						</option>
-						<option value="ZH">
-							Chinese (Mandarin)
-						</option>
+						<option value="KM">Cambodian</option>
+						<option value="ZH">Chinese (Mandarin)</option>
 						<option value="HR">Croatian</option>
 						<option value="CS">Czech</option>
 						<option value="DA">Danish</option>
@@ -350,15 +308,9 @@ function SignUpPage() {
 						<option value="GU">Gujarati</option>
 						<option value="HE">Hebrew</option>
 						<option value="HI">Hindi</option>
-						<option value="HU">
-							Hungarian
-						</option>
-						<option value="IS">
-							Icelandic
-						</option>
-						<option value="ID">
-							Indonesian
-						</option>
+						<option value="HU">Hungarian</option>
+						<option value="IS">Icelandic</option>
+						<option value="ID">Indonesian</option>
 						<option value="GA">Irish</option>
 						<option value="IT">Italian</option>
 						<option value="JA">Japanese</option>
@@ -366,31 +318,19 @@ function SignUpPage() {
 						<option value="KO">Korean</option>
 						<option value="LA">Latin</option>
 						<option value="LV">Latvian</option>
-						<option value="LT">
-							Lithuanian
-						</option>
-						<option value="MK">
-							Macedonian
-						</option>
+						<option value="LT">Lithuanian</option>
+						<option value="MK">Macedonian</option>
 						<option value="MS">Malay</option>
-						<option value="ML">
-							Malayalam
-						</option>
+						<option value="ML">Malayalam</option>
 						<option value="MT">Maltese</option>
 						<option value="MI">Maori</option>
 						<option value="MR">Marathi</option>
-						<option value="MN">
-							Mongolian
-						</option>
+						<option value="MN">Mongolian</option>
 						<option value="NE">Nepali</option>
-						<option value="NO">
-							Norwegian
-						</option>
+						<option value="NO">Norwegian</option>
 						<option value="FA">Persian</option>
 						<option value="PL">Polish</option>
-						<option value="PT">
-							Portuguese
-						</option>
+						<option value="PT">Portuguese</option>
 						<option value="PA">Punjabi</option>
 						<option value="QU">Quechua</option>
 						<option value="RO">Romanian</option>
@@ -398,9 +338,7 @@ function SignUpPage() {
 						<option value="SM">Samoan</option>
 						<option value="SR">Serbian</option>
 						<option value="SK">Slovak</option>
-						<option value="SL">
-							Slovenian
-						</option>
+						<option value="SL">Slovenian</option>
 						<option value="ES">Spanish</option>
 						<option value="SW">Swahili</option>
 						<option value="SV">Swedish</option>
@@ -411,14 +349,10 @@ function SignUpPage() {
 						<option value="BO">Tibetan</option>
 						<option value="TO">Tonga</option>
 						<option value="TR">Turkish</option>
-						<option value="UK">
-							Ukrainian
-						</option>
+						<option value="UK">Ukrainian</option>
 						<option value="UR">Urdu</option>
 						<option value="UZ">Uzbek</option>
-						<option value="VI">
-							Vietnamese
-						</option>
+						<option value="VI">Vietnamese</option>
 						<option value="CY">Welsh</option>
 						<option value="XH">Xhosa</option>
 					</select>
@@ -427,26 +361,20 @@ function SignUpPage() {
 						placeholder={"Create Password"}
 						type={"password"}
 						required={true}
-						onChange={e =>
-							setPass(e.target.value)
-						}
+						onChange={e => setPass(e.target.value)}
 					/>
 					<input
 						className="signup-pass1 signup-font-class-1"
 						placeholder={"Confirm Password"}
 						type={"password"}
 						required={true}
-						onChange={e =>
-							setCPass(e.target.value)
-						}
+						onChange={e => setCPass(e.target.value)}
 					/>
 					<div
 						className="signup-photo-upload signup-font-class-1" //delete button, function TBD
 					>
 						<form onSubmit={submitPic}>
-							<label for="img">
-								Upload profile picture:
-							</label>
+							<label for="img">Upload profile picture:</label>
 							<input
 								className="signup-photo-upload-choose signup-font-class-1"
 								type="file"

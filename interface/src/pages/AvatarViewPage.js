@@ -23,34 +23,27 @@ function AvatarViewPage() {
 	let isLogin = false;
 	var input1, input2;
 
-	const [interactionLanguage, setInteractionLanguage] =
-		React.useState(null);
+	const [interactionLanguage, setInteractionLanguage] = React.useState(null);
 
 	React.useEffect(() => {
 		axios
 			.get(`/api/getAvatarInfo`, {
 				params: {
-					avatarID:
-						history.location.state.id_avatar,
+					avatarID: history.location.state.id_avatar,
 				},
 			})
 			.then(res => {
 				setName(res.data.name);
 				setLanguage(res.data.language);
 				setBio(res.data.bio);
-				setAvatarID(
-					history.location.state.id_avatar,
-				);
+				setAvatarID(history.location.state.id_avatar);
 			});
 
 		// Tracker
 		new Tracker().startTracking(history.location.state);
 	});
 
-	const [state, dispatch] = React.useReducer(
-		exampleReducer,
-		{ open: false },
-	);
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	const { open } = state;
 
 	function openModal(e) {
@@ -149,16 +142,13 @@ function AvatarViewPage() {
 						Welcome Back
 					</h1>
 					<p className="login_blurb login-montserrat-black">
-						Enter the following information to
-						login to your TOIA account
+						Enter the following information to login to your TOIA
+						account
 					</p>
 				</Modal.Header>
 
 				<Modal.Content>
-					<form
-						className="login_popup"
-						onSubmit={submitHandler1}
-					>
+					<form className="login_popup" onSubmit={submitHandler1}>
 						<input
 							className="login_email login-font-class-1"
 							placeholder={"Email"}
@@ -225,47 +215,33 @@ function AvatarViewPage() {
 			<img className="view-still" src={video} />
 
 			<div className="view-group">
-				<div className="view-name view-font-class-1 ">
-					Name:{" "}
-				</div>
+				<div className="view-name view-font-class-1 ">Name: </div>
 				<input
 					className="view-name_box view-font-class-1"
 					defaultValue={name}
 					type={"text"}
 				/>
-				<div className="view-creator view-font-class-1 ">
-					Album:{" "}
-				</div>
+				<div className="view-creator view-font-class-1 ">Album: </div>
 				<input
 					className="view-creator_box view-font-class-1"
 					defaultValue={name}
 					type={"text"}
 				/>
-				<div className="view-lang view-font-class-1 ">
-					Language:{" "}
-				</div>
+				<div className="view-lang view-font-class-1 ">Language: </div>
 				<input
 					className="view-lang_box view-font-class-1"
 					defaultValue={language}
 					type={"text"}
 				/>
-				<div className="view-bio view-font-class-1 ">
-					Bio:{" "}
-				</div>
+				<div className="view-bio view-font-class-1 ">Bio: </div>
 				<textarea
 					className="view-bio_box view-font-class-1"
 					defaultValue={bio}
 					type={"text"}
 				/>
 				<select className="view-lang2_box view-font-class-1">
-					<option
-						value=""
-						disabled
-						selected
-						hidden
-					>
-						What language would you like to
-						speak in..
+					<option value="" disabled selected hidden>
+						What language would you like to speak in..
 					</option>
 					<option value="AF">Afrikaans</option>
 					<option value="SQ">Albanian</option>
@@ -276,9 +252,7 @@ function AvatarViewPage() {
 					<option value="BG">Bulgarian</option>
 					<option value="CA">Catalan</option>
 					<option value="KM">Cambodian</option>
-					<option value="ZH">
-						Chinese (Mandarin)
-					</option>
+					<option value="ZH">Chinese (Mandarin)</option>
 					<option value="HR">Croatian</option>
 					<option value="CS">Czech</option>
 					<option value="DA">Danish</option>

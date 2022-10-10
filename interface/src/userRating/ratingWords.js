@@ -12,9 +12,7 @@ const labels = {
 };
 
 function getLabelText(value) {
-	return `${value} Star${value !== 1 ? "s" : ""}, ${
-		labels[value]
-	}`;
+	return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
 }
 
 export default function HoverRating({ recUserRating }) {
@@ -47,16 +45,11 @@ export default function HoverRating({ recUserRating }) {
 					setHover(newHover);
 				}}
 				emptyIcon={
-					<StarIcon
-						style={{ opacity: 0.55 }}
-						fontSize="inherit"
-					/>
+					<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
 				}
 			/>
 			{value !== null && (
-				<Box sx={{ ml: 2 }}>
-					{labels[hover !== -1 ? hover : value]}
-				</Box>
+				<Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
 			)}
 		</Box>
 	);
