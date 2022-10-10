@@ -28,14 +28,11 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState(null);
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
-	const [toiaIDToTalk, setTOIAIdToTalk] = useState(null);
 	const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] = useState(null);
 	const [toiaLastNameToTalk, setTOIALastNameToTalk] = useState(null);
-	const [streamIdToTalk, setStreamIdToTalk] = useState(null);
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
@@ -43,28 +40,19 @@ function Player() {
 	let allSuggestedQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
-	const [isInteracting, setIsInteracting] = useState(false);
-
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
-	const [ratingVal, setRatingVal] = useState(1);
-	const [videoURL, setVideoURL] = useState(null);
-
 	const [transcribedAudio, setTranscribedAudio] = useState("");
-
-	const [lastQAsked, setlastQAsked] = useState("");
-	const [lastPlayedVideo, setLastPlayedVideo] = useState(null);
+	const [ratingParams, setRatingParams] = useState({active: false});
 
 	// suggested questions for cards
 
 	const textInput = React.useRef("");
 	const question = React.useRef("");
 	const interacting = React.useRef("false");
-	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
 	const allQuestions = React.useRef([]);
 	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
-	const questionsLength = React.useRef(0);
 	const interimTextInput = React.useRef("");
 
 	var input1, input2;
@@ -95,12 +83,9 @@ function Player() {
 			setLanguage(history.location.state.toiaLanguage);
 		}
 
-		setTOIAIdToTalk(history.location.state.toiaToTalk);
 		setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
-		setStreamIdToTalk(history.location.state.streamToTalk);
 		setStreamNameToTalk(history.location.state.streamNameToTalk);
-
 
 		canAccessStream();
 
@@ -179,16 +164,14 @@ function Player() {
 		const mode = "CARD";
 
 		const oldQuestion = question;
-		console.log(oldQuestion);
 		axios
 			.post(`/api/player`, {
 				params: {
 					toiaIDToTalk: history.location.state.toiaToTalk,
-					toiaFirstNameToTalk:
-						history.location.state.toiaFirstNameToTalk,
-						question: {
-							current: oldQuestion.question,
-						},
+					toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
+					question: {
+						current: oldQuestion.question,
+					},
 					streamIdToTalk: history.location.state.streamToTalk,
 					record_log: "true",
 					...(history.location.state.toiaID && {
@@ -203,26 +186,30 @@ function Player() {
 					console.log("error");
 				} else {
 					setFillerPlaying(true);
-					setHasRated(false);
 
 					isFillerPlaying.current = "false";
-					newRating.current = "false";
-					setlastQAsked(oldQuestion.question);
+
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded:fetchFiller,
+						onEnded: () => {
+							setRatingParams({
+								video_id: res.data.video_id,
+								question: oldQuestion.question
+							})
+							setHasRated(false);
+							fetchFiller()
+						},
 						source: res.data.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
-						duration_seconds: res.data.duration_seconds || null
+						duration_seconds: res.data.duration_seconds || null,
+						question: oldQuestion.question,
+						video_id: res.data.video_id
 					});
 
-					setLastPlayedVideo(res.data.video_id);
 					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
-					setVideoURL(res.data.url); // setting the video ID
 					setTranscribedAudio("");
-					// question.current = "";
 				}
 			});
 	}
@@ -232,16 +219,9 @@ function Player() {
 	function handleDataReceived(data) {
 		// setting the transcribedAudio
 		if (data) {
-			// transcribedAudio.current = data.alternatives[0].transcript;
 			setTranscribedAudio(data.alternatives[0].transcript);
-			setHasRated(false);
-			// newRating.current = 'false';
 			if (data.isFinal) {
 				question.current = data.alternatives[0].transcript;
-
-				newRating.current = "false";
-				setlastQAsked(data.alternatives[0].transcript);
-				setHasRated(false);
 
 				speechToTextUtils.stopRecording();
 				fetchData("VOICE");
@@ -254,7 +234,6 @@ function Player() {
 	// Sets the value of 'allQuestions' array
 	// to be the string list of all questions of the stream
 	function fetchAllStreamQuestions(){
-		console.log("Fetching all questions!");
 		axios.get(`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`)
 		.then((res)=>{
 			allQuestions.current = res.data || [];
@@ -264,7 +243,6 @@ function Player() {
 	// question: the last question asked by the user
 	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question="", answer="") {
-		console.log(`Creating Smart Questions...\n question = ${question}\n`);
 		axios.post('/api/getSmartQuestions', {
 			params: {
 				toiaIDToTalk: history.location.state.toiaToTalk,
@@ -290,94 +268,57 @@ function Player() {
 					allSuggestedQuestions.push(q);
 				}
 			});
-			console.log("Created Smart Questions.");
-			console.log(answeredQuestions);
-			console.log("=========================")
+
 			shouldRefreshQuestions.current = true;
 			setAnsweredQuestions([...answeredQuestions]);
 		});
 	}
 
-
 	function textInputChange(val) {
 		if (val && val.question) {
 			textInput.current = val.question;
-			console.log("AYOOOO", textInput.current);
 		} else if (typeof val === "string") {
 			textInput.current = val;
 		}
 	}
 
-	const recordUserRating = function (rate) {
-		// record the rating for the user
-		const vidID = lastPlayedVideo;
-		console.log(vidID);
-
-		if (vidID){
-			const options = {
-				method: "POST",
-				url: "/api/save_player_feedback",
-				headers: { "Content-Type": "application/json" },
-				data: {
-					...(history.location.state.toiaID && {
-						user_id: history.location.state.toiaID,
-					}),
-					video_id: vidID,
-	
-					question: lastQAsked,
-					rating: rate,
-				},
-			};
-	
-			axios
-				.request(options)
-				.then(function (response) {
-					console.log(response.data);
-				})
-				.catch(function (error) {
-					console.error(error);
-				});
-		} else {
-			console.error("Video ID not defined for rating")
-		}
-
-	};
-
-	async function continueChat() {
-
-		if (newRating.current != "false") {
-			// if the user has rated then they can continue
-			if (interacting.current == "true") {
-				await endTranscription();
-
+	useEffect(() => {
+		if (hasRated){
+			if (interacting.current == "true"){
 				speechToTextUtils.initRecording(handleDataReceived, (error) => {
 					console.error("Error when transcribing", error);
 				});
 			}
-		} else {
-			NotificationManager.warning("Please provide a rating", "", 3000);
-		}
+	  	}
+	}, [hasRated])
+	
 
-	}
+	const recordUserRating = function (ratingValue) {
+		const options = {
+			method: "POST",
+			url: "/api/save_player_feedback",
+			headers: { "Content-Type": "application/json" },
+			data: {
+				...(history.location.state.toiaID && {
+					user_id: history.location.state.toiaID,
+				}),
+				video_id: ratingParams.video_id,
 
-	async function chatFiller() {
-		if (newRating.current != "false") {
-			fetchFiller();
+				question: ratingParams.question,
+				rating: ratingValue,
+			},
+		};
 
-			continueChat();
-		} else {
-			fetchFiller();
-		}
-	}
-
-	const skipFiller = function () {
-		if (isFillerPlaying.current == "true") {
-			if (interacting.current == "false") {
-				fetchFiller();
-			} else {
-				chatFiller();
-			}
-		}
+		axios
+			.request(options)
+			.then(function (response) {
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.error(error);
+			}).finally(() => {
+				setHasRated(true);
+			})
 	};
 
 	function fetchData(mode="UNKNOWN") {
@@ -414,29 +355,32 @@ function Player() {
 					} else {
 						setFillerPlaying(true);
 
-						setHasRated(false);
-						newRating.current = "false";
-						setlastQAsked(oldQuestion);
 						isFillerPlaying.current = "false";
-						setVideoURL(res.data.url); // setting the video ID
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded:
-								interacting.current == "false"
-									? fetchFiller
-									: chatFiller,
+							onEnded:  () => {
+								setRatingParams({
+									video_id: res.data.video_id,
+									question: oldQuestion
+								})
+								setHasRated(false);
+								fetchFiller();
+							},
 							source: res.data.url,
 							fetchFiller: fetchFiller,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null
+							duration_seconds: res.data.duration_seconds || null,
+							question: question.current,
+							video_id: res.data.video_id
 						});
-						setLastPlayedVideo(res.data.video_id);
 
 						setTranscribedAudio("");
 					}
-				});
+				}).catch((e) => {
+					console.error(e);
+				})
 		}
 	}
 
@@ -449,10 +393,9 @@ function Player() {
 			setMicStatus(false);
 
 			setMicString("STOP ASK BY VOICE");
-			setIsInteracting(true);
 			interacting.current = "true";
 
-			if (newRating.current != "false") {
+			if (hasRated) {
 				speechToTextUtils.initRecording(handleDataReceived, (error) => {
 					console.error("Error when transcribing", error);
 					// No further action needed, as stream already closes itself on error
@@ -470,7 +413,6 @@ function Player() {
 			setMicStatus(true);
 
 			setMicString("ASK BY VOICE");
-			setIsInteracting(false);
 			interacting.current = "false";
 		}
 	}
@@ -495,17 +437,13 @@ function Player() {
 
 					setVideoProperties({
 						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded:
-							interacting.current == "false"
-								? fetchFiller
-								: chatFiller,
+						onEnded:fetchFiller,
 						source: res.data,
 						muted: true,
 						filler: true,
 						duration_seconds: null
 					});
 
-					setVideoURL(res.data);
 
 					document.getElementById("vidmain").load();
 					const playPromise = document
@@ -551,7 +489,6 @@ function Player() {
 			: interimTextInput.current;
 
 		if (question.current != "") {
-			setHasRated(false);
 			const oldQuestion = question.current;
 			axios
 				.post(`/api/player`, {
@@ -569,29 +506,29 @@ function Player() {
 					},
 				})
 				.then((res) => {
-					if (res.data === "error") {
-						setFillerPlaying(true);
-					} else {
-						setFillerPlaying(true);
-						setHasRated(false);
-
-						newRating.current = "false";
-						setlastQAsked(oldQuestion)
+					setFillerPlaying(true);
+					if (res.data !== "error") {
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded: fetchFiller,
+							onEnded:  () => {
+								setRatingParams({
+									video_id: res.data.video_id,
+									question: oldQuestion
+								})
+								setHasRated(false);
+								fetchFiller()
+							},
 							source: res.data.url,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null
+							duration_seconds: res.data.duration_seconds || null,
+							question: question.current,
+							video_id: res.data.video_id
 						});
-						setLastPlayedVideo(res.data.video_id);
 
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
-						setVideoURL(res.data.url); // setting the video ID
-						// transcribedAudio.current = '';
 						setTranscribedAudio("");
 						question.current = "";
 					}
@@ -773,14 +710,8 @@ function Player() {
 				</Modal.Content>
 			</Modal>
 			<div className="nav-heading-bar">
-				{newRating.current != "true" && (
-					<PopModal
-						setRating={setRatingVal}
-						setRatingDone={setHasRated}
-						userRating={recordUserRating}
-						newRatingVal={newRating}
-						skipFillerVid={skipFiller}
-					/>
+				{(!hasRated) && (
+					<PopModal userRating={recordUserRating} />
 				)}
 
 				<div
@@ -875,11 +806,7 @@ function Player() {
 				{isFillerPlaying.current == "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
-						onClick={
-							interacting.current == "false"
-								? fetchFiller
-								: chatFiller
-						}
+						onClick={fetchFiller}
 					>
 						{" "}
 						Skip to End{" "}
