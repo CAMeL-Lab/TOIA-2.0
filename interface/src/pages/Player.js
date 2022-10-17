@@ -327,11 +327,6 @@ function Player() {
 		}
 	}
 
-	const recordUserRating = function (rate) {
-		// record the rating for the user
-		const vidID = lastPlayedVideo;
-		console.log(vidID);
-
 	const recordUserRating = function (ratingValue) {
 		const options = {
 			method: "POST",
