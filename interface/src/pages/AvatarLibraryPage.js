@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Fuse from "fuse.js";
-import sampleVideo from "../icons/sample-video.svg";
 import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
@@ -9,7 +7,6 @@ import Tracker from "../utils/tracker";
 
 import NavBar from './NavBar.js'
 
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 
@@ -18,22 +15,6 @@ function AvatarLibraryPage() {
   const { t } = useTranslation();
 
     /*functions in charge of opening and closing the various pop up menus*/
-    function exampleReducer( state, action ) {
-        switch (action.type) {
-          case 'close':
-            return { open: false };
-          case 'open':
-            return { open: true };
-        }
-    }
-    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-    const { open } = state
-
-    function openModal(e){
-        dispatch({ type: 'open' });
-        e.preventDefault();
-    }
-
 
     function exampleReducer3( state3, action ) { // for stream settings window
         switch (action.type) {
@@ -184,7 +165,14 @@ function AvatarLibraryPage() {
 
     return (
         <div className="library-page">
-            {NavBar(toiaName, toiaID, toiaLanguage, isLoggedIn, history, dispatch, open, t)}
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={isLoggedIn}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={true}
+            />
              <Modal //this is the view pop up menu
                 size='large'
                 style={inlineStyle.modal}

@@ -100,6 +100,14 @@ function SignUpPage() {
     return (
         <div>
             {NavBar(null, null, null, false, history, dispatch, open, t)}
+            <NavBar
+            toiaName={null}
+            toiaID={null}
+            isLoggedIn={false}
+            toiaLanguage={null}
+            history={history}
+            showLoginModal={true}
+            />
             <form className="signup-page" onSubmit={submitHandler}>
                 <div className="signup-group">
                     <h1 className="signup-title signup-font-class-3 ">Get Started</h1>

@@ -19,7 +19,6 @@ import NavBar from './NavBar.js';
 
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 
@@ -961,7 +960,14 @@ function AvatarGardenPage() {
     return (
         <div className="garden-page">
 
-            {NavBar(toiaName, toiaID, toiaLanguage, true, history, null, open, t)}
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={false}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={false}
+            />
 
             <Modal //This is the warning pop menu, that shows whenever you delete or move videos
                 size='large'

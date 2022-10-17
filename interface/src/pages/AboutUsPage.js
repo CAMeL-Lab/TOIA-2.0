@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import submitButton from "../icons/submit-button.svg";
-import sampleVideo from "../icons/sample-video.svg";
 import alberto from "../images/alberto.jpeg";
 import wahib from "../images/wahib.jpg";
 import kertu from "../images/kertu.jpg";
@@ -12,29 +10,18 @@ import armaan from "../images/armaan.jpg";
 import nyuad from "../images/nyuad-rb.png";
 import camel from "../images/camel.png";
 import history from '../services/history';
-import {Modal} from 'semantic-ui-react';
-import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf'
-import axios from 'axios';
+import sigDail from '../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import toia_logo from "../images/TOIA_Logo.png";
 import Tracker from "../utils/tracker";
 
 import NavBar from './NavBar.js';
 
-import i18n from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 
 function AvatarViewPage() {
 
     const { t } = useTranslation();
-
-    /*functions in charge of opening and closing the various pop up menus*/
-    const [open, dispatch] = useState(false);
-
-    function openModal(e){
-        dispatch(true);
-        e.preventDefault();
-    }
 
     const [toiaName, setName] = useState(null);
     const [toiaLanguage, setLanguage] = useState(null);
@@ -92,8 +79,14 @@ function AvatarViewPage() {
 
     return (
         <div className="about-page">
-        
-            {NavBar(toiaName, toiaID, toiaLanguage, isLoggedIn, history, dispatch, open, t)}
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={isLoggedIn}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={true}
+            />
 
             <div className = "about-team">
             <h1 className={`about-heading ${t("alignment")}`}>{t("meet_the_team")}</h1>

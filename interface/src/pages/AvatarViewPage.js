@@ -8,21 +8,11 @@ import Tracker from "../utils/tracker";
 
 import NavBar from './NavBar.js';
 
-import i18n from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 
 function AvatarViewPage() {
 
     const { t } = useTranslation();
-    
-    function exampleReducer( state, action ) {
-        switch (action.type) {
-          case 'close':
-            return { open: false };
-          case 'open':
-            return { open: true }; 
-        }
-    }
 
     const [name, setName] = React.useState(null);
     const [language, setLanguage] = React.useState(null);
@@ -47,36 +37,6 @@ function AvatarViewPage() {
         // Tracker
         new Tracker().startTracking(history.location.state);
     });
-    
-    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-    const { open } = state
-
-    function openModal(e){
-        dispatch({ type: 'open' });
-        e.preventDefault();
-    }
-
-    function myChangeHandler(event){
-        event.preventDefault();
-        var name = event.target.name;
-    
-        switch(name) {
-          case "email":
-            input1 = event.target.value;
-            break;
-          case "pass":
-            input2 = event.target.value;
-            break;
-        }
-    }
-
-    function submitHandler1(e){
-        e.preventDefault();
-        history.push({
-            pathname: '/mytoia',
-        });
-    }
-    
 
     function submitHandler(event){
         event.preventDefault();
@@ -90,54 +50,18 @@ function AvatarViewPage() {
             }
         });
     }
-
-    function home() {
-        history.push({
-          pathname: '/',
-        });
-      }
-    
-      function library() {
-        history.push({
-          pathname: '/library',
-        });
-      }
-    
-      function garden(e) {
-        if (isLogin) {
-          history.push({
-            pathname: '/mytoia',
-          });
-        }else{
-          openModal(e);
-        }
-      }
-
-     function logout(){
-         //logout function needs to be implemented (wahib)
-         history.push({
-             pathname: '/',
-           });
-     }
-     
-     function signup(){
-        history.push({
-          pathname: '/signup',
-        });
-      }
-
-     const inlineStyle = {
-        modal : {
-            height: '560px',
-            width: '600px',
-        }
-      };
-     
     //a function will be needed to send input5 to database (wahib)
     
     return (
         <div className="view-page">
-            {NavBar(toiaName, toiaID, toiaLanguage, false, history, dispatch, open, t)}
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={true}  // {isLoggedIn}
+            toiaLanguage={"en"}
+            history={history}
+            showLoginModal={true}
+            />
             <h1 className="view-title view-font-class-1 ">Here is infromation on the TOIA selected</h1>
             <img className="view-still" src={video}/>
 
