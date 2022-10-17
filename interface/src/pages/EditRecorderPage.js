@@ -9,7 +9,6 @@ import Switch from "react-switch";
 
 import NavBar from './NavBar.js';
 
-import i18n from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 
 const videoConstraints = {
@@ -204,30 +203,6 @@ function EditRecorder () {
         dispatch({ type: 'open' });
         e.preventDefault();
       }
-    
-      function home() {
-        history.push({
-          pathname: '/',
-        });
-      }
-      
-      function about() {
-        history.push({
-          pathname: '/about',
-        });
-      }
-
-      function library() {
-        history.push({
-          pathname: '/library',
-        });
-      }
-    
-      function garden() {
-        history.push({
-            pathname: '/mytoia',
-        });
-      }
      
       function setType(event) {
         event.preventDefault();
@@ -355,7 +330,14 @@ function EditRecorder () {
                 </Modal.Actions>
             </Modal>
             
-            {NavBar(toiaName, toiaID, toiaLanguage, false, history, dispatch, open, t)}
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={true}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={false}
+            />
 
             <h1 className="edit-title edit-font-class-3 ">{t("edit_recording_page_title")}</h1>
             <div className="side-bar">

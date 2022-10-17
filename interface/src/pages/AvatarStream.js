@@ -10,8 +10,7 @@ import nizar from "../images/nizar.jpg";
 
 import NavBar from './NavBar.js';
 
-import i18n from "i18next";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 var cardSelected = [];//the videos selected to be edited or deleted
 
@@ -186,72 +185,19 @@ function AvatarSettings() {
         setCurrentUserLanguage(res.data[0].language);
         setCurrentUserEmail(res.data[0].email);
     })
-}
-
-function fetchStreamList() {
-  return new Promise(((resolve) => {
-      axios.post(`/api/getUserStreams`, {
-          params: {
-              toiaID: history.location.state.toiaID,
-              toiaName: history.location.state.toiaName
-          }
-      }).then((res) => {
-          resolve(res.data);
-      });
-  }))
-}
-
-  /*nav bar functions*/
-  function home() {
-
-    history.push({
-      pathname: '/',
-      state: {
-        toiaName,
-        toiaLanguage,
-        toiaID
-    }
-    });
   }
 
-  function about() {
-    history.push({
-      pathname: '/about',
-      state: {
-        toiaName,
-        toiaLanguage,
-        toiaID
-    }
-    });
-  }
-
-  function library() {
-    history.push({
-      pathname: '/library',
-      state: {
-        toiaName,
-        toiaLanguage,
-        toiaID
-    }
-    });
-  }
-
-  function garden() {
-    history.push({
-        pathname: '/mytoia',
-        state: {
-          toiaName,
-          toiaLanguage,
-          toiaID
-      }
-    });
-  }
-
-  function logout(){
-      //logout function needs to be implemented (wahib)
-      history.push({
-          pathname: '/',
+  function fetchStreamList() {
+    return new Promise(((resolve) => {
+        axios.post(`/api/getUserStreams`, {
+            params: {
+                toiaID: history.location.state.toiaID,
+                toiaName: history.location.state.toiaName
+            }
+        }).then((res) => {
+            resolve(res.data);
         });
+    }));
   }
 
   /*navigations to pages from buttons*/
@@ -304,7 +250,14 @@ function fetchStreamList() {
           </Modal.Actions>
       </Modal>
 
-      {NavBar(toiaName, toiaID, toiaLanguage, false, history, dispatch, open, t)}
+      <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={true} // {isLoggedIn}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={true}
+            />
       
       <div className="settings-section1" //the first section
       >

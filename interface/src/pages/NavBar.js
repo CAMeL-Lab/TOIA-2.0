@@ -1,4 +1,5 @@
 import {Modal} from 'semantic-ui-react';
+import React from "react";
 import {NotificationManager} from "react-notifications";
 import axios from 'axios';
 import submitButton from "../icons/submit-button.svg";
@@ -6,9 +7,30 @@ import submitButton from "../icons/submit-button.svg";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
-function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn = false, history = null, dispatch = null, open = null, t = null) {
+//toiaName = null, props.toiaID = null, props.toiaLanguage = null, props.isLoggedIn = false, props.history = null
 
-    // const t = useTranslation();
+function NavBar(props) {
+
+    const { t } = useTranslation();
+
+    function exampleReducer( state, action ) {
+        switch (action.type) {
+            case 'open':
+                return { 
+                  open: true 
+                };
+            case 'close':
+            default:
+                return { 
+                open: false 
+                };
+
+        }
+      }
+
+    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,});
+    
+    const { open } = state;
 
     var input1, input2; //these hold all the user login data
 
@@ -18,64 +40,64 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
     }
 
 	function home() {
-        if(isLoggedIn){
-          history.push({
+        if(props.isLoggedIn){
+          props.history.push({
             pathname: '/',
             state: {
-              toiaName,
-              toiaLanguage,
-              toiaID
+              toiaName: props.toiaName,
+              toiaLanguage: props.toiaLanguage,
+              toiaID: props.toiaID
             }
           });
         }else{
-          history.push({
+          props.history.push({
             pathname: '/',
           });
         }
     }
 
     function about() {
-        if(isLoggedIn){
-            history.push({
+        if(props.isLoggedIn){
+            props.history.push({
             pathname: '/about',
             state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
+                toiaName: props.toiaName,
+                toiaLanguage: props.toiaLanguage,
+                toiaID: props.toiaID
             }
             });
         }else{
-            history.push({
+            props.history.push({
             pathname: '/about',
             });
         }
     }
 
     function library() {
-        if(isLoggedIn){
-            history.push({
+        if(props.isLoggedIn){
+            props.history.push({
             pathname: '/library',
             state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
+                toiaName: props.toiaName,
+                toiaLanguage: props.toiaLanguage,
+                toiaID: props.toiaID
             }
             });
         }else{
-            history.push({
+            props.history.push({
             pathname: '/library',
             });
         }
     }
 
     function garden(e) {
-        if (isLoggedIn) {
-            history.push({
+        if (props.isLoggedIn) {
+            props.history.push({
             pathname: '/mytoia',
             state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
+                toiaName: props.toiaName,
+                toiaLanguage: props.toiaLanguage,
+                toiaID: props.toiaID
                 }
             });
         }else{
@@ -84,7 +106,7 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
     }
 
     function logout(){
-        history.push({
+        props.history.push({
             pathname: '/'
         });
     }
@@ -92,13 +114,13 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
 
      /*login popup functions*/
     function signup(){
-        history.push({
+        props.history.push({
             pathname: '/signup',
         });
     }
 
     function switch_lang(e){
-     // i18n.changeLanguage(toiaLanguage);
+     // i18n.changeLanguage(props.toiaLanguage);
      console.log("Language changed:", i18n.language);
     if(i18n.language == "en"){
       i18n.changeLanguage("fr");
@@ -127,7 +149,7 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
                 NotificationManager.error("Incorrect password.");
             }else {
                 console.log(res.data);
-                history.push({
+                props.history.push({
                     pathname:'mytoia',
                     state: {
                     toiaName:res.data.firstName,
@@ -152,7 +174,7 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
                 size='large'
                 style={inlineStyle.modal}
                 open={open}
-                onClose={() => dispatch(false)}
+                onClose={() => dispatch({ type: 'close' })}
             >
                     <Modal.Header className="login_header">
                     <h1 className="login_welcome login-opensans-normal">{t("nav_welcome_back")}</h1>
@@ -188,9 +210,18 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
     return (
     <div className="top-nav-bar">
     
-            { dispatch ? login_modal() : ''}
+            { props.showLoginModal ? login_modal() : ''}
 
             <div className="nav-heading-bar">
+                <div class="nav-dropdown">
+                    <button class="nav-dropbtn">EN</button>
+                    <div class="nav-dropdown-content">
+                        <a href="#">EN</a>
+                        <a href="#">AR</a>
+                        <a href="#">SP</a>
+                        <a href="#">FR</a>
+                    </div>
+                </div>
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">
                     {t("nav_toia")}
                 </div>
@@ -203,11 +234,11 @@ function NavBar(toiaName = null, toiaID = null, toiaLanguage = null, isLoggedIn 
                 <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
                     {t("nav_my_toia")}
                 </div>
-                <div onClick={switch_lang} className="nav-my_icon app-monsterrat-black" style="visibility:hidden">
+                <div onClick={switch_lang} className="nav-my_icon app-monsterrat-black" >
                   Switch
                 </div>
-                <div onClick={isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
-                   {isLoggedIn ? t("nav_logout") : t("nav_login")}
+                <div onClick={props.isLoggedIn ? logout : openModal} className="nav-login_icon app-monsterrat-black">
+                   {props.isLoggedIn ? t("nav_logout") : t("nav_login")}
                 </div>
             </div>
         </div>

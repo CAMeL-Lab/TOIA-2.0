@@ -1,43 +1,22 @@
 import React, {useState, useEffect, useRef} from "react";
 import signupButton from "../icons/signup-button.svg";
-import submitButton from "../icons/submit-button.svg";
-import sample from "../icons/sample-video.svg";
 import history from '../services/history';
-import {Modal} from 'semantic-ui-react';
-import axios from 'axios';
 import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
 import Tracker from "../utils/tracker";
-import {NotificationManager} from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
 import NavBar from './NavBar.js';
 
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
 
-  function exampleReducer( state, action ) {
-    switch (action.type) {
-      case 'close':
-        return { open: false };
-      case 'open':
-        return { open: true };
-    }
-  }
-
   const { t } = useTranslation();
-
-  var input1, input2; //these hold all the user login data
-
-  const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
 
   const [toiaName, setName] = useState(null);
   const [toiaLanguage, setLanguage] = useState(null);
   const [toiaID, setTOIAid] = useState(null);
   const [isLoggedIn,setLoginState]=useState(false);
-
-  const { open } = state;
 
   useEffect(() => {
     if(history.location.state!=undefined){
@@ -51,10 +30,10 @@ function HomePage() {
     new Tracker().startTracking(history.location.state);
   },[]);
 
-  function openModal(e){
-    dispatch({ type: 'open' });
-    e.preventDefault();
-  }
+
+  // function callDispatch(bool){
+  //   dispatch(bool);
+  // }
 
   function signup(){
         history.push({
@@ -76,7 +55,14 @@ function HomePage() {
 
   return (
     <div className="home-page">
-      {NavBar(toiaName, toiaID, toiaLanguage, isLoggedIn, history, dispatch, open, t)}
+      <NavBar
+      toiaName={toiaName}
+      toiaID={toiaID}
+      isLoggedIn={isLoggedIn}
+      toiaLanguage={toiaLanguage}
+      history={history}
+      showLoginModal={true}
+      />
 
       <video ref={videoRef} onCanPlay={() => setPlayBack()} className="home-sample-videos home-animate-enter"autoPlay muted>
           <source src={toia_home_vid} type="video/mp4"/>
@@ -97,6 +83,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-
-// ${right_languages.includes(toiaLanguage) ? 'right-align' : ''}`

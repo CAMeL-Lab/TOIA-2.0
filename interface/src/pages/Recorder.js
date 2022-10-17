@@ -868,6 +868,14 @@ function Recorder() {
                 AllowAddingCustomVideo={pendingOnBoardingQs.length === 0}/>
 
             {NavBar(toiaName, toiaID, toiaLanguage, false, history, null, null, t)}
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={true}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={false}
+            />
 
             <div>
                 <div className="side-bar">
