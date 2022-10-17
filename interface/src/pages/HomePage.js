@@ -11,8 +11,6 @@ import { useTranslation } from "react-i18next";
 
 function HomePage() {
 
-function HomePage() {
-
   const { t } = useTranslation();
 
   const [toiaName, setName] = useState(null);
