@@ -1,5 +1,11 @@
 const connection = require("../configs/db-connection");
 const logger = require("../logger");
+const { Configuration, OpenAIApi } = require("openai");
+const fs = require("fs");
+const configuration = new Configuration({
+	apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
 const QuestionTypes = [
 	"filler",
@@ -581,7 +587,49 @@ const getExactMatchVideo = (stream_id, question) => {
 	});
 };
 
+const getEmbeddings = async (question, answer) => {
+	try {
+		const embeddings = await openai.createEmbedding({
+			model: "text-search-ada-doc-001",
+			input: "Question: " + question + "; Answer: " + answer,
+		});
+
+		return embeddings.data.data[0].embedding;
+	} catch (e) {
+		console.error(e);
+	}
+};
+
+const getVideoLatestIDX = async () => {
+	let query = `SELECT max(idx) FROM video`;
+
+	return new Promise(resolve => {
+		connection.query(query, (err, result) => {
+			if (err) throw err;
+			resolve(result[0]["max(idx)"]);
+		});
+	});
+};
+
+const addVideoEntry = async (id_video, toia_id, answer, duration_seconds) => {
+	let query =
+		"INSERT INTO `video`(`id_video`, `toia_id`, `idx`, `private`, `answer`, `language`, `likes`, `views`, `duration_seconds`) VALUES (?,?,?,?,?,?,?,?,?)";
+
+	const idx = (await getVideoLatestIDX()) + 1;
+	return new Promise(resolve => {
+		connection.query(
+			query,
+			[id_video, toia_id, idx, 0, answer, "EN", 0, 0, duration_seconds],
+			(err, result) => {
+				if (err) throw err;
+				resolve();
+			},
+		);
+	});
+};
+
 module.exports.addQuestion = addQuestion;
+module.exports.addQuestionIfNew = addQuestionIfNew;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
 module.exports.emailExists = emailExists;
 module.exports.linkStreamVideoQuestion = linkStreamVideoQuestion;
@@ -611,3 +659,7 @@ module.exports.getAdaSearch = getAdaSearch;
 module.exports.getAccessibleStreams = getAccessibleStreams;
 module.exports.getVideoDetails = getVideoDetails;
 module.exports.getExactMatchVideo = getExactMatchVideo;
+module.exports.fetchEmbeddings = getEmbeddings;
+module.exports.getVideoLatestIDX = getVideoLatestIDX;
+module.exports.addVideoEntry = addVideoEntry;
+module.exports.QuestionTypes = QuestionTypes;
