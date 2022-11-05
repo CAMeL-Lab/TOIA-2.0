@@ -1,22 +1,29 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Webcam from "react-webcam";
-import axios from 'axios';
-import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
-import history from '../services/history';
-import {Button, Image, Modal, Popup, TextArea, Icon} from 'semantic-ui-react';
-import {Multiselect} from 'multiselect-react-dropdown';
-import {default as EditCreateMultiSelect} from "editable-creatable-multiselect";
+import axios from "axios";
+import SpeechRecognition, {
+	useSpeechRecognition,
+} from "react-speech-recognition";
+import history from "../services/history";
+import { Button, Image, Modal, Popup, TextArea, Icon } from "semantic-ui-react";
+import { Multiselect } from "multiselect-react-dropdown";
+import { default as EditCreateMultiSelect } from "editable-creatable-multiselect";
 import Switch from "react-switch";
-import {RecordAVideoCard, OnBoardingQCard, SuggestedQCard, SuggestedQCardNoAction} from './AvatarGardenPage';
-import CheckMarkIcon from '../icons/check-mark-success1.webp';
-import RecordButton from '../icons/record1.png';
-import RecordingGif from '../icons/recording51.gif';
-import videoTypesJSON from '../configs/VideoTypes.json';
-import io from 'socket.io-client';
+import {
+	RecordAVideoCard,
+	OnBoardingQCard,
+	SuggestedQCard,
+	SuggestedQCardNoAction,
+} from "./AvatarGardenPage";
+import CheckMarkIcon from "../icons/check-mark-success1.webp";
+import RecordButton from "../icons/record1.png";
+import RecordingGif from "../icons/recording51.gif";
+import videoTypesJSON from "../configs/VideoTypes.json";
+import io from "socket.io-client";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
-import {NotificationManager} from "react-notifications";
+import { NotificationManager } from "react-notifications";
 import getBlobDuration from "get-blob-duration";
 
 import NavBar from './NavBar.js';
@@ -26,25 +33,33 @@ import { Trans, useTranslation } from "react-i18next";
 
 
 const videoConstraints = {
-    width: 720,
-    height: 405,
-    facingMode: "user"
+	width: 720,
+	height: 405,
+	facingMode: "user",
 };
 // Post recording, question suggestion modal
 function ModalQSuggestion(props) {
+	const suggestedQs = props.suggestedQuestions.slice(0, 5);
+	const recordNewVideoDisabled = !props.AllowAddingCustomVideo;
+	const {
+		ModalOnOpen,
+		ModalOnClose,
+		OnShowRecording,
+		OnCardClickFunc,
+		OnAddVideoCallback,
+	} = props;
 
     const { t } = useTranslation();
 
-    const suggestedQs = props.suggestedQuestions.slice(0, 5);
-    const recordNewVideoDisabled = (!props.AllowAddingCustomVideo);
-    const {ModalOnOpen, ModalOnClose, OnShowRecording, OnCardClickFunc, OnAddVideoCallback} = props;
-
-    const hasOnBoardingQs = () => {
-        const allQs = props.suggestedQuestions;
-        return allQs.filter(q => q.hasOwnProperty("onboarding") && q.onboarding === 1).length > 0;
-    }
-
-    return (
+	const hasOnBoardingQs = () => {
+		const allQs = props.suggestedQuestions;
+		return (
+			allQs.filter(
+				q => q.hasOwnProperty("onboarding") && q.onboarding === 1,
+			).length > 0
+		);
+	};
+	return (
         <Modal
             open={props.active}
             onClose={ModalOnClose}
@@ -90,7 +105,7 @@ function ModalQSuggestion(props) {
                 </Button>
             </Modal.Actions>
         </Modal>
-    )
+    );
 }
 
 function Recorder() {

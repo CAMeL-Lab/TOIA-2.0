@@ -14,17 +14,17 @@ logger.debug("Debug message"); // Prints only in development
 
 ### Error levels
 
-From most important to least. 
+From most important to least.
 
 ```javascript
 const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  verbose: 4,
-  debug: 5,
-  silly: 6
+	error: 0,
+	warn: 1,
+	info: 2,
+	http: 3,
+	verbose: 4,
+	debug: 5,
+	silly: 6,
 };
 ```
 

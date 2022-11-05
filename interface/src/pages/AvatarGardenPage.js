@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import Carousel from 'react-elastic-carousel'
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
+import React, { useState, useEffect } from "react";
+import Carousel from "react-elastic-carousel";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
 import addButton from "../icons/add-button.svg";
 import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
 import history from '../services/history';
-import { Modal, Button, Confirm, Input } from 'semantic-ui-react';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
-import '@brainhubeu/react-carousel/lib/style.css';
-import axios from 'axios';
-import './AvatarGardenPage.css';
+import "@brainhubeu/react-carousel/lib/style.css";
+import axios from "axios";
+import "./AvatarGardenPage.css";
 import Tracker from "../utils/tracker";
 
 import NavBar from './NavBar.js';
