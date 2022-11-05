@@ -1,9 +1,9 @@
 import React from "react";
 import submitButton from "../icons/submit-button.svg";
-import video from "../icons/sample-video.svg"
-import history from '../services/history';
-import {Modal} from 'semantic-ui-react';
-import axios from 'axios';
+import video from "../icons/sample-video.svg";
+import history from "../services/history";
+import { Modal } from "semantic-ui-react";
+import axios from "axios";
 import Tracker from "../utils/tracker";
 
 import NavBar from './NavBar.js';
@@ -14,29 +14,21 @@ function AvatarViewPage() {
 
     const { t } = useTranslation();
 
-    const [name, setName] = React.useState(null);
-    const [language, setLanguage] = React.useState(null);
-    const [bio, setBio] = React.useState(null);
-    const [avatarID,setAvatarID] = React.useState(null);
-    let isLogin = false;
-    var input1, input2;
+	const [name, setName] = React.useState(null);
+	const [language, setLanguage] = React.useState(null);
+	const [bio, setBio] = React.useState(null);
+	const [avatarID, setAvatarID] = React.useState(null);
+	let isLogin = false;
+	var input1, input2;
 
-    const [interactionLanguage, setInteractionLanguage] = React.useState(null);
-    
-    React.useEffect(() => {
-    
-        axios.get(`/api/getAvatarInfo`,{params:{
-            avatarID: history.location.state.id_avatar
-        }}).then((res)=>{
-            setName(res.data.name);
-            setLanguage(res.data.language);
-            setBio(res.data.bio);
-            setAvatarID(history.location.state.id_avatar);
-        });
+	const [interactionLanguage, setInteractionLanguage] = React.useState(null);
 
         // Tracker
+	React.useEffect(() => {
+
         new Tracker().startTracking(history.location.state);
-    });
+    }, []);
+
 
     function submitHandler(event){
         event.preventDefault();

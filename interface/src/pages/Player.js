@@ -1,4 +1,3 @@
-
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
@@ -58,6 +57,9 @@ function Player() {
 
 	const [lastQAsked, setlastQAsked] = useState("");
 	const [lastPlayedVideo, setLastPlayedVideo] = useState(null);
+	const [ratingParams, setRatingParams] = useState({
+		active: false,
+	});
 
 	// suggested questions for cards
 
@@ -117,9 +119,8 @@ function Player() {
 		new Tracker().startTracking(history.location.state);
 	}, []);
 
-
 	useEffect(() => {
-		const listener = (event) => {
+		const listener = event => {
 			if (event.code === "Enter" || event.code === "NumpadEnter") {
 				event.preventDefault();
 
@@ -154,7 +155,6 @@ function Player() {
 		}
 	}
 
-
 	function canAccessStream() {
 		let toiaID = history.location.state.toiaID;
 		let streamID = history.location.state.streamToTalk;
@@ -168,29 +168,29 @@ function Player() {
 
 		axios
 			.request(options)
-			.then(function (response) {})
+			.then(function (response) { })
 			.catch(function (error) {
 				alert("You do not have permission to access this page");
 				// Navigate to /library
-				if(isLoggedIn){
+				if (isLoggedIn) {
 					history.push({
-					pathname: '/library',
-					state: {
-						toiaName,
-						toiaLanguage,
-						toiaID
-					}
+						pathname: '/library',
+						state: {
+							toiaName,
+							toiaLanguage,
+							toiaID
+						}
 					});
-				}else{
+				} else {
 					history.push({
-					pathname: '/library',
+						pathname: '/library',
 					});
 				}
 			});
 	}
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
-		if (!hasRated){
+		if (!hasRated) {
 			NotificationManager.warning("Please provide a rating", "", 3000);
 			return;
 		}
@@ -205,18 +205,18 @@ function Player() {
 					toiaIDToTalk: history.location.state.toiaToTalk,
 					toiaFirstNameToTalk:
 						history.location.state.toiaFirstNameToTalk,
-						question: {
-							current: oldQuestion.question,
-						},
+					question: {
+						current: oldQuestion.question,
+					},
 					streamIdToTalk: history.location.state.streamToTalk,
 					record_log: "true",
 					...(history.location.state.toiaID && {
 						interactor_id: history.location.state.toiaID,
 					}),
-					mode: mode
+					mode: mode,
 				},
 			})
-			.then((res) => {
+			.then(res => {
 				if (res.data === "error") {
 					setFillerPlaying(true);
 					console.log("error");
@@ -229,17 +229,27 @@ function Player() {
 					setlastQAsked(oldQuestion.question);
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded:fetchFiller,
+						onEnded: () => {
+							setRatingParams({
+								video_id: res.data.video_id,
+								question: oldQuestion.question,
+							});
+							setHasRated(false);
+							fetchFiller();
+						},
 						source: res.data.url,
 						fetchFiller: fetchFiller,
 						muted: false,
 						filler: false,
-						duration_seconds: res.data.duration_seconds || null
+						duration_seconds: res.data.duration_seconds || null,
+						question: oldQuestion.question,
+						video_id: res.data.video_id,
 					});
 
-					setLastPlayedVideo(res.data.video_id);
-					fetchAnsweredQuestions(oldQuestion.question, res.data.answer || '');
-					setVideoURL(res.data.url); // setting the video ID
+					fetchAnsweredQuestions(
+						oldQuestion.question,
+						res.data.answer || "",
+					);
 					setTranscribedAudio("");
 					// question.current = "";
 				}
@@ -272,49 +282,53 @@ function Player() {
 
 	// Sets the value of 'allQuestions' array
 	// to be the string list of all questions of the stream
-	function fetchAllStreamQuestions(){
-		console.log("Fetching all questions!");
-		axios.get(`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`)
-		.then((res)=>{
-			allQuestions.current = res.data || [];
-		});
+	function fetchAllStreamQuestions() {
+		axios
+			.get(
+				`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`,
+			)
+			.then(res => {
+				allQuestions.current = res.data || [];
+			});
 	}
 	// function to fetch answered smart questions from the database
 	// question: the last question asked by the user
 	// answer: the answer given by the avatar
-	function fetchAnsweredQuestions(question="", answer="") {
-		console.log(`Creating Smart Questions...\n question = ${question}\n`);
-		axios.post('/api/getSmartQuestions', {
-			params: {
-				toiaIDToTalk: history.location.state.toiaToTalk,
-				toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
-				avatar_id: history.location.state.toiaToTalk,
-				stream_id: history.location.state.streamToTalk,
-				latest_question: question,
-				latest_answer: answer
-			}
-		}).then((res)=>{
-			// res.data contains the smart questions generated
-			// If res.data is not an array, then there is an error, so stop.
-			if (res.data.constructor !== Array){
-				return;
-			}
-			
-			res.data.forEach((q) => {
-
-				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
-				// then add it to the list of possible suggestions
-				if (q.question != '' && !allSuggestedQuestions.includes(q)){
-					answeredQuestions.push(q);
-					allSuggestedQuestions.push(q);
+	function fetchAnsweredQuestions(question = "", answer = "") {
+		axios
+			.post("/api/getSmartQuestions", {
+				params: {
+					toiaIDToTalk: history.location.state.toiaToTalk,
+					toiaFirstNameToTalk:
+						history.location.state.toiaFirstNameToTalk,
+					avatar_id: history.location.state.toiaToTalk,
+					stream_id: history.location.state.streamToTalk,
+					latest_question: question,
+					latest_answer: answer,
+				},
+			})
+			.then(res => {
+				// res.data contains the smart questions generated
+				// If res.data is not an array, then there is an error, so stop.
+				if (res.data.constructor !== Array) {
+					return;
 				}
+
+				res.data.forEach(q => {
+					// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
+					// then add it to the list of possible suggestions
+					if (
+						q.question != "" &&
+						!allSuggestedQuestions.includes(q)
+					) {
+						answeredQuestions.push(q);
+						allSuggestedQuestions.push(q);
+					}
+				});
+
+				shouldRefreshQuestions.current = true;
+				setAnsweredQuestions([...answeredQuestions]);
 			});
-			console.log("Created Smart Questions.");
-			console.log(answeredQuestions);
-			console.log("=========================")
-			shouldRefreshQuestions.current = true;
-			setAnsweredQuestions([...answeredQuestions]);
-		});
 	}
 
 
@@ -326,6 +340,16 @@ function Player() {
 			textInput.current = val;
 		}
 	}
+
+	useEffect(() => {
+		if (hasRated) {
+			if (interacting.current == "true") {
+				speechToTextUtils.initRecording(handleDataReceived, error => {
+					console.error("Error when transcribing", error);
+				});
+			}
+		}
+	}, [hasRated]);
 
 	const recordUserRating = function (ratingValue) {
 		const options = {
@@ -350,17 +374,17 @@ function Player() {
 			})
 			.catch(function (error) {
 				console.error(error);
-			}).finally(() => {
-				setHasRated(true);
 			})
+			.finally(() => {
+				setHasRated(true);
+			});
 	};
 
-	function fetchData(mode="UNKNOWN") {
-		if (!hasRated){
+	function fetchData(mode = "UNKNOWN") {
+		if (!hasRated) {
 			NotificationManager.warning("Please provide a rating", "", 3000);
 			return;
 		}
-
 
 		const oldQuestion = question.current;
 		if (question.current == null || question.current == "") {
@@ -380,10 +404,10 @@ function Player() {
 						...(history.location.state.toiaID && {
 							interactor_id: history.location.state.toiaID,
 						}),
-						mode: mode
+						mode: mode,
 					},
 				})
-				.then((res) => {
+				.then(res => {
 					if (res.data === "error") {
 						setFillerPlaying(true);
 					} else {
@@ -397,20 +421,29 @@ function Player() {
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded:
-								interacting.current == "false"
-									? fetchFiller
-									: chatFiller,
+							onEnded: () => {
+								setRatingParams({
+									video_id: res.data.video_id,
+									question: oldQuestion,
+								});
+								setHasRated(false);
+								fetchFiller();
+							},
 							source: res.data.url,
 							fetchFiller: fetchFiller,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null
+							duration_seconds: res.data.duration_seconds || null,
+							question: question.current,
+							video_id: res.data.video_id,
 						});
 						setLastPlayedVideo(res.data.video_id);
 
 						setTranscribedAudio("");
 					}
+				})
+				.catch(e => {
+					console.error(e);
 				});
 		}
 	}
@@ -427,17 +460,16 @@ function Player() {
 			setIsInteracting(true);
 			interacting.current = "true";
 
-			if (newRating.current != "false") {
-				speechToTextUtils.initRecording(handleDataReceived, (error) => {
+			if (hasRated) {
+				speechToTextUtils.initRecording(handleDataReceived, error => {
 					console.error("Error when transcribing", error);
 					// No further action needed, as stream already closes itself on error
 				});
 			} else {
-
 				NotificationManager.warning(
 					"Please provide a rating",
 					"",
-					3000
+					3000,
 				);
 			}
 		} else {
@@ -466,21 +498,17 @@ function Player() {
 						}),
 					},
 				})
-				.then(async (res) => {
-
+				.then(async res => {
 					setVideoProperties({
 						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded:
-							interacting.current == "false"
-								? fetchFiller
-								: chatFiller,
+						onEnded: fetchFiller,
 						source: res.data,
 						muted: true,
 						filler: true,
-						duration_seconds: null
+						duration_seconds: null,
 					});
 
-					setVideoURL(res.data);
+					//setVideoURL(res.data);
 
 					document.getElementById("vidmain").load();
 					const playPromise = document
@@ -488,15 +516,13 @@ function Player() {
 						.play();
 					if (playPromise !== undefined) {
 						playPromise
-							.then((_) => {
+							.then(_ => {
 								// Automatic playback started!
 								// Show playing UI.
-
 							})
-							.catch((error) => {
+							.catch(error => {
 								// Auto-play was prevented
 								// Show paused UI.
-
 
 								fetchFiller();
 							});
@@ -505,7 +531,7 @@ function Player() {
 		}
 	}
 
-	function setRefreshQuestionsFalse(){
+	function setRefreshQuestionsFalse() {
 		shouldRefreshQuestions.current = false;
 	}
 
@@ -514,12 +540,11 @@ function Player() {
 		interimTextInput.current = textInput.current;
 	}
 
-	function submitResponse(e, mode="UNKNOWN") {
-		if (!hasRated){
+	function submitResponse(e, mode = "UNKNOWN") {
+		if (!hasRated) {
 			NotificationManager.warning("Please provide a rating", "", 3000);
 			return;
 		}
-
 
 		question.current = textInput.current
 			? textInput.current
@@ -540,27 +565,30 @@ function Player() {
 						...(history.location.state.toiaID && {
 							interactor_id: history.location.state.toiaID,
 						}),
-						mode: mode
+						mode: mode,
 					},
 				})
-				.then((res) => {
-					if (res.data === "error") {
-						setFillerPlaying(true);
-					} else {
-						setFillerPlaying(true);
-						setHasRated(false);
-
-						newRating.current = "false";
-						setlastQAsked(oldQuestion)
+				.then(res => {
+					setFillerPlaying(true);
+					if (res.data !== "error") {
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded: fetchFiller,
+							onEnded: () => {
+								setRatingParams({
+									video_id: res.data.video_id,
+									question: oldQuestion,
+								});
+								setHasRated(false);
+								fetchFiller();
+							},
 							source: res.data.url,
 							muted: false,
 							filler: false,
-							duration_seconds: res.data.duration_seconds || null
+							duration_seconds: res.data.duration_seconds || null,
+							question: question.current,
+							video_id: res.data.video_id,
 						});
 						setLastPlayedVideo(res.data.video_id);
 
@@ -571,22 +599,22 @@ function Player() {
 						question.current = "";
 					}
 				})
-				.catch((e) => {
+				.catch(e => {
 					console.error(e);
-				})
+				});
 		}
 	}
 
 	return (
 		<div className="player">
 			<NavBar
-            toiaName={toiaName}
-            toiaID={toiaID}
-            isLoggedIn={isLoggedIn}
-            toiaLanguage={toiaLanguage}
-            history={history}
-            showLoginModal={true}
-            />
+				toiaName={toiaName}
+				toiaID={toiaID}
+				isLoggedIn={isLoggedIn}
+				toiaLanguage={toiaLanguage}
+				history={history}
+				showLoginModal={true}
+			/>
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
@@ -611,7 +639,9 @@ function Player() {
 								}
 								source={videoProperties.source}
 								filler={videoProperties.filler}
-								duration_seconds={videoProperties.duration_seconds}
+								duration_seconds={
+									videoProperties.duration_seconds
+								}
 							/>
 						</CSSTransition>
 					</TransitionGroup>
@@ -678,20 +708,23 @@ function Player() {
 							<SuggestionCard
 								questions={answeredQuestions}
 								askQuestion={askQuestionFromCard}
-								shouldRefreshQuestions = {shouldRefreshQuestions}
-								setRefreshQuestionsFalse = {setRefreshQuestionsFalse}
-								hasRated = {hasRated}
-								notificationManager = {NotificationManager}
+								shouldRefreshQuestions={shouldRefreshQuestions}
+								setRefreshQuestionsFalse={
+									setRefreshQuestionsFalse
+								}
+								hasRated={hasRated}
+								notificationManager={NotificationManager}
 							/>
 
 							<button
 								color="green"
 								className="ui linkedin button submit-button"
-								onClick={(e) => {
+								onClick={e => {
 									submitResponse(e, "SEARCH");
 								}}
 							>
-								<i aria-hidden="true" class="send icon"></i>ASK
+								<i aria-hidden="true" class="send icon"></i>
+								ASK
 							</button>
 						</>
 					) : (

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import submitButton from "../icons/submit-button.svg";
 import history from '../services/history';
 import {Modal} from 'semantic-ui-react';
@@ -11,6 +11,14 @@ import i18n from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 
 function SignUpPage() {
+	function exampleReducer(state, action) {
+		switch (action.type) {
+			case "close":
+				return { open: false };
+			case "open":
+				return { open: true };
+		}
+	}
 
     const { t } = useTranslation();
 
@@ -23,26 +31,58 @@ function SignUpPage() {
         }
     }
 
-    let isLogin = false; // this will tell if user is logged in to determine whether my TOIA will activate login pop *Wahib*
-    var input1, input2; //these hold all the user login data
+	const [language, setLanguage] = useState("");
+	const [fname, setFName] = useState("");
+	const [lname, setLname] = useState("");
+	const [email, setEmail] = useState("");
+	const [pass, setPass] = useState("");
+	const [cpass, setCPass] = useState("");
+	const [profilePic, setProfilePic] = useState();
 
-    const [language, setLanguage] = useState('');
-    const [fname, setFName] = useState('');
-    const [lname, setLname] = useState('');
-    const [email, setEmail] = useState('');
-    const [pass, setPass] = useState('');
-    const [cpass, setCPass] = useState('');
-    const [profilePic, setProfilePic] = useState();
+	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
+	var [hasEmailError, setHasEmailError] = useState(false);
+	var [hasPasswordError, setHasPasswordError] = useState(false);
+	const { open } = state;
 
-    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-    var [hasEmailError, setHasEmailError] = useState(false);
-    var [hasPasswordError, setHasPasswordError] = useState(false);
-    const {open} = state
+	function openModal(e) {
+		dispatch({ type: "open" });
+		e.preventDefault();
+	}
 
-    function openModal(e) {
-        dispatch({type: 'open'});
-        e.preventDefault();
-    }
+	function submitHandler(event) {
+		event.preventDefault();
+		if (pass === cpass) {
+			let form = new FormData();
+			form.append("blob", profilePic);
+			form.append("firstName", fname);
+			form.append("lastName", lname);
+			form.append("email", email);
+			form.append("pwd", pass);
+			form.append("language", language);
+			console.log(form);
+			axios
+				.post(`/api/createTOIA`, form)
+				.then(res => {
+					if (res.status === 200) {
+						console.log(`Account created successfully ${res.data}`);
+						history.push({
+							pathname: "/mytoia",
+							state: {
+								toiaName: fname,
+								toiaLanguage: language,
+								toiaID: res.data.new_toia_ID,
+							},
+						});
+					}
+				})
+				.catch(err => {
+					console.log(err);
+					NotificationManager.error("Email already exists!");
+				});
+		} else {
+			NotificationManager.error("Passwords need to match");
+		}
+	}
 
     function submitPic(event) {
         console.log('we here');
@@ -55,38 +95,11 @@ function SignUpPage() {
         e.preventDefault();
     }
 
-    function submitHandler(event) {
-        event.preventDefault();
-        if (pass === cpass) {
 
-            let form = new FormData();
-            form.append('blob', profilePic);
-            form.append('firstName', fname);
-            form.append('lastName', lname);
-            form.append('email', email);
-            form.append('pwd', pass);
-            form.append('language', language);
-            console.log(form);
-            axios.post(`/api/createTOIA`, form).then((res) => {
-                if (res.status === 200) {
-                    console.log(`Account created successfully ${res.data}`);
-                    history.push({
-                        pathname: '/mytoia',
-                        state: {
-                            toiaName: fname,
-                            toiaLanguage: language,
-                            toiaID: res.data.new_toia_ID
-                        }
-                    });
-                }
-            }).catch(err => {
-                console.log(err);
-                NotificationManager.error("Email already exists!");
-            });
-        } else {
-            NotificationManager.error("Passwords need to match");
-        }
-    }
+		let params = {
+			email: input1,
+			pwd: input2,
+		};
 
 
     const inlineStyle = {
