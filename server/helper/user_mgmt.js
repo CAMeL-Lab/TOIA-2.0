@@ -58,11 +58,19 @@ async function addQuestion(question, suggested_type, onboarding = 0, priority = 
         } else {
             let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester) VALUES(?, ?, ?, ?, ?);`;
             connection.query(query, [question, suggested_type, onboarding, priority, trigger_suggester], (err, result) => {
-                if (err) throw err;
+                if (err) {
+                    reject(err);
+                    // throw err;
+                    return;
+                }
                 resolve(result.insertId);
             })
         }
     }))
+    .catch((err)=>{
+        console.log("addQuestion: ERR");
+        console.log(err);
+    });
 }
 
 async function linkSuggestedQuestionUser(userId, quesId, isPending = 1) {
@@ -93,18 +101,22 @@ const searchSuggestion = (question, user_id) => {
 }
 
 const searchRecorded = (question, user_id) => {
-    return new Promise((resolve => {
+    return new Promise((resolve) => {
         let query = `SELECT id_question FROM videos_questions_streams WHERE id_question in (SELECT id FROM questions WHERE question = ?) AND id_video in (SELECT id_video FROM video WHERE toia_id = ?)`;
         connection.query(query, [question, user_id], (err, entries) => {
             if (err) throw err;
             resolve(entries);
         })
-    }))
+    })
 }
 
 const saveSuggestedQuestion = async function (userId, question, suggested_type = 'answer', priority = 100) {
     let quesId = await addQuestion(question, suggested_type, 0, priority, 1);
     return new Promise((resolve, reject) => {
+        if (typeof quesId !== "number"){
+            reject(quesId); // quesId is now an SQL "err" object
+            return;
+        }
         linkSuggestedQuestionUser(userId, quesId).then(() => {
             resolve(quesId);
         }).catch(() => {
@@ -128,7 +140,7 @@ const linkStreamVideoQuestion = (streamID, videoID, quesID, type) => {
         if (!(QuestionTypes.find((t) => t === type))) {
             reject('Invalid Type!');
         } else {
-            let linkQuesQuery = `INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type) VALUES(?, ?, ?, ?);`;
+            let linkQuesQuery = `INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type, ada_search) VALUES(?, ?, ?, ?, "");`;
             connection.query(linkQuesQuery, [videoID, quesID, streamID, type], (err) => {
                 if (err) throw err;
                 console.log("Linked video id: " + videoID + " question id: " + quesID + " stream id: " + streamID);
@@ -441,8 +453,10 @@ const getAdaSearch = (question_id, video_id) => {
     return new Promise((resolve) => {
         connection.query(query, [video_id, question_id], (err, entry) => {
             if (err) throw err;
-            if (entry.length === 0) resolve(null);
-            
+            if (entry.length === 0) {
+                resolve(null);
+                return;
+            }
             let ada_search_encoded = entry[0].ada_search;
             let buff = new Buffer.from(ada_search_encoded, 'base64');
             resolve(buff.toString('ascii'));

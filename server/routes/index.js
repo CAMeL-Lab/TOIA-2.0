@@ -385,7 +385,12 @@ router.post('/getUserStreams', cors(), async (req, res) => {
         if (err) {
             throw err;
         } else {
-            if (entries.length === 0) throw "No streams!";
+            if (entries.length === 0) {
+                res.send("No streams!");
+                console.error("getUserStreams: No user streams!");
+                return;
+                // throw "No streams!";
+            }
 
 
             let counter = 0;
@@ -917,7 +922,8 @@ router.post('/getSmartQuestions', (req,res)=>{
     const stream_id = req.body.params.stream_id;
 
     // If it is the beginning of the conversation, then return 'dumb' question suggestions
-    if (req.body.params.latest_question=="") // This indicates that we are at the beginning of the conversation
+    if (!req.body.params.latest_question) // This indicates that we are at the beginning of the conversation
+    // This condition activates when latest_question = "" or undefined or null
     {
         let query = `SELECT questions.question FROM questions 
                     INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
@@ -1029,13 +1035,15 @@ router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
             return;
         }
 
-        searchRecorded(req.body.q, user_id).then((entries) => {
+        searchRecorded(req.body.q, user_id)
+        .then((entries) => {
             if (entries.length === 0){
                 searchSuggestion(req.body.q, user_id).then((entries) => {
                     if (entries.length === 0){
                         saveSuggestedQuestion(user_id, req.body.q).then(() => {
                             res.sendStatus(200);
                         }, () => {
+                            console.log("Sending 500");
                             res.sendStatus(500);
                         })
                     } else {
@@ -1048,6 +1056,11 @@ router.post('/saveSuggestedQuestion/:user_id', (req, res) => {
                 res.sendStatus(200);
             }
         })
+        .catch((err) => {
+            console.log("Caught error!");
+            console.log(err);
+            res.sendStatus(500);
+        });
 
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
@@ -1136,7 +1149,7 @@ router.get('/questions/suggestions/:user_id/pending', (req, res) => {
         connection.query(query, [user_id], (err, entries) => {
             if (err) throw err;
             res.send(entries);
-        })
+        });
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);
@@ -1147,7 +1160,6 @@ router.post('/questions/answered/delete', (req, res) => {
     const user_id = req.body.user_id || null;
     const ques_id = req.body.question_id || null;
     const video_id = req.body.video_id || null;
-
     if (!user_id || !ques_id || !video_id) {
         res.sendStatus(400);
         return;
@@ -1157,6 +1169,10 @@ router.post('/questions/answered/delete', (req, res) => {
         let query = `DELETE FROM videos_questions_streams WHERE id_video = ? AND id_question = ? AND id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
         connection.query(query, [video_id, ques_id, user_id], (err, result) => {
             if (err) throw err;
+            if (result.affectedRows == 0) {
+                res.sendStatus(404);
+                return;
+            }
             console.log("Deleted video_id: " + video_id + " question_id: " + ques_id + " of user_id: " + user_id);
             res.sendStatus(200);
         })
@@ -1175,7 +1191,7 @@ router.get('/questions/answered/:user_id', (req, res) => {
         connection.query(query, [user_id], (err, entries) => {
             if (err) throw err;
             res.send(entries);
-        })
+        });
     }, (reject) => {
         if (reject === false) console.log("Provided user id doesn't exist");
         res.sendStatus(404);

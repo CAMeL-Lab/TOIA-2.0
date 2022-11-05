@@ -13,10 +13,12 @@ connection = mysql.createConnection({
 connection.connect();
 
 if(process.env["ROLLBACK"]) {
+    console.warn("Database Changes will NOT be saved in this session!");
     connection.query("begin;");
 }
 
 function CloseDB(){
+    console.log("Closing...");
     connection.end();
 }
 
