@@ -171,15 +171,15 @@ function isSuggestedQuestion(quesId, userId) {
 	});
 }
 
-const linkStreamVideoQuestion = (streamID, videoID, quesID, type) => {
+const linkStreamVideoQuestion = (streamID, videoID, quesID, type, ada_search=null) => {
 	return new Promise(resolve => {
 		if (!QuestionTypes.find(t => t === type)) {
 			reject("Invalid Type!");
 		} else {
-			let linkQuesQuery = `INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type) VALUES(?, ?, ?, ?);`;
+			let linkQuesQuery = `INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type, ada_search) VALUES(?, ?, ?, ?, ?);`;
 			connection.query(
 				linkQuesQuery,
-				[videoID, quesID, streamID, type],
+				[videoID, quesID, streamID, type, ada_search],
 				err => {
 					if (err) throw err;
 					console.log(
@@ -663,3 +663,4 @@ module.exports.fetchEmbeddings = getEmbeddings;
 module.exports.getVideoLatestIDX = getVideoLatestIDX;
 module.exports.addVideoEntry = addVideoEntry;
 module.exports.QuestionTypes = QuestionTypes;
+module.exports.getEmbeddings = getEmbeddings;
