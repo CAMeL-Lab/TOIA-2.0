@@ -1708,6 +1708,7 @@ router.get("/permission/streams", async (req, res) => {
 	}
 });
 
+// The following route is deprecated. Mutate the db directly instead.
 router.post("/saveAdaSearch", cors(), async (req, res) => {
 	const video_id = req.body.video_id;
 	const question_id = req.body.question_id;
