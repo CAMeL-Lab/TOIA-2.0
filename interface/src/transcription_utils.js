@@ -24,13 +24,19 @@ const mediaConstraints = {
 	video: false,
 };
 
+let index = 0;
+const languages = ["en-US", "ar-AE", "fr-FR"];
+
 let AudioStreamer = {
 	/**
 	 * @param {function} onData Callback to run on data each time it's received
 	 * @param {function} onError Callback to run on an error if one is emitted.
 	 */
 	initRecording: function (onData, onError) {
-		socket.emit("transcribeAudio", "");
+		// socket.emit("transcribeAudio", "");
+		console.log("Language Code:", languages[index]);
+		socket.emit("transcribeAudio", languages[index]);
+		index = (index+1)%3;
 		AudioContext = window.AudioContext || window.webkitAudioContext;
 		context = new AudioContext({
 			latencyHint: "interactive",
