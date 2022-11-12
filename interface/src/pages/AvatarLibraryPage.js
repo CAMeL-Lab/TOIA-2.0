@@ -26,6 +26,13 @@ function AvatarLibraryPage() {
 		e.preventDefault();
 	}
 
+	const [open3, dispatch3] = useState(false); // this is to open the view pop up
+
+	function openModal3(e) {
+		dispatch3(true);
+		e.preventDefault();
+	}
+
 	const [toiaName, setName] = useState(null);
 	const [toiaLanguage, setLanguage] = useState(null);
 	const [toiaID, setTOIAid] = useState(null);
@@ -43,8 +50,10 @@ function AvatarLibraryPage() {
 			setTOIAid(history.location.state.toiaID);
 		}
 
+		console.log("Trying my best here!", history.location.state?.toiaID);
+
 		axios.get(`/api/getAllStreams`).then(res => {
-			let user_id = history.location.state.toiaID;
+			let user_id = history.location.state?.toiaID;
 			axios
 				.get(`/api/permission/streams?user_id=${user_id}`)
 				.then(permission_res => {

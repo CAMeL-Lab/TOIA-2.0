@@ -14,9 +14,14 @@ import EditRecorder from "../pages/EditRecorderPage";
 import i18n from "i18next";
 import { useTranslation, initReactI18next, Trans } from "react-i18next";
 
-let right_languages = ["ar"];
+
+const supportedLanguages = ["en", "ar", "fr"];
+
+
 
 const translationsEn = {
+  // NavBar Language
+  current_lang: "fi fi-us",
 	// Structure
 	alignment: '',
 
@@ -160,6 +165,8 @@ const translationsEn = {
 
 
 const translationsFr = {
+  // NavBar Language
+  current_lang: "fi fi-fr",
 	// Structure
 	alignment: '',
 
@@ -301,6 +308,8 @@ const translationsFr = {
 
 
 const translationsAr = {
+  // NavBar Language
+  current_lang: "fi fi-ae",
 	// Structure
 	alignment: 'right-align',
 

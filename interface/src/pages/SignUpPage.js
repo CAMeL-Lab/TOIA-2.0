@@ -21,6 +21,7 @@ function SignUpPage() {
 	}
 
     const { t } = useTranslation();
+    var input1, input2;
 
     function exampleReducer(state, action) {
         switch (action.type) {
