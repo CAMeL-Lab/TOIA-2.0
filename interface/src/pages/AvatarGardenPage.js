@@ -963,7 +963,7 @@ function AvatarGardenPage() {
             <NavBar
             toiaName={toiaName}
             toiaID={toiaID}
-            isLoggedIn={false}
+            isLoggedIn={true}
             toiaLanguage={toiaLanguage}
             history={history}
             showLoginModal={false}

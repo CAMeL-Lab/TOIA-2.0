@@ -87,6 +87,8 @@ services:
     env_file:
       - ./.env
       - ./interface/.env
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   metabase-sql-wrapper:
     build:

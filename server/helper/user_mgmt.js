@@ -468,6 +468,7 @@ const saveConversationLog = (
 	ada_similarity_score = null,
 	mode = "UNKNOWN",
 ) => {
+	return;
 	return new Promise(resolve => {
 		let currentTimestamp = +new Date();
 		const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;

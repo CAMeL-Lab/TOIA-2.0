@@ -32,7 +32,7 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState(null);
+	const [interactionLanguage, setInteractionLanguage] = useState("en");
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
@@ -647,22 +647,35 @@ function Player() {
 					</TransitionGroup>
 				)}
 				{micMute ? (
-					<button
-						color="green"
-						className="ui linkedin microphone button mute-button"
-						onClick={micStatusChange}
-					>
-						<i aria-hidden="true" class="">
-							<RecordVoiceOverRoundedIcon
-								sx={{
-									paddingTop: "0px",
-									paddingRight: "0px",
-									fontSize: "1.7rem",
-								}}
-							/>
-						</i>
-						{micString}
-					</button>
+					<div>
+						<div class="lang-container">
+							<div class="lang-dropdown">
+								<div class="lang-dropbtn"><span className={t("current_lang")}></span></div>
+								<div class="lang-dropdown-content">
+									<a href="#" onClick={setInteractionLanguage("en")}><span class="fi fi-us"></span></a>
+									<a href="#" onClick={setInteractionLanguage("ar")}><span class="fi fi-ae"></span></a>
+									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+									<a href="#" onClick={setInteractionLanguage("fr")}><span class="fi fi-fr"></span></a>
+								</div>
+							</div>
+						</div>
+						<button
+							color="green"
+							className="ui linkedin microphone button mute-button"
+							onClick={micStatusChange}
+						>
+							<i aria-hidden="true" class="">
+								<RecordVoiceOverRoundedIcon
+									sx={{
+										paddingTop: "0px",
+										paddingRight: "0px",
+										fontSize: "1.7rem",
+									}}
+								/>
+							</i>
+							{micString}
+						</button>
+					</div>
 				) : (
 					<button
 						className="ui secondary button mute-button"
@@ -678,11 +691,7 @@ function Player() {
 				{isFillerPlaying.current == "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
-						onClick={
-							interacting.current == "false"
-								? fetchFiller
-								: chatFiller
-						}
+						onClick={fetchFiller}
 					>
 						{" "}
 						Skip to End{" "}

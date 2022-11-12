@@ -21,6 +21,10 @@
   height: 12px;
 }*/
 
+body{
+	unicode-bidi: plaintext;
+}
+
 /*navbar*/
 ::-webkit-scrollbar-corner {
 	background: rgba(0, 0, 0, 0);
@@ -50,7 +54,7 @@
 .nav-toia_icon {
 	top: 0%;
 	/* left: 2.85%; */
-	left: 40px;
+	left: 60px;
 	position: absolute;
 	font-size: 28.4444px;
 	line-height: 39px;
@@ -156,15 +160,18 @@
 
 /* Dropdown Button */
 .nav-dropbtn {
-  background-color: #04AA6D;
+  background-color: transparent;
   color: white;
-  padding: 16px;
+  width: 30px;
+  text-align: center;
   font-size: 16px;
   border: none;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .nav-dropdown {
+  top: 0%;
+  left: 0%;
   position: relative;
   display: inline-block;
 }
@@ -179,9 +186,11 @@
 }
 
 /* Links inside the dropdown */
-.nav-dropdown-content option {
+.nav-dropdown-content a {
   color: black;
-  padding: 12px 16px;
+  width: 30px;
+  height: 20px;
+  text-align: center;
   text-decoration: none;
   display: block;
 }
@@ -196,7 +205,7 @@
 .nav-dropdown:hover .nav-dropdown-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.nav-dropdown:hover .nav-dropbtn {background-color: #3e8e41;}
+/* .nav-dropdown:hover .nav-dropbtn {background-color: #3e8e41;} */
 
 /*login popup*/
 .login_popup {
