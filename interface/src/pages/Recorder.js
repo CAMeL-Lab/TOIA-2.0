@@ -467,7 +467,10 @@ function Recorder() {
 
         // starting listening through socket
         //startRecording();
-        speechToTextUtils.initRecording(handleDataReceived,(error) => {
+        const params = {
+            language: 'en-US'
+        };
+        speechToTextUtils.initRecording(params, handleDataReceived,(error) => {
             console.error('Error when transcribing', error);
             setIsRecording(false)
             // No further action needed, as stream already closes itself on error

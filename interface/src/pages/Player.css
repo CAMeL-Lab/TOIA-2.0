@@ -238,7 +238,7 @@
   .lang-dropdown {
 	position: relative;
 	display: inline-block;
-	z-index: 2;
+	z-index: 10;
   }
   
   /* Dropdown Content (Hidden by Default) */

@@ -7,6 +7,19 @@ const languageCode = "ar-AE";
 // array to store responses
 //let responseChunks = [];
 
+function constructRequest(inputLanguageCode){
+	return {
+		config: {
+			encoding: encoding,
+			sampleRateHertz: sampleRateHertz,
+			languageCode: inputLanguageCode,
+			enableAutomaticPunctuation: true,
+			profanityFilter: true,
+		},
+		interimResults: true, // If you want interim results, set this to true
+	};
+}
+
 // the request object
 const request = {
 	config: {
@@ -38,3 +51,4 @@ const clientConfig = {
 
 module.exports.request = request;
 module.exports.clientConfig = clientConfig;
+module.exports.constructRequest = constructRequest;
