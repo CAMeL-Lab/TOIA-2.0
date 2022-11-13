@@ -2,20 +2,27 @@ import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRound
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NotificationManager } from "react-notifications";
-import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { Modal } from "semantic-ui-react";
-import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
+import PopModal from "../userRating/popModal";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
-import PopModal from "../userRating/popModal";
-import Tracker from "../utils/tracker";
-import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
+import { NotificationManager } from "react-notifications";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import Tracker from "../utils/tracker"
+
+import NavBar from './NavBar.js';
+
+import i18n from "i18next";
+import { useTranslation } from "react-i18next";
+import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player"
+
+import languageFlagsCSS from "../services/languageHelper";
 
 function Player() {
+	const { t } = useTranslation();
+
 	function exampleReducer(state, action) {
 		switch (action.type) {
 			case "close":
@@ -27,6 +34,7 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
+	const [interactionLanguage, setInteractionLanguage] = useState("en-US");
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
@@ -56,7 +64,6 @@ function Player() {
 
 	const interimTextInput = React.useRef("");
 
-	var input1, input2;
 	let [micMute, setMicStatus] = React.useState(true);
 	let [micString, setMicString] = React.useState("ASK BY VOICE");
 
@@ -112,28 +119,6 @@ function Player() {
 		};
 	}, []);
 
-	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
-	const { open } = state;
-
-	function openModal(e) {
-		dispatch({ type: "open" });
-		e.preventDefault();
-	}
-
-	function myChangeHandler(event) {
-		event.preventDefault();
-		var name = event.target.name;
-
-		switch (name) {
-			case "email":
-				input1 = event.target.value;
-				break;
-			case "pass":
-				input2 = event.target.value;
-				break;
-		}
-	}
-
 	function canAccessStream() {
 		let toiaID = history.location.state.toiaID;
 		let streamID = history.location.state.streamToTalk;
@@ -147,10 +132,24 @@ function Player() {
 
 		axios
 			.request(options)
-			.then(function (response) {})
+			.then(function (response) { })
 			.catch(function (error) {
 				alert("You do not have permission to access this page");
-				library();
+				// Navigate to /library
+				if (isLoggedIn) {
+					history.push({
+						pathname: '/library',
+						state: {
+							toiaName,
+							toiaLanguage,
+							toiaID
+						}
+					});
+				} else {
+					history.push({
+						pathname: '/library',
+					});
+				}
 			});
 	}
 	// if user asks one of the suggested questions
@@ -163,6 +162,7 @@ function Player() {
 		const mode = "CARD";
 
 		const oldQuestion = question;
+		console.log(oldQuestion);
 		axios
 			.post(`/api/player`, {
 				params: {
@@ -296,7 +296,10 @@ function Player() {
 	useEffect(() => {
 		if (hasRated) {
 			if (interacting.current == "true") {
-				speechToTextUtils.initRecording(handleDataReceived, error => {
+				const params = {
+					language: interactionLanguage
+				};
+				speechToTextUtils.initRecording(params, handleDataReceived, error => {
 					console.error("Error when transcribing", error);
 				});
 			}
@@ -407,7 +410,10 @@ function Player() {
 			interacting.current = "true";
 
 			if (hasRated) {
-				speechToTextUtils.initRecording(handleDataReceived, error => {
+				const params = {
+					language: interactionLanguage
+				};
+				speechToTextUtils.initRecording(params, handleDataReceived, error => {
 					console.error("Error when transcribing", error);
 					// No further action needed, as stream already closes itself on error
 				});
@@ -544,210 +550,18 @@ function Player() {
 		}
 	}
 
-	function submitHandler(e) {
-		e.preventDefault();
-
-		let params = {
-			email: input1,
-			pwd: input2,
-		};
-
-		axios.post(`/api/login`, params).then(res => {
-			if (res.data == -1) {
-				//alert('Email not found');
-				NotificationManager.error("Incorrect e-mail address.");
-			} else if (res.data == -2) {
-				NotificationManager.error("Incorrect password.");
-			} else {
-				history.push({
-					pathname: "/mytoia",
-					state: {
-						toiaName: res.data.firstName,
-						toiaLanguage: res.data.language,
-						toiaID: res.data.toia_id,
-					},
-				});
-			}
-		});
-	}
-
-	function home() {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/",
-			});
-		}
-	}
-
-	function about() {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/about",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/about",
-			});
-		}
-	}
-
-	function library() {
-		if (history.location.state.toiaID != undefined) {
-			endTranscription();
-			history.push({
-				pathname: "/library",
-				state: {
-					toiaName: history.location.state.toiaName,
-					toiaLanguage: history.location.state.toiaLanguage,
-					toiaID: history.location.state.toiaID,
-				},
-			});
-		} else {
-			history.push({
-				pathname: "/library",
-			});
-		}
-	}
-
-	function garden(e) {
-		if (isLoggedIn) {
-			endTranscription();
-			history.push({
-				pathname: "/mytoia",
-				state: {
-					toiaName,
-					toiaLanguage,
-					toiaID,
-				},
-			});
-		} else {
-			openModal(e);
-		}
-	}
-
-	function logout() {
-		//logout function needs to be implemented (wahib)
-		history.push({
-			pathname: "/",
-		});
-		endTranscription();
-	}
-
-	function signup() {
-		history.push({
-			pathname: "/signup",
-		});
-		endTranscription();
-	}
-
-	const inlineStyle = {
-		modal: {
-			height: "560px",
-			width: "600px",
-		},
-	};
-
 	return (
 		<div className="player">
-			<Modal //this is the new pop up menu
-				size="large"
-				style={inlineStyle.modal}
-				open={open}
-				onClose={() => dispatch({ type: "close" })}
-			>
-				<Modal.Header className="login_header">
-					<h1 className="login_welcome login-opensans-normal">
-						Welcome Back
-					</h1>
-					<p className="login_blurb login-montserrat-black">
-						Enter the following information to login to your TOIA
-						account
-					</p>
-				</Modal.Header>
-
-				<Modal.Content>
-					<form className="login_popup" onSubmit={submitHandler}>
-						<input
-							className="login_email login-font-class-1"
-							placeholder={"Email"}
-							type={"email"}
-							required={true}
-							onChange={myChangeHandler}
-							name={"email"}
-						/>
-						<input
-							className="login_pass login-font-class-1"
-							placeholder={"Password"}
-							type={"password"}
-							required={true}
-							onChange={myChangeHandler}
-							name={"pass"}
-						/>
-						<input
-							className="login_button smart-layers-pointers "
-							type="image"
-							src={submitButton}
-							alt="Submit"
-						/>
-						<div
-							className="login_text login-montserrat-black"
-							onClick={signup}
-						>
-							Don't have an Account? Sign Up
-						</div>
-					</form>
-				</Modal.Content>
-			</Modal>
-			<div className="nav-heading-bar">
-				{!hasRated && <PopModal userRating={recordUserRating} />}
-
-				<div
-					onClick={home}
-					className="nav-toia_icon app-opensans-normal"
-				>
-					TOIA
-				</div>
-				<div
-					onClick={about}
-					className="nav-about_icon app-monsterrat-black "
-				>
-					About Us
-				</div>
-				<div
-					onClick={library}
-					className="nav-talk_icon app-monsterrat-black "
-				>
-					Talk To TOIA
-				</div>
-				<div
-					onClick={garden}
-					className="nav-my_icon app-monsterrat-black "
-				>
-					My TOIA
-				</div>
-				<div
-					onClick={isLoggedIn ? logout : openModal}
-					className="nav-login_icon app-monsterrat-black"
-				>
-					{isLoggedIn ? "Logout" : "Login"}
-				</div>
-			</div>
+			<NavBar
+				toiaName={toiaName}
+				toiaID={toiaID}
+				isLoggedIn={isLoggedIn}
+				toiaLanguage={toiaLanguage}
+				history={history}
+				showLoginModal={true}
+				endTranscription={endTranscription}
+			/>
+			{!hasRated && <PopModal userRating={recordUserRating} />}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
@@ -780,22 +594,35 @@ function Player() {
 					</TransitionGroup>
 				)}
 				{micMute ? (
-					<button
-						color="green"
-						className="ui linkedin microphone button mute-button"
-						onClick={micStatusChange}
-					>
-						<i aria-hidden="true" class="">
-							<RecordVoiceOverRoundedIcon
-								sx={{
-									paddingTop: "0px",
-									paddingRight: "0px",
-									fontSize: "1.7rem",
-								}}
-							/>
-						</i>
-						{micString}
-					</button>
+					<div>
+						<div class="lang-container">
+							<div class="lang-dropdown">
+								<div class="lang-dropbtn"><span className={languageFlagsCSS[interactionLanguage]}></span></div>
+								<div class="lang-dropdown-content">
+									<a href="#" onClick={() => setInteractionLanguage("en-US")}><span class="fi fi-us"></span></a>
+									<a href="#" onClick={() => setInteractionLanguage("ar-AE")}><span class="fi fi-ae"></span></a>
+									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+									<a href="#" onClick={() => setInteractionLanguage("fr-FR")}><span class="fi fi-fr"></span></a>
+								</div>
+							</div>
+						</div>
+						<button
+							color="green"
+							className="ui linkedin microphone button mute-button"
+							onClick={micStatusChange}
+						>
+							<i aria-hidden="true" class="">
+								<RecordVoiceOverRoundedIcon
+									sx={{
+										paddingTop: "0px",
+										paddingRight: "0px",
+										fontSize: "1.7rem",
+									}}
+								/>
+							</i>
+							{micString}
+						</button>
+					</div>
 				) : (
 					<button
 						className="ui secondary button mute-button"
