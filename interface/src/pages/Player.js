@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import history from "../services/history";
+import PopModal from "../userRating/popModal";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
@@ -14,11 +15,12 @@ import Tracker from "../utils/tracker"
 import NavBar from './NavBar.js';
 
 import i18n from "i18next";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player"
 
-function Player() {
+import languageFlagsCSS from "../services/languageHelper";
 
+function Player() {
 	const { t } = useTranslation();
 
 	function exampleReducer(state, action) {
@@ -32,14 +34,12 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState("en");
+	const [interactionLanguage, setInteractionLanguage] = useState("en-US");
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
-	const [toiaIDToTalk, setTOIAIdToTalk] = useState(null);
 	const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] = useState(null);
 	const [toiaLastNameToTalk, setTOIALastNameToTalk] = useState(null);
-	const [streamIdToTalk, setStreamIdToTalk] = useState(null);
 	const [streamNameToTalk, setStreamNameToTalk] = useState(null);
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
@@ -47,16 +47,8 @@ function Player() {
 	let allSuggestedQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
-	const [isInteracting, setIsInteracting] = useState(false);
-
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
-	const [ratingVal, setRatingVal] = useState(1);
-	const [videoURL, setVideoURL] = useState(null);
-
 	const [transcribedAudio, setTranscribedAudio] = useState("");
-
-	const [lastQAsked, setlastQAsked] = useState("");
-	const [lastPlayedVideo, setLastPlayedVideo] = useState(null);
 	const [ratingParams, setRatingParams] = useState({
 		active: false,
 	});
@@ -66,15 +58,12 @@ function Player() {
 	const textInput = React.useRef("");
 	const question = React.useRef("");
 	const interacting = React.useRef("false");
-	const newRating = React.useRef("true");
 	const isFillerPlaying = React.useRef("true");
 	const allQuestions = React.useRef([]);
 	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
-	const questionsLength = React.useRef(0);
 	const interimTextInput = React.useRef("");
 
-	var input1, input2;
 	let [micMute, setMicStatus] = React.useState(true);
 	let [micString, setMicString] = React.useState("ASK BY VOICE");
 
@@ -102,12 +91,9 @@ function Player() {
 			setLanguage(history.location.state.toiaLanguage);
 		}
 
-		setTOIAIdToTalk(history.location.state.toiaToTalk);
 		setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
-		setStreamIdToTalk(history.location.state.streamToTalk);
 		setStreamNameToTalk(history.location.state.streamNameToTalk);
-
 
 		canAccessStream();
 
@@ -132,28 +118,6 @@ function Player() {
 			document.removeEventListener("keydown", listener);
 		};
 	}, []);
-
-	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
-	const { open } = state;
-
-	function openModal(e) {
-		dispatch({ type: "open" });
-		e.preventDefault();
-	}
-
-	function myChangeHandler(event) {
-		event.preventDefault();
-		var name = event.target.name;
-
-		switch (name) {
-			case "email":
-				input1 = event.target.value;
-				break;
-			case "pass":
-				input2 = event.target.value;
-				break;
-		}
-	}
 
 	function canAccessStream() {
 		let toiaID = history.location.state.toiaID;
@@ -222,11 +186,9 @@ function Player() {
 					console.log("error");
 				} else {
 					setFillerPlaying(true);
-					setHasRated(false);
 
 					isFillerPlaying.current = "false";
-					newRating.current = "false";
-					setlastQAsked(oldQuestion.question);
+
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded: () => {
@@ -251,7 +213,6 @@ function Player() {
 						res.data.answer || "",
 					);
 					setTranscribedAudio("");
-					// question.current = "";
 				}
 			});
 	}
@@ -261,16 +222,9 @@ function Player() {
 	function handleDataReceived(data) {
 		// setting the transcribedAudio
 		if (data) {
-			// transcribedAudio.current = data.alternatives[0].transcript;
 			setTranscribedAudio(data.alternatives[0].transcript);
-			setHasRated(false);
-			// newRating.current = 'false';
 			if (data.isFinal) {
 				question.current = data.alternatives[0].transcript;
-
-				newRating.current = "false";
-				setlastQAsked(data.alternatives[0].transcript);
-				setHasRated(false);
 
 				speechToTextUtils.stopRecording();
 				fetchData("VOICE");
@@ -331,11 +285,9 @@ function Player() {
 			});
 	}
 
-
 	function textInputChange(val) {
 		if (val && val.question) {
 			textInput.current = val.question;
-			console.log("AYOOOO", textInput.current);
 		} else if (typeof val === "string") {
 			textInput.current = val;
 		}
@@ -344,7 +296,10 @@ function Player() {
 	useEffect(() => {
 		if (hasRated) {
 			if (interacting.current == "true") {
-				speechToTextUtils.initRecording(handleDataReceived, error => {
+				const params = {
+					language: interactionLanguage
+				};
+				speechToTextUtils.initRecording(params, handleDataReceived, error => {
 					console.error("Error when transcribing", error);
 				});
 			}
@@ -413,11 +368,7 @@ function Player() {
 					} else {
 						setFillerPlaying(true);
 
-						setHasRated(false);
-						newRating.current = "false";
-						setlastQAsked(oldQuestion);
 						isFillerPlaying.current = "false";
-						setVideoURL(res.data.url); // setting the video ID
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
@@ -437,7 +388,6 @@ function Player() {
 							question: question.current,
 							video_id: res.data.video_id,
 						});
-						setLastPlayedVideo(res.data.video_id);
 
 						setTranscribedAudio("");
 					}
@@ -457,11 +407,13 @@ function Player() {
 			setMicStatus(false);
 
 			setMicString("STOP ASK BY VOICE");
-			setIsInteracting(true);
 			interacting.current = "true";
 
 			if (hasRated) {
-				speechToTextUtils.initRecording(handleDataReceived, error => {
+				const params = {
+					language: interactionLanguage
+				};
+				speechToTextUtils.initRecording(params, handleDataReceived, error => {
 					console.error("Error when transcribing", error);
 					// No further action needed, as stream already closes itself on error
 				});
@@ -477,7 +429,6 @@ function Player() {
 			setMicStatus(true);
 
 			setMicString("ASK BY VOICE");
-			setIsInteracting(false);
 			interacting.current = "false";
 		}
 	}
@@ -507,8 +458,6 @@ function Player() {
 						filler: true,
 						duration_seconds: null,
 					});
-
-					//setVideoURL(res.data);
 
 					document.getElementById("vidmain").load();
 					const playPromise = document
@@ -551,7 +500,6 @@ function Player() {
 			: interimTextInput.current;
 
 		if (question.current != "") {
-			setHasRated(false);
 			const oldQuestion = question.current;
 			axios
 				.post(`/api/player`, {
@@ -590,11 +538,8 @@ function Player() {
 							question: question.current,
 							video_id: res.data.video_id,
 						});
-						setLastPlayedVideo(res.data.video_id);
 
 						fetchAnsweredQuestions(oldQuestion, res.data.answer);
-						setVideoURL(res.data.url); // setting the video ID
-						// transcribedAudio.current = '';
 						setTranscribedAudio("");
 						question.current = "";
 					}
@@ -614,7 +559,9 @@ function Player() {
 				toiaLanguage={toiaLanguage}
 				history={history}
 				showLoginModal={true}
+				endTranscription={endTranscription}
 			/>
+			{!hasRated && <PopModal userRating={recordUserRating} />}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
@@ -650,12 +597,12 @@ function Player() {
 					<div>
 						<div class="lang-container">
 							<div class="lang-dropdown">
-								<div class="lang-dropbtn"><span className={t("current_lang")}></span></div>
+								<div class="lang-dropbtn"><span className={languageFlagsCSS[interactionLanguage]}></span></div>
 								<div class="lang-dropdown-content">
-									<a href="#" onClick={setInteractionLanguage("en")}><span class="fi fi-us"></span></a>
-									<a href="#" onClick={setInteractionLanguage("ar")}><span class="fi fi-ae"></span></a>
+									<a href="#" onClick={() => setInteractionLanguage("en-US")}><span class="fi fi-us"></span></a>
+									<a href="#" onClick={() => setInteractionLanguage("ar-AE")}><span class="fi fi-ae"></span></a>
 									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
-									<a href="#" onClick={setInteractionLanguage("fr")}><span class="fi fi-fr"></span></a>
+									<a href="#" onClick={() => setInteractionLanguage("fr-FR")}><span class="fi fi-fr"></span></a>
 								</div>
 							</div>
 						</div>

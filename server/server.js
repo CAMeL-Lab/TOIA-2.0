@@ -99,8 +99,8 @@ io.on("connect", function (socket) {
 		socket.emit("message", data);
 	});
 
-	socket.on("transcribeAudio", data => {
-		createStream(this, data);
+	socket.on("transcribeAudio", languageCode => {
+		createStream(this, languageCode);
 		console.log("stream created!");
 		//await recognizeStream.addListener("data", onResponse);
 	});
@@ -128,12 +128,13 @@ io.on("connect", function (socket) {
 	// functions for google speech to text api
 	//####################################################
 	// Create a recognize stream
-	function createStream(socket) {
+	function createStream(socket, languageCode) {
+		console.log(languageCode);
 		recognizeStream = client
-			.streamingRecognize(speech_to_text.request)
+			.streamingRecognize(speech_to_text.constructRequest(languageCode))
 			.on("error", console.error)
 			.on("data", data => {
-				console.log("data recieved: ");
+				console.log("data recieved: ", languageCode);
 				process.stdout.write(
 					data.results[0] && data.results[0].alternatives[0]
 						? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
@@ -147,7 +148,7 @@ io.on("connect", function (socket) {
 				// if end of utterance, let's restart stream
 				if (data.results[0] && data.results[0].isFinal) {
 					endRecognitionStream();
-					createStream(socket);
+					createStream(socket, languageCode);
 					// console.log('restarted stream serverside');
 				}
 			});

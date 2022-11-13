@@ -45,6 +45,9 @@ function NavBar(props) {
     }
 
     function home() {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
         if (props.isLoggedIn) {
             history.push({
                 pathname: '/',
@@ -62,6 +65,9 @@ function NavBar(props) {
     }
 
     function about() {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
         if (props.isLoggedIn) {
             history.push({
                 pathname: '/about',
@@ -79,6 +85,9 @@ function NavBar(props) {
     }
 
     function library() {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
         if (props.isLoggedIn) {
             history.push({
                 pathname: '/library',
@@ -96,6 +105,9 @@ function NavBar(props) {
     }
 
     function garden(e) {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
         if (props.isLoggedIn) {
             history.push({
                 pathname: '/mytoia',
@@ -111,6 +123,9 @@ function NavBar(props) {
     }
 
     function logout() {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
         history.push({
             pathname: '/'
         });
@@ -119,6 +134,9 @@ function NavBar(props) {
 
     /*login popup functions*/
     function signup() {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
         history.push({
             pathname: '/signup',
         });
@@ -223,7 +241,7 @@ function NavBar(props) {
             </Modal>
         );
     }
-// style = {{direction: i18n.dir(i18n.language)}}  style = {{"unicode-bidi": "plaintext"}}
+    // style = {{direction: i18n.dir(i18n.language)}}  style = {{"unicode-bidi": "plaintext"}}
     return (
         <div className="top-nav-bar">
 
@@ -231,7 +249,7 @@ function NavBar(props) {
 
             <div className="nav-heading-bar">
                 <div class="nav-dropdown">
-                    <div class="nav-dropbtn"><span class={t("current_lang")}></span></div>
+                    <div class="nav-dropbtn"><span className={t("current_lang")}></span></div>
                     <div class="nav-dropdown-content">
                         <a href="#" onClick={switch_lang("en")}><span class="fi fi-us"></span></a>
                         <a href="#" onClick={switch_lang("ar")}><span class="fi fi-ae"></span></a>
