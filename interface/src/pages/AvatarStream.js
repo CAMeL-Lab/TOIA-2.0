@@ -8,7 +8,11 @@ import { Modal, Button } from "semantic-ui-react";
 import axios from "axios";
 import nizar from "../images/nizar.jpg";
 
-var cardSelected = []; //the videos selected to be edited or deleted
+import NavBar from './NavBar.js';
+
+import { useTranslation } from "react-i18next";
+
+var cardSelected = [];//the videos selected to be edited or deleted
 
 function AvatarSettings() {
 	const [currentUserFullname, setCurrentUserFullname] = useState(null);
@@ -19,12 +23,14 @@ function AvatarSettings() {
 	const [toiaLanguage, setLanguage] = useState(null);
 	const [toiaID, setTOIAid] = useState(null);
 
+	const { t } = useTranslation();
 	React.useEffect(() => {
 		if (history.location.state === undefined) {
 			history.push({
 				pathname: "/",
 			});
 		}
+
 
 		setName(history.location.state.toiaName);
 		setLanguage(history.location.state.toiaLanguage);
@@ -292,197 +298,105 @@ function AvatarSettings() {
 		});
 	}
 
-	/*nav bar functions*/
-	function home() {
-		history.push({
-			pathname: "/",
-			state: {
-				toiaName,
-				toiaLanguage,
-				toiaID,
-			},
-		});
+	// querying the database for user data
+	function getUserData() {
+		axios.post(`/api/getUserData`, {
+			params: {
+				toiaID: history.location.state.toiaID,
+			}
+		}).then((res) => {
+			setCurrentUserFullname(res.data[0].first_name + " " + res.data[0].last_name);
+			setCurrentUserLanguage(res.data[0].language);
+			setCurrentUserEmail(res.data[0].email);
+		})
 	}
 
-	function about() {
-		history.push({
-			pathname: "/about",
-			state: {
-				toiaName,
-				toiaLanguage,
-				toiaID,
-			},
-		});
-	}
 
-	function library() {
-		history.push({
-			pathname: "/library",
-			state: {
-				toiaName,
-				toiaLanguage,
-				toiaID,
-			},
-		});
-	}
-
-	function garden() {
-		history.push({
-			pathname: "/mytoia",
-			state: {
-				toiaName,
-				toiaLanguage,
-				toiaID,
-			},
-		});
-	}
-
-	function logout() {
-		//logout function needs to be implemented (wahib)
-		history.push({
-			pathname: "/",
-		});
-	}
 
 	/*navigations to pages from buttons*/
 	function edit() {
 		history.push({
-			pathname: "/editrecorder",
+			pathname: '/editrecorder',
 			state: {
 				toiaName,
 				toiaLanguage,
-				toiaID,
-			},
+				toiaID
+			}
 		});
 	}
 
+
 	function add() {
 		history.push({
-			pathname: "/recorder",
+			pathname: '/recorder',
 			state: {
 				toiaName,
 				toiaLanguage,
-				toiaID,
-			},
+				toiaID
+			}
 		});
 	}
 
 	const inlineStyle = {
 		modal: {
-			height: "100px",
-			width: "600px",
-		},
+			height: '100px',
+			width: '600px',
+		}
 	};
+	
 
 	return (
 		<form className="avatar-settings-page-1">
 			<Modal //This is the warning pop menu, that shows whenever you delete or move videos
-				size="large"
+				size='large'
 				closeIcon={true}
 				style={inlineStyle.modal}
 				open={open}
-				onClose={() => dispatch({ type: "close" })}
+				onClose={() => dispatch({ type: 'close' })}
 			>
 				<Modal.Header className="login_header">
-					<h1 className="login_welcome login-opensans-normal">
-						Are You Sure??
-					</h1>
-					<p className="login_blurb login-montserrat-black">
-						This action will be irreversible
-					</p>
+					<h1 className="login_welcome login-opensans-normal">Are You Sure??</h1>
+					<p className="login_blurb login-montserrat-black">This action will be irreversible</p>
 				</Modal.Header>
 				<Modal.Actions>
-					<Button color="green" inverted onClick={groupSelect}>
+					<Button color='green' inverted onClick={groupSelect}>
 						<i class="fa fa-check"></i>
 					</Button>
 				</Modal.Actions>
 			</Modal>
-			<div
-				className="nav-heading-bar" //nav bar
+
+			<NavBar
+				toiaName={toiaName}
+				toiaID={toiaID}
+				isLoggedIn={true} // {isLoggedIn}
+				toiaLanguage={toiaLanguage}
+				history={history}
+				showLoginModal={true}
+			/>
+
+			<div className="settings-section1" //the first section
 			>
-				<div
-					onClick={home}
-					className="nav-toia_icon app-opensans-normal"
-				>
-					TOIA
-				</div>
-				<div
-					onClick={about}
-					className="nav-about_icon app-monsterrat-black"
-				>
-					About Us
-				</div>
-				<div
-					onClick={library}
-					className="nav-talk_icon app-monsterrat-black"
-				>
-					Talk To TOIA
-				</div>
-				<div
-					onClick={garden}
-					className="nav-my_icon app-monsterrat-black"
-				>
-					My TOIA
-				</div>
-				<div
-					onClick={logout}
-					className="nav-login_icon app-monsterrat-black"
-				>
-					Logout
-				</div>
-			</div>
-			<div
-				className="settings-section1" //the first section
-			>
-				<h1
-					className="settings-settings settings-font-class-3 " // main heading
-				>
-					{stream[0].name}
-				</h1>
-				<div
-					className="settings-name settings-font-class-1" //the name input field
-				>
-					Name:{" "}
-				</div>
+				<h1 className="settings-settings settings-font-class-3 " // main heading
+				>{stream[0].name}</h1>
+				<div className="settings-name settings-font-class-1" //the name input field
+				>{t("name_input")}</div>
 				<input
 					className="settings-name_box settings-font-class-1"
 					defaultValue={stream[0].name}
 					type={"text"}
-					onChange={e =>
-						changehandler(e.target.className, e.target.value)
-					}
+					onChange={e => changehandler(e.target.className, e.target.value)}
 				/>
-				<div
-					className="settings-priv settings-font-class-1" //the privacy input feild
-				>
-					Privacy:{" "}
-				</div>
-				<select
-					className="settings-priv_box settings-font-class-1"
-					onChange={e =>
-						changehandler(e.target.className, e.target.value)
-					} /*required={true}*/
-				>
-					<option value="" disabled selected hidden>
-						{stream[0].privacy}
-					</option>
-					<option value="public">Public</option>
-					<option value="private">Private</option>
+				<div className="settings-priv settings-font-class-1" //the privacy input feild
+				>{t("privacy_input")}</div>
+				<select className="settings-priv_box settings-font-class-1" onChange={e => changehandler(e.target.className, e.target.value)}  /*required={true}*/>
+					<option value="" disabled selected hidden>{stream[0].privacy}</option>
+					<option value="public">{t("privacy_option_public")}</option>
+					<option value="private">{t("privacy_option_private")}</option>
 				</select>
-				<div
-					className="settings-lang settings-font-class-1" //the language input field
-				>
-					Language:{" "}
-				</div>
-				<select
-					className="settings-lang_box settings-font-class-1"
-					onChange={e =>
-						changehandler(e.target.className, e.target.value)
-					} /*required={true}*/
-				>
-					<option value="" disabled selected hidden>
-						{stream[0].language}
-					</option>
+				<div className="settings-lang settings-font-class-1" //the language input field
+				>{t("language_input")}</div>
+				<select className="settings-lang_box settings-font-class-1" onChange={e => changehandler(e.target.className, e.target.value)} /*required={true}*/>
+					<option value="" disabled selected hidden>{stream[0].language}</option>
 					<option value="AF">Afrikaans</option>
 					<option value="SQ">Albanian</option>
 					<option value="AR">Arabic</option>
@@ -556,71 +470,38 @@ function AvatarSettings() {
 					<option value="CY">Welsh</option>
 					<option value="XH">Xhosa</option>
 				</select>
-				<div
-					className="settings-bio settings-font-class-1" // bio input field
-				>
-					Bio:{" "}
-				</div>
+				<div className="settings-bio settings-font-class-1" // bio input field
+				>{t("bio_input")}</div>
 				<textarea
 					className="settings-bio_box settings-font-class-1"
 					defaultValue={stream[0].bio}
 					type={"text"}
-					onChange={e =>
-						changehandler(e.target.className, e.target.value)
-					}
+					onChange={e => changehandler(e.target.className, e.target.value)}
 				/>
-				<img
-					className="settings-still"
-					src={stream[0].still} //thumbnail image for stream
+				<img className="settings-still" src={stream[0].still} //thumbnail image for stream
 				/>
-				<div
-					className="settings-menu" //the stats that appear under the image
+				<div className="settings-menu" //the stats that appear under the image
 				>
-					<p style={{ marginRight: 40 }}>
-						{stream[0].ppl}&nbsp;
-						<i class="fa fa-users"></i>
-					</p>
-					<p style={{ marginRight: 25 }}>
-						{stream[0].heart}
-						<i class="fa fa-heart"></i>
-					</p>
-					<p style={{ marginLeft: 5 }}>
-						{stream[0].thumbs}&nbsp;
-						<i class="fa fa-thumbs-up"></i>
-					</p>
+					<p style={{ marginRight: 40 }}>{stream[0].ppl}&nbsp;<i class="fa fa-users"></i></p>
+					<p style={{ marginRight: 25 }}>{stream[0].heart}<i class="fa fa-heart"></i></p>
+					<p style={{ marginLeft: 5 }}>{stream[0].thumbs}&nbsp;<i class="fa fa-thumbs-up"></i></p>
 				</div>
 			</div>
-			<div
-				className="settings-section2" //the second section of the page that has the search bar and videos
+			<div className="settings-section2" //the second section of the page that has the search bar and videos
 			>
-				<input
-					className="settings-search"
-					type="text"
-					placeholder="&#xF002;"
-					onChange={event => searchData(event.target.value)} //search bar
+				<input className="settings-search" type="text" placeholder="&#xF002;" onChange={(event) => searchData(event.target.value)} //search bar
 				/>
-				<div
-					className="settings-grid" //videos
+				<div className="settings-grid" //videos
 				>
 					{data.map(renderCard)}
 				</div>
-				<div
-					className="settings-hidden"
-					style={{ display: displayItem }} //the hidden menu that appears when you select a function
+				<div className="settings-hidden" style={{ display: displayItem }} //the hidden menu that appears when you select a function
 				>
-					<div onClick={openModal}>
-						<img className="settings-trash" src={trashIcon} />
-					</div>
+					<div onClick={openModal}><img className="settings-trash" src={trashIcon} /></div>
 				</div>
-				<div onClick={add}>
-					<img
-						className="settings-add"
-						src={addButton} //the add video button
-					/>
-				</div>
-				<h1 className="settings-video-text settings-font-class-3">
-					Add Video
-				</h1>
+				<div onClick={add}><img className="settings-add" src={addButton} //the add video button
+				/></div>
+				<h1 className="settings-video-text settings-font-class-3">{t("add_video")}</h1>
 			</div>
 		</form>
 	);

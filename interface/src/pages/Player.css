@@ -214,3 +214,59 @@
 	padding-top: 25px;
 	padding-bottom: 25px;
 }
+
+/* Selecting Language for Player */
+
+/* Dropdown Button */
+.lang-dropbtn {
+	background-color: transparent;
+	color: white;
+	width: 30px;
+	text-align: center;
+	font-size: 16px;
+	border: none;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  .lang-container {
+	position: absolute;
+	top: 75.4%;
+	left: 65%;
+	height: 7%;
+	font-size: 1.5rem;
+  }
+  .lang-dropdown {
+	position: relative;
+	display: inline-block;
+	z-index: 10;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .lang-dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #dad3d3;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+  }
+  
+  /* Links inside the dropdown */
+  .lang-dropdown-content a {
+	color: black;
+	width: 30px;
+	height: 20px;
+	font-size:15px;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+  }
+  
+  .lang-dropdown-content div.header:hover::after {
+	background-color: transparent;
+  }
+  /* Change color of dropdown links on hover */
+  .lang-dropdown-content option:hover {background-color: #ddd;}
+  
+  /* Show the dropdown menu on hover */
+  .lang-dropdown:hover .lang-dropdown-content {display: block;}
+  

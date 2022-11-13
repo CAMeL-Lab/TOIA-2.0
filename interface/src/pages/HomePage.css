@@ -60,17 +60,17 @@
 
 /*text and font*/
 .home-welcome-text {
-	background-color: transparent;
-	height: auto;
-	left: 0px;
-	letter-spacing: -0.54px;
-	line-height: normal;
-	position: absolute;
-	text-align: left;
-	top: 0px;
-	width: 232px;
-	font-size: 36px;
-	font-weight: 600;
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: -0.54px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: 420px;
+  font-size: 36px;
+  font-weight: 600;
 }
 .home-toia {
 	background-color: transparent;
@@ -85,17 +85,17 @@
 	font-size: 120px;
 }
 .home-des {
-	background-color: transparent;
-	height: auto;
-	left: 0px;
-	letter-spacing: -0.38px;
-	line-height: normal;
-	position: absolute;
-	text-align: left;
-	top: 200px;
-	width: 404px;
-	font-size: 25px;
-	font-weight: 500;
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: -0.38px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 200px;
+  width: 420px;
+  font-size: 25px;
+  font-weight: 500;
 }
 .home-montserrat-black {
 	color: var(--t-color);
@@ -121,4 +121,8 @@
 /*colors*/
 :root {
 	--desert-storm: rgba(248, 248, 248, 1);
+}
+
+.right-align{
+  text-align: right;
 }

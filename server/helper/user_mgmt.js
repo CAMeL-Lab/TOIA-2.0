@@ -469,26 +469,27 @@ const saveConversationLog = (
 	mode = "UNKNOWN",
 ) => {
 	return new Promise(resolve => {
-		let currentTimestamp = +new Date();
-		const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+		resolve();
+		// let currentTimestamp = +new Date();
+		// const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-		connection.query(
-			query,
-			[
-				interactor_id,
-				toia_id,
-				currentTimestamp,
-				filler,
-				question_asked,
-				video_played,
-				ada_similarity_score,
-				mode,
-			],
-			(err, res) => {
-				if (err) throw err;
-				resolve();
-			},
-		);
+		// connection.query(
+		// 	query,
+		// 	[
+		// 		interactor_id,
+		// 		toia_id,
+		// 		currentTimestamp,
+		// 		filler,
+		// 		question_asked,
+		// 		video_played,
+		// 		ada_similarity_score,
+		// 		mode,
+		// 	],
+		// 	(err, res) => {
+		// 		if (err) throw err;
+		// 		resolve();
+		// 	},
+		// );
 	});
 };
 
