@@ -929,7 +929,8 @@ router.post("/recorder", cors(), async (req, res) => {
 
                 await ch.assertQueue(q, {durable: true});
 
-                const languages_supported = ['es', 'ar', 'fr'];
+                let languages_supported = ['es', 'ar', 'fr', 'en'];
+				languages_supported = languages_supported.pop(language);
 
                 const payload = {
                     "translate_to": languages_supported,

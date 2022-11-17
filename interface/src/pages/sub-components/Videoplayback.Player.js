@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 
-export default function VideoPlaybackPlayer(props) {
+export default function VideoPlaybackPlayer({muted, key, onEnded, source}) {
 	const videoRef = useRef(null);
 
 	// let skippedLastSecond = false;
@@ -24,17 +24,23 @@ export default function VideoPlaybackPlayer(props) {
 	return (
 		<div>
 			<video
-				muted={props.muted}
+				muted={muted}
 				className="player-vid"
 				id="vidmain"
-				key={props.key}
-				onEnded={props.onEnded}
+				key={key}
+				onEnded={onEnded}
 				// onTimeUpdate={onTimeUpdate}
 				ref={videoRef}
 				autoPlay
 			>
-				<source src={props.source} type="video/mp4"></source>
+				<source src={source} type="video/mp4"></source>
 			</video>
+			{/* {props.subtitles ? <track
+				label="Deutsch"
+				kind="subtitles"
+				srclang="de"
+				src="" /> :
+				<></>} */}
 		</div>
 	);
 }

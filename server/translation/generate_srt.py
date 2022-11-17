@@ -1,6 +1,7 @@
 import json
 from google.cloud import storage
 import os
+import shutil
 from dotenv import load_dotenv
 
 from msg2srt import msg2srt
@@ -8,7 +9,6 @@ from translate_txt import copy_to_local
 from txt2srt import txt2srt
 from translate_txt import batch_translate_text
 
-env = os.getenv('ENVIRONMENT')
 
 def generate_srt(data, target_langs, video_name, output_file="en", input_language="en-US", max_chars=40):
 
@@ -16,6 +16,7 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
 
     load_dotenv()
 
+    env = os.getenv('ENVIRONMENT')
     INPUT_BUCKET = os.getenv('INPUT_BUCKET')
     OUTPUT_BUCKET = os.getenv('OUTPUT_BUCKET')
     INPUT_URI = os.getenv('INPUT_URI')
@@ -36,8 +37,8 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
     txt2srt(transcript_srt, txt_out="txts", srt_out="srts")
     if env == "PRODUCTION":
         upload_to_bucket(SUBTITLES, TRANSCRIPTS, PROJECT_ID, video_name)
-    # elif env == "DEVELOPMENT":
-    #     upload_to_folders("Subtitles", video_name)
+    elif env == "DEVELOPMENT":
+        upload_to_folders("files", video_name)
     clear_folders()
 
 
@@ -82,7 +83,16 @@ def clear_folders():
         for f in os.listdir(dir):
             os.remove(os.path.join(dir, f))
 
-# def upload_to_folders(folder_name, video_name):
-#     for f in os.listdir("srts"):
+def upload_to_folders(folder_name, video_name):
+    for f in os.listdir("srts"):
+        shutil.copyfile(f, f'{folder_name}/srts/{video_name}-{f}')
 
-
+    for f in os.listdir("txts"):
+        if f.endswith('.csv'):
+            continue
+        parts = f.split('_')
+        if len(parts) > 1:
+            filename = parts[4]
+        else:
+            filename = f
+        shutil.copyfile(f, f'{folder_name}/txts/{video_name}-{filename}')
