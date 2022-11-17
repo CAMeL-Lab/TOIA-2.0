@@ -650,3 +650,11 @@ video {
 	margin-top: 8px;
 	border-radius: 5px;
 }
+
+.lang-recorder-container {
+	position: absolute;
+	top: 78.4%;
+	left: 85%;
+	height: 7%;
+	font-size: 1.5rem;
+  }
