@@ -1,4 +1,5 @@
 import pika, sys, os, json, msg2srt
+from dotenv import load_dotenv
 from generate_srt import generate_srt
 
 try:
@@ -7,9 +8,12 @@ except ImportError:
     from argparse import Namespace
 
 def main():
+    load_dotenv()
     while True:
         try:
-            credentials = pika.PlainCredentials('myuser', 'mypassword')
+            username = os.getenv('USER')
+            pwd = os.getenv('PASSWORD')
+            credentials = pika.PlainCredentials(username, pwd)
             connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq3', credentials=credentials))
             print("Connected to rabbitmq")
             channel = connection.channel()

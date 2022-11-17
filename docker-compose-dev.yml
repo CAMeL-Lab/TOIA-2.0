@@ -126,5 +126,7 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=toia-translation.json
       - ENVIRONMENT=development
+    volumes:
+      - ./server/Transcripts:/app/files
 volumes:
   mysql-vol:
