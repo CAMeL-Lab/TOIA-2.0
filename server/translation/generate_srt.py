@@ -12,11 +12,11 @@ from translate_txt import batch_translate_text
 
 def generate_srt(data, target_langs, video_name, output_file="en", input_language="en-US", max_chars=40):
 
+    load_dotenv()
+    env = os.getenv('ENVIRONMENT')
     print(f"{env}: Generating SRT files from queue...")
 
-    load_dotenv()
 
-    env = os.getenv('ENVIRONMENT')
     INPUT_BUCKET = os.getenv('INPUT_BUCKET')
     OUTPUT_BUCKET = os.getenv('OUTPUT_BUCKET')
     INPUT_URI = os.getenv('INPUT_URI')
