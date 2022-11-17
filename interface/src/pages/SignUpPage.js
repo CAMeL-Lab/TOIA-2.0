@@ -113,7 +113,6 @@ function SignUpPage() {
 
     return (
         <div>
-            {NavBar(null, null, null, false, history, dispatch, open, t)}
             <NavBar
             toiaName={null}
             toiaID={null}

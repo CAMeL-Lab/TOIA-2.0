@@ -298,6 +298,7 @@ function Player() {
 			if (interacting.current == "true") {
 				const params = {
 					language: interactionLanguage
+					// language: "ko-KR"
 				};
 				speechToTextUtils.initRecording(params, handleDataReceived, error => {
 					console.error("Error when transcribing", error);
@@ -412,6 +413,7 @@ function Player() {
 			if (hasRated) {
 				const params = {
 					language: interactionLanguage
+					// language: "ko-KR"
 				};
 				speechToTextUtils.initRecording(params, handleDataReceived, error => {
 					console.error("Error when transcribing", error);

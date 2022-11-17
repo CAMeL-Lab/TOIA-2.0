@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import SpeechRecognition, {
-	useSpeechRecognition,
+    useSpeechRecognition,
 } from "react-speech-recognition";
 import history from "../services/history";
 import { Button, Image, Modal, Popup, TextArea, Icon } from "semantic-ui-react";
@@ -10,10 +10,10 @@ import { Multiselect } from "multiselect-react-dropdown";
 import { default as EditCreateMultiSelect } from "editable-creatable-multiselect";
 import Switch from "react-switch";
 import {
-	RecordAVideoCard,
-	OnBoardingQCard,
-	SuggestedQCard,
-	SuggestedQCardNoAction,
+    RecordAVideoCard,
+    OnBoardingQCard,
+    SuggestedQCard,
+    SuggestedQCardNoAction,
 } from "./AvatarGardenPage";
 import CheckMarkIcon from "../icons/check-mark-success1.webp";
 import RecordButton from "../icons/record1.png";
@@ -31,35 +31,37 @@ import NavBar from './NavBar.js';
 import i18n from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 
+import languageFlagsCSS from "../services/languageHelper";
+
 
 const videoConstraints = {
-	width: 720,
-	height: 405,
-	facingMode: "user",
+    width: 720,
+    height: 405,
+    facingMode: "user",
 };
 // Post recording, question suggestion modal
 function ModalQSuggestion(props) {
-	const suggestedQs = props.suggestedQuestions.slice(0, 5);
-	const recordNewVideoDisabled = !props.AllowAddingCustomVideo;
-	const {
-		ModalOnOpen,
-		ModalOnClose,
-		OnShowRecording,
-		OnCardClickFunc,
-		OnAddVideoCallback,
-	} = props;
+    const suggestedQs = props.suggestedQuestions.slice(0, 5);
+    const recordNewVideoDisabled = !props.AllowAddingCustomVideo;
+    const {
+        ModalOnOpen,
+        ModalOnClose,
+        OnShowRecording,
+        OnCardClickFunc,
+        OnAddVideoCallback,
+    } = props;
 
     const { t } = useTranslation();
 
-	const hasOnBoardingQs = () => {
-		const allQs = props.suggestedQuestions;
-		return (
-			allQs.filter(
-				q => q.hasOwnProperty("onboarding") && q.onboarding === 1,
-			).length > 0
-		);
-	};
-	return (
+    const hasOnBoardingQs = () => {
+        const allQs = props.suggestedQuestions;
+        return (
+            allQs.filter(
+                q => q.hasOwnProperty("onboarding") && q.onboarding === 1,
+            ).length > 0
+        );
+    };
+    return (
         <Modal
             open={props.active}
             onClose={ModalOnClose}
@@ -68,7 +70,7 @@ function ModalQSuggestion(props) {
         >
             <Modal.Header>Successful! Your TOIA has been saved.</Modal.Header>
             <Modal.Content image scrolling>
-                <Image size='medium' src={CheckMarkIcon} wrapped/>
+                <Image size='medium' src={CheckMarkIcon} wrapped />
 
                 <Modal.Description>
                     <p>
@@ -77,20 +79,20 @@ function ModalQSuggestion(props) {
                     <div className={"questionSuggestionsWrapper"}>
                         <div className="cards-wrapper ui">
                             <div className="ui cards">
-                                <RecordAVideoCard onClick={OnAddVideoCallback} isDisabled={recordNewVideoDisabled}/>
+                                <RecordAVideoCard onClick={OnAddVideoCallback} isDisabled={recordNewVideoDisabled} />
                                 {suggestedQs.map((q, index) => {
-                                    if (q.hasOwnProperty("onboarding") && q.onboarding === 1){
+                                    if (q.hasOwnProperty("onboarding") && q.onboarding === 1) {
                                         return (<OnBoardingQCard data={q} onClick={(e) => {
                                             OnCardClickFunc(e, q)
-                                        }} key={index}/>)
+                                        }} key={index} />)
                                     } else {
                                         return (
                                             <SuggestedQCardNoAction data={q}
-                                                                    onClick={(e) => {
-                                                                        if (!hasOnBoardingQs())OnCardClickFunc(e, q);
-                                                                    }}
-                                                                    isDisabled={hasOnBoardingQs()}
-                                                                    key={index} />
+                                                onClick={(e) => {
+                                                    if (!hasOnBoardingQs()) OnCardClickFunc(e, q);
+                                                }}
+                                                isDisabled={hasOnBoardingQs()}
+                                                key={index} />
                                         )
                                     }
                                 })}
@@ -112,7 +114,7 @@ function Recorder() {
 
     const { t } = useTranslation();
 
-    const {transcript, resetTranscript} = useSpeechRecognition({command: '*'});
+    const { transcript, resetTranscript } = useSpeechRecognition({ command: '*' });
 
     const webcamRef = useRef(null);
     const mediaRecorderRef = useRef(null);
@@ -157,6 +159,7 @@ function Recorder() {
     // This is for tracking purpose. These timestamps do not reflect the video start and end timestamps
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
     const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
+    const [interactionLanguage, setInteractionLanguage] = useState("en-US");
 
     const [transcribedAudio, setTranscribedAudio] = useState('');
 
@@ -196,13 +199,13 @@ function Recorder() {
         setTOIAid(history.location.state.toiaID);
 
 
-        if (history.location.state.isEditing){
+        if (history.location.state.isEditing) {
             InitializeEditingMode();
         } else {
             if (history.location.state.suggestedQuestion != null) {
-                let q = {question: history.location.state.suggestedQuestion};
+                let q = { question: history.location.state.suggestedQuestion };
                 if (history.location.state.id_question) {
-                    q = {...q, id_question: history.location.state.id_question};
+                    q = { ...q, id_question: history.location.state.id_question };
                 }
                 setQuestionsSelected([...questionsSelected, q]);
             }
@@ -213,7 +216,7 @@ function Recorder() {
                 setListStreams([streamsReceived[0]]);
                 setMainStreamVal([streamsReceived[0]]);
             });
-            fetchOnBoardingQuestions();
+            // fetchOnBoardingQuestions();
             loadSuggestedQuestions();
         }
 
@@ -239,7 +242,7 @@ function Recorder() {
             }).then((res) => {
                 let streamsReceived = [];
                 res.data.forEach((stream) => {
-                    streamsReceived.push({name: stream.name, id: stream.id_stream});
+                    streamsReceived.push({ name: stream.name, id: stream.id_stream });
                 });
                 resolve(streamsReceived);
             });
@@ -262,13 +265,13 @@ function Recorder() {
 
     function fetchOnBoardingQuestions() {
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `/api/questions/onboarding/${toiaID}/pending`};
+        const options = { method: 'GET', url: `/api/questions/onboarding/${toiaID}/pending` };
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
                 setPendingOnBoardingQs(response.data);
                 if (response.data.length !== 0 && !history.location.state.question_obj) {
-                    if (!history.location.state.isEditing){
+                    if (!history.location.state.isEditing) {
                         alert("Please record the required videos before creating new ones!");
                     } else {
                         alert("You cannot edit videos before recording the required ones!");
@@ -285,13 +288,13 @@ function Recorder() {
     }
 
 
-    function fetchVideosCount(){
+    function fetchVideosCount() {
         const toiaID = history.location.state.toiaID;
         const options = {
             method: 'POST',
             url: '/api/getUserVideosCount',
-            headers: {'Content-Type': 'application/json'},
-            data: {user_id: toiaID}
+            headers: { 'Content-Type': 'application/json' },
+            data: { user_id: toiaID }
         };
 
         axios.request(options).then(function (response) {
@@ -309,8 +312,8 @@ function Recorder() {
         const options = {
             method: 'POST',
             url: '/api/getTotalVideoDuration',
-            headers: {'Content-Type': 'application/json'},
-            data: {user_id: toiaID}
+            headers: { 'Content-Type': 'application/json' },
+            data: { user_id: toiaID }
         };
 
         axios.request(options).then(function (response) {
@@ -329,7 +332,7 @@ function Recorder() {
 
         if (type && video_id) {
             // Fetch on-boarding questions
-            fetchOnBoardingQuestions();
+            // fetchOnBoardingQuestions();
 
             // Load all streams
             loadUserStreams().then((userAllStreams) => {
@@ -341,7 +344,7 @@ function Recorder() {
                 const video_streams_obj = video_data.streams;
                 const video_questions = video_data.questions;
                 const video_streams = video_streams_obj.map((stream, index) => {
-                    return {name: stream.name, id: stream.id_stream}
+                    return { name: stream.name, id: stream.id_stream }
                 })
 
                 // Set Selected Streams
@@ -389,7 +392,7 @@ function Recorder() {
         let minutes = Math.floor(remaining / 60);
         let seconds = remaining % 60;
 
-        if (hours !== 0){
+        if (hours !== 0) {
             return hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
         } else {
             return minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
@@ -401,7 +404,7 @@ function Recorder() {
             const options = {
                 method: 'GET',
                 url: `/api/videos/${history.location.state.toiaID}/`,
-                params: {video_id: video_id, type: type}
+                params: { video_id: video_id, type: type }
             };
 
             axios.request(options).then(function (response) {
@@ -421,8 +424,8 @@ function Recorder() {
             const options = {
                 method: 'POST',
                 url: `/api/getVideoPlayback`,
-                headers: {'Content-Type': 'application/json'},
-                data: {params: {playbackVideoID: video_id}}
+                headers: { 'Content-Type': 'application/json' },
+                data: { params: { playbackVideoID: video_id } }
             };
 
             axios.request(options).then(function (response) {
@@ -439,22 +442,22 @@ function Recorder() {
 
 
 
-      function handleDataReceived(data) {
-          //setTranscribedAudio(oldData => [...oldData, data])
-          //setTranscribedAudio(input.current + " " + data);
+    function handleDataReceived(data) {
+        //setTranscribedAudio(oldData => [...oldData, data])
+        //setTranscribedAudio(input.current + " " + data);
 
-          setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
+        setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
-          let isFinal = undefined || data.isFinal
+        let isFinal = undefined || data.isFinal
 
-          if(data && isFinal){
+        if (data && isFinal) {
             setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
             input.current += (" " + data.alternatives[0].transcript);
             //setTranscribedAudio(input.current);
-          }
-          
-      }
+        }
+
+    }
 
 
     const handleStartCaptureClick = React.useCallback((e) => {
@@ -468,14 +471,15 @@ function Recorder() {
         // starting listening through socket
         //startRecording();
         const params = {
-            language: 'en-US'
+            language: interactionLanguage
         };
-        speechToTextUtils.initRecording(params, handleDataReceived,(error) => {
+        console.log("Language Set:", interactionLanguage);
+        speechToTextUtils.initRecording(params, handleDataReceived, (error) => {
             console.error('Error when transcribing', error);
             setIsRecording(false)
             // No further action needed, as stream already closes itself on error
-          })
-         
+        })
+
         // sending request to server
         setCapturing(true);
 
@@ -495,10 +499,10 @@ function Recorder() {
         );
         mediaRecorderRef.current.start(1000);
         e.preventDefault();
-    }, [webcamRef, setCapturing, mediaRecorderRef]);
+    }, [webcamRef, setCapturing, mediaRecorderRef, interactionLanguage]);
 
     const handleDataAvailable = React.useCallback(
-        ({data}) => {
+        ({ data }) => {
             if (data.size > 0) {
                 setRecordedChunks((prev) => prev.concat(data));
             }
@@ -519,12 +523,12 @@ function Recorder() {
 
     function handleDownload(e) {
         e.preventDefault();
-        if (!videoType){
+        if (!videoType) {
             NotificationManager.error("Video Type Not Selected!");
             return;
         }
 
-        if (!isDefaultStreamSelected()){
+        if (!isDefaultStreamSelected()) {
             setDefaultStreamAlertActive(true);
             return;
         }
@@ -543,7 +547,7 @@ function Recorder() {
             setSuggestedQsListCopy([]);
             setSuggestedQsListOrig([]);
 
-            fetchOnBoardingQuestions();
+            // fetchOnBoardingQuestions();
 
             loadSuggestedQuestions().then(() => {
                 setWaitingServerResponse(false);
@@ -556,7 +560,7 @@ function Recorder() {
         })
     }
 
-    const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type='') => {
+    const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type = '') => {
         return new Promise(((resolve, reject) => {
             let endTimestamp = + new Date();
 
@@ -577,7 +581,7 @@ function Recorder() {
             form.append('end_time', endTimestamp);
             setRecordEndTimestamp(endTimestamp);
 
-            if (is_editing){
+            if (is_editing) {
                 form.append('is_editing', true);
                 form.append('save_as_new', save_as_new.toString());
                 form.append('old_video_id', old_video_id);
@@ -602,8 +606,8 @@ function Recorder() {
 
     const isDefaultStreamSelected = () => {
         let found = false;
-        listStreams.forEach((stream)=>{
-            if (stream.name === 'All'){
+        listStreams.forEach((stream) => {
+            if (stream.name === 'All') {
                 found = true;
             }
         });
@@ -611,7 +615,7 @@ function Recorder() {
     }
 
     const handleSaveAsNew = () => {
-        if (!isDefaultStreamSelected()){
+        if (!isDefaultStreamSelected()) {
             setDefaultStreamAlertActive(true);
         } else {
             setWaitingServerResponse(true);
@@ -628,7 +632,7 @@ function Recorder() {
                 setSuggestedQsListCopy([]);
                 setSuggestedQsListOrig([]);
 
-                fetchOnBoardingQuestions();
+                // fetchOnBoardingQuestions();
 
                 loadSuggestedQuestions().then(() => {
                     setWaitingServerResponse(false);
@@ -643,7 +647,7 @@ function Recorder() {
     }
 
     const handleUpdateVideo = () => {
-        if (!isDefaultStreamSelected()){
+        if (!isDefaultStreamSelected()) {
             setDefaultStreamAlertActive(true);
         } else {
             setWaitingServerResponse(true);
@@ -659,7 +663,7 @@ function Recorder() {
                 setSuggestedQsListCopy([]);
                 setSuggestedQsListOrig([]);
 
-                fetchOnBoardingQuestions();
+                // fetchOnBoardingQuestions();
 
                 loadSuggestedQuestions().then(() => {
                     setWaitingServerResponse(false);
@@ -674,8 +678,8 @@ function Recorder() {
     }
 
     const GetVideoLength = async () => {
-        if (recordedChunks.length){
-            const blob = new Blob(recordedChunks, {type: "video/webm"});
+        if (recordedChunks.length) {
+            const blob = new Blob(recordedChunks, { type: "video/webm" });
             setVideoLengthSeconds(await getBlobDuration(blob));
         }
     }
@@ -692,7 +696,7 @@ function Recorder() {
     }
 
     function openSuggestion(e, card) {
-        if (card.id){
+        if (card.id) {
             history.push({
                 pathname: '/recorder?type=' + card.type,
                 state: {
@@ -807,7 +811,7 @@ function Recorder() {
         setVideoTypeFormal(videoTypesJSON[typeIndex].displayText);
         if (videoTypesJSON[typeIndex].auto_question) {
             setAutoSelectionQuestion(true);
-            setQuestionsSelected([...questionsSelected, {question: videoTypesJSON[typeIndex].displayText}]);
+            setQuestionsSelected([...questionsSelected, { question: videoTypesJSON[typeIndex].displayText }]);
         } else {
             if (autoSelectionQuestion) {
                 setQuestionsSelected([]);
@@ -831,19 +835,19 @@ function Recorder() {
 
         return (
             <Popup content={props.toolTipExample}
-                   header={props.toolTipText}
-                   size='mini'
-                   inverted={true}
-                   trigger={
-                       <div
-                           className={"side-button tooltip b" + (props.index + 1) + " " + ((isDisabled) ? "cursor-disabled" : "")}
-                           style={{backgroundColor: props.type === videoType ? backgroundActiveColor : backgroundDefaultColor}}
-                           onClick={onClickHandler}
-                           video-type={props.type}>
+                header={props.toolTipText}
+                size='mini'
+                inverted={true}
+                trigger={
+                    <div
+                        className={"side-button tooltip b" + (props.index + 1) + " " + ((isDisabled) ? "cursor-disabled" : "")}
+                        style={{ backgroundColor: props.type === videoType ? backgroundActiveColor : backgroundDefaultColor }}
+                        onClick={onClickHandler}
+                        video-type={props.type}>
 
-                           {props.buttonText}
-                       </div>
-                   }
+                        {props.buttonText}
+                    </div>
+                }
             />
 
         );
@@ -864,7 +868,7 @@ function Recorder() {
                     toolTipExample={entry.toolTipExample}
                     index={index}
                     key={index}
-                    isDisabled={disabled}/>
+                    isDisabled={disabled} />
             );
             jsx.push(elem);
         });
@@ -883,16 +887,15 @@ function Recorder() {
                 OnCardClickFunc={openSuggestion}
                 OnShowRecording={navigateToMyTOIA}
                 OnAddVideoCallback={reset}
-                AllowAddingCustomVideo={pendingOnBoardingQs.length === 0}/>
+                AllowAddingCustomVideo={pendingOnBoardingQs.length === 0} />
 
-            {NavBar(toiaName, toiaID, toiaLanguage, false, history, null, null, t)}
             <NavBar
-            toiaName={toiaName}
-            toiaID={toiaID}
-            isLoggedIn={true}
-            toiaLanguage={toiaLanguage}
-            history={history}
-            showLoginModal={false}
+                toiaName={toiaName}
+                toiaID={toiaID}
+                isLoggedIn={true}
+                toiaLanguage={toiaLanguage}
+                history={history}
+                showLoginModal={false}
             />
 
             <div>
@@ -901,9 +904,9 @@ function Recorder() {
 
                     {VideoTypeButtonsAll()}
 
-                    <hr className="divider1"/>
+                    <hr className="divider1" />
                     <div className="font-class-1 public tooltip"
-                         style={{backgroundColor: isPrivate ? backgroundDefaultColor : backgroundActiveColor}}>
+                        style={{ backgroundColor: isPrivate ? backgroundDefaultColor : backgroundActiveColor }}>
                         <span>Public</span>
                         <Switch
                             onChange={handlePrivacySwitch}
@@ -944,8 +947,8 @@ function Recorder() {
                             content={t("alert_select_default_stream")}
                             on='click'
                             open={defaultStreamAlertActive}
-                            onClose={()=>setDefaultStreamAlertActive(false)}
-                            onOpen={()=>{setDefaultStreamAlertActive(true)}}
+                            onClose={() => setDefaultStreamAlertActive(false)}
+                            onOpen={() => { setDefaultStreamAlertActive(true) }}
                             position='top center'
                             className={'StreamNotSelectedAlert'}
                         />
@@ -965,7 +968,7 @@ function Recorder() {
 
                         <div className="stats-wrapper">
                             <div className="stats-number">
-                                {(videosTotalDuration)? (videosTotalDuration / 60).toFixed(1): 0}Min
+                                {(videosTotalDuration) ? (videosTotalDuration / 60).toFixed(1) : 0}Min
                             </div>
                             <div className="stats-label">
                                 Total Videos Length
@@ -981,14 +984,14 @@ function Recorder() {
                                     disabled={recordedChunks.length > 0 && !isRecording}
                                     content={t("alert_record_video")}
                                     trigger={
-                                        <div style={{display: "inline-block"}}
-                                             className="right floated recorder-next-btn-wrapper">
+                                        <div style={{ display: "inline-block" }}
+                                            className="right floated recorder-next-btn-wrapper">
                                             <Button icon labelPosition='right' className="right floated"
-                                                    onClick={() => {
-                                                        togglePreviewBox()
-                                                    }} disabled={!(recordedChunks.length > 0) || isRecording}>
+                                                onClick={() => {
+                                                    togglePreviewBox()
+                                                }} disabled={!(recordedChunks.length > 0) || isRecording}>
                                                 Next
-                                                <Icon name='right arrow'/>
+                                                <Icon name='right arrow' />
                                             </Button>
                                         </div>
                                     }
@@ -997,9 +1000,9 @@ function Recorder() {
                                 {
                                     (recordedChunks.length > 0 && !isRecording) && (
                                         <Button icon labelPosition='left' className="right floated"
-                                                onClick={handleStartCaptureClick}>
+                                            onClick={handleStartCaptureClick}>
                                             {t("record_again_button")}
-                                            <Icon name='repeat'/>
+                                            <Icon name='repeat' />
                                         </Button>
                                     )
                                 }
@@ -1007,10 +1010,10 @@ function Recorder() {
 
 
                             <Webcam className="layout"
-                                    audio={true}
-                                    ref={webcamRef}
-                                    mirrored={true}
-                                    videoConstraints={videoConstraints}/>
+                                audio={true}
+                                ref={webcamRef}
+                                mirrored={true}
+                                videoConstraints={videoConstraints} />
 
                             <div className="timer-wrapper">
                                 <div className="timer-view">{getTimeDiffString(videoLengthSeconds)}</div>
@@ -1018,7 +1021,7 @@ function Recorder() {
 
                             {capturing ? (
                                 <button className="icon tooltip videoControlButtons" onClick={handleStopCaptureClick}
-                                        data-tooltip={t("stop_recording_tooltip")}>
+                                    data-tooltip={t("stop_recording_tooltip")}>
                                     {/* <i className="fa fa-stop"/> */}
                                     {/* <i class="huge icons"> */}
                                     {/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
@@ -1029,13 +1032,13 @@ function Recorder() {
                                     {/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
 
                                     <img src={RecordingGif} width={38.5} height={38.5} alt="record button" />
-                                    
+
                                     {/* <i className="fa-solid fa-circle-stop"></i> */}
                                     {/* <div ><i aria-hidden="true" className="primary stop circle outline"/></div> */}
                                 </button>
                             ) : (
                                 <button className="icon tooltip videoControlButtons cursor-pointer"
-                                        onClick={handleStartCaptureClick} data-tooltip={t("start_recording_tooltip")}>
+                                    onClick={handleStartCaptureClick} data-tooltip={t("start_recording_tooltip")}>
                                     {/* <i className="fa fa-video-camera"/> */}
                                     <img src={RecordButton} width={38.5} height={38.5} alt="record button" />
                                 </button>
@@ -1043,11 +1046,11 @@ function Recorder() {
 
                             {(recordedChunks.length > 0 && !isRecording) && (
                                 <button className="recorder-check-btn check tooltip cursor-pointer"
-                                        onClick={() => {
-                                            togglePreviewBox()
-                                        }}
-                                        data-tooltip={t("save_video_tooltip")}>
-                                    <i className="fa fa-check"/>
+                                    onClick={() => {
+                                        togglePreviewBox()
+                                    }}
+                                    data-tooltip={t("save_video_tooltip")}>
+                                    <i className="fa fa-check" />
                                 </button>
                             )}
 
@@ -1060,41 +1063,41 @@ function Recorder() {
                                     (isEditing) ? (
                                         <Button.Group>
                                             <Popup content={t("editing_alert")}
-                                                   inverted
-                                                   trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)}>{t("save_as_new_button")}</Button>}
+                                                inverted
+                                                trigger={<Button onClick={handleSaveAsNew} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)}>{t("save_as_new_button")}</Button>}
                                             />
-                                            <Button.Or/>
+                                            <Button.Or />
                                             <Button onClick={handleUpdateVideo} loading={waitingServerResponse} disabled={waitingServerResponse || !(videoDuration)} positive>{t("update_button")}</Button>
                                         </Button.Group>
                                     ) : (
                                         <Button className="right floated" positive loading={waitingServerResponse}
-                                                disabled={waitingServerResponse || !videoDuration} onClick={handleDownload}>
-                                                {t("save_video_button")}
-                                                </Button>
+                                            disabled={waitingServerResponse || !videoDuration} onClick={handleDownload}>
+                                            {t("save_video_button")}
+                                        </Button>
                                     )
                                 }
 
                                 <Button icon labelPosition='left' className="right floated"
-                                        onClick={() => setViewingRecordedVideo(false)} disabled={waitingServerResponse}>
+                                    onClick={() => setViewingRecordedVideo(false)} disabled={waitingServerResponse}>
                                     {t("record_again_button")}
-                                    <Icon name='repeat'/>
+                                    <Icon name='repeat' />
                                 </Button>
                             </div>
 
                             <div className="layout video-layout-player-middle">
                                 <video autoPlay controls
-                                       onLoadedMetadata={ () => {
-                                           // This is a trick to make video duration load instantly
-                                           videoPlaybackRef.current.currentTime = 9999999999;
-                                       }}
+                                    onLoadedMetadata={() => {
+                                        // This is a trick to make video duration load instantly
+                                        videoPlaybackRef.current.currentTime = 9999999999;
+                                    }}
 
-                                       onDurationChange={() => {
-                                           if (videoPlaybackRef.current.duration && videoPlaybackRef.current.duration !== Infinity){
-                                               setVideoDuration(videoPlaybackRef.current.duration);
-                                               videoPlaybackRef.current.currentTime = 0;
-                                           }
-                                       }} ref={videoPlaybackRef}>
-                                    <source src={(recordedVideo)? window.URL.createObjectURL(recordedVideo) : ""} type='video/mp4'/>
+                                    onDurationChange={() => {
+                                        if (videoPlaybackRef.current.duration && videoPlaybackRef.current.duration !== Infinity) {
+                                            setVideoDuration(videoPlaybackRef.current.duration);
+                                            videoPlaybackRef.current.currentTime = 0;
+                                        }
+                                    }} ref={videoPlaybackRef}>
+                                    <source src={(recordedVideo) ? window.URL.createObjectURL(recordedVideo) : ""} type='video/mp4' />
                                 </video>
                             </div>
 
@@ -1106,10 +1109,23 @@ function Recorder() {
                                     onChange={(e) => {
                                         setTranscribedAudio(e.target.value);
                                         setAnswerProvided(e.target.value)
-                                    }}/>
+                                    }} />
                             </div>
                         </div>
                     )}
+                    {!viewingRecordedView && !capturing ? (
+                        <div class="lang-recorder-container">
+                            <div class="lang-dropdown">
+                                <div class="lang-dropbtn"><span className={languageFlagsCSS[interactionLanguage]}></span></div>
+                                <div class="lang-dropdown-content">
+                                    <a href="#" onClick={() => setInteractionLanguage("en-US")}><span class="fi fi-us"></span></a>
+                                    <a href="#" onClick={() => setInteractionLanguage("ar-AE")}><span class="fi fi-ae"></span></a>
+                                    {/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+                                    <a href="#" onClick={() => setInteractionLanguage("fr-FR")}><span class="fi fi-fr"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    ) : ('')}
 
                     <h5 className={`ui header question-selection-box-label ${t("alignment")}`}>
                         <div className="content">
@@ -1134,12 +1150,12 @@ function Recorder() {
                             maxDisplayedItems={5}
                             displayField={"question"}
                             autoAddOnBlur={true}
-                            disabled={pendingOnBoardingQs.length !== 0}/>
+                            disabled={pendingOnBoardingQs.length !== 0} />
                     </div>
                 </div>
 
             </div>
-            <NotificationContainer/>
+            <NotificationContainer />
         </div>
     );
 }
