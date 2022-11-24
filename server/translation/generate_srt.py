@@ -15,11 +15,12 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
     load_dotenv()
     env = os.getenv('ENVIRONMENT')
     print(f"{env}: Generating SRT files from queue...")
+    print(f"Transcript: {data}")
 
-
+    video_name = video_name.split('.')[0]
     INPUT_BUCKET = os.getenv('INPUT_BUCKET')
     OUTPUT_BUCKET = os.getenv('OUTPUT_BUCKET')
-    INPUT_URI = os.getenv('INPUT_URI')
+    INPUT_URI = os.getenv('INPUT_URI') + output_file + '.txt'
     OUTPUT_URI = os.getenv('OUTPUT_URI')
     PROJECT_ID = os.getenv('PROJECT_ID')
     SUBTITLES = os.getenv('SUBTITLE_BUCKET')
@@ -40,6 +41,7 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
     elif env == "DEVELOPMENT":
         upload_to_folders("files", video_name)
     clear_folders()
+    print("Finished writing to srt files.")
 
 
 def copy_txt(output_file, bucket_in, project_id):
@@ -77,15 +79,17 @@ def upload_to_bucket(subtitles, transcripts, project_id, video_name):
         blob = bucket.blob(f'{video_name}-{filename}')
         blob.upload_from_filename(f'txts/{f}')
 
+
 def clear_folders():
     dirs = ["txts", "srts"]
     for dir in dirs:
         for f in os.listdir(dir):
             os.remove(os.path.join(dir, f))
 
+
 def upload_to_folders(folder_name, video_name):
     for f in os.listdir("srts"):
-        shutil.copyfile(f, f'{folder_name}/srts/{video_name}-{f}')
+        shutil.copyfile(f'srts/{f}', f'{folder_name}/srts/{video_name}-{f}')
 
     for f in os.listdir("txts"):
         if f.endswith('.csv'):
@@ -94,5 +98,6 @@ def upload_to_folders(folder_name, video_name):
         if len(parts) > 1:
             filename = parts[4]
         else:
-            filename = f
-        shutil.copyfile(f, f'{folder_name}/txts/{video_name}-{filename}')
+            filename = f.split('.')[0]
+        shutil.copyfile(
+            f'txts/{f}', f'{folder_name}/txts/{video_name}-{filename}.txt')

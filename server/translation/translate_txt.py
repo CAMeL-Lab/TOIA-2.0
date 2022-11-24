@@ -31,7 +31,6 @@ def batch_translate_text(input_uri, output_uri, project_id, source_lang, target_
     output_config = {"gcs_destination": gcs_destination}
     parent = f"projects/{project_id}/locations/{location}"
 
-    print(parent, source_lang, input_uri, output_uri, target_lang)
     operation = client.batch_translate_text(
         request={
             "parent": parent,

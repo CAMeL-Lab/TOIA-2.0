@@ -15,6 +15,7 @@ function constructRequest(inputLanguageCode){
 			languageCode: inputLanguageCode,
 			enableAutomaticPunctuation: true,
 			profanityFilter: true,
+			enableWordTimeOffsets: true,
 		},
 		interimResults: true, // If you want interim results, set this to true
 	};

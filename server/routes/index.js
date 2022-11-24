@@ -857,7 +857,7 @@ router.post("/recorder", cors(), async (req, res) => {
     const file = req.file;
     const answer = fields.answer[0].trim();
     const results = req.fields.results;
-    const language = req.fields.language;
+    let language = req.fields.language;
 
 	// Append the answer with '.' if necessary
 	if (
@@ -929,8 +929,9 @@ router.post("/recorder", cors(), async (req, res) => {
 
                 await ch.assertQueue(q, {durable: true});
 
-                let languages_supported = ['es', 'ar', 'fr', 'en'];
-				languages_supported = languages_supported.pop(language);
+                let languages_supported = ['es-ES', 'ar-AE', 'fr-FR', 'en-US'];
+				language = 'en-US';
+				languages_supported = languages_supported.filter(language_code => language_code != language);
 
                 const payload = {
                     "translate_to": languages_supported,
