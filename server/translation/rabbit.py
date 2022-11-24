@@ -23,7 +23,7 @@ def main():
             def callback(ch, method, properties, body):
                 # print(" [x] Received %r" % body.decode())
                 data = json.loads(body, object_hook = lambda d : Namespace(**d))
-                generate_srt(data.results,data.translate_to, data.video_name, input_language=data.input_language[0].lower(), output_file=data.input_language[0].lower())
+                generate_srt(data.results,data.translate_to, data.video_name, input_language=data.input_language, output_file=data.input_language)
 
             channel.basic_consume(queue='translate_transcript', on_message_callback=callback, auto_ack=True)
 

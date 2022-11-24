@@ -11,3 +11,5 @@ package-lock.json
 /translation/toia-translation.json
 /translation/.env
 /mysql/toia_db.sql
+/Transcripts/srts/*
+/Transcripts/txts/*

@@ -125,7 +125,8 @@ services:
     build: server/translation
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=toia-translation.json
-      - ENVIRONMENT=development
+      - ENVIRONMENT=DEVELOPMENT
+      - PYTHONUNBUFFERED=1
     volumes:
       - ./server/Transcripts:/app/files
 volumes:
