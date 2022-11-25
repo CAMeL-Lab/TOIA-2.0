@@ -162,8 +162,7 @@ function Recorder() {
     const [interactionLanguage, setInteractionLanguage] = useState("en-US");
 
     const [transcribedAudio, setTranscribedAudio] = useState('');
-
-
+    const [results, setResults] = useState([]);
 
     //const [socket, setSocket] = useState(null);
     const client = useRef();
@@ -454,10 +453,10 @@ function Recorder() {
             setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
             input.current += (" " + data.alternatives[0].transcript);
-            //setTranscribedAudio(input.current);
-        }
-
-    }
+            setResults(results => [...results, data.alternatives[0].words]);
+          }
+          
+      }
 
 
     const handleStartCaptureClick = React.useCallback((e) => {
@@ -572,6 +571,7 @@ function Recorder() {
             form.append('language', toiaLanguage);
             form.append('questions', JSON.stringify(questionsSelected));
             form.append('answer', answerProvided);
+            form.append('results', JSON.stringify(results));
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));

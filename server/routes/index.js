@@ -1,7 +1,13 @@
-const express = require("express");
+require('dotenv').config()
+
+const express = require('express');
 const router = express.Router();
 const onboardingQuestions = require("../configs/onboarding-questions.json");
 
+const questions = require('./questions');
+router.use('/questions',questions);
+
+const amqp = require('amqplib');
 const cors = require("cors");
 const multiparty = require("multiparty");
 const {
@@ -847,9 +853,11 @@ router.post("/recorder", cors(), async (req, res) => {
 	let vidIndex;
 	let videoStreams;
 
-	const fields = req.fields;
-	const file = req.file;
-	let answer = fields.answer[0].trim();
+    const fields = req.fields;
+    const file = req.file;
+    const answer = fields.answer[0].trim();
+    const results = req.fields.results;
+    let language = req.fields.language;
 
 	// Append the answer with '.' if necessary
 	if (
@@ -914,28 +922,40 @@ router.post("/recorder", cors(), async (req, res) => {
 					),
 				);
 
-				if (process.env.ENVIRONMENT === "development") {
-					// Save thumbnail
-					let thumbDest = `Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/`;
-					let thumbName = videoID + ".jpg";
-					mkdirp(thumbDest).then(() => {
-						let buf = Buffer.from(
-							fields.thumb[0].replace(
-								/^data:image\/\w+;base64,/,
-								"",
-							),
-							"base64",
-						);
-						fs.writeFile(thumbDest + thumbName, buf, error => {
-							if (error) {
-								console.log(error);
-							}
-						});
-					});
-				} else {
-					let videoThumbFile = videoStore.file(
-						`Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/${videoID}`,
-					);
+                // RabbitMQ setup
+                const rabbitconn = await amqp.connect(`amqp://${process.env.RMQ_USERNAME}:${process.env.RMQ_PASSWORD}@rabbitmq:5672`);
+                const ch = await rabbitconn.createChannel();
+                const q = "translate_transcript"
+
+                await ch.assertQueue(q, {durable: true});
+
+                let languages_supported = ['es-ES', 'ar-AE', 'fr-FR', 'en-US'];
+				language = 'en-US';
+				languages_supported = languages_supported.filter(language_code => language_code != language);
+
+                const payload = {
+                    "translate_to": languages_supported,
+                    "results": JSON.parse(results) ,
+                    "video_name": videoID,
+                    "input_language": language,
+                }
+
+                ch.sendToQueue(q, Buffer.from(JSON.stringify(payload)));
+
+                if (process.env.ENVIRONMENT === "development") {
+                    // Save thumbnail
+                    let thumbDest = `Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/`;
+                    let thumbName = videoID + ".jpg";
+                    mkdirp(thumbDest).then(() => {
+                        let buf = Buffer.from(fields.thumb[0].replace(/^data:image\/\w+;base64,/, ""), 'base64');
+                        fs.writeFile(thumbDest + thumbName, buf, (error) => {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
+                    });
+                } else {
+                    let videoThumbFile = videoStore.file(`Accounts/${fields.name[0]}_${fields.id[0]}/VideoThumb/${videoID}`);
 
 					bufferStream
 						.pipe(
@@ -1132,68 +1152,8 @@ router.post("/recorder", cors(), async (req, res) => {
 	});
 });
 
-router.post("/getSmartQuestions", (req, res) => {
-	const avatar_id = req.body.params.avatar_id;
-	const stream_id = req.body.params.stream_id;
-
-	// If it is the beginning of the conversation, then return 'dumb' question suggestions
-	if (req.body.params.latest_question == "") {
-		// This indicates that we are at the beginning of the conversation
-		let query = `SELECT questions.question FROM questions 
-                    INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
-                    INNER JOIN video ON video.id_video = videos_questions_streams.id_video
-                    WHERE videos_questions_streams.id_stream = ?
-                    AND questions.suggested_type IN ("answer", "y/n-answer")
-                    AND questions.id NOT IN (19, 20)
-                    ORDER BY questions.id ASC
-                    LIMIT 5`;
-
-		connection.query(query, [stream_id], (err, entries) => {
-			if (err) throw err;
-			const result = entries.map(question_object => ({
-				question: question_object.question,
-			}));
-			res.send(result);
-		});
-		return;
-	}
-
-	// Actual smart question generation
-	// Using GPT-3 in the q_api
-	const options = {
-		method: "POST",
-		url: `${process.env.SMARTQ_ROUTE}`,
-		headers: { "Content-Type": "application/json" },
-		data: {
-			new_q: req.body.params.latest_question,
-			new_a: req.body.params.latest_answer,
-			n_suggestions: 5,
-			avatar_id: avatar_id,
-			stream_id: req.body.params.stream_id,
-		},
-		timeout: 20000,
-	};
-	axios
-		.request(options)
-		.then(response => {
-			console.log("==========Question Suggested=========");
-			// console.log(response2);
-			console.log(response.data.suggestions);
-			console.log("=====================================");
-			const data = JSON.parse(response.data.suggestions);
-			const result = data.map(question_string => ({
-				question: question_string,
-			}));
-			res.send(result);
-		})
-		.catch(function (error) {
-			console.log("=============== Error with Q_API ============");
-			console.log(error);
-		});
-});
-
-router.post("/getLastestQuestionSuggestion", cors(), (req, res) => {
-	const query_fetchSuggestions = `SELECT question_suggestions.id_question, questions.question, questions.suggested_type as type
+router.post('/getLastestQuestionSuggestion', cors(), (req, res) => {
+    const query_fetchSuggestions = `SELECT question_suggestions.id_question, questions.question, questions.suggested_type as type
                                   FROM question_suggestions
                                   INNER JOIN questions ON questions.id = question_suggestions.id_question
                                   WHERE question_suggestions.toia_id = ? AND question_suggestions.isPending = 1
@@ -1295,225 +1255,10 @@ router.post("/saveSuggestedQuestion/:user_id", (req, res) => {
 	);
 });
 
-router.post("/questions/suggestions/:user_id/edit", async (req, res) => {
-	const user_id = req.params.user_id || null;
-	const question_id = req.body.question_id || null;
-	const question_new_value = req.body.new_value || null;
-
-	if (
-		!user_id ||
-		!question_id ||
-		!question_new_value ||
-		typeof question_new_value !== "string" ||
-		question_new_value.length <= 0
-	) {
-		res.sendStatus(400);
-		return;
-	}
-
-	isValidUser(user_id).then(
-		async () => {
-			try {
-				const response = await updateSuggestedQuestion(
-					user_id,
-					question_id,
-					question_new_value,
-				);
-				res.send(response);
-			} catch (e) {
-				console.log(e);
-				res.sendStatus(400);
-			}
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.post("/questions/suggestions/:user_id/discard", async (req, res) => {
-	const user_id = req.params.user_id || null;
-	const question_id = req.body.question_id || null;
-
-	if (!user_id || !question_id) {
-		res.sendStatus(400);
-		return;
-	}
-
-	isValidUser(user_id).then(
-		async () => {
-			await suggestionSetPending(question_id, user_id, false);
-			res.send("OK");
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.get("/questions/onboarding/:user_id/pending", (req, res) => {
-	const user_id = req.params.user_id;
-	isValidUser(user_id).then(
-		() => {
-			let query = `SELECT id, question, suggested_type as type, onboarding, priority, trigger_suggester FROM questions WHERE onboarding = 1 AND id NOT IN (SELECT videos_questions_streams.id_question as id FROM videos_questions_streams INNER JOIN video ON videos_questions_streams.id_video = video.id_video WHERE video.toia_id = ?)`;
-			connection.query(query, [user_id], (err, entries) => {
-				if (err) throw err;
-				res.send(entries);
-			});
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.get("/questions/onboarding/:user_id/completed", (req, res) => {
-	const user_id = req.params.user_id;
-	isValidUser(user_id).then(
-		() => {
-			let query = `SELECT id, question, suggested_type as type, onboarding, priority, trigger_suggester FROM questions 
-                    WHERE onboarding = 1 AND id IN (SELECT videos_questions_streams.id_question as id FROM videos_questions_streams
-                                                                                                    INNER JOIN video ON videos_questions_streams.id_video = video.id_video WHERE video.toia_id = ?)`;
-			connection.query(query, [user_id], (err, entries) => {
-				if (err) throw err;
-				res.send(entries);
-			});
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.get("/questions/suggestions/:user_id/pending", (req, res) => {
-	const user_id = req.params.user_id;
-	isValidUser(user_id).then(
-		() => {
-			let query = `SELECT id, question, suggested_type as type, onboarding, priority, trigger_suggester FROM questions 
-                    INNER JOIN question_suggestions ON questions.id = question_suggestions.id_question 
-                    WHERE question_suggestions.toia_id = ? AND isPending = 1`;
-			connection.query(query, [user_id], (err, entries) => {
-				if (err) throw err;
-				res.send(entries);
-			});
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.post("/questions/answered/delete", (req, res) => {
-	const user_id = req.body.user_id || null;
-	const ques_id = req.body.question_id || null;
-	const video_id = req.body.video_id || null;
-
-	if (!user_id || !ques_id || !video_id) {
-		res.sendStatus(400);
-		return;
-	}
-
-	isValidUser(user_id).then(
-		() => {
-			let query = `DELETE FROM videos_questions_streams WHERE id_video = ? AND id_question = ? AND id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
-			connection.query(
-				query,
-				[video_id, ques_id, user_id],
-				(err, result) => {
-					if (err) throw err;
-					console.log(
-						"Deleted video_id: " +
-							video_id +
-							" question_id: " +
-							ques_id +
-							" of user_id: " +
-							user_id,
-					);
-					res.sendStatus(200);
-				},
-			);
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.get("/questions/answered/:user_id", (req, res) => {
-	const user_id = req.params.user_id;
-	isValidUser(user_id).then(
-		() => {
-			let query = `SELECT questions.*, videos_questions_streams.type, videos_questions_streams.id_video FROM questions 
-                    INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
-                    WHERE videos_questions_streams.id_video IN (SELECT id_video FROM video WHERE toia_id = ?)`;
-			connection.query(query, [user_id], (err, entries) => {
-				if (err) throw err;
-				res.send(entries);
-			});
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.get("/questions/answered/:user_id/:stream_id", (req, res) => {
-	const user_id = req.params.user_id;
-	const stream_id = req.params.stream_id;
-	isValidUser(user_id).then(
-		() => {
-			let query = `SELECT questions.*, videos_questions_streams.id_video, videos_questions_streams.type FROM questions INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id WHERE videos_questions_streams.id_stream = ?`;
-			connection.query(query, [stream_id], (err, entries) => {
-				if (err) throw err;
-				res.send(entries);
-			});
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-// Special route to get questions that have well-formed questions
-// Filter questions that are of type "answer" and "y/n-answer"
-// E.g.:
-// -- How are you today?
-// -- Do you have siblings?
-// -- Tell me about X.
-router.get("/questions/answered_filtered/:user_id/:stream_id", (req, res) => {
-	const user_id = req.params.user_id;
-	const stream_id = req.params.stream_id;
-	isValidUser(user_id).then(
-		() => {
-			let query = `SELECT DISTINCT questions.question FROM questions 
-        INNER JOIN videos_questions_streams ON videos_questions_streams.id_question = questions.id 
-        WHERE videos_questions_streams.id_stream = ?
-        AND questions.id NOT IN (19, 20) 
-        AND questions.suggested_type IN ("answer", "y/n-answer");`;
-			connection.query(query, [stream_id], (err, entries) => {
-				if (err) throw err;
-				res.send(entries);
-			});
-		},
-		reject => {
-			if (reject === false) console.log("Provided user id doesn't exist");
-			res.sendStatus(404);
-		},
-	);
-});
-
-router.get("/videos/:user_id/", async (req, res) => {
-	const user_id = req.params.user_id;
-	const video_id = req.query.video_id || null;
-	const type = req.query.type || null;
+router.get('/videos/:user_id/', async (req, res) => {
+    const user_id = req.params.user_id;
+    const video_id = req.query.video_id || null;
+    const type = req.query.type || null;
 
 	isValidUser(user_id).then(
 		() => {

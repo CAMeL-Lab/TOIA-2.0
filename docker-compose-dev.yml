@@ -105,6 +105,29 @@ services:
       MB_DB_FILE: /data/metabase
       MB_DB_INIT_SQL_FILE: /data/metabase.db.sql
       MB_DB_SAVE_TO_SQL_FILE: /data/metabase.db.sql
+  
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RMQ_PASSWORD}
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
 
+  translation:
+    depends_on:
+      - rabbitmq3
+    container_name: "translation_py"
+    build: server/translation
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=toia-translation.json
+      - ENVIRONMENT=DEVELOPMENT
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./server/Transcripts:/app/files
 volumes:
   mysql-vol:

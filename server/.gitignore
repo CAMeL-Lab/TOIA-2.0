@@ -8,3 +8,8 @@ package-lock.json
 /Accounts
 /speech_to_text/toia-capstone-2021-b944d1cc65aa.json
 /interface/build
+/translation/toia-translation.json
+/translation/.env
+/mysql/toia_db.sql
+/Transcripts/srts/*
+/Transcripts/txts/*

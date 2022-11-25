@@ -15,14 +15,6 @@ import NavBar from './NavBar.js';
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
-	function exampleReducer(state, action) {
-		switch (action.type) {
-			case "close":
-				return { open: false };
-			case "open":
-				return { open: true };
-		}
-	}
 
 	const { t } = useTranslation();
 
@@ -31,16 +23,17 @@ function HomePage() {
 	const [toiaID, setTOIAid] = useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
-	useEffect(() => {
-		if (history.location.state != undefined) {
-			setLoginState(true);
-			setName(history.location.state.toiaName);
-			setLanguage(history.location.state.toiaLanguage);
-			setTOIAid(history.location.state.toiaID);
-		}
-		// Tracker
-		new Tracker().startTracking(history.location.state);
-	}, []);
+  useEffect(() => {
+    if(history.location.state!==undefined){
+      setLoginState(true);
+      setName(history.location.state.toiaName);
+      setLanguage(history.location.state.toiaLanguage);
+      setTOIAid(history.location.state.toiaID);
+    }
+
+    // Tracker
+    new Tracker().startTracking(history.location.state);
+  },[]);
 
 
 	// function callDispatch(bool){
