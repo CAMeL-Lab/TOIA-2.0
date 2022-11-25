@@ -1,122 +1,122 @@
 [
-  {
-    "question": "Attentive filler video: Record yourself touching your hair/head/face staring at the camera (think making eye contact with a user interacting with your avatar)",
-    "type": "filler",
-    "priority": 0,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Attentive filler: Nod/shake head to show you are listening, and keep staring at the camere (make eye contact)",
-    "type": "filler",
-    "priority": 1,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Attentive filler: Smile and blink eyes while looking towards the camera (make eye contact) for about 10 seconds",
-    "type": "filler",
-    "priority": 2,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Attentive filler: Lean slightly forward with your elbows on the table and your hands together on your chin as if you were attentive to the camera",
-    "type": "filler",
-    "priority": 3,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Attentive filler: Cross hands while looking forward into the camera",
-    "type": "filler",
-    "priority": 4,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Inattentive filler video: Now record again yourself touching your hair/head/face, but don't look at the camera. Look elsewhere (don't make eye contact)",
-    "type": "filler",
-    "priority": 5,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Inattentive filler: Do not nod/shake head and look elsewhere from the camera. Show you are engageing with somebody else in the room, do not stare at the camera (avoid eye contact)",
-    "type": "filler",
-    "priority": 6,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Inattentive filler: Look downward, do not stare at the camera (avoid eye contact) for about 10 seconds",
-    "type": "filler",
-    "priority": 7,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Inattentive filler: Lean slightly backwards, like trying to relax, gaze around and never look at the camera (avoid eye contact)",
-    "type": "filler",
-    "priority": 8,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Inattentive filler: Cross hands while looking upward or elsewere, looking bored, avoiding eye contact with the camera",
-    "type": "filler",
-    "priority": 9,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Say: I don't have an answer to that right now.",
-    "type": "no-answer",
-    "priority": 10,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Say: Sorry, I didn't record answers to that question.",
-    "type": "no-answer",
-    "priority": 11,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Say: Can you try rephrasing the question?",
-    "type": "no-answer",
-    "priority": 12,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Record a greeting (e.g., hello, hi)",
-    "type": "greeting",
-    "priority": 13,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Record a goodbye (or end of conversation sentence)",
-    "type": "exit",
-    "priority": 14,
-    "trigger_suggester": false
-  },
-  {
-    "question": "What is your name?",
-    "type": "answer",
-    "priority": 15,
-    "trigger_suggester": true
-  },
-  {
-    "question": "Where and when were you born?",
-    "type": "answer",
-    "priority": 16,
-    "trigger_suggester": true
-  },
-  {
-    "question": "What do you do for a living?",
-    "type": "answer",
-    "priority": 17,
-    "trigger_suggester": true
-  },
-  {
-    "question": "Record yourself saying Yes. You cann add questions for this answer later.",
-    "type": "y/n-answer",
-    "priority": 18,
-    "trigger_suggester": false
-  },
-  {
-    "question": "Record yourself saying No. You can add questions for this answer later.",
-    "type": "y/n-answer",
-    "priority": 19,
-    "trigger_suggester": false
-  }
+	{
+		"question": "Attentive filler video: Record yourself touching your hair/head/face staring at the camera (think making eye contact with a user interacting with your avatar)",
+		"type": "filler",
+		"priority": 0,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Nod/shake head to show you are listening, and keep staring at the camere (make eye contact)",
+		"type": "filler",
+		"priority": 1,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Smile and blink eyes while looking towards the camera (make eye contact) for about 10 seconds",
+		"type": "filler",
+		"priority": 2,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Lean slightly forward with your elbows on the table and your hands together on your chin as if you were attentive to the camera",
+		"type": "filler",
+		"priority": 3,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Cross hands while looking forward into the camera",
+		"type": "filler",
+		"priority": 4,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler video: Now record again yourself touching your hair/head/face, but don't look at the camera. Look elsewhere (don't make eye contact)",
+		"type": "filler",
+		"priority": 5,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Do not nod/shake head and look elsewhere from the camera. Show you are engageing with somebody else in the room, do not stare at the camera (avoid eye contact)",
+		"type": "filler",
+		"priority": 6,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Look downward, do not stare at the camera (avoid eye contact) for about 10 seconds",
+		"type": "filler",
+		"priority": 7,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Lean slightly backwards, like trying to relax, gaze around and never look at the camera (avoid eye contact)",
+		"type": "filler",
+		"priority": 8,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Cross hands while looking upward or elsewere, looking bored, avoiding eye contact with the camera",
+		"type": "filler",
+		"priority": 9,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Say: I don't have an answer to that right now.",
+		"type": "no-answer",
+		"priority": 10,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Say: Sorry, I didn't record answers to that question.",
+		"type": "no-answer",
+		"priority": 11,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Say: Can you try rephrasing the question?",
+		"type": "no-answer",
+		"priority": 12,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record a greeting (e.g., hello, hi)",
+		"type": "greeting",
+		"priority": 13,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record a goodbye (or end of conversation sentence)",
+		"type": "exit",
+		"priority": 14,
+		"trigger_suggester": false
+	},
+	{
+		"question": "What is your name?",
+		"type": "answer",
+		"priority": 15,
+		"trigger_suggester": true
+	},
+	{
+		"question": "Where and when were you born?",
+		"type": "answer",
+		"priority": 16,
+		"trigger_suggester": true
+	},
+	{
+		"question": "What do you do for a living?",
+		"type": "answer",
+		"priority": 17,
+		"trigger_suggester": true
+	},
+	{
+		"question": "Record yourself saying Yes. You cann add questions for this answer later.",
+		"type": "y/n-answer",
+		"priority": 18,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record yourself saying No. You can add questions for this answer later.",
+		"type": "y/n-answer",
+		"priority": 19,
+		"trigger_suggester": false
+	}
 ]

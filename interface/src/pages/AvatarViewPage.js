@@ -1,76 +1,34 @@
 import React from "react";
 import submitButton from "../icons/submit-button.svg";
-import video from "../icons/sample-video.svg"
-import history from '../services/history';
-import {Modal} from 'semantic-ui-react';
-import axios from 'axios';
+import video from "../icons/sample-video.svg";
+import history from "../services/history";
+import { Modal } from "semantic-ui-react";
+import axios from "axios";
 import Tracker from "../utils/tracker";
 
+import NavBar from './NavBar.js';
+
+import { Trans, useTranslation } from "react-i18next";
 
 function AvatarViewPage() {
-    
-    function exampleReducer( state, action ) {
-        switch (action.type) {
-          case 'close':
-            return { open: false };
-          case 'open':
-            return { open: true }; 
-        }
-    }
 
-    const [name, setName] = React.useState(null);
-    const [language, setLanguage] = React.useState(null);
-    const [bio, setBio] = React.useState(null);
-    const [avatarID,setAvatarID] = React.useState(null);
-    let isLogin = false;
-    var input1, input2;
+    const { t } = useTranslation();
 
-    const [interactionLanguage, setInteractionLanguage] = React.useState(null);
-    
-    React.useEffect(() => {
-    
-        axios.get(`/api/getAvatarInfo`,{params:{
-            avatarID: history.location.state.id_avatar
-        }}).then((res)=>{
-            setName(res.data.name);
-            setLanguage(res.data.language);
-            setBio(res.data.bio);
-            setAvatarID(history.location.state.id_avatar);
-        });
+	const [name, setName] = React.useState(null);
+	const [language, setLanguage] = React.useState(null);
+	const [bio, setBio] = React.useState(null);
+	const [avatarID, setAvatarID] = React.useState(null);
+	let isLogin = false;
+	var input1, input2;
+
+	const [interactionLanguage, setInteractionLanguage] = React.useState(null);
 
         // Tracker
+	React.useEffect(() => {
+
         new Tracker().startTracking(history.location.state);
-    });
-    
-    const [state, dispatch] = React.useReducer(exampleReducer, {open: false,})
-    const { open } = state
+    }, []);
 
-    function openModal(e){
-        dispatch({ type: 'open' });
-        e.preventDefault();
-    }
-
-    function myChangeHandler(event){
-        event.preventDefault();
-        var name = event.target.name;
-    
-        switch(name) {
-          case "email":
-            input1 = event.target.value;
-            break;
-          case "pass":
-            input2 = event.target.value;
-            break;
-        }
-    }
-
-    function submitHandler1(e){
-        e.preventDefault();
-        history.push({
-            pathname: '/mytoia',
-        });
-    }
-    
 
     function submitHandler(event){
         event.preventDefault();
@@ -84,134 +42,48 @@ function AvatarViewPage() {
             }
         });
     }
-
-    function home() {
-        history.push({
-          pathname: '/',
-        });
-      }
-    
-      function library() {
-        history.push({
-          pathname: '/library',
-        });
-      }
-    
-      function garden(e) {
-        if (isLogin) {
-          history.push({
-            pathname: '/mytoia',
-          });
-        }else{
-          openModal(e);
-        }
-      }
-
-     function logout(){
-         //logout function needs to be implemented (wahib)
-         history.push({
-             pathname: '/',
-           });
-     }
-     
-     function signup(){
-        history.push({
-          pathname: '/signup',
-        });
-      }
-
-     const inlineStyle = {
-        modal : {
-            height: '560px',
-            width: '600px',
-        }
-      };
-     
     //a function will be needed to send input5 to database (wahib)
     
     return (
         <div className="view-page">
-            <Modal //this is the new pop up menu
-                size='large'
-                style={inlineStyle.modal}
-                open={open} 
-                onClose={() => dispatch({ type: 'close' })}
-            >
-                    <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Welcome Back</h1>
-                    <p className="login_blurb login-montserrat-black">Enter the following information to login to your TOIA account</p>
-                    </Modal.Header>
-
-                    <Modal.Content>
-                    <form className="login_popup" onSubmit={submitHandler1}>
-                        <input
-                        className="login_email login-font-class-1"
-                        placeholder={"Email"}
-                        type={"email"}
-                        required={true}
-                        onChange={myChangeHandler}
-                        name={"email"}
-                        />
-                        <input
-                        className="login_pass login-font-class-1"
-                        placeholder={"Password"}
-                        type={"password"}
-                        required={true}
-                        onChange={myChangeHandler}
-                        name={"pass"}
-                        />
-                        <input className="login_button smart-layers-pointers " type="image" src={submitButton} alt="Submit"/>
-                        <div className="login_text login-montserrat-black" onClick={signup}>Don't have an Account? Sign Up</div>
-                    </form>
-                    </Modal.Content>
-            </Modal>
-            <div className="nav-heading-bar">
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div className="nav-about_icon app-monsterrat-black ">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black ">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black ">
-                    My TOIA
-                </div>
-                <div onClick={isLogin ? logout : openModal}className="nav-login_icon app-monsterrat-black">
-                   {isLogin ? 'Logout' : 'Login'}
-                </div>
-            </div>
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={true}  // {isLoggedIn}
+            toiaLanguage={"en"}
+            history={history}
+            showLoginModal={true}
+            />
             <h1 className="view-title view-font-class-1 ">Here is infromation on the TOIA selected</h1>
             <img className="view-still" src={video}/>
 
             <div className="view-group">
-                <div className="view-name view-font-class-1 ">Name: </div>
+                <div className="view-name view-font-class-1 ">{t("show_name")}</div>
                 <input
                     className="view-name_box view-font-class-1"
                     defaultValue = {name}
                     type={"text"}
                 />
-                <div className="view-creator view-font-class-1 ">Album: </div>
+                <div className="view-creator view-font-class-1 ">{t("show_album")}</div>
                 <input
                     className="view-creator_box view-font-class-1"
                     defaultValue = {name}
                     type={"text"}
                 />
-                <div className="view-lang view-font-class-1 ">Language: </div>
+                <div className="view-lang view-font-class-1 ">{t("show_language")}</div>
                 <input
                     className="view-lang_box view-font-class-1"
                     defaultValue = {language}
                     type={"text"}
                 />
-                <div className="view-bio view-font-class-1 ">Bio: </div>
+                <div className="view-bio view-font-class-1 ">{t("show_bio")}</div>
                 <textarea
                     className="view-bio_box view-font-class-1"
                     defaultValue = {bio}
                     type={"text"}
                 />
                 <select className="view-lang2_box view-font-class-1" >
-                    <option value="" disabled selected hidden>What language would you like to speak in..</option>
+                    <option value="" disabled selected hidden>{t("language_preference_input")}</option>
                     <option value="AF">Afrikaans</option>
                     <option value="SQ">Albanian</option>
                     <option value="AR">Arabic</option>

@@ -20,8 +20,10 @@
     "editable-creatable-multiselect": "^2.1.0",
     "ffmpeg": "0.0.4",
     "firebase": "^8.6.8",
+    "flag-icons": "^6.6.6",
     "fuse.js": "^6.4.6",
     "get-blob-duration": "^1.2.0",
+    "i18next": "^21.8.14",
     "id3js": "^2.1.1",
     "install": "^0.13.0",
     "mp3": "^0.1.0",
@@ -32,6 +34,7 @@
     "react-bottom-scroll-listener": "^5.0.0",
     "react-dom": "^17.0.1",
     "react-elastic-carousel": "^0.11.5",
+    "react-i18next": "^11.18.0",
     "react-notifications": "^1.7.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
@@ -40,7 +43,7 @@
     "react-switch": "^6.0.0",
     "react-webcam": "^5.2.4",
     "sass": "^1.49.9",
-    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.0.1",
     "socket.io": "^4.3.2",
     "socket.io-client": "^4.4.1",
@@ -74,7 +77,8 @@
     ]
   },
   "devDependencies": {
-    "@types/react-speech-recognition": "^3.6.1"
+    "@types/react-speech-recognition": "^3.6.1",
+    "prettier": "2.7.1"
   },
   "proxy": "http://express-api:3001/"
 }
