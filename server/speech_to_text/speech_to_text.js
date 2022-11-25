@@ -15,6 +15,7 @@ function constructRequest(inputLanguageCode){
 			languageCode: inputLanguageCode,
 			enableAutomaticPunctuation: true,
 			profanityFilter: true,
+			enableWordTimeOffsets: true,
 		},
 		interimResults: true, // If you want interim results, set this to true
 	};
@@ -22,14 +23,16 @@ function constructRequest(inputLanguageCode){
 
 // the request object
 const request = {
-	config: {
-		encoding: encoding,
-		sampleRateHertz: sampleRateHertz,
-		languageCode: languageCode,
-		enableAutomaticPunctuation: true,
-		profanityFilter: true,
-	},
-	interimResults: true, // If you want interim results, set this to true
+    config: {
+      encoding: encoding,
+      sampleRateHertz: sampleRateHertz,
+      languageCode: languageCode,
+      enableAutomaticPunctuation: true,
+      profanityFilter: true,
+      enableWordTimeOffsets: true,
+      //"enable_separate_recognition_per_channel": false,
+    },
+    interimResults: true, // If you want interim results, set this to true
 };
 
 // config of the client object

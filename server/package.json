@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@google-cloud/speech": "^4.2.0",
 		"@google-cloud/storage": "^5.8.5",
+    "amqplib": "^0.10.3",
 		"axios": "^0.21.4",
 		"bcrypt": "^5.0.1",
 		"compression": "^1.7.4",
@@ -33,15 +34,15 @@
 		"mysql2": "^2.3.3-rc.0",
 		"node-record-lpcm16": "^1.0.1",
 		"openai": "^3.0.1",
-		"passport": "^0.4.1",
-		"socket.io": "^4.3.2",
+		"passport": "^0.6.0",
+		"socket.io": "^4.5.2",
 		"url": "^0.11.0",
 		"winston": "^3.7.2"
 	},
 	"devDependencies": {
 		"jest": "^27.4.7",
 		"lodash": "^4.17.21",
-		"nodemon": "^2.0.15",
+		"nodemon": "^2.0.20",
 		"prettier": "2.7.1",
 		"supertest": "^6.2.1"
 	}

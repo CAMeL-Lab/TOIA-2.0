@@ -84,7 +84,7 @@ function Player() {
 		setLanguage(history.location.state.toiaLanguage);
 		setTOIAid(history.location.state.toiaID);
 
-		if (history.location.state.toiaID != undefined) {
+		if (history.location.state.toiaID !== undefined) {
 			setLoginState(true);
 			setTOIAid(history.location.state.toiaID);
 			setName(history.location.state.toiaName);
@@ -250,7 +250,7 @@ function Player() {
 	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question = "", answer = "") {
 		axios
-			.post("/api/getSmartQuestions", {
+			.post("/api/questions/getSmartQuestions", {
 				params: {
 					toiaIDToTalk: history.location.state.toiaToTalk,
 					toiaFirstNameToTalk:
@@ -269,10 +269,11 @@ function Player() {
 				}
 
 				res.data.forEach(q => {
-					// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
+
+				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
 					// then add it to the list of possible suggestions
 					if (
-						q.question != "" &&
+						q.question !== "" &&
 						!allSuggestedQuestions.includes(q)
 					) {
 						answeredQuestions.push(q);
@@ -343,7 +344,7 @@ function Player() {
 		}
 
 		const oldQuestion = question.current;
-		if (question.current == null || question.current == "") {
+		if (question.current === null || question.current === "") {
 			setFillerPlaying(true);
 			fetchFiller();
 		} else {
@@ -404,7 +405,7 @@ function Player() {
 	}
 
 	function micStatusChange() {
-		if (micMute == true) {
+		if (micMute === true) {
 			setMicStatus(false);
 
 			setMicString("STOP ASK BY VOICE");
@@ -501,7 +502,7 @@ function Player() {
 			? textInput.current
 			: interimTextInput.current;
 
-		if (question.current != "") {
+		if (question.current !== "") {
 			const oldQuestion = question.current;
 			axios
 				.post(`/api/player`, {
@@ -637,7 +638,7 @@ function Player() {
 					</button>
 				)}
 
-				{isFillerPlaying.current == "false" ? (
+				{isFillerPlaying.current === "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
 						onClick={fetchFiller}
