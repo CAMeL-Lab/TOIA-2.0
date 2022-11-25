@@ -1,44 +1,44 @@
 [
-    {
-        "type": "greeting",
-        "displayText":"Hello!",
-        "toolTip": "Video type for initial greetings",
-        "toolTipExample": "Hi!, Hello!, Marhaba!, Nihao!",
-        "auto_question": true
-    },
-    {
-        "type": "exit",
-        "displayText":"Goodbye!",
-        "toolTip": "Video type for farewell greetings",
-        "toolTipExample": "Bye!, Nice chat!, Maa Salama!, Sayonara!",
-        "auto_question": true
-    },
-    {
-        "type": "answer",
-        "displayText":"Plain Answer",
-        "toolTip": "Video type for content answers to questions",
-        "toolTipExample": "I am 23 years old; My name is Mary. I want to work in the non-profit sector.",
-        "auto_question": false
-    },
-    {
-        "type": "no-answer",
-        "displayText":"Cannot Answer",
-        "toolTip": "Video type for questions you cannot answer or poorly understood",
-        "toolTipExample": "I did not get that; sorry, can you repeat?; please elaborate?; huh?; You can ask me about my family, my job, and my artwork...",
-        "auto_question": true
-    },
-    {
-        "type": "y/n-answer",
-        "displayText":"Yes/No Answers",
-        "toolTip": "Video type for positive/negative answers",
-        "toolTipExample": "Yes!, Right!, Yep!, No!, Never!",
-        "auto_question": false
-    },
-    {
-        "type": "filler",
-        "displayText":"Filler Between Videos",
-        "toolTip": "Video type for filler videos that will be used when waiting for the conversant to ask a question",
-        "toolTipExample": "nodding head, smiling, brushing hair, sipping coffee, scratching nose, checking phone, ...",
-        "auto_question": true
-    }
+	{
+		"type": "greeting",
+		"displayText": "Hello!",
+		"toolTip": "Video type for initial greetings",
+		"toolTipExample": "Hi!, Hello!, Marhaba!, Nihao!",
+		"auto_question": true
+	},
+	{
+		"type": "exit",
+		"displayText": "Goodbye!",
+		"toolTip": "Video type for farewell greetings",
+		"toolTipExample": "Bye!, Nice chat!, Maa Salama!, Sayonara!",
+		"auto_question": true
+	},
+	{
+		"type": "answer",
+		"displayText": "Plain Answer",
+		"toolTip": "Video type for content answers to questions",
+		"toolTipExample": "I am 23 years old; My name is Mary. I want to work in the non-profit sector.",
+		"auto_question": false
+	},
+	{
+		"type": "no-answer",
+		"displayText": "Cannot Answer",
+		"toolTip": "Video type for questions you cannot answer or poorly understood",
+		"toolTipExample": "I did not get that; sorry, can you repeat?; please elaborate?; huh?; You can ask me about my family, my job, and my artwork...",
+		"auto_question": true
+	},
+	{
+		"type": "y/n-answer",
+		"displayText": "Yes/No Answers",
+		"toolTip": "Video type for positive/negative answers",
+		"toolTipExample": "Yes!, Right!, Yep!, No!, Never!",
+		"auto_question": false
+	},
+	{
+		"type": "filler",
+		"displayText": "Filler Between Videos",
+		"toolTip": "Video type for filler videos that will be used when waiting for the conversant to ask a question",
+		"toolTipExample": "nodding head, smiling, brushing hair, sipping coffee, scratching nose, checking phone, ...",
+		"auto_question": true
+	}
 ]

@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import Carousel from 'react-elastic-carousel'
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
+import React, { useState, useEffect } from "react";
+import Carousel from "react-elastic-carousel";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
 import addButton from "../icons/add-button.svg";
 import moveIcon from "../icons/move-button.svg";
 import trashIcon from "../icons/trash-button.svg";
@@ -10,15 +10,22 @@ import history from '../services/history';
 import {Modal, Button, Confirm, Input} from 'semantic-ui-react';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
-import '@brainhubeu/react-carousel/lib/style.css';
-import axios from 'axios';
-import './AvatarGardenPage.css';
+import "@brainhubeu/react-carousel/lib/style.css";
+import axios from "axios";
+import "./AvatarGardenPage.css";
 import Tracker from "../utils/tracker";
+
+import NavBar from './NavBar.js';
 
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 
+import { useTranslation } from "react-i18next";
+
 
 export const renderSuggestedQsCard = (card, index, onClickFunc) => {
+
+    // const { t } = useTranslation();
+
     return (
         <div className="row" id={card.id_question}>
             <div onClick={(e) => {
@@ -38,8 +45,11 @@ export const renderSuggestedQsCard = (card, index, onClickFunc) => {
 }
 
 export const RecordAVideoCard = ({onClick, isDisabled}) => {
+
+    const { t } = useTranslation();
+
     return (
-        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined}
+        <div data-tooltip={(isDisabled) ? t("record_request") : undefined}
              data-inverted=""
              onClick={(e) => {
                  if (!isDisabled) onClick(e);
@@ -54,7 +64,7 @@ export const RecordAVideoCard = ({onClick, isDisabled}) => {
                             onClick={(e) => {
                                 if (!isDisabled) onClick(e);
                             }}>
-                        Add new video
+                        {t("add_new_video")}
                     </button>
                 </div>
             </div>
@@ -63,6 +73,9 @@ export const RecordAVideoCard = ({onClick, isDisabled}) => {
 }
 
 export const OnBoardingQCard = ({data, onClick}) => {
+
+    const { t } = useTranslation();
+
     return (
         <div>
             <div className="ui red card cursor-pointer" onClick={onClick}>
@@ -73,7 +86,7 @@ export const OnBoardingQCard = ({data, onClick}) => {
                 </div>
                 <div className="ui bottom attached button">
                     <i className="add icon"/>
-                    Record
+                    {t("record")}
                 </div>
             </div>
         </div>
@@ -81,8 +94,11 @@ export const OnBoardingQCard = ({data, onClick}) => {
 }
 
 export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) => {
+
+    const { t } = useTranslation();
+
     return (
-        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+        <div data-tooltip={(isDisabled) ? t("record_request") : undefined} data-inverted="">
             <div className={"ui grey card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
                 <div className="content" onClick={onClick}>
                     <div className="description two-line-ellipsis">
@@ -93,11 +109,11 @@ export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) =>
                     <div className="ui two">
                         <button className="ui labeled icon button tiny" disabled={isDisabled} onClick={onEdit}>
                             <i className="edit icon"/>
-                            Edit
+                            {t("edit")}
                         </button>
                         <button className="ui labeled icon button basic brown tiny" disabled={isDisabled}
                                 onClick={onDelete}>
-                            Delete
+                            {t("delete")}
                             <i className="trash arrow icon"/>
                         </button>
                     </div>
@@ -108,8 +124,11 @@ export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) =>
 }
 
 export const SuggestedQCardNoAction = ({data, onClick, isDisabled}) => {
+
+    const { t } = useTranslation();
+
     return (
-        <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+        <div data-tooltip={(isDisabled) ? t("record_request") : undefined} data-inverted="">
             <div className="ui grey card cursor-pointer" onClick={onClick}>
                 <div className="content">
                     <div className="description three-line-ellipsis">
@@ -118,7 +137,7 @@ export const SuggestedQCardNoAction = ({data, onClick, isDisabled}) => {
                 </div>
                 <div className="ui bottom attached button">
                     <i className="add icon"/>
-                    Record
+                    {t("record")}
                 </div>
             </div>
         </div>
@@ -126,6 +145,9 @@ export const SuggestedQCardNoAction = ({data, onClick, isDisabled}) => {
 }
 
 export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
+
+    const { t } = useTranslation();
+
     return (
         <div>
             <div className="ui card bg-toia-theme cursor-pointer">
@@ -139,10 +161,10 @@ export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
                     <div className="ui two">
                         <button className="ui labeled icon button tiny" onClick={onEdit}>
                             <i className="edit icon"/>
-                            Edit
+                            {t("edit")}
                         </button>
                         <button className="ui labeled icon button tiny" onClick={onDelete}>
-                            Delete
+                            {t("delete")}
                             <i className="trash arrow icon red"/>
                         </button>
                     </div>
@@ -152,7 +174,144 @@ export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
     )
 }
 
+// export const renderSuggestedQsCard = (card, index, onClickFunc) => {
+//     return (
+//         <div className="row" id={card.id_question}>
+//             <div onClick={(e) => {
+//                 onClickFunc(e, card)
+//             }} className="column round-styling-first" style={{
+//                 backgroundImage: `url(${card.pic})`,
+//                 cursor: `pointer`,
+//                 backgroundSize: "132px 138.6px"
+//             }} //video thumbnail
+//             />
+//             <div className="column garden-question round-styling-second">
+//                 <h1 className="garden-name garden-font-class-5" //question
+//                     style={{marginTop: "10px"}}>{card.question}</h1>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const RecordAVideoCard = ({onClick, isDisabled}) => {
+//     return (
+//         <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined}
+//              data-inverted=""
+//              onClick={(e) => {
+//                  if (!isDisabled) onClick(e);
+//              }}>
+//             <div className={"ui card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
+//                 <div className="image">
+//                     <img alt=""
+//                          src={addButton}/>
+
+//                     <button className="ui bottom attached button fluid"
+//                             disabled={isDisabled}
+//                             onClick={(e) => {
+//                                 if (!isDisabled) onClick(e);
+//                             }}>
+//                         Add new video
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const OnBoardingQCard = ({data, onClick}) => {
+//     return (
+//         <div>
+//             <div className="ui red card cursor-pointer" onClick={onClick}>
+//                 <div className="content">
+//                     <div className="description three-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="ui bottom attached button">
+//                     <i className="add icon"/>
+//                     Record
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) => {
+//     return (
+//         <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+//             <div className={"ui grey card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
+//                 <div className="content" onClick={onClick}>
+//                     <div className="description two-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="extra content">
+//                     <div className="ui two">
+//                         <button className="ui labeled icon button tiny" disabled={isDisabled} onClick={onEdit}>
+//                             <i className="edit icon"/>
+//                             Edit
+//                         </button>
+//                         <button className="ui labeled icon button basic brown tiny" disabled={isDisabled}
+//                                 onClick={onDelete}>
+//                             Delete
+//                             <i className="trash arrow icon"/>
+//                         </button>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const SuggestedQCardNoAction = ({data, onClick, isDisabled}) => {
+//     return (
+//         <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+//             <div className="ui grey card cursor-pointer" onClick={onClick}>
+//                 <div className="content">
+//                     <div className="description three-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="ui bottom attached button">
+//                     <i className="add icon"/>
+//                     Record
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
+//     return (
+//         <div>
+//             <div className="ui card bg-toia-theme cursor-pointer">
+//                 <div className="content" onClick={onClick}>
+
+//                     <div className="description text-white two-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="extra content">
+//                     <div className="ui two">
+//                         <button className="ui labeled icon button tiny" onClick={onEdit}>
+//                             <i className="edit icon"/>
+//                             Edit
+//                         </button>
+//                         <button className="ui labeled icon button tiny" onClick={onDelete}>
+//                             Delete
+//                             <i className="trash arrow icon red"/>
+//                         </button>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
 function AvatarGardenPage() {
+
+    const { t } = useTranslation();
+
     const [toiaName, setName] = useState(null);
     const [toiaLanguage, setLanguage] = useState(null);
     const [toiaID, setTOIAid] = useState(null);
@@ -610,7 +769,7 @@ function AvatarGardenPage() {
                 <Modal.Header>Edit Suggestion</Modal.Header>
                 <Modal.Content>
                     <Input fluid
-                           placeholder='Type something...'
+                           placeholder={t("type_request")}
                            disabled={waitingServerResponse}
                            onChange={(e) => {
                                setSuggestionNewValue(e.target.value);
@@ -627,7 +786,7 @@ function AvatarGardenPage() {
                     <Button
                         disabled={waitingServerResponse}
                         loading={waitingServerResponse}
-                        content="Update"
+                        content={t("update")}
                         labelPosition='right'
                         icon='checkmark'
                         onClick={onEditSuggestion}
@@ -672,7 +831,7 @@ function AvatarGardenPage() {
 
                     <div className="ui gray label medium">
                         <i aria-hidden="true" className="video icon"/>
-                        Total Videos In Stream:
+                        {t("total_videos_in_stream")}
                         <div className="detail">{card.videos_count}</div>
                     </div>
                 </div>
@@ -698,58 +857,6 @@ function AvatarGardenPage() {
     function handleSelectCurrentStream(currentItemObject, currentPageIndex) {
         setCurrentStream(currentItemObject.item);
         fetchRecordedQuestions(currentItemObject.item.id);
-    }
-
-    /*navbar navigation fucntions*/
-    function home() {
-        history.push({
-            pathname: '/',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-            }
-        });
-    }
-
-    function about() {
-        history.push({
-            pathname: '/about',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-            }
-        });
-    }
-
-    function library() {
-        history.push({
-            pathname: '/library',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-            }
-        });
-    }
-
-    function garden() {
-        history.push({
-            pathname: '/mytoia',
-            state: {
-                toiaName,
-                toiaLanguage,
-                toiaID
-            }
-        });
-    }
-
-    function logout() {
-        //logout function needs to be implemented (wahib)
-        history.push({
-            pathname: '/',
-        });
     }
 
     /*navigations to pages from buttons*/
@@ -852,6 +959,16 @@ function AvatarGardenPage() {
 
     return (
         <div className="garden-page">
+
+            <NavBar
+            toiaName={toiaName}
+            toiaID={toiaID}
+            isLoggedIn={true}
+            toiaLanguage={toiaLanguage}
+            history={history}
+            showLoginModal={false}
+            />
+
             <Modal //This is the warning pop menu, that shows whenever you delete or move videos
                 size='large'
                 closeIcon={true}
@@ -860,8 +977,8 @@ function AvatarGardenPage() {
                 onClose={() => dispatch({type: 'close'})}
             >
                 <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Are You Sure??</h1>
-                    <p className="login_blurb login-montserrat-black">This action will be irreversible</p>
+                    <h1 className="login_welcome login-opensans-normal">{t("confirm")}</h1>
+                    <p className="login_blurb login-montserrat-black">{t("notify_as_irreversible")}</p>
                 </Modal.Header>
                 <Modal.Actions>
                     <Button color='green' inverted onClick={groupSelect}>
@@ -878,12 +995,11 @@ function AvatarGardenPage() {
             >
                 <Modal.Header className="login_header">
                     <h1 className="login_welcome login-opensans-normal">Account Settings</h1>
-                    <p className="login_blurb login-montserrat-black">Edit the following information about your
-                        account</p>
+                    <p className="login_blurb login-montserrat-black">{t("edit_account")}</p>
                 </Modal.Header>
                 <Modal.Content>
                     <div className="garden-settings-name garden-font-class-2" //the name input field
-                    >Name:
+                    >{t("name_input")}
                     </div>
                     <input
                         className="garden-settings-name_box garden-font-class-2"
@@ -892,7 +1008,7 @@ function AvatarGardenPage() {
                         onChange={e => (settingData[0].name = e.target.value)}
                     />
                     <div className="garden-settings-email garden-font-class-2" //the email input field
-                    >Email:
+                    >{t("email_input")}
                     </div>
                     <input
                         className="garden-settings-email_box garden-font-class-2"
@@ -901,7 +1017,7 @@ function AvatarGardenPage() {
                         onChange={e => (settingData[0].email = e.target.value)}
                     />
                     <div className="garden-settings-pass garden-font-class-2" //the password input field
-                    >Password:
+                    >t("password_input")
                     </div>
                     <input
                         className="garden-settings-pass_box garden-font-class-2"
@@ -910,7 +1026,7 @@ function AvatarGardenPage() {
                         onChange={e => (settingData[0].password = e.target.value)}
                     />
                     <div className="garden-settings-lang garden-font-class-2" //the language input field
-                    >Language:
+                    >{t("language_input")}
                     </div>
                     <select className="garden-settings-lang_box garden-font-class-2"
                             onChange={e => (settingData[0].language = e.target.value)} /*required={true}*/>
@@ -990,12 +1106,12 @@ function AvatarGardenPage() {
                     </select>
                     <div className="garden-settings-delete" //delete button, function TBD
                     >
-                        <h1 className="garden-font-class-2 garden-settings-text">Delete</h1>
+                        <h1 className="garden-font-class-2 garden-settings-text">{t("delete")}</h1>
                     </div>
                     <div onClick={save}
                          className="garden-settings-save" //saves changes made inaccount settings, function TBD
                     >
-                        <h1 className="garden-font-class-2 garden-settings-text">Save</h1>
+                        <h1 className="garden-font-class-2 garden-settings-text">{t("save")}</h1>
                     </div>
                 </Modal.Content>
             </Modal>
@@ -1008,13 +1124,12 @@ function AvatarGardenPage() {
                 onClose={() => dispatch3({type: 'close'})}
             >
                 <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Edit Stream </h1>
-                    <p className="login_blurb login-montserrat-black">Edit the following information about your
-                        stream</p>
+                    <h1 className="login_welcome login-opensans-normal">{t("edit_stream")}</h1>
+                    <p className="login_blurb login-montserrat-black">{t("edit_stream_text")}</p>
                 </Modal.Header>
                 <Modal.Content>
                     <div className="stream-settings-name garden-font-class-2"  //the name input field
-                    >Name:
+                    >{t("name_input")}
                     </div>
                     <input
                         className="stream-settings-name_box garden-font-class-2"
@@ -1024,18 +1139,18 @@ function AvatarGardenPage() {
                         required={true}
                     />
                     <div className="stream-settings-email garden-font-class-2"  //the email input field
-                    >Privacy:
+                    >{t("privacy_input")}
                     </div>
                     <select className="stream-settings-email_box garden-font-class-2"
                             onChange={e => (setNewStreamPrivacy(e.target.value))}
                             required={true}>
                         <option value="" disabled selected hidden>{stream_privacy}</option>
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
+                        <option value="public">{t("public")}</option>
+                        <option value="private">{t("private")}</option>
                     </select>
 
                     <div className="stream-settings-lang garden-font-class-2" //the language input field
-                    >Bio:
+                    >{t("bio_input")}
                     </div>
 
                     <textarea
@@ -1049,7 +1164,7 @@ function AvatarGardenPage() {
                     <div className="stream-photo-upload garden-font-class-2" //delete button, function TBD
                     >
                         <form>
-                            <label htmlFor="img">Select image:</label>
+                            <label htmlFor="img">{t("select_img")}</label>
                             <input className="stream-photo-upload-choose garden-font-class-2" type="file" id="img"
                                    name="img" accept="image/*" onChange={setImg}/>
                             <input className="stream-settings-save garden-font-class-2 stream-settings-text"
@@ -1067,13 +1182,12 @@ function AvatarGardenPage() {
                 onClose={() => dispatch4({type: 'close'})}
             >
                 <Modal.Header className="login_header">
-                    <h1 className="login_welcome login-opensans-normal">Add Stream </h1>
-                    <p className="login_blurb login-montserrat-black">Add the following information about your
-                        stream</p>
+                    <h1 className="login_welcome login-opensans-normal">{t("add_stream")}</h1>
+                    <p className="login_blurb login-montserrat-black">{t("add_stream_text")}</p>
                 </Modal.Header>
                 <Modal.Content>
                     <div className="stream-settings-name garden-font-class-2"  //the name input field
-                    >Name:
+                    >{t("name_input")}
                     </div>
                     <input
                         className="stream-settings-name_box garden-font-class-2"
@@ -1083,18 +1197,18 @@ function AvatarGardenPage() {
                         required={true}
                     />
                     <div className="stream-settings-email garden-font-class-2"  //the email input field
-                    >Privacy:
+                    >{t("privacy_input")}
                     </div>
                     <select className="stream-settings-email_box garden-font-class-2"
                             onChange={e => (setNewStreamPrivacy(e.target.value))}
                             required={true}>
                         <option value="" disabled selected hidden>Public</option>
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
+                        <option value="public">{t("public")}</option>
+                        <option value="private">{t("private")}</option>
                     </select>
 
                     <div className="stream-settings-lang garden-font-class-2" //the language input field
-                    >Bio:
+                    >{t("bio_input")}
                     </div>
 
                     <textarea
@@ -1108,7 +1222,7 @@ function AvatarGardenPage() {
                     <div className="stream-photo-upload garden-font-class-2" //delete button, function TBD
                     >
                         <form>
-                            <label htmlFor="img">Select image:</label>
+                            <label htmlFor="img">{t("select_img")}</label>
                             <input className="stream-photo-upload-choose garden-font-class-2" type="file" id="img"
                                    name="img" accept="image/*" onChange={setImg}/>
                             <input className="stream-settings-save garden-font-class-2 stream-settings-text"
@@ -1128,7 +1242,7 @@ function AvatarGardenPage() {
                 }}
             >
                 <Modal.Header className="modal-header">
-                    <div>Video entry</div>
+                    <div>{t("video_entry")}</div>
                 </Modal.Header>
                 <Modal.Content>
                     <div id="typeOfVideo">Video Type: {playbackVideoType}</div>
@@ -1156,27 +1270,11 @@ function AvatarGardenPage() {
                 </Modal.Actions>
             </Modal>
 
-            <div className="nav-heading-bar" //Nav bar
-            >
-                <div onClick={home} className="nav-toia_icon app-opensans-normal">
-                    TOIA
-                </div>
-                <div onClick={about} className="nav-about_icon app-monsterrat-black nav-deselect">
-                    About Us
-                </div>
-                <div onClick={library} className="nav-talk_icon app-monsterrat-black nav-deselect">
-                    Talk To TOIA
-                </div>
-                <div onClick={garden} className="nav-my_icon app-monsterrat-black nav-selected">
-                    My TOIA
-                </div>
-                <div onClick={logout} className="nav-login_icon app-monsterrat-black nav-deselect">
-                    Logout
-                </div>
-            </div>
+            
+            
             <div className="section3">
                 <h1 className="garden-title garden-font-class-1 " //welcome message
-                >Hi {toiaName}</h1>
+                >{t("greet_user", {toiaName: toiaName})}</h1>
 
                 <div className="stats-container">
                     <div className="stats-wrapper">
@@ -1184,7 +1282,7 @@ function AvatarGardenPage() {
                             {videosCount}
                         </div>
                         <div className="stats-label">
-                            Total Videos
+                            {t("total_videos")}
                         </div>
                     </div>
 
@@ -1193,7 +1291,7 @@ function AvatarGardenPage() {
                             {(videosTotalDuration)? (videosTotalDuration / 60).toFixed(1): 0}Min
                         </div>
                         <div className="stats-label">
-                            Total Videos Length
+                            {t("total_videos_length")}
                         </div>
                     </div>
                 </div>
@@ -1204,7 +1302,7 @@ function AvatarGardenPage() {
             </div>
             <div className="section1">
 
-                <h1 className="stream-heading garden-font-class-3 ">My TOIA Streams</h1>
+                <h1 className="stream-heading garden-font-class-3 ">{t("my_toia_streams")}</h1>
 
                 <Carousel itemsToShow={1} showArrows={false} onChange={handleSelectCurrentStream}>
                     {streamList.map(renderStream)}
@@ -1288,7 +1386,7 @@ function AvatarGardenPage() {
                 <Confirm
                     open={showVideoDeletePopup}
                     header={"Confirm Deletion"}
-                    content={"This action is irreversible."}
+                    content={t("notify_as_irreversible")}
                     confirmButton={"Delete"}
                     onCancel={() => {
                         setShowVideoDeletePopup(false)
@@ -1330,6 +1428,7 @@ function AvatarGardenPage() {
 
             </div>
             <NotificationContainer/>
+            
         </div>
     );
 
