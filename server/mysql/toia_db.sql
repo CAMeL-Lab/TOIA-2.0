@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.1.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jun 23, 2022 at 06:58 PM
+-- Generation Time: Nov 27, 2022 at 06:49 AM
 -- Server version: 8.0.27
--- PHP Version: 7.4.27
+-- PHP Version: 8.0.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -35,7 +35,9 @@ CREATE TABLE `conversations_log` (
   `timestamp` bigint NOT NULL,
   `filler` tinyint(1) NOT NULL,
   `question_asked` text,
-  `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+  `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `ada_similarity_score` float DEFAULT NULL,
+  `mode` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -164,7 +166,7 @@ CREATE TABLE `videos_questions_streams` (
   `id_question` int NOT NULL,
   `id_stream` int NOT NULL,
   `type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
-  `ada_search` text NOT NULL
+  `ada_search` text CHARACTER SET utf8 COLLATE utf8_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
