@@ -179,7 +179,7 @@ const linkStreamVideoQuestion = (streamID, videoID, quesID, type, ada_search=nul
 			let linkQuesQuery = `INSERT INTO videos_questions_streams(id_video, id_question, id_stream, type, ada_search) VALUES(?, ?, ?, ?, ?);`;
 			connection.query(
 				linkQuesQuery,
-				[videoID, quesID, streamID, type, ada_search],
+				[videoID, quesID, streamID, type, JSON.stringify(ada_search)],
 				err => {
 					if (err) throw err;
 					console.log(

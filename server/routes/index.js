@@ -33,6 +33,7 @@ const {
 	getAccessibleStreams,
 	getVideoDetails,
 	getExactMatchVideo,
+	getEmbeddings,
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -1043,11 +1044,20 @@ router.post("/recorder", cors(), async (req, res) => {
 								}
 
 								for (const streamToLink of videoStreams) {
+									let embeddings = "";
+									try {
+										console.log("Generating Embeddings: question: ", q.question, " answer: ", answer);
+										embeddings = await getEmbeddings(q.question, answer);
+									} catch (err) {
+										console.log("Failed to generate embeddings");
+										console.log(err);
+									}
 									await linkStreamVideoQuestion(
 										streamToLink.id,
 										videoID,
 										q_id,
 										fields.videoType[0],
+										embeddings,
 									);
 								}
 

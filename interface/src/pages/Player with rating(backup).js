@@ -11,6 +11,7 @@ import history from "../services/history";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
+import PopModal from "../userRating/popModal";
 import Tracker from "../utils/tracker";
 import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
@@ -38,7 +39,11 @@ function Player() {
 	let allSuggestedQuestions = [];
 
 	const [videoProperties, setVideoProperties] = useState(null);
+	const [hasRated, setHasRated] = useState(true); // controll the rating field
 	const [transcribedAudio, setTranscribedAudio] = useState("");
+	const [ratingParams, setRatingParams] = useState({
+		active: false,
+	});
 
 	// suggested questions for cards
 
@@ -150,6 +155,11 @@ function Player() {
 	}
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
+		if (!hasRated) {
+			NotificationManager.warning("Please provide a rating", "", 3000);
+			return;
+		}
+
 		const mode = "CARD";
 
 		const oldQuestion = question;
@@ -182,6 +192,11 @@ function Player() {
 					setVideoProperties({
 						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 						onEnded: () => {
+							setRatingParams({
+								video_id: res.data.video_id,
+								question: oldQuestion.question,
+							});
+							setHasRated(false);
 							fetchFiller();
 						},
 						source: res.data.url,
@@ -278,7 +293,51 @@ function Player() {
 		}
 	}
 
+	useEffect(() => {
+		if (hasRated) {
+			if (interacting.current == "true") {
+				speechToTextUtils.initRecording(handleDataReceived, error => {
+					console.error("Error when transcribing", error);
+				});
+			}
+		}
+	}, [hasRated]);
+
+	const recordUserRating = function (ratingValue) {
+		const options = {
+			method: "POST",
+			url: "/api/save_player_feedback",
+			headers: { "Content-Type": "application/json" },
+			data: {
+				...(history.location.state.toiaID && {
+					user_id: history.location.state.toiaID,
+				}),
+				video_id: ratingParams.video_id,
+
+				question: ratingParams.question,
+				rating: ratingValue,
+			},
+		};
+
+		axios
+			.request(options)
+			.then(function (response) {
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.error(error);
+			})
+			.finally(() => {
+				setHasRated(true);
+			});
+	};
+
 	function fetchData(mode = "UNKNOWN") {
+		if (!hasRated) {
+			NotificationManager.warning("Please provide a rating", "", 3000);
+			return;
+		}
+
 		const oldQuestion = question.current;
 		if (question.current == null || question.current == "") {
 			setFillerPlaying(true);
@@ -311,6 +370,11 @@ function Player() {
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 							onEnded: () => {
+								setRatingParams({
+									video_id: res.data.video_id,
+									question: oldQuestion,
+								});
+								setHasRated(false);
 								fetchFiller();
 							},
 							source: res.data.url,
@@ -342,10 +406,18 @@ function Player() {
 			setMicString("STOP ASK BY VOICE");
 			interacting.current = "true";
 
-			speechToTextUtils.initRecording(handleDataReceived, error => {
-				console.error("Error when transcribing", error);
-				// No further action needed, as stream already closes itself on error
-			});
+			if (hasRated) {
+				speechToTextUtils.initRecording(handleDataReceived, error => {
+					console.error("Error when transcribing", error);
+					// No further action needed, as stream already closes itself on error
+				});
+			} else {
+				NotificationManager.warning(
+					"Please provide a rating",
+					"",
+					3000,
+				);
+			}
 		} else {
 			speechToTextUtils.stopRecording();
 			setMicStatus(true);
@@ -412,6 +484,10 @@ function Player() {
 	}
 
 	function submitResponse(e, mode = "UNKNOWN") {
+		if (!hasRated) {
+			NotificationManager.warning("Please provide a rating", "", 3000);
+			return;
+		}
 
 		question.current = textInput.current
 			? textInput.current
@@ -442,6 +518,11 @@ function Player() {
 						setVideoProperties({
 							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
 							onEnded: () => {
+								setRatingParams({
+									video_id: res.data.video_id,
+									question: oldQuestion,
+								});
+								setHasRated(false);
 								fetchFiller();
 							},
 							source: res.data.url,
@@ -588,7 +669,8 @@ function Player() {
 				size="large"
 				style={inlineStyle.modal}
 				open={open}
-				onClose={() => dispatch({ type: "close" })}>
+				onClose={() => dispatch({ type: "close" })}
+			>
 				<Modal.Header className="login_header">
 					<h1 className="login_welcome login-opensans-normal">
 						Welcome Back
@@ -625,37 +707,44 @@ function Player() {
 						/>
 						<div
 							className="login_text login-montserrat-black"
-							onClick={signup}>
+							onClick={signup}
+						>
 							Don't have an Account? Sign Up
 						</div>
 					</form>
 				</Modal.Content>
 			</Modal>
 			<div className="nav-heading-bar">
+				{!hasRated && <PopModal userRating={recordUserRating} />}
 
 				<div
 					onClick={home}
-					className="nav-toia_icon app-opensans-normal">
+					className="nav-toia_icon app-opensans-normal"
+				>
 					TOIA
 				</div>
 				<div
 					onClick={about}
-					className="nav-about_icon app-monsterrat-black ">
+					className="nav-about_icon app-monsterrat-black "
+				>
 					About Us
 				</div>
 				<div
 					onClick={library}
-					className="nav-talk_icon app-monsterrat-black ">
+					className="nav-talk_icon app-monsterrat-black "
+				>
 					Talk To TOIA
 				</div>
 				<div
 					onClick={garden}
-					className="nav-my_icon app-monsterrat-black ">
+					className="nav-my_icon app-monsterrat-black "
+				>
 					My TOIA
 				</div>
 				<div
 					onClick={isLoggedIn ? logout : openModal}
-					className="nav-login_icon app-monsterrat-black">
+					className="nav-login_icon app-monsterrat-black"
+				>
 					{isLoggedIn ? "Logout" : "Login"}
 				</div>
 			</div>
@@ -671,7 +760,8 @@ function Player() {
 						<CSSTransition
 							key={videoProperties.key}
 							timeout={500}
-							classNames="fade">
+							classNames="fade"
+						>
 							<VideoPlaybackPlayer
 								onEnded={videoProperties.onEnded}
 								key={videoProperties.key}
@@ -693,7 +783,8 @@ function Player() {
 					<button
 						color="green"
 						className="ui linkedin microphone button mute-button"
-						onClick={micStatusChange}>
+						onClick={micStatusChange}
+					>
 						<i aria-hidden="true" class="">
 							<RecordVoiceOverRoundedIcon
 								sx={{
@@ -708,7 +799,8 @@ function Player() {
 				) : (
 					<button
 						className="ui secondary button mute-button"
-						onClick={micStatusChange}>
+						onClick={micStatusChange}
+					>
 						<i aria-hidden="true" class="">
 							<VoiceOverOffRoundedIcon />
 						</i>
@@ -719,12 +811,14 @@ function Player() {
 				{isFillerPlaying.current == "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
-						onClick={fetchFiller}>
+						onClick={fetchFiller}
+					>
 						{" "}
 						Skip to End{" "}
 						<i
 							aria-hidden="true"
-							class="angle double right icon"></i>
+							class="angle double right icon"
+						></i>
 					</button>
 				) : null}
 
@@ -747,6 +841,7 @@ function Player() {
 								setRefreshQuestionsFalse={
 									setRefreshQuestionsFalse
 								}
+								hasRated={hasRated}
 								notificationManager={NotificationManager}
 							/>
 
@@ -755,7 +850,8 @@ function Player() {
 								className="ui linkedin button submit-button"
 								onClick={e => {
 									submitResponse(e, "SEARCH");
-								}}>
+								}}
+							>
 								<i aria-hidden="true" class="send icon"></i>
 								ASK
 							</button>
