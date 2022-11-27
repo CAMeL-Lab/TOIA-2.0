@@ -649,3 +649,7 @@ video {
 	margin-top: 8px;
 	border-radius: 5px;
 }
+
+.cursor-pointer {
+	cursor: pointer;
+}

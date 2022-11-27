@@ -1,30 +1,26 @@
-import React, { useState, useEffect, useRef } from "react";
-import Webcam from "react-webcam";
 import axios from "axios";
-import SpeechRecognition, {
-	useSpeechRecognition,
-} from "react-speech-recognition";
-import history from "../services/history";
-import { Button, Image, Modal, Popup, TextArea, Icon } from "semantic-ui-react";
-import { Multiselect } from "multiselect-react-dropdown";
 import { default as EditCreateMultiSelect } from "editable-creatable-multiselect";
+import getBlobDuration from "get-blob-duration";
+import { Multiselect } from "multiselect-react-dropdown";
+import React, { useEffect, useRef, useState } from "react";
+import { NotificationManager } from "react-notifications";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import { useSpeechRecognition } from "react-speech-recognition";
 import Switch from "react-switch";
-import {
-	RecordAVideoCard,
-	OnBoardingQCard,
-	SuggestedQCard,
-	SuggestedQCardNoAction,
-} from "./AvatarGardenPage";
+import Webcam from "react-webcam";
+import { Button, Icon, Image, Modal, Popup, TextArea } from "semantic-ui-react";
+import videoTypesJSON from "../configs/VideoTypes.json";
 import CheckMarkIcon from "../icons/check-mark-success1.webp";
 import RecordButton from "../icons/record1.png";
 import RecordingGif from "../icons/recording51.gif";
-import videoTypesJSON from "../configs/VideoTypes.json";
-import io from "socket.io-client";
+import history from "../services/history";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
-import NotificationContainer from "react-notifications/lib/NotificationContainer";
-import { NotificationManager } from "react-notifications";
-import getBlobDuration from "get-blob-duration";
+import {
+	OnBoardingQCard,
+	RecordAVideoCard,
+	SuggestedQCardNoAction,
+} from "./AvatarGardenPage";
 
 const videoConstraints = {
 	width: 720,
@@ -57,8 +53,7 @@ function ModalQSuggestion(props) {
 			open={props.active}
 			onClose={ModalOnClose}
 			onOpen={ModalOnOpen}
-			trigger={<Button>Question Suggestion Modal</Button>}
-		>
+			trigger={<Button>Question Suggestion Modal</Button>}>
 			<Modal.Header>Successful! Your TOIA has been saved.</Modal.Header>
 			<Modal.Content image scrolling>
 				<Image size="medium" src={CheckMarkIcon} wrapped />
@@ -123,6 +118,7 @@ function Recorder() {
 		command: "*",
 	});
 
+	const uploadElementRef = useRef(null);
 	const webcamRef = useRef(null);
 	const mediaRecorderRef = useRef(null);
 	const [capturing, setCapturing] = useState(false);
@@ -630,6 +626,7 @@ function Recorder() {
 		save_as_new = false,
 		old_video_id = "",
 		old_video_type = "",
+		from_upload = false,
 	) => {
 		return new Promise((resolve, reject) => {
 			let endTimestamp = +new Date();
@@ -647,9 +644,11 @@ function Recorder() {
 			form.append("streams", JSON.stringify(listStreams));
 			form.append("video_duration", videoDuration.toString());
 
-			form.append("start_time", recordStartTimestamp);
-			form.append("end_time", endTimestamp);
-			setRecordEndTimestamp(endTimestamp);
+			if (!from_upload){
+				form.append("start_time", recordStartTimestamp);
+				form.append("end_time", endTimestamp);
+				setRecordEndTimestamp(endTimestamp);
+			}
 
 			if (is_editing) {
 				form.append("is_editing", true);
@@ -947,8 +946,7 @@ function Recorder() {
 									: backgroundDefaultColor,
 						}}
 						onClick={onClickHandler}
-						video-type={props.type}
-					>
+						video-type={props.type}>
 						{props.buttonText}
 					</div>
 				}
@@ -979,6 +977,20 @@ function Recorder() {
 		return jsx;
 	};
 
+	const handleVideoUpload = e => {
+		const file = e.target.files[0];
+		if (file) {
+			setRecordedVideo(file);
+			setAnswerProvided("");
+			setViewingRecordedVideo(true);
+		}
+	};
+
+	const onUploadClick = () => {
+		// simulate click on hidden file input element
+		uploadElementRef.current.click();
+	};
+
 	return (
 		<div className="record-page">
 			<ModalQSuggestion
@@ -1000,32 +1012,27 @@ function Recorder() {
 			<div className="nav-heading-bar">
 				<div
 					onClick={navigateToHome}
-					className="nav-toia_icon app-opensans-normal"
-				>
+					className="nav-toia_icon app-opensans-normal">
 					TOIA
 				</div>
 				<div
 					onClick={navigateToAbout}
-					className="nav-about_icon app-monsterrat-black"
-				>
+					className="nav-about_icon app-monsterrat-black">
 					About Us
 				</div>
 				<div
 					onClick={navigateToLibrary}
-					className="nav-talk_icon app-monsterrat-black "
-				>
+					className="nav-talk_icon app-monsterrat-black ">
 					Talk To TOIA
 				</div>
 				<div
 					onClick={navigateToMyTOIA}
-					className="nav-my_icon app-monsterrat-black "
-				>
+					className="nav-my_icon app-monsterrat-black ">
 					My TOIA
 				</div>
 				<div
 					onClick={logout}
-					className="nav-login_icon app-monsterrat-black "
-				>
+					className="nav-login_icon app-monsterrat-black ">
 					Logout
 				</div>
 			</div>
@@ -1043,8 +1050,7 @@ function Recorder() {
 							backgroundColor: isPrivate
 								? backgroundDefaultColor
 								: backgroundActiveColor,
-						}}
-					>
+						}}>
 						<span>Public</span>
 						<Switch
 							onChange={handlePrivacySwitch}
@@ -1122,14 +1128,13 @@ function Recorder() {
 										recordedChunks.length > 0 &&
 										!isRecording
 									}
-									content={"Record a video to proceed"}
+									content={"Record/Upload a video to proceed"}
 									trigger={
 										<div
 											style={{
 												display: "inline-block",
 											}}
-											className="right floated recorder-next-btn-wrapper"
-										>
+											className="right floated recorder-next-btn-wrapper">
 											<Button
 												icon
 												labelPosition="right"
@@ -1142,8 +1147,7 @@ function Recorder() {
 														recordedChunks.length >
 														0
 													) || isRecording
-												}
-											>
+												}>
 												Next
 												<Icon name="right arrow" />
 											</Button>
@@ -1156,12 +1160,27 @@ function Recorder() {
 										icon
 										labelPosition="left"
 										className="right floated"
-										onClick={handleStartCaptureClick}
-									>
+										onClick={handleStartCaptureClick}>
 										Record Again
 										<Icon name="repeat" />
 									</Button>
 								)}
+
+								<div
+									className="ui labeled icon button right floated cursor-pointer"
+									onClick={onUploadClick}>
+									<i className="cloud upload icon" />
+									<input
+										type="file"
+										name="uploadVideo"
+										id="videoUpload"
+										style={{ display: "none" }}
+										accept="video/*"
+										ref={uploadElementRef}
+										onChange={handleVideoUpload}
+									/>
+									Upload
+								</div>
 							</div>
 
 							<Webcam
@@ -1182,8 +1201,7 @@ function Recorder() {
 								<button
 									className="icon tooltip videoControlButtons"
 									onClick={handleStopCaptureClick}
-									data-tooltip="Stop Recording"
-								>
+									data-tooltip="Stop Recording">
 									{/* <i className="fa fa-stop"/> */}
 									{/* <i class="huge icons"> */}
 									{/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
@@ -1207,8 +1225,7 @@ function Recorder() {
 								<button
 									className="icon tooltip videoControlButtons cursor-pointer"
 									onClick={handleStartCaptureClick}
-									data-tooltip="Start Recording"
-								>
+									data-tooltip="Start Recording">
 									{/* <i className="fa fa-video-camera"/> */}
 									<img
 										src={RecordButton}
@@ -1225,8 +1242,7 @@ function Recorder() {
 									onClick={() => {
 										togglePreviewBox();
 									}}
-									data-tooltip="Save Video"
-								>
+									data-tooltip="Save Video">
 									<i className="fa fa-check" />
 								</button>
 							)}
@@ -1254,8 +1270,7 @@ function Recorder() {
 													disabled={
 														waitingServerResponse ||
 														!videoDuration
-													}
-												>
+													}>
 													Save As New
 												</Button>
 											}
@@ -1268,8 +1283,7 @@ function Recorder() {
 												waitingServerResponse ||
 												!videoDuration
 											}
-											positive
-										>
+											positive>
 											Update
 										</Button>
 									</Button.Group>
@@ -1282,8 +1296,7 @@ function Recorder() {
 											waitingServerResponse ||
 											!videoDuration
 										}
-										onClick={handleDownload}
-									>
+										onClick={handleDownload}>
 										Save Video
 									</Button>
 								)}
@@ -1295,8 +1308,7 @@ function Recorder() {
 									onClick={() =>
 										setViewingRecordedVideo(false)
 									}
-									disabled={waitingServerResponse}
-								>
+									disabled={waitingServerResponse}>
 									Record Again
 									<Icon name="repeat" />
 								</Button>
@@ -1323,8 +1335,7 @@ function Recorder() {
 											videoPlaybackRef.current.currentTime = 0;
 										}
 									}}
-									ref={videoPlaybackRef}
-								>
+									ref={videoPlaybackRef}>
 									<source
 										src={
 											recordedVideo
