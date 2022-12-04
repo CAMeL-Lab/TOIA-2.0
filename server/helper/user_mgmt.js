@@ -493,7 +493,6 @@ const saveConversationLog = (
 };
 
 const canAccessStream = (user_id, stream_id) => {
-	return true;
 	return new Promise(resolve => {
 		let query = `SELECT 1 FROM stream_view_permission WHERE toia_id = ? AND stream_id = ? UNION SELECT 1 FROM stream WHERE id_stream = ? AND toia_id = ?`;
 		connection.query(
@@ -513,8 +512,8 @@ const canAccessStream = (user_id, stream_id) => {
 
 const getAccessibleStreams = user_id => {
 	return new Promise(resolve => {
-		// let query = `(SELECT id_stream FROM stream where toia_id = ?) UNION (SELECT stream_id FROM stream_view_permission WHERE toia_id = ?);`;
-		let query = `SELECT id_stream FROM stream`;
+		let query = `(SELECT id_stream FROM stream where toia_id = ?) UNION (SELECT stream_id FROM stream_view_permission WHERE toia_id = ?);`;
+		// let query = `SELECT id_stream FROM stream`;
 		connection.query(query, [user_id, user_id], (err, entries) => {
 			if (err) throw err;
 			let stream_ids = entries.map(item => {
