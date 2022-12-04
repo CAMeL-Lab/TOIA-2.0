@@ -211,7 +211,7 @@ function Player() {
 			if (data.isFinal) {
 				question.current = data.alternatives[0].transcript;
 
-				speechToTextUtils.stopRecording();
+				// speechToTextUtils.stopRecording();
 				fetchData("VOICE");
 			}
 		} else {
