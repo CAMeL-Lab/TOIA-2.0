@@ -64,15 +64,6 @@ export default function SuggestionCards(props) {
 	};
 
 	const askQuestion = (questionCard, setQuestionCard) => {
-		if (!props.hasRated) {
-			props.notificationManager.warning(
-				"Please provide a rating",
-				"",
-				3000,
-			);
-			return;
-		}
-
 		// console.log("askQuestion:");
 		props.askQuestion(questionCard.questionData);
 		questionCard.waiting = true;
