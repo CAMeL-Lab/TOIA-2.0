@@ -821,7 +821,7 @@ function AvatarGardenPage() {
 				/>
 				{streamSetting}
 
-				<div onClick={album_page}>
+				<div>
 					<h1
 						className="t1 garden-font-class-2" //name of user
 					>
@@ -927,17 +927,6 @@ function AvatarGardenPage() {
 	function add() {
 		history.push({
 			pathname: "/recorder",
-			state: {
-				toiaName,
-				toiaLanguage,
-				toiaID,
-			},
-		});
-	}
-
-	function album_page() {
-		history.push({
-			pathname: "/stream",
 			state: {
 				toiaName,
 				toiaLanguage,

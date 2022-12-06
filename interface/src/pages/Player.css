@@ -138,12 +138,25 @@
 	color: #49769c;
 }
 
-.cards-suggestion-header {
+.player-cards-wrapper {
+    display: flex;
+    flex-direction: column;
 	position: absolute;
 	left: 75.5%;
+	top: 3%;
 }
 
-.card-1 {
+.player-cards-wrapper > div {
+	margin-bottom: 1rem;
+
+}
+
+/* .cards-suggestion-header {
+	position: absolute;
+	left: 75.5%;
+} */
+
+/* .card-1 {
 	position: absolute;
 	left: 75.5%;
 	top: 3%;
@@ -171,7 +184,7 @@
 	position: absolute;
 	left: 75.5%;
 	top: 86%;
-}
+} */
 
 .card-overview {
 	transition: background 1s !important;

@@ -117,7 +117,7 @@
 	font-size: 3rem;
 	text-align: left;
 	letter-spacing: -0.015em;
-	position: absolute;
+	/* position: absolute; */
 	/* left: 50%; */
 	top: 80px;
 	color: black;
@@ -129,15 +129,15 @@
 }
 .about-grid {
 	padding: 5px;
-	overflow-y: auto;
+	/* overflow-y: auto; */
 	height: 70%;
 	/* width: 84vw; */
-	width: 113.5%;
+	/* width: 113.5%; */
 	/* left: 8%;
   top: 25%; */
 	left: -6.5%;
 	top: 175px;
-	position: absolute;
+	/* position: absolute; */
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
@@ -153,7 +153,7 @@
 	font-size: 20px;
 	font-weight: 500;
 	text-align: center;
-	margin-bottom: 0px;
+	margin-bottom: 30px !important;
 }
 
 .image-sizing {
