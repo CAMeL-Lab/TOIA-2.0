@@ -117,7 +117,7 @@ export default function SuggestionCards(props) {
 	}, []);
 
 	return props.questions ? (
-		<Card.Group>
+		<Card.Group className="player-cards-wrapper">
 			<h4 className="cards-suggestion-header">
 				Some things you can ask me…
 			</h4>

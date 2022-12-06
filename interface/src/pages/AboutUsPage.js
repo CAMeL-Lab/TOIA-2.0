@@ -1,25 +1,28 @@
-import React, { useState, useEffect } from "react";
-import submitButton from "../icons/submit-button.svg";
-import sampleVideo from "../icons/sample-video.svg";
-import alberto from "../images/alberto.jpeg";
-import wahib from "../images/wahib.jpg";
-import kertu from "../images/kertu.jpg";
-import erin from "../images/erin.jpeg";
-import nizar from "../images/nizar.jpg";
-import goffredo from "../images/goffredo.jpeg";
-import tyeece from "../images/Tyeece.jpg";
-import armaan from "../images/armaan.jpg";
-import nyuad from "../images/nyuad-rb.png";
-import camel from "../images/camel.png";
-import history from "../services/history";
-import { Modal } from "semantic-ui-react";
-import sigDail from "../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
 	NotificationContainer,
-	NotificationManager,
+	NotificationManager
 } from "react-notifications";
+import { Modal } from "semantic-ui-react";
+import submitButton from "../icons/submit-button.svg";
+import alberto from "../images/alberto.jpeg";
+import armaan from "../images/armaan.jpg";
+import bishnu from "../images/bishnu.jpg";
+import camel from "../images/camel.png";
+import erin from "../images/erin.jpeg";
+import gautam from "../images/gautam.jpeg";
+import goffredo from "../images/goffredo.jpeg";
+import kertu from "../images/kertu.jpg";
+import muhammad from "../images/muhammad.jpeg";
+import nizar from "../images/nizar.jpg";
+import nyuad from "../images/nyuad-rb.png";
+import soojin from "../images/soojin.jpeg";
 import toia_logo from "../images/TOIA_Logo.png";
+import tyeece from "../images/Tyeece.jpg";
+import wahib from "../images/wahib.jpg";
+import sigDail from "../pdf/SIGDIAL_2021_TOIA_camera_ready_.pdf";
+import history from "../services/history";
 import Tracker from "../utils/tracker";
 
 function AvatarViewPage() {
@@ -61,6 +64,10 @@ function AvatarViewPage() {
 		{ still: erin, member: "Erin Collins" },
 		{ still: goffredo, member: "Goffredo Puccetti" },
 		{ still: nizar, member: "Nizar Habash" },
+		{ still: soojin, member: "Soojin Lee" },
+		{ still: muhammad, member: "Muhammad Ali" },
+		{ still: gautam, member: "Gautam Dinesh" },
+		{ still: bishnu, member: "Bishnu Dev" },
 	];
 
 	const renderTeam = (card, index) => {
@@ -205,8 +212,7 @@ function AvatarViewPage() {
 				size="large"
 				style={inlineStyle.modal}
 				open={open}
-				onClose={() => dispatch(false)}
-			>
+				onClose={() => dispatch(false)}>
 				<Modal.Header className="login_header">
 					<h1 className="login_welcome login-opensans-normal">
 						Welcome Back
@@ -243,8 +249,7 @@ function AvatarViewPage() {
 						/>
 						<div
 							className="login_text login-montserrat-black"
-							onClick={signup}
-						>
+							onClick={signup}>
 							Don't have an Account? Sign Up
 						</div>
 					</form>
@@ -253,32 +258,27 @@ function AvatarViewPage() {
 			<div className="nav-heading-bar">
 				<div
 					onClick={home}
-					className="nav-toia_icon app-opensans-normal"
-				>
+					className="nav-toia_icon app-opensans-normal">
 					TOIA
 				</div>
 				<div
 					onClick={about}
-					className="nav-about_icon app-monsterrat-black nav-selected"
-				>
+					className="nav-about_icon app-monsterrat-black nav-selected">
 					About Us
 				</div>
 				<div
 					onClick={library}
-					className="nav-talk_icon app-monsterrat-black "
-				>
+					className="nav-talk_icon app-monsterrat-black ">
 					Talk To TOIA
 				</div>
 				<div
 					onClick={garden}
-					className="nav-my_icon app-monsterrat-black "
-				>
+					className="nav-my_icon app-monsterrat-black ">
 					My TOIA
 				</div>
 				<div
 					onClick={isLoggedIn ? logout : openModal}
-					className="nav-login_icon app-monsterrat-black"
-				>
+					className="nav-login_icon app-monsterrat-black">
 					{isLoggedIn ? "Logout" : "Login"}
 				</div>
 			</div>
@@ -320,8 +320,7 @@ function AvatarViewPage() {
 					</a>
 					<a
 						href="https://github.com/wahibkamran/TOIA-2.0"
-						className="reference-item"
-					>
+						className="reference-item">
 						Github Repo
 					</a>
 				</div>
