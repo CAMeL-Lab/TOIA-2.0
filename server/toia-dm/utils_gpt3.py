@@ -20,7 +20,7 @@ def toia_answer(query, data, k=1):
     res = data.sort_values('similarities', ascending=False).head(k)
 
     ada_similarity_score = res.similarities.values[0]
-    if ada_similarity_score > 0.29:
+    if ada_similarity_score > 0:
         return res['answer'].values[0], res['id_video'].values[0], ada_similarity_score
     else:
         df_noanswers = data[data['type'] == "no-answer"]
