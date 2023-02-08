@@ -171,7 +171,7 @@ function isSuggestedQuestion(quesId, userId) {
 	});
 }
 
-const linkStreamVideoQuestion = (streamID, videoID, quesID, type, ada_search = null) => {
+const linkStreamVideoQuestion = (streamID, videoID, quesID, type, ada_search=null) => {
 	return new Promise(resolve => {
 		if (!QuestionTypes.find(t => t === type)) {
 			reject("Invalid Type!");
@@ -181,14 +181,14 @@ const linkStreamVideoQuestion = (streamID, videoID, quesID, type, ada_search = n
 				linkQuesQuery,
 				[videoID, quesID, streamID, type, JSON.stringify(ada_search)],
 				err => {
-					// if (err) throw err;
+					if (err) throw err;
 					console.log(
 						"Linked video id: " +
-						videoID +
-						" question id: " +
-						quesID +
-						" stream id: " +
-						streamID,
+							videoID +
+							" question id: " +
+							quesID +
+							" stream id: " +
+							streamID,
 					);
 					resolve();
 				},
@@ -469,27 +469,26 @@ const saveConversationLog = (
 	mode = "UNKNOWN",
 ) => {
 	return new Promise(resolve => {
-		resolve();
-		// let currentTimestamp = +new Date();
-		// const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+		let currentTimestamp = +new Date();
+		const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-		// connection.query(
-		// 	query,
-		// 	[
-		// 		interactor_id,
-		// 		toia_id,
-		// 		currentTimestamp,
-		// 		filler,
-		// 		question_asked,
-		// 		video_played,
-		// 		ada_similarity_score,
-		// 		mode,
-		// 	],
-		// 	(err, res) => {
-		// 		if (err) throw err;
-		// 		resolve();
-		// 	},
-		// );
+		connection.query(
+			query,
+			[
+				interactor_id,
+				toia_id,
+				currentTimestamp,
+				filler,
+				question_asked,
+				video_played,
+				ada_similarity_score,
+				mode,
+			],
+			(err, res) => {
+				if (err) throw err;
+				resolve();
+			},
+		);
 	});
 };
 
@@ -623,6 +622,7 @@ const addVideoEntry = async (id_video, toia_id, answer, duration_seconds) => {
 			query,
 			[id_video, toia_id, idx, 0, answer, "EN", 0, 0, duration_seconds],
 			(err, result) => {
+				if (err) throw err;
 				resolve();
 			},
 		);

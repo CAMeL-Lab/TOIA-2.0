@@ -228,6 +228,106 @@
 	padding-bottom: 25px;
 }
 
+.submit-button {
+	position: absolute;
+	top: 93.7%;
+	left: 57.5%;
+	width: 13.5%;
+	height: 7.5%;
+	font-size: 1.5rem;
+	color: #49769c;
+}
+
+.player-cards-wrapper {
+    display: flex;
+    flex-direction: column;
+	position: absolute;
+	left: 75.5%;
+	top: 3%;
+}
+
+.player-cards-wrapper > div {
+	margin-bottom: 1rem;
+
+}
+
+/* .cards-suggestion-header {
+	position: absolute;
+	left: 75.5%;
+} */
+
+/* .card-1 {
+	position: absolute;
+	left: 75.5%;
+	top: 3%;
+}
+
+.card-2 {
+	position: absolute;
+	left: 75.5%;
+	top: 20%;
+}
+
+.card-3 {
+	position: absolute;
+	left: 75.5%;
+	top: 42%;
+}
+
+.card-4 {
+	position: absolute;
+	left: 75.5%;
+	top: 64%;
+}
+
+.card-5 {
+	position: absolute;
+	left: 75.5%;
+	top: 86%;
+} */
+
+.card-overview {
+	transition: background 1s !important;
+}
+
+.card-waiting-true {
+	background: #d7f5ff !important;
+	box-shadow: 0px 4px 4px rgba(46, 122, 210, 0.25) !important;
+	border-radius: 5px !important;
+}
+
+.card-width-control {
+	max-height: 30%;
+	min-height: 24%;
+}
+.cursor-disabled {
+	cursor: not-allowed !important;
+}
+
+.redo-icon {
+	color: #006a94;
+}
+
+.transcript {
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 41px;
+	/* left: 39%; */
+	left: 1%;
+	padding: 5px;
+	position: absolute;
+	resize: none;
+	text-align: left;
+	/* top: 75%; */
+	top: 89.75%;
+	width: 70%;
+	color: #707070;
+	font-size: 1.5rem;
+	padding-top: 25px;
+	padding-bottom: 25px;
+}
+
 /* Selecting Language for Player */
 
 /* Dropdown Button */

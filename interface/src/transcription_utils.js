@@ -29,11 +29,8 @@ let AudioStreamer = {
 	 * @param {function} onData Callback to run on data each time it's received
 	 * @param {function} onError Callback to run on an error if one is emitted.
 	 */
-	initRecording: function (params, onData, onError) {
-		// socket.emit("transcribeAudio", "");
-		const language = params?.language ?? 'en-US';
-		console.log("Language Code:", language);
-		socket.emit("transcribeAudio", language);
+	initRecording: function (onData, onError) {
+		socket.emit("transcribeAudio", "");
 		AudioContext = window.AudioContext || window.webkitAudioContext;
 		context = new AudioContext({
 			latencyHint: "interactive",

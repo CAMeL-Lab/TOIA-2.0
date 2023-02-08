@@ -606,10 +606,9 @@ video {
 	font-family: "Montserrat", Helvetica, Arial, serif;
 }
 
-.question-selection-box-label{
-    position: absolute;
-    top:76%;
-    width: 100%;
+.question-selection-box-label {
+	position: absolute;
+	top: 76%;
 }
 
 .recorder-next-btn-wrapper {
@@ -654,10 +653,3 @@ video {
 .cursor-pointer {
 	cursor: pointer;
 }
-.lang-recorder-container {
-	position: absolute;
-	top: 78.4%;
-	left: 85%;
-	height: 7%;
-	font-size: 1.5rem;
-  }

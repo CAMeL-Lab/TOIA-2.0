@@ -21,10 +21,6 @@
   height: 12px;
 }*/
 
-body{
-	unicode-bidi: plaintext;
-}
-
 /*navbar*/
 ::-webkit-scrollbar-corner {
 	background: rgba(0, 0, 0, 0);
@@ -48,26 +44,13 @@ body{
 	padding: 9px;
 	position: fixed;
 	top: 0px;
-	width: 100%;
+	width: 1280px;
 	z-index: 100;
 }
-
-.nav-heading-bar2 {
-	align-items: center;
-	background-color: var(--heavy-metal);
-	display: flex;
-	justify-content: space-between;
-	left: 0;
-	padding: 20px 50px;
-	position: absolute;
-	top: 0;
-	width: 1440px;
-}
-
 .nav-toia_icon {
 	top: 0%;
 	/* left: 2.85%; */
-	left: 60px;
+	left: 40px;
 	position: absolute;
 	font-size: 28.4444px;
 	line-height: 39px;
