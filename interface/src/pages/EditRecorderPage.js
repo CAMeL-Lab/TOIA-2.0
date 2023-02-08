@@ -9,6 +9,10 @@ import history from "../services/history";
 import { Modal, Button } from "semantic-ui-react";
 import Switch from "react-switch";
 
+import NavBar from './NavBar.js';
+
+import { Trans, useTranslation } from "react-i18next";
+
 const videoConstraints = {
 	width: 750,
 	height: 405,
@@ -23,21 +27,24 @@ const videoConstraints = {
 // ];
 
 function EditRecorder() {
+
+	const { t } = useTranslation();
+
 	function exampleReducer(state, action) {
 		switch (action.type) {
-			case "close":
+			case 'close':
 				return { open: false };
-			case "open":
+			case 'open':
 				return { open: true };
 		}
 	}
-
 	const { transcript, resetTranscript } = useSpeechRecognition({
 		command: "*",
 	});
 
 	const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
 	const { open } = state;
+
 
 	const [fillerColor, setFillerColor] = useState("#e5e5e5");
 	const [answerColor, setAnswerColor] = useState("#e5e5e5");
@@ -94,17 +101,17 @@ function EditRecorder() {
 		makeSideButtonElements(history.location.state.videoType);
 	});
 
-	function makeSideButtonElements(vtype) {}
+	function makeSideButtonElements(vtype) { }
 
 	/*useEffect(() => {
-        axios.get('http://localhost:3000/getQuestions').then((res)=>{
-        setQuestionList(res.data);
-        });
-        setName(history.location.state.name);
-        setLanguage(history.location.state.language);
-        setAvatarID(history.location.state.new_avatar_ID);
-    });
-    },[]);*/
+		axios.get('http://localhost:3000/getQuestions').then((res)=>{
+		setQuestionList(res.data);
+		});
+		setName(history.location.state.name);
+		setLanguage(history.location.state.language);
+		setAvatarID(history.location.state.new_avatar_ID);
+	});
+	},[]);*/
 
 	// setName(history.location.state.name);
 	// setLanguage(history.location.state.language);
@@ -207,34 +214,19 @@ function EditRecorder() {
 		e.preventDefault();
 	}
 
-	function home() {
-		history.push({
-			pathname: "/",
-		});
+	function setType(event) {
+		event.preventDefault();
+		var name = event.target.className;
 	}
 
-	function about() {
-		history.push({
-			pathname: "/about",
-		});
-	}
-
-	function library() {
-		history.push({
-			pathname: "/library",
-		});
-	}
-
-	function garden() {
-		history.push({
-			pathname: "/mytoia",
-		});
+	function openModal(e) {
+		dispatch({ type: 'open' });
+		e.preventDefault();
 	}
 
 	function setType(event) {
 		event.preventDefault();
 		var name = event.target.className;
-
 		switch (name) {
 			case "side-button b1":
 				if (fillerColor == "#e5e5e5") {
@@ -293,13 +285,6 @@ function EditRecorder() {
 	//   return
 	// }
 
-	function logout() {
-		//logout function needs to be implemented (wahib)
-		history.push({
-			pathname: "/",
-		});
-	}
-
 	const inlineStyle = {
 		modal: {
 			height: "400px",
@@ -314,10 +299,10 @@ function EditRecorder() {
 				backgroundColor: isDisabled
 					? null
 					: isSelected
-					? "#7E7C7C"
-					: isFocused
-					? "#7E7C7C"
-					: null,
+						? "#7E7C7C"
+						: isFocused
+							? "#7E7C7C"
+							: null,
 				":active": {
 					...styles[":active"],
 					backgroundColor:
@@ -364,96 +349,27 @@ function EditRecorder() {
 					</Button>
 				</Modal.Actions>
 			</Modal>
-			<div className="nav-heading-bar">
-				<div
-					onClick={home}
-					className="nav-toia_icon app-opensans-normal"
-				>
-					TOIA
-				</div>
-				<div
-					onClick={about}
-					className="nav-about_icon app-monsterrat-black"
-				>
-					About Us
-				</div>
-				<div
-					onClick={library}
-					className="nav-talk_icon app-monsterrat-black "
-				>
-					Talk To TOIA
-				</div>
-				<div
-					onClick={garden}
-					className="nav-my_icon app-monsterrat-black "
-				>
-					My TOIA
-				</div>
-				<div
-					onClick={logout}
-					className="nav-login_icon app-monsterrat-black "
-				>
-					Logout
-				</div>
-			</div>
 			<h1 className="edit-title edit-font-class-3 ">Edit Recording</h1>
+			<NavBar
+				toiaName={toiaName}
+				toiaID={toiaID}
+				isLoggedIn={true}
+				toiaLanguage={toiaLanguage}
+				history={history}
+				showLoginModal={false}
+			/>
+
+			<h1 className="edit-title edit-font-class-3 ">{t("edit_recording_page_title")}</h1>
 			<div className="side-bar">
-				<div
-					className="side-button b1"
-					value="filler"
-					id="filler"
-					style={{ backgroundColor: fillerColor }}
-					onClick={setType}
-				>
-					Filler
-				</div>
-				<div
-					className="side-button b2"
-					value="answer"
-					id="answer"
-					style={{ backgroundColor: answerColor }}
-					onClick={setType}
-				>
-					Regular Answer
-				</div>
+				<div className="side-button b1" value="filler" id="filler" style={{ backgroundColor: fillerColor }} onClick={setType}>{t("filler")}</div>
+				<div className="side-button b2" value="answer" id="answer" style={{ backgroundColor: answerColor }} onClick={setType}>{t("regular_answer")}</div>
 				{/* <div className="side-button b2" value="no-answer" id="no-answer" style={{backgroundColor: bgColor2}} onClick={setType}>No Answer Provided</div> */}
-				<div
-					className="side-button b3"
-					value="y/n-answer"
-					id="y/n-answer"
-					style={{ backgroundColor: yesNoColor }}
-					onClick={setType}
-				>
-					Yes or No
-				</div>
-				<div
-					className="side-button b4"
-					value="greeting"
-					id="greeting"
-					style={{
-						backgroundColor: greetingColor,
-					}}
-					onClick={setType}
-				>
-					Greeting
-				</div>
-				<div
-					className="side-button b5"
-					value="exit"
-					id="exit"
-					style={{ backgroundColor: exitColor }}
-					onClick={setType}
-				>
-					Exit
-				</div>
+				<div className="side-button b3" value="y/n-answer" id="y/n-answer" style={{ backgroundColor: yesNoColor }} onClick={setType}>{t("yes_or_no")}</div>
+				<div className="side-button b4" value="greeting" id="greeting" style={{ backgroundColor: greetingColor }} onClick={setType}>{t("greeting")}</div>
+				<div className="side-button b5" value="exit" id="exit" style={{ backgroundColor: exitColor }} onClick={setType}>{t("exit")}</div>
 				<hr className="divider1"></hr>
-				<div
-					className="font-class-1 public"
-					style={{
-						backgroundColor: privacyColor,
-					}}
-				>
-					<span>Public</span>
+				<div className="font-class-1 public" style={{ backgroundColor: privacyColor }}>
+					<span>{t("public")}</span>
 					<Switch
 						onChange={handleChange}
 						// checked={isPublic}
@@ -472,37 +388,29 @@ function EditRecorder() {
 				<hr className="divider2"></hr>
 				<div className="select">
 					<CreatableSelect
-						placeholder="Select album...."
+						placeholder={t("select_album")}
 						isClearable
 						isMulti
 						// onChange={setAlbum}
 						styles={customStyles}
 						options={albums}
-						// value={albumC}
+					// value={albumC}
 					/>
 				</div>
 			</div>
-			<Webcam
-				className="edit-layout"
-				audio={true}
-				ref={webcamRef}
-				mirrored={true}
-				videoConstraints={videoConstraints}
-			/>
-			{capturing ? (
-				<button className="edit-icon" onClick={handleStopCaptureClick}>
-					<i class="fa fa-stop" style={{ fontSize: 34 }}></i>
-				</button>
-			) : (
-				<button className="edit-icon" onClick={handleStartCaptureClick}>
-					<i class="fa fa-video-camera" style={{ fontSize: 34 }}></i>
-				</button>
-			)}
-			{recordedChunks.length > 0 && (
-				<button className="edit-check" onClick={openModal}>
-					<i class="fa fa-check"></i>
-				</button>
-			)}
+			<Webcam className="edit-layout" audio={true} ref={webcamRef} mirrored={true} videoConstraints={videoConstraints} />
+			{
+				capturing ? (
+					<button className="edit-icon" onClick={handleStopCaptureClick}><i class="fa fa-stop" style={{ fontSize: 34 }}></i></button>
+				) : (
+					<button className="edit-icon" onClick={handleStartCaptureClick}><i class="fa fa-video-camera" style={{ fontSize: 34 }}></i></button>
+				)
+			}
+			{
+				recordedChunks.length > 0 && (
+					<button className="edit-check" onClick={openModal}><i class="fa fa-check"></i></button>
+				)
+			}
 			<p className="speech">{transcript}</p>
 			<input
 				className="edit-type-q edit-font-class-1"
@@ -510,8 +418,9 @@ function EditRecorder() {
 				type={"text"}
 				onChange={e => setQuestion(e.target.value)}
 			/>
-		</form>
+		</form >
 	);
+
 }
 
 export default EditRecorder;

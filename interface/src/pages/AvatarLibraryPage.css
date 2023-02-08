@@ -8,6 +8,16 @@
 	width: 100%;
 }
 
+.shhh-page {
+	background-color:#302D2D;
+	height: 100vh;
+	margin: 0px;
+	min-height: 700px;
+	min-width: 1440px;
+	position: relative;
+	width: 100%;
+}
+
 .library-page-setup {
 	position: absolute;
 	top: 80px;

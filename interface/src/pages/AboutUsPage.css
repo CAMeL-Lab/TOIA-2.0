@@ -16,18 +16,21 @@
 }
 
 /*page text*/
-.about-heading {
-	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 3rem;
-	text-align: left;
-	letter-spacing: -0.015em;
-	position: relative;
-	/* left: 50%; */
-	top: 0%;
-	color: black;
-	margin: 0 auto;
+.about-heading{
+
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 3rem;
+  text-align: left;
+  letter-spacing: -0.015em;
+  position: relative;
+  /* left: 50%; */
+  top: 0%;
+  width: 65%;
+  color: black;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .about-text {
 	/* font-family: "Open Sans-Bold", Helvetica, Arial, serif;
@@ -111,17 +114,17 @@
 }
 
 .grid-heading {
-	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 3rem;
-	text-align: left;
-	letter-spacing: -0.015em;
-	/* position: absolute; */
-	/* left: 50%; */
-	top: 80px;
-	color: black;
-	/* margin: 0 auto; */
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 3rem;
+  text-align: left;
+  letter-spacing: -0.015em;
+  position: relative;
+  /* left: 50%; */
+  width: 100%;
+  color: black;
+  /* margin: 0 auto; */
 }
 .about-box {
 	margin: 5px;
@@ -184,17 +187,17 @@
 	position: absolute;
 }
 
-.publication-links {
-	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 3rem;
-	text-align: left;
-	letter-spacing: -0.015em;
-	/* width: 70vw; */
-	position: absolute;
-	/* left: 10.7%; */
-	top: 80px;
+.publication-links{
+  font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 3rem;
+  text-align: left;
+  letter-spacing: -0.015em;
+   width: 100%; 
+  position: absolute;
+  /* left: 10.7%; */
+  top: 80px;
 
 	/* color: #707070; */
 

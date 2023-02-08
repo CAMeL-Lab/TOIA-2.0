@@ -1,0 +1,84 @@
+.navigation {
+    align-items: center;
+    background-color: var(--heavy-metal);
+    display: flex;
+    justify-content: space-between;
+    left: 0;
+    padding: 20px 50px;
+    position: absolute;
+    top: 0;
+    width: 1440px;
+  }
+  
+  .title {
+    letter-spacing: 0;
+    line-height: normal;
+    width: fit-content;
+  }
+  
+  .nav-logo {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    width: fit-content;
+  }
+  
+  .logo {
+    height: 1px;
+    min-width: 1px;
+  }
+  
+  .nav-nav-menu {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    width: fit-content;
+  }
+  
+  .nav-nav-menu-item {
+    align-items: center;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    height: 46px;
+    justify-content: center;
+    padding: 0px 20px;
+    transition: all 0.3s ease;
+    width: fit-content;
+  }
+  
+  .nav-nav-menu-item:hover,
+  .sign-up:hover {
+    transform: scale(0.95); 
+  }
+  
+  .button {
+    letter-spacing: 0;
+    line-height: 22.4px;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+  }
+  
+  .sign-up {
+    align-items: center;
+    background-color: var(--electric-violet);
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    height: 60px;
+    justify-content: center;
+    padding: 0px 30px;
+    transition: all 0.3s ease;
+    width: fit-content;
+  }
+  
+  .icon-search {
+    height: 20px;
+    min-width: 20px;
+  }
+  
+  
