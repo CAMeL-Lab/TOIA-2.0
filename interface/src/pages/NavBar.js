@@ -64,6 +64,26 @@ function NavBar(props) {
         }
     }
 
+
+    function shhh() {
+        if (typeof props?.endTranscription === "function") {
+            props.endTranscription();
+        }
+        if (props.isLoggedIn) {
+            history.push({
+                pathname: '/shhh',
+                state: {
+                    toiaName: props.toiaName,
+                    toiaLanguage: props.toiaLanguage,
+                    toiaID: props.toiaID
+                }
+            });
+        } else {
+            history.push({
+                pathname: '/shhh',
+            });
+        }
+    }
     function about() {
         if (typeof props?.endTranscription === "function") {
             props.endTranscription();
@@ -122,23 +142,6 @@ function NavBar(props) {
         }
     }
 
-    function shhh(e) {
-        if (typeof props?.endTranscription === "function") {
-            props.endTranscription();
-        }
-        if (props.isLoggedIn) {
-            history.push({
-                pathname: '/shhh',
-                state: {
-                    toiaName: props.toiaName,
-                    toiaLanguage: props.toiaLanguage,
-                    toiaID: props.toiaID
-                }
-            });
-        } else {
-            openModal(e);
-        }
-    }
 
     function logout() {
         if (typeof props?.endTranscription === "function") {
@@ -276,13 +279,12 @@ function NavBar(props) {
                     </div>
                 </div>
 
-        
+
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">
                     {t("nav_toia")}
                 </div>
-
-                <div onClick={shhh} className="nav-shhh_icon app-monsterrat-black">
-                    {t("nav_Shhh")}
+                <div onClick={shhh} className="shhh-about_icon app-monsterrat-black">
+                    {t("shhh")}
                 </div>
                 <div onClick={about} className="nav-about_icon app-monsterrat-black">
                     {t("nav_about_us")}

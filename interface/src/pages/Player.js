@@ -142,7 +142,7 @@ function Player() {
 
 		axios
 			.request(options)
-			.then(function (response) {})
+			.then(function (response) { })
 			.catch(function (error) {
 				alert("You do not have permission to access this page");
 				library();

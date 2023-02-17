@@ -7,9 +7,10 @@ import { Modal } from "semantic-ui-react";
 import axios from "axios";
 import Tracker from "../utils/tracker";
 import ShhhNavBar from './ShhhNavBar.js';
-import childBirth from "../images/child_birth.png";
-import sex from "../images/sex.png";
-import death from "../images/death.png";
+import elephant from "../images/elephant.png";
+const BirthText = "Engage in stories and discussions on the miraculous journey of bringing new life into the world.";
+const DeathText = "Talk about the finality of life and let's address elephant in the room";
+const SexText = "Join to have open, honest, and playful conversations around sex.";
 
 
 function ShhhPage() {
@@ -71,7 +72,7 @@ function ShhhPage() {
 	function goToPlayer(element) {
 		if (isLoggedIn) {
 			history.push({
-				pathname: "/player",
+				pathname: "/shhhplayer",
 				state: {
 					toiaName,
 					toiaLanguage,
@@ -85,7 +86,7 @@ function ShhhPage() {
 			});
 		} else {
 			history.push({
-				pathname: "/player",
+				pathname: "/shhhplayer",
 				state: {
 					toiaToTalk: element.id,
 					toiaFirstNameToTalk: element.first_name,
@@ -98,60 +99,43 @@ function ShhhPage() {
 	}
 
 	const renderStream = (card, index) => {
-		//cards for streams
-		return (
-			<div className="shhh-carousel-card" id={card.id_stream}>
-				<div className="child-birth" onClick={() => {
-					goToPlayer(card);
-				}}>
-					<img src={childBirth} className="child-birth-img" alt="child-birth" />
-					<div className="headline-subhead">
-						<div className="headline">
-							<div className="heading child-birth-title valign-text-middle">
-								Child Birth
+		console.log(card);
+		console.log('cardname' + card.name);
+		const orderedCards = ["Birth", "Sex", "Death"];
+		if (orderedCards.includes(card.name)) {
+			//cards for streams
+			return (
+				<div className="shhh-carousel-card" id={card.id_stream}>
+					<div className={card.name} onClick={() => {
+						goToPlayer(card);
+					}}>
+						<img src={card.pic} className={`${card.name}-img`} alt="NONE" />
+						<div className="headline-subhead">
+							<div className="headline">
+								<div className={"heading " + card.name + "-title" + " valign-text-middle"}>
+									{card.name}
+								</div>
 							</div>
-						</div>
-						<div className="description">
-							Engage in stories and discussions on the miraculous journey of bringing new life into the world.
+							<div className="description">
+								{(() => {
+									switch (card.name) {
+										case "Birth":
+											return BirthText;
+										case "Death":
+											return DeathText;
+										case "Sex":
+											return SexText;
+										default:
+											return "";
+									}
+								})()}
+							</div>
 						</div>
 					</div>
 				</div>
-
-				<div className="sex" onClick={() => {
-					goToPlayer(card);
-				}}>
-					<img src={sex} className="sex-img" alt="sex" />
-					<div className="headline-subhead">
-						<div className="headline">
-							<div className="heading sex-title valign-text-middle">
-								Sex
-							</div>
-						</div>
-						<div className="description">
-							Join to have open, honest, and playful conversations around sex.
-						</div>
-					</div>
-				</div>
-
-				<div className="death" onClick={() => {
-					goToPlayer(card);
-				}}>
-					<img src={death} className="death-img" alt="death" />
-					<div className="headline-subhead">
-						<div className="headline">
-							<div className="heading death-title valign-text-middle">
-								Death
-							</div>
-						</div>
-						<div className="description">
-							Engage in stories and discussions on the miraculous journey of bringing new life into the world.
-						</div>
-					</div>
-				</div>
-			</div>
-		);
+			);
+		}
 	};
-
 
 	const inlineStyle = {
 		modal: {
@@ -177,24 +161,7 @@ function ShhhPage() {
 				history={history}
 				showLoginModal={true}
 			/>
-			<Modal //this is the view pop up menu
-				size='large'
-				style={inlineStyle.modal}
-				open={open2}
-				onClose={() => dispatch2(false)}
-			>
-				<Modal.Content>
-					{/* <img className="library-view-img" src={allData[viewIndex].still}/> */}
-					<div className="library-view-menu" //the stats that appear under the image
-					>
-						{/* <p style={{marginRight: 52}}>{allData[viewIndex].views}&nbsp;<i class="fa fa-users"></i></p>
-                      <p style={{marginLeft: 26}}>{allData[viewIndex].likes}&nbsp;<i class="fa fa-thumbs-up"></i></p> */}
-					</div>
-					<div className="library-view-button">
-						<img src={submitButton} />
-					</div>
-				</Modal.Content>
-			</Modal>
+			<img src={elephant} className="elephant" alt="ELEPHANT IN THE ROOM" />
 			<Modal //This is the stream settings pop menu
 				size="large"
 				closeIcon={true}

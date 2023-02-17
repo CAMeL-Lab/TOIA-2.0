@@ -9,6 +9,7 @@ import toia_home_vid from "../video/TOIA-LOGO-VID.mov";
 import Tracker from "../utils/tracker";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import elephantIcon from "../images/elephant-icon.png";
 
 function HomePage() {
 	function exampleReducer(state, action) {
@@ -135,6 +136,23 @@ function HomePage() {
 		}
 	}
 
+	function shhh() {
+		if (isLoggedIn) {
+			history.push({
+				pathname: "/shhh",
+				state: {
+					toiaName,
+					toiaLanguage,
+					toiaID,
+				},
+			});
+		} else {
+			history.push({
+				pathname: "/shhh",
+			});
+		}
+	}
+
 	function library() {
 		if (isLoggedIn) {
 			history.push({
@@ -255,6 +273,13 @@ function HomePage() {
 				>
 					TOIA
 				</div>
+				<div
+					onClick={shhh}
+					className="nav-shhh_icon app-monsterrat-black"
+				>
+					<img className="elephant-icon" src={elephantIcon} alt="Shhh Icon" />
+				</div>
+
 				<div
 					onClick={about}
 					className="nav-about_icon app-monsterrat-black"

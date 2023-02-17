@@ -1,7 +1,7 @@
 // import * as React from "react";
 import React, { useEffect, useState } from "react";
 import { Button, Card } from "semantic-ui-react";
-import "../pages/Player.css";
+// import "../pages/Player.css";
 
 export default function SuggestionCards(props) {
 	// keeping track of position of each of the five cards
@@ -141,6 +141,7 @@ export default function SuggestionCards(props) {
 								color="linkedin"
 								icon="send"
 								labelPosition="left"
+
 								onClick={() => {
 									askQuestion(
 										fifthQuestion,
@@ -347,10 +348,10 @@ export default function SuggestionCards(props) {
 }
 
 /**
- * 
- * 
- * 
- * 
- 
+ *
+ *
+ *
+ *
+
 
 */

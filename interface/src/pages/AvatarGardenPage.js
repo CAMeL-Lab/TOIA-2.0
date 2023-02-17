@@ -1390,7 +1390,7 @@ function AvatarGardenPage() {
 						className="modal-ans font-class-1"
 						value={playbackVideoAnswer}
 						type={"text"}
-						onChange={() => {}}
+						onChange={() => { }}
 					/>
 				</Modal.Content>
 				<Modal.Actions>

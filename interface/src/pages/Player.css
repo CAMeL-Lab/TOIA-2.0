@@ -238,19 +238,6 @@
 	color: #49769c;
 }
 
-.player-cards-wrapper {
-    display: flex;
-    flex-direction: column;
-	position: absolute;
-	left: 75.5%;
-	top: 3%;
-}
-
-.player-cards-wrapper > div {
-	margin-bottom: 1rem;
-
-}
-
 /* .cards-suggestion-header {
 	position: absolute;
 	left: 75.5%;

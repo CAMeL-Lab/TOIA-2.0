@@ -120,7 +120,7 @@ function AvatarLibraryPage() {
 
 	const renderStream = (card, index) => {
 		//cards for streams
-
+		console.log(card)
 		return (
 			<div className="garden-carousel-card" id={card.id_stream}>
 				<img

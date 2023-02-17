@@ -90,7 +90,7 @@ export default function FreeSoloCreateOption(props) {
 						top: "90%",
 						width: "55.25%",
 						left: "1%",
-						height: "7.5%",
+						height: "30.5%",
 						// height: "80.25%",
 						color: "#707070",
 						fontSize: "1.5rem",

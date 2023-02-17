@@ -116,6 +116,8 @@
 	color: white;
 	opacity: 0.8;
 }
+
+
 .nav-shhh_icon {
 	top: 0%;
 	left: 50%;
@@ -133,6 +135,9 @@
 	cursor: pointer;
 	color: white;
 	opacity: 0.8;
+}
+.elephant-icon{
+	width: 30px;
 }
 
 .nav-login_icon {
@@ -346,17 +351,6 @@
 	opacity: 0;
 }
 
-/*shhh nav bar*/
-.shhh-nav-heading-bar {
-	align-items: center;
-	background-color: var(--heavy-metal);
-	display: flex;
-	justify-content: space-between;
-	left: 0;
-	padding: 20px 50px;
-	position: absolute;
-	top: 0;
-	width: 1440px;
-  }
+
 
 

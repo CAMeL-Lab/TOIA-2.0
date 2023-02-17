@@ -1,84 +1,206 @@
-.navigation {
-    align-items: center;
-    background-color: var(--heavy-metal);
-    display: flex;
-    justify-content: space-between;
-    left: 0;
-    padding: 20px 50px;
-    position: absolute;
-    top: 0;
-    width: 1440px;
-  }
-  
-  .title {
-    letter-spacing: 0;
-    line-height: normal;
-    width: fit-content;
-  }
-  
-  .nav-logo {
-    align-items: center;
-    display: flex;
-    gap: 10px;
-    width: fit-content;
-  }
-  
-  .logo {
-    height: 1px;
-    min-width: 1px;
-  }
-  
-  .nav-nav-menu {
-    align-items: center;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    width: fit-content;
-  }
-  
-  .nav-nav-menu-item {
-    align-items: center;
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    gap: 12px;
-    height: 46px;
-    justify-content: center;
-    padding: 0px 20px;
-    transition: all 0.3s ease;
-    width: fit-content;
-  }
-  
-  .nav-nav-menu-item:hover,
-  .sign-up:hover {
-    transform: scale(0.95); 
-  }
-  
-  .button {
-    letter-spacing: 0;
-    line-height: 22.4px;
-    text-align: center;
-    white-space: nowrap;
-    width: fit-content;
-  }
-  
-  .sign-up {
-    align-items: center;
-    background-color: var(--electric-violet);
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    gap: 12px;
-    height: 60px;
-    justify-content: center;
-    padding: 0px 30px;
-    transition: all 0.3s ease;
-    width: fit-content;
-  }
-  
-  .icon-search {
-    height: 20px;
-    min-width: 20px;
-  }
-  
+/*navbar*/
+::-webkit-scrollbar-corner {
+	background: rgba(0, 0, 0, 0);
+}
+
+:root {
+	--nv-color: #00587a;
+	--bg-color: white;
+	--hd-color: #008891;
+	--t-color: #0f3057;
+}
+.shhh-nav-heading-bar {
+	align-items: flex-start;
+	background-color: transparent;
+	display: inline-flex;
+	flex-direction: row;
+	height: 100px;
+	justify-content: flex-start;
+	left: 0px;
+	padding: 50px;
+	position: fixed;
+	top: 30px;
+	width: 100vw;
+	z-index: 100;
+}
+.nav-toia_icon {
+	top: 0%;
+	/* left: 2.85%; */
+	left: 40px;
+	position: absolute;
+	font-size: 28.4444px;
+	line-height: 39px;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	letter-spacing: -0.015em;
+	height: 40px;
+	cursor: pointer;
+	color: white;
+}
+.nav-about_icon {
+	top: 0%;
+	left: 60%;
+	position: absolute;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	letter-spacing: -0.015em;
+	height: 40px;
+	width: 120px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: white;
+	opacity: 0.8;
+}
+.nav-talk_icon {
+	top: 0%;
+	left: 70%;
+	position: absolute;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	letter-spacing: -0.015em;
+	height: 40px;
+	width: 130px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: white;
+	opacity: 0.8;
+}
+.nav-my_icon {
+	top: 0%;
+	left: 80%;
+	position: absolute;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	letter-spacing: -0.015em;
+	height: 40px;
+	width: 145px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: white;
+	opacity: 0.8;
+}
+
+.nav-shhh_icon {
+	top: 0%;
+	left: 50%;
+	position: absolute;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	letter-spacing: -0.015em;
+	height: 40px;
+	width: 145px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: white;
+	opacity: 0.8;
+}
+
+.nav-login_icon {
+	top: 0%;
+	left: 90%;
+	position: absolute;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	letter-spacing: -0.015em;
+	height: 40px;
+	width: 120px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: var(--desert-storm);
+	opacity: 0.8;
+}
+.nav-selected {
+	opacity: 1;
+}
+.nav-deselect {
+	opacity: 0.8;
+}
+
+.nav-shhh_icon:hover{
+	opacity: 1;
+}
+
+.nav-about_icon:hover{
+	opacity: 1;
+}
+.nav-talk_icon:hover {
+	opacity: 1;
+}
+.nav-my_icon:hover {
+	opacity: 1;
+}
+.nav-login_icon:hover {
+	opacity: 1;
+}
+
+/* Dropdown Button */
+.nav-dropbtn {
+  background-color: transparent;
+  color: white;
+  width: 30px;
+  text-align: center;
+  font-size: 16px;
+  border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.nav-dropdown {
+  top: 0%;
+  left: 0%;
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.nav-dropdown-content a {
+  color: black;
+  width: 30px;
+  height: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+.nav-dropdown-content div.header:hover::after {
+  background-color: transparent;
+}
+/* Change color of dropdown links on hover */
+.nav-dropdown-content option:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.nav-dropdown:hover .nav-dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+/* .nav-dropdown:hover .nav-dropbtn {background-color: #3e8e41;} */
+
   
