@@ -2,29 +2,17 @@ from dotenv import dotenv_values
 import pandas as pd
 import numpy as np
 import os
-
-import tensorflow_hub as hub
+import labse
 import tensorflow as tf
-import tensorflow_text as text # Needed for loading universal-sentence-encoder-cmlm/multilingual-preprocess
 
 config = dotenv_values()
 
-preprocessor = hub.KerasLayer(
-    "https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2")
-encoder = hub.KerasLayer("https://tfhub.dev/google/LaBSE/2")
-
-def normalization(embeds):
-    norms = np.linalg.norm(embeds, 2, axis=1, keepdims=True)
-    return embeds/norms
-
-def similarity(question_embeds, answer_embeds):
-    return np.matmul(question_embeds, np.transpose(answer_embeds))
 
 def toia_answer(query, data, k=1):
     print("Query", query)
-    embedding = normalization(encoder(preprocessor(query))["default"])
+    embedding = labse.normalization(labse.encoder(labse.preprocessor(tf.constant([query])))["default"]).numpy()[0]
     print("B")
-    data['similarities'] = data.ada_search.apply(lambda x: similarity(embedding, x))
+    data['similarities'] = data.ada_search.apply(lambda x: labse.similarity(embedding, x))
     print("C")
     res = data.sort_values('similarities', ascending=False).head(k)
     print("D")

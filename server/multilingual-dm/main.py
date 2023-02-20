@@ -78,6 +78,7 @@ def dialogue_manager(payload: DMpayload):
     if query is None:
         return 'Please enter a query', 400
 
+    print("checking for response")
     response = toia_answer(query, df_avatar)
 
     answer = response[0]
