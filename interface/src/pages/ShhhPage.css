@@ -167,23 +167,49 @@
 	width: 100%;
 }
 
-.shhh-player-group {
-	display: flex;
-	flex-direction: column;
+
+.shhh-player-cards-wrapper {
+    display: flex;
+    flex-direction: column;
+	position: absolute;
+	left: 75.5%;
+	top: 20%;
+	width:20vw;
+	background: orange;
+}
+
+.shhh-player-cards-wrapper > div {
+	margin-bottom: 2vw;
+
+}
+
+.shhh-player-cards-wrapper  .ui.card {
+	flex-direction: row !important;
 	width: 100%;
-	height: 70%;
+	height:20%;
+}
+
+.shhh-player-cards-wrapper .ui.cards {
+	margin: auto 5vw auto auto !important; /* center the element vertically and align to the right */
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
-	position: relative;
-  }
-  
-  .shhh-player-vid {
-	position: relative;
-	background-color: white;
-	border-radius: 5px;
-	width: 70%;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-  }
-  
+}
+
+.shhh-player-cards-wrapper .ui.buttons{
+	flex-direction: column !important;
+}
+.shhh-player-cards-wrapper .button {
+    width: 100% !important;
+}
+.shhh-player-cards-wrapper .ui.buttons .button:last-child {
+    border-radius: 0.28571429rem !important;
+}
+
+.shhh-player-cards-wrapper.ui.buttons .button:first-child {
+    border-radius: 0.28571429rem !important;
+}
+
+.shhh-player-cards-wrapper .ui.card > .content > .description {
+    color: #b9d2e9 !important;
+}

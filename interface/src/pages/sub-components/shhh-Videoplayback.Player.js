@@ -24,7 +24,8 @@ export default function ShhhVideoPlaybackPlayer(props) {
     return (
         <div>
             <video
-                className="shhh-player-vid"
+                style={{ width: '10%' }}
+                className="player-vid"
                 muted={props.muted}
                 id="vidmain"
                 key={props.key}

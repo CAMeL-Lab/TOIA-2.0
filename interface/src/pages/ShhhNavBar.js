@@ -8,6 +8,7 @@ import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import "../../node_modules/flag-icons/css/flag-icons.min.css";
 import "./ShhhNavBar.css";
+import './ShhhPage.css';
 //toiaName = null, props.toiaID = null, props.toiaLanguage = null, props.isLoggedIn = false, history = null
 const supportedLanguages = ["en", "fr", "ar"];
 const rightLanguages = [];

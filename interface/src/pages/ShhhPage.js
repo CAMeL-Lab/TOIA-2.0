@@ -8,6 +8,8 @@ import axios from "axios";
 import Tracker from "../utils/tracker";
 import ShhhNavBar from './ShhhNavBar.js';
 import elephant from "../images/elephant.png";
+import './ShhhPage.css';
+
 const BirthText = "Engage in stories and discussions on the miraculous journey of bringing new life into the world.";
 const DeathText = "Talk about the finality of life and let's address elephant in the room";
 const SexText = "Join to have open, honest, and playful conversations around sex.";

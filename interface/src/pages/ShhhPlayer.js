@@ -8,11 +8,13 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
-import SuggestionCard from "../suggestiveSearch/suggestionCards";
-import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
+import SuggestionCard from "../suggestiveSearch/shhhsuggesitonCards.js";
+import SuggestiveSearch from "../suggestiveSearch/shhhsuggestiveSearch.js";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
 import ShhhVideoPlaybackPlayer from "./sub-components/shhh-Videoplayback.Player";
+import './ShhhPage.css';
+
 
 function ShhhPlayer() {
     function exampleReducer(state, action) {
@@ -661,8 +663,8 @@ function ShhhPlayer() {
                 )}
                 {micMute ? (
                     <button
-                        color="green"
-                        className="ui linkedin microphone button mute-button"
+                        className="ui microphone button mute-button"
+                        style={{ background: "#614CB8", width: "10%" }}
                         onClick={micStatusChange}>
                         <i aria-hidden="true" class="">
                             <RecordVoiceOverRoundedIcon
@@ -717,17 +719,14 @@ function ShhhPlayer() {
                                 }
                                 notificationManager={NotificationManager}
                             />
-
                             <button
-                                color="green"
                                 className="ui linkedin button submit-button"
-
                                 onClick={e => {
                                     submitResponse(e, "SEARCH");
                                 }}>
                                 <i aria-hidden="true" class="send icon"></i>
-                                Hello
                             </button>
+
                         </>
                     ) : (
                         <input
