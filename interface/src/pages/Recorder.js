@@ -464,6 +464,7 @@ function Recorder() {
         resetTranscript();
         setRecordedChunks([]);
         setTranscribedAudio("")
+        setResults([]);
         input.current = "";
         setIsRecording(true)
 
