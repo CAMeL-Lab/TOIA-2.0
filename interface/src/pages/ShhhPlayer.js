@@ -14,7 +14,34 @@ import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
 import ShhhVideoPlaybackPlayer from "./sub-components/shhh-Videoplayback.Player";
 import './ShhhPage.css';
-
+import james from "../images/death/james.png";
+import rina from "../images/death/rina.png";
+import sally from "../images/death/sally.png";
+import brian from "../images/death/brian.png";
+import jj from "../images/death/jj.png";
+import ian from "../images/death/ian.png";
+import leila from "../images/death/leila.png";
+import rahma from "../images/death/rahma.png";
+import serene from "../images/death/serene.png";
+import kekyong from "../images/death/kekyong.png";
+import norman from "../images/death/norman.png";
+const death_icons = [james, rina, sally, brian, jj, ian, leila, norman];
+const sex_icons = [james, rina, sally, brian, jj, ian, leila, norman];
+const birth_icons = [james, rina, sally, brian, jj, ian, leila, norman];
+const death_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
+const sex_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
+const birth_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
+const death_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
+const sex_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
+const birth_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
+const death_questions = [
+    "Are you afraid of death?",
+    "Who is not invited to your funeral?",
+    "Do you think you are dying?",
+    "Who would be happy that you are gone?",
+    "What would you miss the most?",
+    "Have you tried giving up?"
+];
 
 function ShhhPlayer() {
     function exampleReducer(state, action) {
@@ -42,11 +69,14 @@ function ShhhPlayer() {
     const [videoProperties, setVideoProperties] = useState(null);
     const [transcribedAudio, setTranscribedAudio] = useState("");
 
+
+    const [icons, setIcons] = useState([]);
+    const [iconNames, setIconNames] = useState([]);
+    const [iconDescriptions, setIconDescriptions] = useState([]);
     // suggested questions for cards
 
     const textInput = React.useRef("");
     const question = React.useRef("");
-    const interacting = React.useRef("false");
     const isFillerPlaying = React.useRef("true");
     const allQuestions = React.useRef([]);
     const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
@@ -54,8 +84,31 @@ function ShhhPlayer() {
     const interimTextInput = React.useRef("");
 
     var input1, input2;
-    let [micMute, setMicStatus] = React.useState(true);
+    const [micMute, setMicMute] = useState(true);
+    const [micString, setMicString] = useState("ASK BY VOICE");
+    const interacting = React.useRef(false);
 
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.code === "Space") {
+                setMicMute(false);
+            }
+        };
+
+        const handleKeyUp = (event) => {
+            if (event.code === "Space") {
+                setMicMute(true);
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keyup", handleKeyUp);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("keyup", handleKeyUp);
+        };
+    }, []);
 
     useEffect(() => {
         // Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -84,7 +137,6 @@ function ShhhPlayer() {
         setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
         setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
         setStreamNameToTalk(history.location.state.streamNameToTalk);
-
         canAccessStream();
 
         fetchAnsweredQuestions();
@@ -108,6 +160,24 @@ function ShhhPlayer() {
             document.removeEventListener("keydown", listener);
         };
     }, []);
+
+
+    useEffect(() => {
+        // set the icon and icon name arrays based on streamNameToTalk
+        if ({ streamNameToTalk }.streamNameToTalk === "Death stream") {
+            setIcons(death_icons);
+            setIconNames(death_names);
+            setIconDescriptions(death_descriptions);
+        } else if ({ streamNameToTalk }.streamNameToTalk === "Sex stream") {
+            setIcons(sex_icons);
+            setIconNames(sex_names);
+            setIconDescriptions(sex_descriptions);
+        } else if ({ streamNameToTalk }.streamNameToTalk === "Birth stream") {
+            setIcons(birth_icons);
+            setIconNames(birth_names);
+            setIconDescriptions(birth_descriptions);
+        }
+    }, [streamNameToTalk]);
 
     const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
     const { open } = state;
@@ -336,22 +406,22 @@ function ShhhPlayer() {
     function endTranscription() {
         speechToTextUtils.stopRecording();
     }
+    const micStatusChange = () => {
+        if (!micMute) {
+            speechToTextUtils.stopRecording();
+        } else {
+            interacting.current = true;
 
-    function micStatusChange() {
-        if (micMute == true) {
-            setMicStatus(false);
-            interacting.current = "true";
-
-            speechToTextUtils.initRecording(handleDataReceived, error => {
+            speechToTextUtils.initRecording(handleDataReceived, (error) => {
                 console.error("Error when transcribing", error);
                 // No further action needed, as stream already closes itself on error
             });
-        } else {
-            speechToTextUtils.stopRecording();
-            setMicStatus(true);
-            interacting.current = "false";
         }
-    }
+
+        setMicMute(!micMute);
+        setMicString(micMute ? "STOP ASK BY VOICE" : "ASK BY VOICE");
+        interacting.current = micMute ? true : false;
+    };
 
     function fetchFiller() {
         isFillerPlaying.current = "true";
@@ -580,6 +650,31 @@ function ShhhPlayer() {
         },
     };
 
+    const [selectedIconIndex, setSelectedIconIndex] = useState(null);
+
+
+    const handleIconClick = (index) => {
+        if (index === selectedIconIndex) {
+            setSelectedIconIndex(null);
+            // unmute all icons
+            const iconContainers = document.querySelectorAll('.icon-container');
+            iconContainers.forEach((container) => {
+                container.classList.remove('muted');
+            });
+        } else {
+            setSelectedIconIndex(index);
+            // mute all icons except selected one
+            const iconContainers = document.querySelectorAll('.icon-container');
+            iconContainers.forEach((container, i) => {
+                if (i === index) {
+                    container.classList.remove('muted');
+                } else {
+                    container.classList.add('muted');
+                }
+            });
+        }
+    };
+
     return (
         <div className="shhh-player">
             <Modal //this is the new pop up menu
@@ -637,13 +732,26 @@ function ShhhPlayer() {
                     TOIA
                 </div>
             </div>
+            <div className="icons">
+                {icons.map((icon, index) => (
+                    <div key={index} className="icon-container">
+                        <img
+                            src={icon}
+                            className={index === selectedIconIndex ? 'selected' : ''}
+                            onClick={() => handleIconClick(index)}
+                        />
+                        <div className="icon-name">{iconNames[index]}</div>
+                        <div className="icon-description">{iconDescriptions[index]}</div>
+                    </div>
+                ))}
+            </div>
             <div className="shhh-player-group">
                 {videoProperties && (
                     <TransitionGroup>
                         <CSSTransition
                             key={videoProperties.key}
                             timeout={500}
-                            classNames="fade">
+                        >
                             <ShhhVideoPlaybackPlayer
                                 onEnded={videoProperties.onEnded}
                                 key={videoProperties.key}
@@ -662,11 +770,30 @@ function ShhhPlayer() {
                     </TransitionGroup>
                 )}
                 {micMute ? (
+                    <button className="ui secondary button shhh-mute-button" onClick={micStatusChange}>
+                        <i aria-hidden="true">
+                            <VoiceOverOffRoundedIcon />
+                        </i>
+                    </button>
+                ) : (
+                    <button className="ui microphone button shhh-mute-button" onClick={micStatusChange}>
+                        <i aria-hidden="true">
+                            <RecordVoiceOverRoundedIcon
+                                sx={{
+                                    paddingTop: "0px",
+                                    paddingRight: "0px",
+                                    fontSize: "1.7rem",
+                                }}
+                            />
+                        </i>
+                    </button>
+                )
+
+                /* {micMute ? (
                     <button
-                        className="ui microphone button mute-button"
-                        style={{ background: "#614CB8", width: "10%" }}
+                        className="ui microphone button shhh-mute-button"
                         onClick={micStatusChange}>
-                        <i aria-hidden="true" class="">
+                        <i aria-hidden="true">
                             <RecordVoiceOverRoundedIcon
                                 sx={{
                                     paddingTop: "0px",
@@ -678,17 +805,18 @@ function ShhhPlayer() {
                     </button>
                 ) : (
                     <button
-                        className="ui secondary button mute-button"
+                        className="ui secondary button shhh-mute-button"
                         onClick={micStatusChange}>
-                        <i aria-hidden="true" class="">
+                        <i aria-hidden="true">
                             <VoiceOverOffRoundedIcon />
                         </i>
                     </button>
-                )}
+                )} */}
+
 
                 {isFillerPlaying.current == "false" ? (
                     <button
-                        className="ui inverted button skip-end-button"
+                        className="ui inverted button shhh-skip-end-button"
                         onClick={fetchFiller}>
                         {" "}
                         Skip to End{" "}
@@ -698,52 +826,43 @@ function ShhhPlayer() {
                     </button>
                 ) : null}
 
-                <div>
-                    {micMute ? (
-                        <>
-                            {micMute && (
-                                <SuggestiveSearch
-                                    handleTextChange={textChange}
-                                    handleTextInputChange={textInputChange}
-                                    // questions={latestSuggestedQuestions}
-                                    questions={allQuestions.current}
-                                />
-                            )}
 
-                            <SuggestionCard
-                                questions={answeredQuestions}
-                                askQuestion={askQuestionFromCard}
-                                shouldRefreshQuestions={shouldRefreshQuestions}
-                                setRefreshQuestionsFalse={
-                                    setRefreshQuestionsFalse
-                                }
-                                notificationManager={NotificationManager}
-                            />
-                            <button
-                                className="ui linkedin button submit-button"
-                                onClick={e => {
-                                    submitResponse(e, "SEARCH");
-                                }}>
-                                <i aria-hidden="true" class="send icon"></i>
-                            </button>
-
-                        </>
-                    ) : (
-                        <input
-                            className="transcript font-class-1"
-                            placeholder={"Transcript"}
-                            value={transcribedAudio || ""}
-                            id="video-text-box"
-                            type={"text"}
-                        />
-                    )}
+                <div className="ask_box">
+                    <input
+                        className="shhh-transcript font-class-1"
+                        placeholder={"Hold Button to Speak"}
+                        value={transcribedAudio || ""}
+                        id="video-text-box"
+                        type={"text"}
+                    />
+                    <div className="AskMe">
+                        <h2>Hey, let's talk about Death</h2>
+                        <ul>
+                            {death_questions.map((question, index) => (
+                                <li key={index}>{question}</li>
+                            ))}
+                        </ul>
+                        <hr style={{ borderColor: 'grey', borderWidth: '1px', borderStyle: 'solid', marginBottom: '10px' }} />
+                    </div>
+                    <SuggestiveSearch
+                        handleTextChange={textChange}
+                        handleTextInputChange={textInputChange}
+                        questions={allQuestions.current}
+                    />
+                    <button
+                        className="ui linkedin button shhh-submit-button"
+                        style={{ background: "#614CB8" }}
+                        onClick={e => {
+                            submitResponse(e, "SEARCH");
+                        }}
+                    >
+                        <i aria-hidden="true" class="send icon"></i>
+                    </button>
                 </div>
+
             </div>
             <NotificationContainer />
         </div>
     );
 }
-
-
-
 export default ShhhPlayer;

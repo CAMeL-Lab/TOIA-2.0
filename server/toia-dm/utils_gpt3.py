@@ -13,10 +13,16 @@ except:
     openai.api_key = os.environ.get("OPENAI_API_KEY")
 # openai.Model.list()
 
+print("toia_answer")
+
 
 def toia_answer(query, data, k=1):
+    print("toia_answer")
+    print(query)
     embedding = get_embedding(query, engine='text-search-ada-query-001')
-    data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
+    print("API worked")
+    data['similarities'] = data.ada_search.apply(
+        lambda x: cosine_similarity(x, embedding))
     res = data.sort_values('similarities', ascending=False).head(k)
 
     ada_similarity_score = res.similarities.values[0]

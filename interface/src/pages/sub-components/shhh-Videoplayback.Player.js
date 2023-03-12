@@ -24,8 +24,10 @@ export default function ShhhVideoPlaybackPlayer(props) {
     return (
         <div>
             <video
-                style={{ width: '10%' }}
-                className="player-vid"
+                style={{
+                    width: '70%', position: 'absolute'
+                }}
+                className="shhh-player-vid"
                 muted={props.muted}
                 id="vidmain"
                 key={props.key}
@@ -36,6 +38,6 @@ export default function ShhhVideoPlaybackPlayer(props) {
             >
                 <source src={props.source} type="video/mp4"></source>
             </video>
-        </div>
+        </div >
     );
 }

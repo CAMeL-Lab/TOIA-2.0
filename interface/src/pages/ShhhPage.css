@@ -157,43 +157,46 @@
 
 /* ShhhPlayer*/
 .shhh-player {
-	padding: 5vw;
+	padding: 0 5vw;
 	background-color: #302D2D;
-	height: 100vh;
+	height: 100%;
 	margin: 0px;
 	display: flex;
 	align-items: center;
 	position: relative;
-	width: 100%;
+	width: 100vw;
 }
 
 
 .shhh-player-cards-wrapper {
-    display: flex;
-    flex-direction: column;
-	position: absolute;
-	left: 75.5%;
-	top: 20%;
-	width:20vw;
-	background: orange;
-}
-
-.shhh-player-cards-wrapper > div {
-	margin-bottom: 2vw;
-
-}
-
-.shhh-player-cards-wrapper  .ui.card {
-	flex-direction: row !important;
-	width: 100%;
-	height:20%;
-}
-
-.shhh-player-cards-wrapper .ui.cards {
-	margin: auto 5vw auto auto !important; /* center the element vertically and align to the right */
+	flex: 1 1 auto; 
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
+	position: absolute;
+	right: 0%;
+	padding: 0.1vw;
+	width: 25%;
+	max-height: 70%;
+	overflow-y: scroll;
+  }
+  
+.shhh-player-cards-wrapper::-webkit-scrollbar {
+display: none;
+}
+  
+
+.shhh-player-cards-wrapper > div {
+	margin-bottom: 9%;
+
+}
+
+.ask_box .ui.cards {
+	margin: 0;
+}
+
+.shhh-player-cards-wrapper .ui.card {
+	flex-direction: row !important;
+	width: 22vw;
 }
 
 .shhh-player-cards-wrapper .ui.buttons{
@@ -202,14 +205,171 @@
 .shhh-player-cards-wrapper .button {
     width: 100% !important;
 }
-.shhh-player-cards-wrapper .ui.buttons .button:last-child {
-    border-radius: 0.28571429rem !important;
+.ask_box .ui.buttons .button:first-child  {
+    border-radius: 0.28571429rem;
+	margin-bottom: 0.5vw;
 }
 
-.shhh-player-cards-wrapper.ui.buttons .button:first-child {
-    border-radius: 0.28571429rem !important;
+.ask_box .ui.buttons .button:last-child {
+	border-radius: 0.28571429rem;
+
 }
 
 .shhh-player-cards-wrapper .ui.card > .content > .description {
+
     color: #b9d2e9 !important;
 }
+
+.shhh-player-group{
+	position: relative;
+	width:100vw;
+	height:100vh;
+}
+.ask_box{
+	position: absolute;
+	display: flex; /* set the container to use flexbox */
+	flex-direction: column; 
+	top:20%;
+	height: 80%; 
+	width: 90vw;
+	right:0%;
+}
+
+.shhh-submit-button {
+	position:absolute;
+	top: 36.5vw;
+	right:0%;
+	width: 4vw;
+	height: 4vw;
+	font-size: 1.5rem;
+}
+
+.shhh-player-vid {
+	background-color: transparent;
+	top: 20%;
+	left: 0%;
+	position: absolute;
+	width: 70%;
+	border-radius: 5px;
+}
+
+.shhh-mute-button {
+	position: fixed;
+	margin:0 !important;
+	top: 49vw;
+	width: 10%;
+	height: 4vw;
+	font-size: 1vw;
+	background-color: #614CB8 !important;
+	z-index: 999999;
+
+}
+
+.shhh-transcript {
+	background-color: rgba(126, 124, 124, 0.1);
+	border: 0;
+	border-radius: 3px;
+	height: 4vw;
+	padding: 5px;
+	padding-left: 15px;
+	position: fixed;
+	resize: none;
+	text-align: left;
+	/* top: 75%; */
+	top: 49vw;
+	margin-left:12%;
+	width: 51%;
+	color: #707070;
+	font-size: 1.5rem;
+}
+
+.ask_box .css-1qqsdnr-MuiAutocomplete-root .MuiOutlinedInput-root {
+	height: 4vw !important;
+}
+
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiAutocomplete-inputRoot.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root{
+	height: 4vw;
+	border-color: transparent;
+}
+.AskMe {
+	width: 20vw; 
+	position: absolute;
+	right:3vw;
+	line-height: 2vw;
+	color: white;
+	font-size: 1vw;
+
+}
+
+.icons {
+	top: 55%;
+	right: 7vw;
+	width: 20vw; /* adjust the width to fit the 3x3 grid */
+	position: absolute;
+	display: grid; /* change display to grid */
+	grid-template-columns: repeat(4, 1fr); /* create three columns with equal width */
+	grid-gap: 2vw; /* add gap between icons */
+	justify-content: center; /* center the icons horizontally */
+  }
+  
+  .icons img {
+	border-radius: 10%;
+	width: 100%;
+	filter: grayscale(0%);
+	transition: filter 0.3s ease-in-out;
+  }
+  
+  .icons img.selected {
+	opacity: 1;
+  }
+  
+  .icon-container {
+	position: relative;
+	z-index: 10000;
+	color: white;
+  }
+  
+  .icon-description {
+	position: absolute;
+	bottom: -2vw;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 15vw;
+	background-color: black;
+	color: white;
+	padding: 10px;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out;
+  }
+  .icon-container.muted .icon-name {
+    color: #999; /* Change to the desired muted color */
+}
+  .icon-container:hover .icon-description {
+	opacity: 1;
+  }
+  
+  .icon-container.muted img {
+	/* Apply styling to muted icons */
+	opacity: 0.5;
+  }
+  
+  .icons.toggle-on .icon-container:not(.selected) {
+	/* Apply styling to muted icons when toggle is on */
+	opacity: 0.5;
+  }
+  
+  .icons.toggle-off .icon-container {
+	/* Apply styling to unmuted icons when toggle is off */
+	opacity: 1;
+  }
+  
+  .shhh-skip-end-button {
+	position: absolute;
+	top: 65%;
+	left: 50%;
+	width: 15%;
+	height: 7%;
+	font-size: 1.8rem;
+	z-index: 9;
+}
+

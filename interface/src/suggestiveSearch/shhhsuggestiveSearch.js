@@ -1,6 +1,7 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import '../pages/ShhhPage.css';
 
 const filter = createFilterOptions({
     matchFrom: "start",
@@ -71,35 +72,37 @@ export default function FreeSoloCreateOption(props) {
             renderOption={(props, option) => (
                 <li {...props}>{option.question}</li>
             )}
-            sx={{ width: 200 }}
             freeSolo
             renderInput={params => (
                 <TextField
+                    placeholder={"Type to ask!"}
                     sx={{
-                        // backgroundColor: "rgba(126, 124, 124, 0.1)",
-                        border: 0,
-                        /* left: 39%; */
-                        padding: "0px",
-                        position: "relative",
-                        resize: "none",
+                        backgroundColor: "rgba(126, 124, 124, 0.1)",
+                        left: 0,
+                        position: "absolute",
+                        borderRadius: "3px",
                         textAlign: "left",
                         /* top: 75%; */
-                        top: "70%",
-                        left: "60vw",
-                        width: "10vw",
-                        color: "#707070",
-                        fontSize: "1.5rem",
+                        top: "36.5vw",
+                        left: "75%",
+                        width: "20%",
+                        height: "4vw",
+                        fontSize: "1.5vw",
+                        fontFamily: "Work Sans",
+                        color: "#ffffff", // Add this line to set the text color to white
                         "& label": {
-                            position: "absolute",
+                            marginLeft: "35%",
+                            paddingTop: "3.55%",
                             fontSize: "1.2rem",
-                            color: "#707070",
                             "&.Mui-focused": {
                                 marginLeft: 0,
                             },
                         },
+                        "& input": {
+                            color: "#ffffff",
+                        }, // Add this
                     }}
                     {...params}
-                    label="Type a question to ask"
                     onChange={value => {
                         disableTyping.current = Boolean(!value.target.value); // if string is empty, return true. Otherwise, false
                         props.handleTextChange(value);

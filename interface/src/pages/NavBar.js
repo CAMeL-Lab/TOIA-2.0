@@ -7,7 +7,7 @@ import history from "../services/history";
 
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
-import "../../node_modules/flag-icons/css/flag-icons.min.css";
+import "../node_modules/flag-icons/css/flag-icons.min.css";
 
 //toiaName = null, props.toiaID = null, props.toiaLanguage = null, props.isLoggedIn = false, history = null
 const supportedLanguages = ["en", "fr", "ar"];
@@ -164,14 +164,14 @@ function NavBar(props) {
     }
 
     function switch_lang(language) {
-        // i18n.changeLanguage(props.toiaLanguage);
+        i18n.changeLanguage(props.toiaLanguage);
 
         return function (e) {
             console.log("Language changed:", i18n.language);
             if (!supportedLanguages.includes(language)) {
                 return;
             }
-            i18n.changeLanguage(language);
+            //i18n.changeLanguage(language);
             // if (rightLanguages.includes(language)){
             //     document.getElementsByTagName('html')[0].setAttribute("dir", "rtl");
             // } else {

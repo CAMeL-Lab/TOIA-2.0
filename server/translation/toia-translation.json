@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "toia-capstone-2021",
+  "private_key_id": "c161f9c66a0183737ce5e2ab5f6b59b7df2d33df",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDV8NLTHJLigoKp\nHWWtEVJsP9vAdDwlPQzovF6/W8TKUe9FTNF8XPg48q7vyLpQLb/G3YNbLpH1jjOE\nEKSl+hdUJqG+uUGUv13e5oPsREBMD9FfJ849Bphc5vz4xWj9J7K2G05C0kp2MmtN\n0gNnTJBRjEk2vQwYfuYQWE5ccPbtT4Ga4n0xKzVPR8kId6HSccy9u1eouUOs3oe2\nOUTAvxJxZ721vT6YG3AZfQa6VcPgZGHPIXyKlFU7vlBrHKG+XQi9qi7xLxki+Ae2\nLTdHEwzEphaiqOOEZS9fOj0uzgEpdmDrhM5tbjwkLugCALNbAOYp5vlLB3j38g5P\nobS4rSt3AgMBAAECggEAApMceAKJUmUffTlUcdHaPy5BKHhECKJK9C2sKdTI/sxT\nB+9fbmxqALlyJhv+ATZqIlKkU/Kw0/0xnOtcWxj+5eB1itrAF/7gYNNyW/0+rthz\n4xeS1+r35qPrAHPTvYdlE0orb3EIPCyDXEZ+Pv4aluvZLhz2HWdaWnEA0TdhnJDj\nDATnJZRBSfDxvR3HA3eFQslVcwgTgfXz3PGR8JJ4V9sZMY0rrGpCjRXQf31Hp2LR\nSQ+Gn/AX56fsQ2yf9TdlBDsq9Oj+456amuVNZIP/hvUux4tab0sJqvg/4rBtPJ7x\nC9j3b+le1plBVEq0KHSq/HphIJ394DH1V9vFN48DBQKBgQDwITYrBPdzw5BM5rGF\nsvX1NO273ehNxgt7t9KOrluamTOBFXrnq1vomTFZr9lInbQVwDpM/dvEKhsKPbXn\niAw5tNZD4ARvBr2J9rKVaIxhALohcRvm9UVITEEeP9q9soWTy72BULoOvnh7YYgf\n1ojirBw8I7hj+G3rkF0pZ2GKzQKBgQDkFIQuT9dK0FsMtvrxS779UFO/cWKGKucZ\nNKDqJ2sflN8lqWRAJMK4oO10VbMgpcLfZPJjfrm4pvhfvULVh2FBJm9dpxNLbIhy\nz0BfhK8ZrxzUAx/eMgKa9ODjjeU7qL0rpZF1I/jX4RbhwRTAEEqfgR0mMLc2C4wT\nWznwMGfXUwKBgQCtffFbB42ZcDQzu4GLLY+TCBizYVLTzkDBtEBGoibA/es+Wjyg\nYShYV0ZWnDyKwJY6GNaGhetgQWOj9I4WqC7dCpC8HYBWjzImGb1RQWYbN6FDRCt6\npL7Xy3BI4K2z3OWxsMRMR/0FZgw6aG8nQaNI0jzcHpq8b+NLDNSic3UACQKBgCWY\nqC1GJfQEIm4XH4h09vekrRlqpFX/bna+MSRH+SWMkbgQkyDrrllm1Z2Onudry5Kt\nfjMeaZjhlSGa/hBar5JgtozWhJyzOE7MkQztvztZnUPpe/BRiBJo+UUpV7cc2on+\nUdrgYh2b0fzGqhf614Ixc0+fSiQThTSPnh5UrFlXAoGBALn0FnW6tnTvQOqdUPaL\n9VOD4y0uRD+WL2gqy3czQU/NOzmp7nTrHtVCLrrNZBE3rLhPiAhTgwJMhE3RsahZ\nepUm/QGoRPMNt7yF5/B34+4Jr+4ptK30rJq1qTpcCoUS9DinnF0zvFc5JNRULXIj\nenXtPra/AfhRtPBzeLjQzm0S\n-----END PRIVATE KEY-----\n",
+  "client_email": "toia-translation@toia-capstone-2021.iam.gserviceaccount.com",
+  "client_id": "112776380172360861687",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/toia-translation%40toia-capstone-2021.iam.gserviceaccount.com"
+}

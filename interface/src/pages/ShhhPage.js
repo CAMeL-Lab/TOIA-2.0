@@ -6,7 +6,7 @@ import history from "../services/history";
 import { Modal } from "semantic-ui-react";
 import axios from "axios";
 import Tracker from "../utils/tracker";
-import ShhhNavBar from './ShhhNavBar.js';
+//import ShhhNavBar from './ShhhNavBar.js';
 import elephant from "../images/elephant.png";
 import './ShhhPage.css';
 
@@ -155,14 +155,14 @@ function ShhhPage() {
 
 	return (
 		<div className="shhh-page">
-			<ShhhNavBar
+			{/* <ShhhNavBar
 				toiaName={toiaName}
 				toiaID={toiaID}
 				isLoggedIn={isLoggedIn}
 				toiaLanguage={toiaLanguage}
 				history={history}
 				showLoginModal={true}
-			/>
+			/> */}
 			<img src={elephant} className="elephant" alt="ELEPHANT IN THE ROOM" />
 			<Modal //This is the stream settings pop menu
 				size="large"
