@@ -8,7 +8,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
-import SuggestionCard from "../suggestiveSearch/shhhsuggesitonCards.js";
+//import SuggestionCard from "../suggestiveSearch/shhhsuggesitonCards.js";
 import SuggestiveSearch from "../suggestiveSearch/shhhsuggestiveSearch.js";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
@@ -21,18 +21,21 @@ import brian from "../images/death/brian.png";
 import jj from "../images/death/jj.png";
 import ian from "../images/death/ian.png";
 import leila from "../images/death/leila.png";
-import rahma from "../images/death/rahma.png";
-import serene from "../images/death/serene.png";
-import kekyong from "../images/death/kekyong.png";
 import norman from "../images/death/norman.png";
+import lucy from "../images/sex/lucy.png";
+import lauren from "../images/sex/lauren.png";
+import klarissa from "../images/sex/klarissa.png";
+import ellis from "../images/sex/ellis.png";
+import kenny from "../images/sex/kenny.png";
+import kendel from "../images/sex/kendel.png";
 const death_icons = [james, rina, sally, brian, jj, ian, leila, norman];
-const sex_icons = [james, rina, sally, brian, jj, ian, leila, norman];
+const sex_icons = [lucy, lauren, klarissa, ellis, kenny, kendel];
 const birth_icons = [james, rina, sally, brian, jj, ian, leila, norman];
 const death_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
-const sex_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
+const sex_names = ['Lucy', 'Lauren', 'Klarissa', 'Ellis', 'Kenny', 'Kendel'];
 const birth_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
 const death_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
-const sex_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
+const sex_descriptions = ['Description of Lucy', 'Description of Lauren', 'Description of Klarissa', 'Description of Ellis', 'Description of Kenny', 'Description of Kendel'];
 const birth_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
 const death_questions = [
     "Are you afraid of death?",
@@ -41,6 +44,19 @@ const death_questions = [
     "Who would be happy that you are gone?",
     "What would you miss the most?",
     "Have you tried giving up?"
+];
+const sex_questions = [
+    "What does penetration feel like?",
+    "Do you orgasm during sex?",
+    "Top or bottom?",
+    "What should I know about gay sex?",
+    "Any advice for someone's first time?",
+    "Do you masturbate?",
+    "Is period sex okay?"
+];
+
+const birth_questions = [
+
 ];
 
 function ShhhPlayer() {
@@ -52,7 +68,6 @@ function ShhhPlayer() {
                 return { open: true };
         }
     }
-
     const [toiaName, setName] = React.useState(null);
     const [toiaLanguage, setLanguage] = React.useState(null);
     const [toiaID, setTOIAid] = React.useState(null);
@@ -87,28 +102,6 @@ function ShhhPlayer() {
     const [micMute, setMicMute] = useState(true);
     const [micString, setMicString] = useState("ASK BY VOICE");
     const interacting = React.useRef(false);
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.code === "Space") {
-                setMicMute(false);
-            }
-        };
-
-        const handleKeyUp = (event) => {
-            if (event.code === "Space") {
-                setMicMute(true);
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyDown);
-        document.addEventListener("keyup", handleKeyUp);
-
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-            document.removeEventListener("keyup", handleKeyUp);
-        };
-    }, []);
 
     useEffect(() => {
         // Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -147,20 +140,6 @@ function ShhhPlayer() {
         new Tracker().startTracking(history.location.state);
     }, []);
 
-    useEffect(() => {
-        const listener = event => {
-            if (event.code === "Enter" || event.code === "NumpadEnter") {
-                event.preventDefault();
-
-                submitResponse(event, "SEARCH");
-            }
-        };
-        document.addEventListener("keydown", listener);
-        return () => {
-            document.removeEventListener("keydown", listener);
-        };
-    }, []);
-
 
     useEffect(() => {
         // set the icon and icon name arrays based on streamNameToTalk
@@ -174,7 +153,7 @@ function ShhhPlayer() {
             setIconDescriptions(sex_descriptions);
         } else if ({ streamNameToTalk }.streamNameToTalk === "Birth stream") {
             setIcons(birth_icons);
-            setIconNames(birth_names);
+            setIconNames(birth_names)
             setIconDescriptions(birth_descriptions);
         }
     }, [streamNameToTalk]);
@@ -220,59 +199,59 @@ function ShhhPlayer() {
                 library();
             });
     }
-    // if user asks one of the suggested questions
-    function askQuestionFromCard(question) {
-        const mode = "CARD";
+    // // if user asks one of the suggested questions
+    // function askQuestionFromCard(question) {
+    //     const mode = "CARD";
 
-        const oldQuestion = question;
-        axios
-            .post(`/api/player`, {
-                params: {
-                    toiaIDToTalk: history.location.state.toiaToTalk,
-                    toiaFirstNameToTalk:
-                        history.location.state.toiaFirstNameToTalk,
-                    question: {
-                        current: oldQuestion.question,
-                    },
-                    streamIdToTalk: history.location.state.streamToTalk,
-                    record_log: "true",
-                    ...(history.location.state.toiaID && {
-                        interactor_id: history.location.state.toiaID,
-                    }),
-                    mode: mode,
-                },
-            })
-            .then(res => {
-                if (res.data === "error") {
-                    setFillerPlaying(true);
-                    console.log("error");
-                } else {
-                    setFillerPlaying(true);
+    //     const oldQuestion = question;
+    //     axios
+    //         .post(`/api/player`, {
+    //             params: {
+    //                 toiaIDToTalk: history.location.state.toiaToTalk,
+    //                 toiaFirstNameToTalk:
+    //                     history.location.state.toiaFirstNameToTalk,
+    //                 question: {
+    //                     current: oldQuestion.question,
+    //                 },
+    //                 streamIdToTalk: history.location.state.streamToTalk,
+    //                 record_log: "true",
+    //                 ...(history.location.state.toiaID && {
+    //                     interactor_id: history.location.state.toiaID,
+    //                 }),
+    //                 mode: mode,
+    //             },
+    //         })
+    //         .then(res => {
+    //             if (res.data === "error") {
+    //                 setFillerPlaying(true);
+    //                 console.log("error");
+    //             } else {
+    //                 setFillerPlaying(true);
 
-                    isFillerPlaying.current = "false";
+    //                 isFillerPlaying.current = "false";
 
-                    setVideoProperties({
-                        key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-                        onEnded: () => {
-                            fetchFiller();
-                        },
-                        source: res.data.url,
-                        fetchFiller: fetchFiller,
-                        muted: false,
-                        filler: false,
-                        duration_seconds: res.data.duration_seconds || null,
-                        question: oldQuestion.question,
-                        video_id: res.data.video_id,
-                    });
+    //                 setVideoProperties({
+    //                     key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
+    //                     onEnded: () => {
+    //                         fetchFiller();
+    //                     },
+    //                     source: res.data.url,
+    //                     fetchFiller: fetchFiller,
+    //                     muted: false,
+    //                     filler: false,
+    //                     duration_seconds: res.data.duration_seconds || null,
+    //                     question: oldQuestion.question,
+    //                     video_id: res.data.video_id,
+    //                 });
 
-                    fetchAnsweredQuestions(
-                        oldQuestion.question,
-                        res.data.answer || "",
-                    );
-                    setTranscribedAudio("");
-                }
-            });
-    }
+    //                 fetchAnsweredQuestions(
+    //                     oldQuestion.question,
+    //                     res.data.answer || "",
+    //                 );
+    //                 setTranscribedAudio("");
+    //             }
+    //         });
+    // }
     // Function ends here
 
     // handling data recieved from server
@@ -342,13 +321,6 @@ function ShhhPlayer() {
             });
     }
 
-    function textInputChange(val) {
-        if (val && val.question) {
-            textInput.current = val.question;
-        } else if (typeof val === "string") {
-            textInput.current = val;
-        }
-    }
 
     function fetchData(mode = "UNKNOWN") {
         const oldQuestion = question.current;
@@ -475,16 +447,15 @@ function ShhhPlayer() {
     }
 
     function textChange(e) {
-        textInput.current = e.target.value;
+        textInput.current = `${textInput.current} ${e.target.value}`;
         interimTextInput.current = textInput.current;
+        console.log(textInput.current)
     }
 
     function submitResponse(e, mode = "UNKNOWN") {
-
         question.current = textInput.current
             ? textInput.current
             : interimTextInput.current;
-
         if (question.current != "") {
             const oldQuestion = question.current;
             axios
@@ -528,6 +499,8 @@ function ShhhPlayer() {
                 .catch(e => {
                     console.error(e);
                 });
+            textInput.current = "";
+            interimTextInput.current = "";
         }
     }
 
@@ -654,6 +627,7 @@ function ShhhPlayer() {
 
 
     const handleIconClick = (index) => {
+        const iconName = iconNames[index];
         if (index === selectedIconIndex) {
             setSelectedIconIndex(null);
             // unmute all icons
@@ -661,6 +635,7 @@ function ShhhPlayer() {
             iconContainers.forEach((container) => {
                 container.classList.remove('muted');
             });
+            textInput.current = ""; // reset to empty string
         } else {
             setSelectedIconIndex(index);
             // mute all icons except selected one
@@ -672,8 +647,11 @@ function ShhhPlayer() {
                     container.classList.add('muted');
                 }
             });
+            textInput.current = iconName;
+            interimTextInput.current = textInput.current;
         }
     };
+
 
     return (
         <div className="shhh-player">
@@ -774,18 +752,15 @@ function ShhhPlayer() {
                         <i aria-hidden="true">
                             <VoiceOverOffRoundedIcon />
                         </i>
+                        Unmute
                     </button>
                 ) : (
                     <button className="ui microphone button shhh-mute-button" onClick={micStatusChange}>
                         <i aria-hidden="true">
                             <RecordVoiceOverRoundedIcon
-                                sx={{
-                                    paddingTop: "0px",
-                                    paddingRight: "0px",
-                                    fontSize: "1.7rem",
-                                }}
                             />
                         </i>
+                        Mute
                     </button>
                 )
 
@@ -830,15 +805,23 @@ function ShhhPlayer() {
                 <div className="ask_box">
                     <input
                         className="shhh-transcript font-class-1"
-                        placeholder={"Hold Button to Speak"}
+                        placeholder={"Click Unmute to Start Asking Questions"}
                         value={transcribedAudio || ""}
                         id="video-text-box"
                         type={"text"}
                     />
                     <div className="AskMe">
-                        <h2>Hey, let's talk about Death</h2>
+                        {streamNameToTalk && streamNameToTalk.includes(" stream") && (
+                            <h2>Hey, let's talk about {streamNameToTalk.replace(" stream", "")}</h2>
+                        )}
                         <ul>
-                            {death_questions.map((question, index) => (
+                            {streamNameToTalk === "Death stream" && death_questions.map((question, index) => (
+                                <li key={index}>{question}</li>
+                            ))}
+                            {streamNameToTalk === "Sex stream" && sex_questions.map((question, index) => (
+                                <li key={index}>{question}</li>
+                            ))}
+                            {streamNameToTalk === "Birth stream" && birth_questions.map((question, index) => (
                                 <li key={index}>{question}</li>
                             ))}
                         </ul>
@@ -846,18 +829,20 @@ function ShhhPlayer() {
                     </div>
                     <SuggestiveSearch
                         handleTextChange={textChange}
-                        handleTextInputChange={textInputChange}
                         questions={allQuestions.current}
                     />
-                    <button
-                        className="ui linkedin button shhh-submit-button"
-                        style={{ background: "#614CB8" }}
-                        onClick={e => {
-                            submitResponse(e, "SEARCH");
-                        }}
-                    >
-                        <i aria-hidden="true" class="send icon"></i>
-                    </button>
+                    <form onSubmit={e => {
+                        e.preventDefault();
+                        submitResponse(e, "SEARCH");
+                    }}>
+                        <button
+                            type="submit"
+                            className="ui linkedin button shhh-submit-button"
+                            style={{ background: "#614CB8" }}
+                        >
+                            <i aria-hidden="true" class="send icon"></i>
+                        </button>
+                    </form>
                 </div>
 
             </div>
