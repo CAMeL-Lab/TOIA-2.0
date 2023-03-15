@@ -81,7 +81,7 @@ def dialogue_manager(payload: DMpayload):
     # if query is None:
     #     return 'Please enter a query', 400
     print(query)
-    response = toia_answer(query, df_avatar)
+    response = toia_answer(query, df_avatar, ENGINE, interactor_id=avatar_id) # this works only for one toia account interacting with its strams. Need to change to focus only on interactor ID
     print("does it make response")
     print(response)
 
