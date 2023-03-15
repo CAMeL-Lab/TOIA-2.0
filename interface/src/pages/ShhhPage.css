@@ -255,16 +255,19 @@ display: none;
 
 .shhh-mute-button {
 	position: fixed;
-	margin:0 !important;
+	margin: 0 !important;
 	top: 49vw;
 	width: 10%;
 	height: 4vw;
 	font-size: 1vw;
 	background-color: #614CB8 !important;
 	z-index: 999999;
-
-}
-
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center; /* Add this line to center the content horizontally */
+	text-align: center;
+	}
 .shhh-transcript {
 	background-color: rgba(126, 124, 124, 0.1);
 	border: 0;
