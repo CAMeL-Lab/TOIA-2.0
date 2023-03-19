@@ -40,12 +40,12 @@ services:
     env_file:
       - ./.env
 
-  toia-dm:
-    build: server/toia-dm
+  multilingual-toia-dm:
+    build: server/multilingual-dm
     ports:
       - ${DM_PORT}:${DM_PORT}
     volumes:
-      - ./server/toia-dm:/app
+      - ./server/multilingual-dm:/app
     depends_on:
       mysql:
         condition: service_healthy
@@ -121,6 +121,7 @@ services:
   translation:
     depends_on:
       - rabbitmq3
+    restart: on-failure
     container_name: "translation_py"
     build: server/translation
     environment:

@@ -928,25 +928,34 @@ router.post("/recorder", cors(), async (req, res) => {
 					),
 				);
 
-                // RabbitMQ setup
-                const rabbitconn = await amqp.connect(`amqp://${process.env.RMQ_USERNAME}:${process.env.RMQ_PASSWORD}@rabbitmq:5672`);
-                const ch = await rabbitconn.createChannel();
-                const q = "translate_transcript"
+				console.log(answer);
+				console.log(results);
+				console.log(`regex test ${(/[0-9a-zA-Z]+/i).test(answer)}`)
+				if((/[0-9a-zA-Z]+/i).test(answer) && results.length > 0){
 
-                await ch.assertQueue(q, {durable: true});
+					console.log("Sending transcript for translation");
+					// RabbitMQ setup
+					const rabbitconn = await amqp.connect(`amqp://${process.env.RMQ_USERNAME}:${process.env.RMQ_PASSWORD}@rabbitmq:5672`);
+					const ch = await rabbitconn.createChannel();
+					const q = "translate_transcript"
 
-                let languages_supported = ['es-ES', 'ar-AE', 'fr-FR', 'en-US'];
-				language = 'en-US';
-				languages_supported = languages_supported.filter(language_code => language_code != language);
+					await ch.assertQueue(q, {durable: true});
 
-                const payload = {
-                    "translate_to": languages_supported,
-                    "results": JSON.parse(results) ,
-                    "video_name": videoID,
-                    "input_language": language,
-                }
+					let languages_supported = ['es-ES', 'ar-AE', 'fr-FR', 'en-US'];
+					language = 'en-US';
+					languages_supported = languages_supported.filter(language_code => language_code != language);
 
-                ch.sendToQueue(q, Buffer.from(JSON.stringify(payload)));
+					const payload = {
+						"translate_to": languages_supported,
+						"results": JSON.parse(results) ,
+						"video_name": videoID,
+						"input_language": language,
+					}
+
+					ch.sendToQueue(q, Buffer.from(JSON.stringify(payload)));
+
+				}
+
 
                 if (process.env.ENVIRONMENT === "development") {
                     // Save thumbnail
