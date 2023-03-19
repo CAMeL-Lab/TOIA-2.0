@@ -14,3 +14,4 @@ server/q_api/notebooks/.ipynb_checkpoints
 .env
 interface/.env
 server/toia-dm/.env
+server/translation/.env

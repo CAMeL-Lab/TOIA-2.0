@@ -59,9 +59,11 @@ app.use(compression());
 // if on development, server static files
 const localAccountsDir = path.join(__dirname, "Accounts/");
 const localAssetsDir = path.join(__dirname, "assets/");
+const localSubtitlesDir = path.join(__dirname, "Transcripts/");
 if (process.env.ENVIRONMENT === "development") {
 	app.use(express.static(localAccountsDir));
 	app.use(express.static(localAssetsDir));
+	app.use(express.static(localSubtitlesDir));
 }
 
 // Load on-boarding questions

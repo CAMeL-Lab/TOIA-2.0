@@ -570,7 +570,7 @@ const getVideoDetails = id_video => {
 };
 
 const getExactMatchVideo = (stream_id, question) => {
-	let query = `SELECT videos_questions_streams.*, video.answer FROM videos_questions_streams
+	let query = `SELECT videos_questions_streams.*, video.answer, video.language FROM videos_questions_streams
                 LEFT JOIN questions ON questions.id = videos_questions_streams.id_question
                 INNER JOIN video ON video.id_video = videos_questions_streams.id_video
                 WHERE videos_questions_streams.id_stream = ? AND

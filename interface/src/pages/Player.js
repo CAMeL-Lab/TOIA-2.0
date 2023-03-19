@@ -10,13 +10,13 @@ import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
-import Tracker from "../utils/tracker"
+import Tracker from "../utils/tracker";
 
-import NavBar from './NavBar.js';
+import NavBar from "./NavBar.js";
 
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
-import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player"
+import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
 import languageFlagsCSS from "../services/languageHelper";
 
@@ -132,22 +132,22 @@ function Player() {
 
 		axios
 			.request(options)
-			.then(function (response) { })
+			.then(function (response) {})
 			.catch(function (error) {
 				alert("You do not have permission to access this page");
 				// Navigate to /library
 				if (isLoggedIn) {
 					history.push({
-						pathname: '/library',
+						pathname: "/library",
 						state: {
 							toiaName,
 							toiaLanguage,
-							toiaID
-						}
+							toiaID,
+						},
 					});
 				} else {
 					history.push({
-						pathname: '/library',
+						pathname: "/library",
 					});
 				}
 			});
@@ -163,58 +163,7 @@ function Player() {
 
 		const oldQuestion = question;
 		console.log(oldQuestion);
-		axios
-			.post(`/api/player`, {
-				params: {
-					toiaIDToTalk: history.location.state.toiaToTalk,
-					toiaFirstNameToTalk:
-						history.location.state.toiaFirstNameToTalk,
-					question: {
-						current: oldQuestion.question,
-					},
-					streamIdToTalk: history.location.state.streamToTalk,
-					record_log: "true",
-					...(history.location.state.toiaID && {
-						interactor_id: history.location.state.toiaID,
-					}),
-					mode: mode,
-				},
-			})
-			.then(res => {
-				if (res.data === "error") {
-					setFillerPlaying(true);
-					console.log("error");
-				} else {
-					setFillerPlaying(true);
-
-					isFillerPlaying.current = "false";
-
-					setVideoProperties({
-						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded: () => {
-							setRatingParams({
-								video_id: res.data.video_id,
-								question: oldQuestion.question,
-							});
-							setHasRated(false);
-							fetchFiller();
-						},
-						source: res.data.url,
-						fetchFiller: fetchFiller,
-						muted: false,
-						filler: false,
-						duration_seconds: res.data.duration_seconds || null,
-						question: oldQuestion.question,
-						video_id: res.data.video_id,
-					});
-
-					fetchAnsweredQuestions(
-						oldQuestion.question,
-						res.data.answer || "",
-					);
-					setTranscribedAudio("");
-				}
-			});
+		getVideoData(mode, oldQuestion.question);
 	}
 	// Function ends here
 
@@ -239,7 +188,7 @@ function Player() {
 	function fetchAllStreamQuestions() {
 		axios
 			.get(
-				`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`,
+				`/api/questions/answered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`,
 			)
 			.then(res => {
 				allQuestions.current = res.data || [];
@@ -269,8 +218,7 @@ function Player() {
 				}
 
 				res.data.forEach(q => {
-
-				// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
+					// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
 					// then add it to the list of possible suggestions
 					if (
 						q.question !== "" &&
@@ -298,12 +246,16 @@ function Player() {
 		if (hasRated) {
 			if (interacting.current == "true") {
 				const params = {
-					language: interactionLanguage
+					language: interactionLanguage,
 					// language: "ko-KR"
 				};
-				speechToTextUtils.initRecording(params, handleDataReceived, error => {
-					console.error("Error when transcribing", error);
-				});
+				speechToTextUtils.initRecording(
+					params,
+					handleDataReceived,
+					error => {
+						console.error("Error when transcribing", error);
+					},
+				);
 			}
 		}
 	}, [hasRated]);
@@ -348,56 +300,61 @@ function Player() {
 			setFillerPlaying(true);
 			fetchFiller();
 		} else {
-			axios
-				.post(`/api/player`, {
-					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
-
-						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
-						question,
-						streamIdToTalk: history.location.state.streamToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
-						mode: mode,
-					},
-				})
-				.then(res => {
-					if (res.data === "error") {
-						setFillerPlaying(true);
-					} else {
-						setFillerPlaying(true);
-
-						isFillerPlaying.current = "false";
-						fetchAnsweredQuestions(oldQuestion, res.data.answer);
-						setVideoProperties({
-							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded: () => {
-								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion,
-								});
-								setHasRated(false);
-								fetchFiller();
-							},
-							source: res.data.url,
-							fetchFiller: fetchFiller,
-							muted: false,
-							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
-							question: question.current,
-							video_id: res.data.video_id,
-						});
-
-						setTranscribedAudio("");
-					}
-				})
-				.catch(e => {
-					console.error(e);
-				});
+			getVideoData(mode, oldQuestion);
 		}
+	}
+
+	function getVideoData(mode, oldQuestion) {
+		axios
+			.post(`/api/player`, {
+				params: {
+					toiaIDToTalk: history.location.state.toiaToTalk,
+
+					toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
+					question,
+					streamIdToTalk: history.location.state.streamToTalk,
+					record_log: "true",
+					...(history.location.state.toiaID && {
+						interactor_id: history.location.state.toiaID,
+					}),
+					mode: mode,
+				},
+			})
+			.then(res => {
+				if (res.data === "error") {
+					setFillerPlaying(true);
+				} else {
+					setFillerPlaying(true);
+
+					isFillerPlaying.current = "false";
+					fetchAnsweredQuestions(oldQuestion, res.data.answer);
+					setVideoProperties({
+						key: res.data.url + new Date(),
+						onEnded: () => {
+							setRatingParams({
+								video_id: res.data.video_id,
+								question: oldQuestion,
+							});
+							setHasRated(false);
+							fetchFiller();
+						},
+						source: res.data.url,
+						source_vtt: res.data.vtt_url,
+						fetchFiller: fetchFiller,
+						muted: false,
+						filler: false,
+						duration_seconds: res.data.duration_seconds || null,
+						question: question.current,
+						video_id: res.data.video_id,
+						language: res.data.language,
+					});
+
+					setTranscribedAudio("");
+				}
+			})
+			.catch(e => {
+				console.error(e);
+			});
 	}
 
 	function endTranscription() {
@@ -413,13 +370,17 @@ function Player() {
 
 			if (hasRated) {
 				const params = {
-					language: interactionLanguage
+					language: interactionLanguage,
 					// language: "ko-KR"
 				};
-				speechToTextUtils.initRecording(params, handleDataReceived, error => {
-					console.error("Error when transcribing", error);
-					// No further action needed, as stream already closes itself on error
-				});
+				speechToTextUtils.initRecording(
+					params,
+					handleDataReceived,
+					error => {
+						console.error("Error when transcribing", error);
+						// No further action needed, as stream already closes itself on error
+					},
+				);
 			} else {
 				NotificationManager.warning(
 					"Please provide a rating",
@@ -504,52 +465,7 @@ function Player() {
 
 		if (question.current !== "") {
 			const oldQuestion = question.current;
-			axios
-				.post(`/api/player`, {
-					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
-						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
-						question,
-						streamIdToTalk: history.location.state.streamToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
-						mode: mode,
-					},
-				})
-				.then(res => {
-					setFillerPlaying(true);
-					if (res.data !== "error") {
-						isFillerPlaying.current = "false";
-
-						setVideoProperties({
-							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded: () => {
-								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion,
-								});
-								setHasRated(false);
-								fetchFiller();
-							},
-							source: res.data.url,
-							muted: false,
-							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
-							question: question.current,
-							video_id: res.data.video_id,
-						});
-
-						fetchAnsweredQuestions(oldQuestion, res.data.answer);
-						setTranscribedAudio("");
-						question.current = "";
-					}
-				})
-				.catch(e => {
-					console.error(e);
-				});
+			getVideoData(mode, oldQuestion);
 		}
 	}
 
@@ -577,8 +493,7 @@ function Player() {
 						<CSSTransition
 							key={videoProperties.key}
 							timeout={500}
-							classNames="fade"
-						>
+							classNames="fade">
 							<VideoPlaybackPlayer
 								onEnded={videoProperties.onEnded}
 								key={videoProperties.key}
@@ -588,10 +503,12 @@ function Player() {
 										: false
 								}
 								source={videoProperties.source}
-								filler={videoProperties.filler}
-								duration_seconds={
-									videoProperties.duration_seconds
-								}
+								source_vtt={videoProperties.source_vtt}
+								// filler={videoProperties.filler}
+								// duration_seconds={
+								// 	videoProperties.duration_seconds
+								// }
+								lang={videoProperties.language}
 							/>
 						</CSSTransition>
 					</TransitionGroup>
@@ -600,20 +517,44 @@ function Player() {
 					<div>
 						<div class="lang-container">
 							<div class="lang-dropdown">
-								<div class="lang-dropbtn"><span className={languageFlagsCSS[interactionLanguage]}></span></div>
+								<div class="lang-dropbtn">
+									<span
+										className={
+											languageFlagsCSS[
+												interactionLanguage
+											]
+										}></span>
+								</div>
 								<div class="lang-dropdown-content">
-									<a href="#" onClick={() => setInteractionLanguage("en-US")}><span class="fi fi-us"></span></a>
-									<a href="#" onClick={() => setInteractionLanguage("ar-AE")}><span class="fi fi-ae"></span></a>
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("en-US")
+										}>
+										<span class="fi fi-us"></span>
+									</a>
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("ar-AE")
+										}>
+										<span class="fi fi-ae"></span>
+									</a>
 									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
-									<a href="#" onClick={() => setInteractionLanguage("fr-FR")}><span class="fi fi-fr"></span></a>
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("fr-FR")
+										}>
+										<span class="fi fi-fr"></span>
+									</a>
 								</div>
 							</div>
 						</div>
 						<button
 							color="green"
 							className="ui linkedin microphone button mute-button"
-							onClick={micStatusChange}
-						>
+							onClick={micStatusChange}>
 							<i aria-hidden="true" class="">
 								<RecordVoiceOverRoundedIcon
 									sx={{
@@ -629,8 +570,7 @@ function Player() {
 				) : (
 					<button
 						className="ui secondary button mute-button"
-						onClick={micStatusChange}
-					>
+						onClick={micStatusChange}>
 						<i aria-hidden="true" class="">
 							<VoiceOverOffRoundedIcon />
 						</i>
@@ -641,14 +581,12 @@ function Player() {
 				{isFillerPlaying.current === "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
-						onClick={fetchFiller}
-					>
+						onClick={fetchFiller}>
 						{" "}
 						Skip to End{" "}
 						<i
 							aria-hidden="true"
-							class="angle double right icon"
-						></i>
+							class="angle double right icon"></i>
 					</button>
 				) : null}
 
@@ -680,8 +618,7 @@ function Player() {
 								className="ui linkedin button submit-button"
 								onClick={e => {
 									submitResponse(e, "SEARCH");
-								}}
-							>
+								}}>
 								<i aria-hidden="true" class="send icon"></i>
 								ASK
 							</button>

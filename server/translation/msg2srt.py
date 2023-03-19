@@ -15,6 +15,7 @@
 # limitations under the License.
 import srt
 from datetime import timedelta
+import webvtt
 
 def break_sentences(max_chars, subs, words, prev_end_time):
     firstword = True
@@ -83,3 +84,6 @@ def msg2srt(results, max_chars, out_file, language_code):
 
     write_srt(out_file, language_code, subs)
     write_txt(out_file, subs)
+    
+    vtt = webvtt.from_srt(f'srts/{out_file}.srt')
+    vtt.save(f'vtts/{out_file}.vtt')

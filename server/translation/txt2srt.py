@@ -15,6 +15,7 @@
 # limitations under the License.
 import srt
 import os
+import webvtt
 
 
 def load_srt(filename):
@@ -26,7 +27,7 @@ def load_srt(filename):
     return list(srt.parse(text))
 
 
-def process_translations(subs, indexfile, output_dir, srt_out):
+def process_translations(subs, indexfile, output_dir, srt_out, vtt_out):
     # read index.csv and foreach translated file,
 
     print("Updating subtitles for each translated language")
@@ -39,6 +40,7 @@ def process_translations(subs, indexfile, output_dir, srt_out):
         langfile = f'{output_dir}/{index_list[2].split("/")[-1]}'
         lang_subs = update_srt(lang, langfile, subs)
         write_srt(lang, lang_subs,srt_out)
+        convertsrt2vtt(lang, srt_out, vtt_out)
     return
 
 
@@ -64,7 +66,13 @@ def write_srt(lang, lang_subs, srt_out_dir):
     return
 
 
-def txt2srt(srt_file, txt_out, srt_out):
+def txt2srt(srt_file, txt_out, srt_out, vtt_out):
     subs = load_srt(srt_file)
     index_path = f'{txt_out}/index.csv'
-    process_translations(subs, index_path, txt_out, srt_out)
+    process_translations(subs, index_path, txt_out, srt_out, vtt_out)
+
+def convertsrt2vtt(lang, srt_out_dir, vtt_out_dir = "vtt"):
+    srt_file = f'{srt_out_dir}/{lang}.srt'
+    vtt_file = f'{vtt_out_dir}/{lang}.vtt'
+    vtt = webvtt.from_srt(srt_file)
+    vtt.save(vtt_file)

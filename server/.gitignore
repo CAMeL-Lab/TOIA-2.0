@@ -4,6 +4,7 @@
 package-lock.json
 *.DS_Store
 # toia-capstone-2021-a17d9d7dd482.json
+toia-capstone-2021-07c7a1b6d791.json
 /.idea
 /Accounts
 /speech_to_text/toia-capstone-2021-b944d1cc65aa.json
@@ -13,3 +14,4 @@ package-lock.json
 /mysql/toia_db.sql
 /Transcripts/srts/*
 /Transcripts/txts/*
+/Transcripts/vtts/*

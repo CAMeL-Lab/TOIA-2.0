@@ -11,7 +11,7 @@ from utils_gpt3 import toia_answer
 # from utils_gpt3 import getFirstNSimilar
 from dotenv import load_dotenv
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 load_dotenv()
 
@@ -48,7 +48,7 @@ def dialogue_manager(payload: DMpayload):
     print(avatar_id)
     print(stream_id)
 
-    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, videos_questions_streams.ada_search, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.likes, video.views FROM video
+    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, videos_questions_streams.ada_search, questions.question, video.id_video, video.toia_id, video.language, video.idx, video.private, video.answer, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND videos_questions_streams.type NOT IN ('filler', 'exit');""")
@@ -63,6 +63,7 @@ def dialogue_manager(payload: DMpayload):
                                     'type',
                                     'ada_search',
                                     'question',
+                                    'language',
                                     'id_video',
                                     'toia_id',
                                     'idx',
@@ -77,18 +78,21 @@ def dialogue_manager(payload: DMpayload):
     # df_greetings = df_avatar[df_avatar['type'] == "greeting"]
 
     if query is None:
-        return 'Please enter a query', 400
+        raise HTTPException(status_code=400, detail="Please enter a query")
+        # return 'Please enter a query', 400
 
     response = toia_answer(query, df_avatar)
 
     answer = response[0]
     id_video = response[1]
-    ada_similarity_score = response[2]
+    language = response[2]
+    ada_similarity_score = response[3]
 
     result = {
         'answer': answer,
         'id_video': id_video,
-        'ada_similarity_score': ada_similarity_score
+        'ada_similarity_score': ada_similarity_score,
+        'language' : language,
     }
 
     json.dumps(result)

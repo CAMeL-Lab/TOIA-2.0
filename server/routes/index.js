@@ -743,6 +743,7 @@ router.post("/player", cors(), async (req, res) => {
 				ada_similarity_score: null,
 				id_video: exactMatch["id_video"],
 				answer: exactMatch["answer"],
+				language: exactMatch["language"],
 			},
 		};
 	}
@@ -780,11 +781,16 @@ router.post("/player", cors(), async (req, res) => {
 			res.send("error");
 			return;
 		}
+		const videoName = player_video_id.split('.').slice(0,-1).join('');
+		console.log(`vtts/${videoName}-${videoDetails.data.language}.vtt`);
 		res.send({
 			url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
 			answer: videoDetails.data.answer,
 			duration_seconds: videoInfo.duration_seconds,
 			video_id: player_video_id,
+			language: videoDetails.data.language,
+			vtt_url: `vtts/${videoName}-${videoDetails.data.language}.vtt`,
+			// vtt_url: `/Transcripts/`
 		});
 		return;
 	}
@@ -855,7 +861,7 @@ router.post("/recorder", cors(), async (req, res) => {
 
     const fields = req.fields;
     const file = req.file;
-    const answer = fields.answer[0].trim();
+    let answer = fields.answer[0].trim();
     const results = req.fields.results;
     let language = req.fields.language;
 

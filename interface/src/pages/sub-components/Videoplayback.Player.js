@@ -1,25 +1,19 @@
 import { useRef, useState, useEffect } from "react";
 
-export default function VideoPlaybackPlayer({muted, key, onEnded, source}) {
+// var fsp = fs.promises;
+
+// var subtitle = "V0VCVlRUDQoNCjAwOjAwOjAwLjAwMCAtLT4gMDA6MDA6MDEuMDAwDQpXaGVyZSBkaWQgaGUgZ28/WVlZWQ0KDQowMDowMDowMS4wMDAgLS0+IDAwOjAwOjAzLjUwMA0KSSB0aGluayBoZSB3ZW50IGRvd24gdGhpcyBsYW5lLg0KDQowMDowMDowMy4wMDAgLS0+IDAwOjAwOjA2LjUwMA0KV2hhdCBhcmUgeW91IHdhaXRpbmcgZm9yPw==";
+// subtitle = window.atob(subtitle);
+// var subBlob = new Blob([subtitle]);
+// var subURL = URL.createObjectURL(subBlob);
+
+//   const result = await streamToString(stream)
+
+export default function VideoPlaybackPlayer({ muted, key, onEnded, source, lang, source_vtt }) {
 	const videoRef = useRef(null);
-
-	// let skippedLastSecond = false;
-
-	// useEffect(() => {
-	//   skippedLastSecond = false;
-	// }, [props])
-
-	// const onTimeUpdate = () => {
-	//     if (!props.filler && props.duration_seconds && props.duration_seconds > 3){
-	//         if ((props.duration_seconds - videoRef.current.currentTime) <= 1){
-	//             if (!skippedLastSecond){
-	//                 skippedLastSecond = true;
-	//                 props.onEnded();
-	//                 console.log("Ending:", props.duration_seconds)
-	//             }
-	//         }
-	//     }
-	// }
+	console.log(`log: source_vtt`);
+	
+	console.log(source_vtt);
 
 	return (
 		<div>
@@ -34,13 +28,8 @@ export default function VideoPlaybackPlayer({muted, key, onEnded, source}) {
 				autoPlay
 			>
 				<source src={source} type="video/mp4"></source>
+				<track label="English" kind="subtitles" srcLang={lang?.split('-')[0] ?? ""} src={source_vtt} default />
 			</video>
-			{/* {props.subtitles ? <track
-				label="Deutsch"
-				kind="subtitles"
-				srclang="de"
-				src="" /> :
-				<></>} */}
 		</div>
 	);
 }

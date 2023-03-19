@@ -568,7 +568,7 @@ function Recorder() {
             form.append('thumb', videoThumbnail);
             form.append('id', toiaID);
             form.append('name', toiaName);
-            form.append('language', toiaLanguage);
+            form.append('language', interactionLanguage);
             form.append('questions', JSON.stringify(questionsSelected));
             form.append('answer', answerProvided);
             form.append('results', JSON.stringify(results));
