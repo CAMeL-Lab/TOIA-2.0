@@ -7,6 +7,7 @@ export default function FreeSoloCreateOption(props) {
     return (
         <TextField
             placeholder={"Type and click send button!"}
+            value={props.textInputValue}
             sx={{
                 backgroundColor: "rgba(126, 124, 124, 0.1)",
                 left: 0,
@@ -32,8 +33,8 @@ export default function FreeSoloCreateOption(props) {
                     color: "#ffffff",
                 }, // Add this
             }}
-            onChange={value => {
-                props.handleTextChange(value);
+            onChange={e => {
+                props.handleTextChange(e);
             }}
         />
     );

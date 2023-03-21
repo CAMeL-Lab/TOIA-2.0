@@ -12,6 +12,20 @@
 	width: 0;
   }
 
+  h1.title{
+	position: absolute;
+	font-family: 'Work Sans', sans-serif;
+	top: 8vw;
+	width: 100vw;
+	left: 50vw;
+	font-size: 3vw;
+	text-align: center;
+	transform: translateX(-50%);
+	color: white;
+  }
+  
+  
+
 .shhh-grid {
 	overflow-y: scroll;
 	height: 82%;
@@ -149,9 +163,10 @@
 
 .elephant {
 	position: absolute;
+	opacity:0.2;
 	width: 50vw;
 	top: 50%;
-	left: 50%;
+	left: 50vw;
 	transform: translate(-50%, -50%);
   }
 
@@ -288,6 +303,12 @@ display: none;
 
 .ask_box .css-1qqsdnr-MuiAutocomplete-root .MuiOutlinedInput-root {
 	height: 4vw !important;
+}
+
+.ask_box .MuiInputBase-input{
+	height:4vw !important;
+	padding:0;
+	padding-left: 1vw;
 }
 
 .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiAutocomplete-inputRoot.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root{

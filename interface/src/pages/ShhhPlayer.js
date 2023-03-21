@@ -28,15 +28,20 @@ import klarissa from "../images/sex/klarissa.png";
 import ellis from "../images/sex/ellis.png";
 import kenny from "../images/sex/kenny.png";
 import kendel from "../images/sex/kendel.png";
-const death_icons = [james, rina, sally, brian, jj, ian, leila, norman];
+import krista from "../images/birth/krista.png";
+import ashley from "../images/birth/ashley.png";
+import alison from "../images/birth/alison.png";
+import kieona from "../images/birth/kieona.png";
+const death_icons = [brian, jj, leila, james, rina, sally, ian, norman];
 const sex_icons = [lucy, lauren, klarissa, ellis, kenny, kendel];
-const birth_icons = [james, rina, sally, brian, jj, ian, leila, norman];
-const death_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
+const birth_icons = [krista, ashley, alison, kieona];
+const death_names = ['Brian', 'JJ', 'Leila', 'James', 'Rina', 'Sally', 'Ian', 'Norman'];
 const sex_names = ['Lucy', 'Lauren', 'Klarissa', 'Ellis', 'Kenny', 'Kendel'];
-const birth_names = ['James', 'Rina', 'Sally', 'Brian', 'JJ', 'Ian', 'Leila', 'Norman'];
-const death_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
+const birth_names = ['Krista', 'Ashley', 'Alison', 'Kieona'];
+const death_descriptions = ['[Brian] A man with Parkinsons and its symptoms that can lead to earlier death', '[JJ] A 34-year-old man has been diagnosed with incurable colon cancer', '[James]Singaporean Man', '[Rina] Singaporean Woman', '[Sally] Singaporean Woman', '[Ian] Singaporean Man', '[Layla] A woman with end-stage renal disease', '[Norman] Singaporean Man'];
 const sex_descriptions = ['Description of Lucy', 'Description of Lauren', 'Description of Klarissa', 'Description of Ellis', 'Description of Kenny', 'Description of Kendel'];
-const birth_descriptions = ['Description of James', 'Description of Rina', 'Description of Sally', 'Description of Brian', 'Description of JJ', 'Description of Ian', 'Description of Leila', 'Description of Norman'];
+const birth_descriptions = ['[Krista] A mother with one child delivered vaginally in a hospital setting and had an epidural.', '[Ashley]A mother of two children, both born vaginally.',
+    '[Alison]A mom of two daughters via two scheduled c-sections', '[Kieona]A mother of one daughter had a regular vaginal birth.'];
 const death_questions = [
     "Are you afraid of death?",
     "Who is not invited to your funeral?",
@@ -56,6 +61,13 @@ const sex_questions = [
 ];
 
 const birth_questions = [
+    "Do you poop while giving birth?",
+    "Did you use mirror?",
+    "How long was your labor?",
+    "How would you describe the pain?",
+    "What happens after giving birth",
+    "Did you tear your vagina while giving birth?"
+
 
 ];
 
@@ -102,6 +114,8 @@ function ShhhPlayer() {
     const [micMute, setMicMute] = useState(true);
     const [micString, setMicString] = useState("ASK BY VOICE");
     const interacting = React.useRef(false);
+    const [textInputValue, setTextInputValue] = React.useState("");
+    const [dataIsFinal, setDataIsFinal] = React.useState(null)
 
     useEffect(() => {
         // Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -157,6 +171,92 @@ function ShhhPlayer() {
             setIconDescriptions(birth_descriptions);
         }
     }, [streamNameToTalk]);
+
+    //ask question on enter 
+    useEffect(() => {
+        const listener = event => {
+            if (event.code === "Enter" || event.code === "NumpadEnter") {
+                event.preventDefault();
+
+                submitResponse(event, "SEARCH");
+            }
+        };
+        document.addEventListener("keydown", listener);
+        return () => {
+            document.removeEventListener("keydown", listener);
+        };
+    }, []);
+
+    //press space bar to unmute
+    const [isSpaceKeyPressed, setIsSpaceKeyPressed] = React.useState(false);
+    const isSpaceKey = React.useRef("false")
+    const firstRender = React.useRef(false)
+
+    useEffect(() => {
+        // listener for spacebar down
+        // console.log("current", isSpaceKey.current)
+        const listenDown = event => {
+            if (textInputValue == "" && event.code === "Space" && isSpaceKey.current === "false") {
+                event.preventDefault();
+                setIsSpaceKeyPressed(true)
+                isSpaceKey.current = "true"
+                // isSpaceKeyPressed = true;
+                // micStatusChange(event);
+                setMicMute(false)
+                // console.log(micMute)
+                console.log("key down");
+            }
+        };
+        // listener for spacebar up
+        const listenUp = event => {
+            if (textInputValue == "" && event.code === "Space" && isSpaceKey.current === "true") {
+                event.preventDefault();
+                // micStatusChange(event);
+                setIsSpaceKeyPressed(false)
+                isSpaceKey.current = "false"
+                setMicMute(true)
+                // isSpaceKeyPressed = false;
+                // console.log(micMute)
+                console.log("key up");
+
+                // submitResponse(event, "SEARCH");
+            }
+        };
+        document.addEventListener("keydown", listenDown);
+        document.addEventListener("keyup", listenUp);
+        return () => {
+            document.removeEventListener("keydown", listenDown);
+            document.removeEventListener("keyup", listenUp);
+        };
+    }, []);
+
+    useEffect((e) => {
+    
+        if (firstRender.current){
+            if (!micMute) {
+                speechToTextUtils.stopRecording();
+                // console.log(dataIsFinal)
+                if (dataIsFinal === false) {
+                    textInput.current = transcribedAudio
+                    submitResponse(e, "SEARCH")
+                }
+                // dataIsFinal === false ? textInput.current = transcribedAudio || submitResponse(e, "SEARCH") : null;
+    
+            } else {
+                interacting.current = true;
+                speechToTextUtils.initRecording(handleDataReceived, (error) => {
+                    console.error("Error when transcribing", error);
+                    // No further action needed, as stream already closes itself on error
+                });
+            }
+        } else{
+            firstRender.current = true
+        }
+       
+
+    }, [isSpaceKeyPressed])
+
+
 
     const [state, dispatch] = React.useReducer(exampleReducer, { open: false });
     const { open } = state;
@@ -259,9 +359,10 @@ function ShhhPlayer() {
         // setting the transcribedAudio
         if (data) {
             setTranscribedAudio(data.alternatives[0].transcript);
+            setDataIsFinal(false)
             if (data.isFinal) {
                 question.current = data.alternatives[0].transcript;
-
+                setDataIsFinal(true)
                 // speechToTextUtils.stopRecording();
                 fetchData("VOICE");
             }
@@ -378,12 +479,18 @@ function ShhhPlayer() {
     function endTranscription() {
         speechToTextUtils.stopRecording();
     }
-    const micStatusChange = () => {
+    const micStatusChange = (e) => {
         if (!micMute) {
             speechToTextUtils.stopRecording();
+            // console.log(dataIsFinal)
+            if (dataIsFinal === false) {
+                textInput.current = transcribedAudio
+                submitResponse(e, "SEARCH")
+            }
+            // dataIsFinal === false ? textInput.current = transcribedAudio || submitResponse(e, "SEARCH") : null;
+
         } else {
             interacting.current = true;
-
             speechToTextUtils.initRecording(handleDataReceived, (error) => {
                 console.error("Error when transcribing", error);
                 // No further action needed, as stream already closes itself on error
@@ -449,6 +556,8 @@ function ShhhPlayer() {
     function textChange(e) {
         textInput.current = `${textInput.current} ${e.target.value}`;
         interimTextInput.current = textInput.current;
+        console.log(interimTextInput.current)
+        setTextInputValue(e.target.value);
         console.log(textInput.current)
     }
 
@@ -501,6 +610,7 @@ function ShhhPlayer() {
                 });
             textInput.current = "";
             interimTextInput.current = "";
+            setTextInputValue("");
         }
     }
 
@@ -748,7 +858,7 @@ function ShhhPlayer() {
                     </TransitionGroup>
                 )}
                 {micMute ? (
-                    <button className="ui secondary button shhh-mute-button" onClick={micStatusChange}>
+                    <button className="ui secondary button shhh-mute-button" onClick={e => micStatusChange(e)}>
                         <i aria-hidden="true">
                             <VoiceOverOffRoundedIcon />
                         </i>
@@ -830,10 +940,12 @@ function ShhhPlayer() {
                     <SuggestiveSearch
                         handleTextChange={textChange}
                         questions={allQuestions.current}
+                        textInputValue={textInputValue}
                     />
                     <form onSubmit={e => {
                         e.preventDefault();
                         submitResponse(e, "SEARCH");
+
                     }}>
                         <button
                             type="submit"

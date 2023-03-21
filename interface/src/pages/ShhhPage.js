@@ -10,7 +10,7 @@ import Tracker from "../utils/tracker";
 import elephant from "../images/elephant.png";
 import './ShhhPage.css';
 
-const BirthText = "Engage in stories and discussions on the miraculous journey of bringing new life into the world.";
+const BirthText = "Ask moms about childbirth experiences that you are too afraid to ask, from labor horror stories to post-pregnancy changes.";
 const DeathText = "Talk about the finality of life and let's address elephant in the room";
 const SexText = "Join to have open, honest, and playful conversations around sex.";
 
@@ -164,6 +164,7 @@ function ShhhPage() {
 				showLoginModal={true}
 			/> */}
 			<img src={elephant} className="elephant" alt="ELEPHANT IN THE ROOM" />
+			<h1 class="title">Elephant In the Room</h1>
 			<Modal //This is the stream settings pop menu
 				size="large"
 				closeIcon={true}
