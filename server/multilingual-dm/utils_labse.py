@@ -11,11 +11,11 @@ config = dotenv_values()
 def toia_answer(query, data, k=1):
     print("Query", query)
     embedding = labse.normalization(labse.encoder(labse.preprocessor(tf.constant([query])))["default"]).numpy()[0]
-    print("B")
+    # print("B")
     data['similarities'] = data.ada_search.apply(lambda x: labse.similarity(embedding, x))
-    print("C")
+    # print("C")
     res = data.sort_values('similarities', ascending=False).head(k)
-    print("D")
+    # print("D")
 
     ada_similarity_score = res.similarities.values[0]
     print("Similarity Score", ada_similarity_score)

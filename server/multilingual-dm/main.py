@@ -35,6 +35,10 @@ class QuestionInput(BaseModel):
 class DMpayload(BaseModel):  #I know this nesting is stupid --- correct this later in the nodejs backend when defining the payload there
     params: QuestionInput
 
+@app.post("/test")
+def test(payload: DMpayload):
+    return "Hello", 200
+
 @app.post("/dialogue_manager")
 def dialogue_manager(payload: DMpayload):
     raw_payload = payload.params

@@ -9,11 +9,21 @@ import { useRef, useState, useEffect } from "react";
 
 //   const result = await streamToString(stream)
 
-export default function VideoPlaybackPlayer({ muted, key, onEnded, source, lang, source_vtt }) {
+export default function VideoPlaybackPlayer({
+	muted,
+	key,
+	onEnded,
+	source,
+	lang,
+	source_vtt,
+}) {
 	const videoRef = useRef(null);
-	console.log(`log: source_vtt`);
-	
-	console.log(source_vtt);
+
+	useEffect(() => {
+		console.log(`log: source_vtt`);
+		console.log(source_vtt);
+		console.log(lang);
+	}, [source_vtt]);
 
 	return (
 		<div>
@@ -25,10 +35,15 @@ export default function VideoPlaybackPlayer({ muted, key, onEnded, source, lang,
 				onEnded={onEnded}
 				// onTimeUpdate={onTimeUpdate}
 				ref={videoRef}
-				autoPlay
-			>
+				autoPlay>
 				<source src={source} type="video/mp4"></source>
-				<track label="English" kind="subtitles" srcLang={lang?.split('-')[0] ?? ""} src={source_vtt} default />
+				<track
+					label="English"
+					kind="subtitles"
+					srcLang={lang?.split("-")[0] ?? ""}
+					src={source_vtt}
+					default
+				/>
 			</video>
 		</div>
 	);

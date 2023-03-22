@@ -719,12 +719,14 @@ router.post("/player", cors(), async (req, res) => {
 	const question = req.body.params.question.current;
 	const stream_id = req.body.params.streamIdToTalk;
 	const avatar_id = req.body.params.toiaIDToTalk;
+	const language = req.body.params.language;
 
 	const exactMatch = await getExactMatchVideo(stream_id, question);
 
 	let videoDetails;
 	if (exactMatch === null) {
 		try {
+			console.log(`${process.env.DM_ROUTE}`);
 			videoDetails = await axios.post(`${process.env.DM_ROUTE}`, {
 				params: {
 					query: question,
@@ -789,7 +791,7 @@ router.post("/player", cors(), async (req, res) => {
 			duration_seconds: videoInfo.duration_seconds,
 			video_id: player_video_id,
 			language: videoDetails.data.language,
-			vtt_url: `vtts/${videoName}-${videoDetails.data.language}.vtt`,
+			vtt_url: `vtts/${videoName}-${language}.vtt`,
 			// vtt_url: `/Transcripts/`
 		});
 		return;
