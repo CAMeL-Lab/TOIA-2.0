@@ -10,9 +10,9 @@ import Tracker from "../utils/tracker";
 import elephant from "../images/elephant.png";
 import './ShhhPage.css';
 
-const BirthText = "Ask moms about childbirth experiences that you are too afraid to ask, from labor horror stories to post-pregnancy changes.";
-const DeathText = "Talk about the finality of life and let's address elephant in the room";
-const SexText = "Join to have open, honest, and playful conversations around sex.";
+const BirthText = "Ask moms about their childbirth experiences that you're too afraid to ask, from labor horror stories to body transformations.";
+const DeathText = "Join in a heartfelt conversation about death with elderly individuals and people with chronic conditions. Are you scared of death?";
+const SexText = "Don't be shy! Join us to have open, juicy, and playful conversations about sex that you are curious but don't dare to ask in real-life. We welcome your curiosity!";
 
 
 function ShhhPage() {

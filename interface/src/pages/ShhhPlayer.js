@@ -20,7 +20,7 @@ import sally from "../images/death/sally.png";
 import brian from "../images/death/brian.png";
 import jj from "../images/death/jj.png";
 import ian from "../images/death/ian.png";
-import leila from "../images/death/leila.png";
+import layla from "../images/death/leila.png";
 import norman from "../images/death/norman.png";
 import lucy from "../images/sex/lucy.png";
 import lauren from "../images/sex/lauren.png";
@@ -28,47 +28,53 @@ import klarissa from "../images/sex/klarissa.png";
 import ellis from "../images/sex/ellis.png";
 import kenny from "../images/sex/kenny.png";
 import kendel from "../images/sex/kendel.png";
+import chris from "../images/sex/chris.png";
+import zaldy from "../images/sex/zaldy.png";
 import krista from "../images/birth/krista.png";
 import ashley from "../images/birth/ashley.png";
 import alison from "../images/birth/alison.png";
 import kieona from "../images/birth/kieona.png";
-const death_icons = [brian, jj, leila, james, rina, sally, ian, norman];
-const sex_icons = [lucy, lauren, klarissa, ellis, kenny, kendel];
-const birth_icons = [krista, ashley, alison, kieona];
-const death_names = ['Brian', 'JJ', 'Leila', 'James', 'Rina', 'Sally', 'Ian', 'Norman'];
-const sex_names = ['Lucy', 'Lauren', 'Klarissa', 'Ellis', 'Kenny', 'Kendel'];
-const birth_names = ['Krista', 'Ashley', 'Alison', 'Kieona'];
-const death_descriptions = ['[Brian] A man with Parkinsons and its symptoms that can lead to earlier death', '[JJ] A 34-year-old man has been diagnosed with incurable colon cancer', '[James]Singaporean Man', '[Rina] Singaporean Woman', '[Sally] Singaporean Woman', '[Ian] Singaporean Man', '[Layla] A woman with end-stage renal disease', '[Norman] Singaporean Man'];
-const sex_descriptions = ['Description of Lucy', 'Description of Lauren', 'Description of Klarissa', 'Description of Ellis', 'Description of Kenny', 'Description of Kendel'];
+import kaylee from "../images/birth/kaylee.png";
+import christian from "../images/birth/christian.png";
+import stephanie from "../images/birth/stephanie.png";
+import elephantIcon from "../images/elephant-icon.png";
+const death_icons = [brian, jj, layla, james, rina, sally, ian, norman];
+const sex_icons = [lucy, lauren, klarissa, ellis, kenny, kendel, chris, zaldy];
+const birth_icons = [krista, ashley, alison, kieona, kaylee, christian, stephanie];
+const death_names = ['Brian', 'JJ', 'Layla', 'James', 'Rina', 'Sally', 'Ian', 'Norman'];
+const sex_names = ['Lucy', 'Lauren', 'Klarissa', 'Ellis', 'Kenny', 'Kendel', 'Chris', 'Zaldy'];
+const birth_names = ['Krista', 'Ashley', 'Alison', 'Kieona', 'Kaylee', 'Christian', 'Stephanie'];
+const death_descriptions = ['[Brian] A man with Parkinsons and its symptoms that can lead to earlier death', '[JJ] A 34-year-old man has been diagnosed with incurable colon cancer', '[Layla] A woman with end-stage renal disease', '[James] A Singaporean Man talks about life and superstition', '[Rina] A humorous Singaporean woman who has no regrets in life', '[Sally] A Singaporean woman who speaks about death in Mandarin', '[Ian] Singaporean Man', '[Norman] A Singaporean man who learned how to accept death'];
+const sex_descriptions = ['[Lucy] A young woman who grew up in a culture of taboo around sex', '[Lauren] A sexual confidence coach who encourages open and non-judgmental conversations about sex', '[Klarissa] A bubbly young woman who talks about her first sexual experience and the things she wished she knew beforehand', '[Ellis] A gay man discusses his frustration with categorizing people and setting expectations in sexual encounters', '[Kenny] A gay man shares his insights on gay pornography and the importance of setting boundaries', '[Kendel] A gay man who gives a candid advice for first-time sex', '[Chris] A straight man who shares his past sexual insecurities and anxieties', '[Zaldy] A straight man who shares his definition of consent and shares his sexual insecurities, pressures, and more'];
 const birth_descriptions = ['[Krista] A mother with one child delivered vaginally in a hospital setting and had an epidural.', '[Ashley]A mother of two children, both born vaginally.',
-    '[Alison]A mom of two daughters via two scheduled c-sections', '[Kieona]A mother of one daughter had a regular vaginal birth.'];
+    '[Alison] A mother of two daughters delivered via two scheduled c-sections', '[Kieona] A mother of one daughter had a regular vaginal birth.', '[Kaylee] A mother who shares her candid pregnancy experiences', '[Christian] A mother who gave a birth through c-section and shares her high-blood pressure issues during pregnancy', '[Stephanie] A mother who underwent an emergency C-section and shares her body-transformation stories during pregnancy.'];
 const death_questions = [
     "Are you afraid of death?",
     "Who is not invited to your funeral?",
-    "Do you think you are dying?",
+    "How does dying feel like?",
     "Who would be happy that you are gone?",
     "What would you miss the most?",
     "Have you tried giving up?"
 ];
 const sex_questions = [
     "What does penetration feel like?",
-    "Do you orgasm during sex?",
+    "Do you get emotionally attached?",
     "Top or bottom?",
     "What should I know about gay sex?",
     "Any advice for someone's first time?",
-    "Do you masturbate?",
+    "How often do you think about sex?",
     "Is period sex okay?"
 ];
 
 const birth_questions = [
-    "Do you poop while giving birth?",
-    "Did you use mirror?",
-    "How long was your labor?",
-    "How would you describe the pain?",
-    "What happens after giving birth",
-    "Did you tear your vagina while giving birth?"
-
-
+    "What was labor like?",
+    "Did you use epidural (spinal anesthesia)?",
+    "Did you see your baby come out?",
+    "How painful was labor?",
+    "What's your most embarrassing story?",
+    "Does your body change after giving birth?",
+    "What’s the hardest part of pregnancy?",
+    "Did you plan pregnancy?"
 ];
 
 function ShhhPlayer() {
@@ -196,27 +202,22 @@ function ShhhPlayer() {
         // listener for spacebar down
         // console.log("current", isSpaceKey.current)
         const listenDown = event => {
-            if (textInputValue == "" && event.code === "Space" && isSpaceKey.current === "false") {
-                event.preventDefault();
+            if (textInput.current == "" && event.code === "Space" && isSpaceKey.current === "false") {
+                //event.preventDefault();
                 setIsSpaceKeyPressed(true)
                 isSpaceKey.current = "true"
-                // isSpaceKeyPressed = true;
-                // micStatusChange(event);
                 setMicMute(false)
-                // console.log(micMute)
                 console.log("key down");
             }
         };
         // listener for spacebar up
         const listenUp = event => {
-            if (textInputValue == "" && event.code === "Space" && isSpaceKey.current === "true") {
-                event.preventDefault();
+            if (textInput.current == "" && event.code === "Space" && isSpaceKey.current === "true") {
+                //event.preventDefault();
                 // micStatusChange(event);
                 setIsSpaceKeyPressed(false)
                 isSpaceKey.current = "false"
                 setMicMute(true)
-                // isSpaceKeyPressed = false;
-                // console.log(micMute)
                 console.log("key up");
 
                 // submitResponse(event, "SEARCH");
@@ -231,8 +232,8 @@ function ShhhPlayer() {
     }, []);
 
     useEffect((e) => {
-    
-        if (firstRender.current){
+
+        if (firstRender.current) {
             if (!micMute) {
                 speechToTextUtils.stopRecording();
                 // console.log(dataIsFinal)
@@ -241,7 +242,7 @@ function ShhhPlayer() {
                     submitResponse(e, "SEARCH")
                 }
                 // dataIsFinal === false ? textInput.current = transcribedAudio || submitResponse(e, "SEARCH") : null;
-    
+
             } else {
                 interacting.current = true;
                 speechToTextUtils.initRecording(handleDataReceived, (error) => {
@@ -249,10 +250,10 @@ function ShhhPlayer() {
                     // No further action needed, as stream already closes itself on error
                 });
             }
-        } else{
+        } else {
             firstRender.current = true
         }
-       
+
 
     }, [isSpaceKeyPressed])
 
@@ -556,9 +557,7 @@ function ShhhPlayer() {
     function textChange(e) {
         textInput.current = `${textInput.current} ${e.target.value}`;
         interimTextInput.current = textInput.current;
-        console.log(interimTextInput.current)
         setTextInputValue(e.target.value);
-        console.log(textInput.current)
     }
 
     function submitResponse(e, mode = "UNKNOWN") {
@@ -655,6 +654,23 @@ function ShhhPlayer() {
         } else {
             history.push({
                 pathname: "/",
+            });
+        }
+    }
+
+    function shhh() {
+        if (isLoggedIn) {
+            history.push({
+                pathname: "/shhh",
+                state: {
+                    toiaName,
+                    toiaLanguage,
+                    toiaID,
+                },
+            });
+        } else {
+            history.push({
+                pathname: "/shhh",
             });
         }
     }
@@ -812,12 +828,9 @@ function ShhhPlayer() {
                     </form>
                 </Modal.Content>
             </Modal>
-            <div className="shhh-nav-heading-bar">
-
-                <div
-                    onClick={home}
-                    className="nav-toia_icon app-opensans-normal">
-                    TOIA
+            <div className="back-to-shhh">
+                <div onClick={shhh}>
+                    <i className="fa fa-arrow-left"></i>
                 </div>
             </div>
             <div className="icons">
@@ -862,7 +875,6 @@ function ShhhPlayer() {
                         <i aria-hidden="true">
                             <VoiceOverOffRoundedIcon />
                         </i>
-                        Unmute
                     </button>
                 ) : (
                     <button className="ui microphone button shhh-mute-button" onClick={micStatusChange}>
@@ -870,7 +882,6 @@ function ShhhPlayer() {
                             <RecordVoiceOverRoundedIcon
                             />
                         </i>
-                        Mute
                     </button>
                 )
 
@@ -915,10 +926,15 @@ function ShhhPlayer() {
                 <div className="ask_box">
                     <input
                         className="shhh-transcript font-class-1"
-                        placeholder={"Click Unmute to Start Asking Questions"}
+                        placeholder={"Voice transcribed here. Press space bar or click unmute to start."}
                         value={transcribedAudio || ""}
                         id="video-text-box"
                         type={"text"}
+                        readOnly
+                        tabIndex={-1}
+                        autoFocus={false}
+                        style={{ outline: 'none', caretColor: 'transparent' }}
+
                     />
                     <div className="AskMe">
                         {streamNameToTalk && streamNameToTalk.includes(" stream") && (

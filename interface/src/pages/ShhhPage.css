@@ -153,7 +153,7 @@
 
 .description{
 	letter-spacing: 0;
-	line-height: normal;
+	line-height:1.3;
 	margin-top: 1vw;
 	width: 100%;
 	color: white;
@@ -278,28 +278,35 @@ display: none;
 	background-color: #614CB8 !important;
 	z-index: 999999;
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	justify-content: center; /* Add this line to center the content horizontally */
+	justify-content: center;
 	text-align: center;
-	}
-.shhh-transcript {
-	background-color: rgba(126, 124, 124, 0.1);
-	border: 0;
-	border-radius: 3px;
-	height: 4vw;
-	padding: 5px;
-	padding-left: 15px;
-	position: fixed;
-	resize: none;
-	text-align: left;
-	/* top: 75%; */
-	top: 49vw;
-	margin-left:12%;
-	width: 51%;
-	color: #707070;
-	font-size: 1.5rem;
-}
+  }
+  
+  .shhh-mute-button i {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+  }
+  
+	.shhh-transcript {
+		background-color: transparent;
+		border: 0;
+		border-bottom: 1px solid #707070;
+		border-radius: 0;
+		height: 4vw;
+		padding: 5px;
+		padding-left: 15px;
+		position: fixed;
+		resize: none;
+		text-align: left;
+		top: 49vw;
+		margin-left: 12%;
+		width: 51%;
+		color: #707070;
+		font-size: 1.5rem;
+		}
 
 .ask_box .css-1qqsdnr-MuiAutocomplete-root .MuiOutlinedInput-root {
 	height: 4vw !important;
@@ -338,10 +345,13 @@ display: none;
   
   .icons img {
 	border-radius: 10%;
-	width: 100%;
+	height: 100%;
+	width: auto;
 	filter: grayscale(0%);
+	z-index: 7;
 	transition: filter 0.3s ease-in-out;
   }
+  
   
   .icons img.selected {
 	opacity: 1;
@@ -349,27 +359,34 @@ display: none;
   
   .icon-container {
 	position: relative;
-	z-index: 10000;
 	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 4vw; /* set a fixed height to match the image */
   }
-  
-  .icon-description {
-	position: absolute;
-	bottom: -2vw;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 15vw;
-	background-color: black;
-	color: white;
-	padding: 10px;
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out;
-  }
+
+.icon-description {
+    position: absolute;
+    bottom: -6vw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15vw;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 3; /* Increase the z-index value */
+}
+
   .icon-container.muted .icon-name {
     color: #999; /* Change to the desired muted color */
 }
   .icon-container:hover .icon-description {
 	opacity: 1;
+	width: 15vw;
+	z-index:999999;
   }
   
   .icon-container.muted img {
@@ -397,3 +414,19 @@ display: none;
 	z-index: 9;
 }
 
+.back-to-shhh {
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    z-index: 999;
+}
+
+.back-to-shhh i {
+    font-size: 2rem; /* adjust the size as needed */
+    color: white; /* set the color to white */
+    transition: transform 0.3s ease-in-out; /* add transition for hover effect */
+}
+
+.back-to-shhh i:hover {
+    transform: scale(1.2); /* make the icon slightly bigger on hover */
+}
