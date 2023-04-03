@@ -247,7 +247,6 @@ function Player() {
 			if (interacting.current == "true") {
 				const params = {
 					language: interactionLanguage,
-					// language: "ko-KR"
 				};
 				speechToTextUtils.initRecording(
 					params,
@@ -373,7 +372,6 @@ function Player() {
 			if (hasRated) {
 				const params = {
 					language: interactionLanguage,
-					// language: "ko-KR"
 				};
 				speechToTextUtils.initRecording(
 					params,
@@ -543,6 +541,13 @@ function Player() {
 										<span class="fi fi-ae"></span>
 									</a>
 									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("es-ES")
+										}>
+										<span class="fi fi-es"></span>
+									</a>
 									<a
 										href="#"
 										onClick={() =>

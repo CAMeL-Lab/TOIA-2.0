@@ -7,6 +7,7 @@ const languageFlagsCSS = {
     'en-US' : "fi fi-us",
     'ar-AE' : "fi fi-ae",
     'fr-FR' : "fi fi-fr",
+    'es-ES' : "fi fi-es",
 };
 
 export default languageFlagsCSS;

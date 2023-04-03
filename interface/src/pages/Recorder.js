@@ -445,6 +445,7 @@ function Recorder() {
         //setTranscribedAudio(oldData => [...oldData, data])
         //setTranscribedAudio(input.current + " " + data);
 
+        console.log("HDR transcribedAudio:", input.current + " " + data.alternatives[0].transcript);
         setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
         let isFinal = undefined || data.isFinal
@@ -453,6 +454,8 @@ function Recorder() {
             setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
             input.current += (" " + data.alternatives[0].transcript);
+            console.log("HDR2 transcribedAudio:", input.current);
+            console.log("HDR2 results:", results, "to", [...results, data.alternatives[0].words]);
             setResults(results => [...results, data.alternatives[0].words]);
           }
           
@@ -461,6 +464,7 @@ function Recorder() {
 
     const handleStartCaptureClick = React.useCallback((e) => {
         // start call  here
+        console.log("HSCC", results, "to", []);
         resetTranscript();
         setRecordedChunks([]);
         setTranscribedAudio("")
@@ -561,6 +565,7 @@ function Recorder() {
     }
 
     const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type = '') => {
+        console.log("SSSS", results);
         return new Promise(((resolve, reject) => {
             let endTimestamp = + new Date();
 
@@ -577,6 +582,8 @@ function Recorder() {
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
             form.append('video_duration', videoDuration.toString());
+
+            console.log("SSSS2", results);
 
             form.append('start_time', recordStartTimestamp);
             form.append('end_time', endTimestamp);
@@ -648,6 +655,8 @@ function Recorder() {
     }
 
     const handleUpdateVideo = () => {
+        console.log(results);
+        return;
         if (!isDefaultStreamSelected()) {
             setDefaultStreamAlertActive(true);
         } else {
@@ -1122,6 +1131,7 @@ function Recorder() {
                                     <a href="#" onClick={() => setInteractionLanguage("en-US")}><span class="fi fi-us"></span></a>
                                     <a href="#" onClick={() => setInteractionLanguage("ar-AE")}><span class="fi fi-ae"></span></a>
                                     {/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+                                    <a href="#" onClick={() => setInteractionLanguage("es-ES")}><span class="fi fi-es"></span></a>
                                     <a href="#" onClick={() => setInteractionLanguage("fr-FR")}><span class="fi fi-fr"></span></a>
                                 </div>
                             </div>
