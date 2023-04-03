@@ -58,8 +58,8 @@ def addAdaSearch(toiaID):
                                  'id_video',
                                  'question_id'
                              ])
-    df_avatar['combined'] = "Question: " + df_avatar.question.str.strip() + \
-        "; Answer: " + df_avatar.answer.str.strip()
+    df_avatar['combined'] = df_avatar.question.str.strip() + \
+        " " + df_avatar.answer.str.strip()
     
     # This will take just under 2 minutes
     df_avatar['ada_search'] = df_avatar.combined.apply(lambda x: adaSearch(x))
