@@ -944,14 +944,13 @@ router.post("/recorder", cors(), async (req, res) => {
 					await ch.assertQueue(q, {durable: true});
 
 					let languages_supported = ['es-ES', 'ar-AE', 'fr-FR', 'en-US'];
-					language = 'en-US';
 					languages_supported = languages_supported.filter(language_code => language_code != language);
 
 					const payload = {
 						"translate_to": languages_supported,
 						"results": JSON.parse(results) ,
 						"video_name": videoID,
-						"input_language": language,
+						"input_language": language[0],
 					}
 
 					ch.sendToQueue(q, Buffer.from(JSON.stringify(payload)));
