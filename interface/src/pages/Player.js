@@ -155,7 +155,7 @@ function Player() {
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
 		if (!hasRated) {
-			NotificationManager.warning("Please provide a rating", "", 3000);
+			NotificationManager.warning("Please provide a rating, or skip", "", 3000);
 			return;
 		}
 
@@ -287,6 +287,10 @@ function Player() {
 				setHasRated(true);
 			});
 	};
+
+	function skipUserRating(){
+		setHasRated(true);
+	}
 
 	function fetchData(mode = "UNKNOWN") {
 		if (!hasRated) {
@@ -480,7 +484,7 @@ function Player() {
 				showLoginModal={true}
 				endTranscription={endTranscription}
 			/>
-			{!hasRated && <PopModal userRating={recordUserRating} />}
+			{!hasRated && <PopModal userRating={recordUserRating} skip={skipUserRating}/>}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}

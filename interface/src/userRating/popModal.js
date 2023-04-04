@@ -2,7 +2,7 @@ import React from "react";
 import "./popModal.css";
 import RatingWords from "./ratingWords";
 
-function PopModal({ userRating }) {
+function PopModal({ userRating, skip }) {
 	return (
 		<div className="modalBackground">
 			<div className="modalContainer">
@@ -18,6 +18,9 @@ function PopModal({ userRating }) {
 						<RatingWords recUserRating={userRating} />
 					</h3>
 				</div>
+				<div onClick={skip} className="skipText">
+						Skip
+					</div>
 			</div>
 		</div>
 	);
