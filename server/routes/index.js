@@ -953,8 +953,6 @@ router.post("/recorder", cors(), async (req, res) => {
 						"input_language": language[0],
 					}
 
-					console.log("AAA", language, language[0], languages_supported);
-
 					ch.sendToQueue(q, Buffer.from(JSON.stringify(payload)));
 
 				}

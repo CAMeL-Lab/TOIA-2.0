@@ -332,7 +332,6 @@ function Player() {
 
 					isFillerPlaying.current = "false";
 					fetchAnsweredQuestions(oldQuestion, res.data.answer);
-					console.log("AAAAAA: Language is", res.data.language);
 					setVideoProperties({
 						key: res.data.url + new Date(),
 						onEnded: () => {
