@@ -20,28 +20,30 @@ import translationsEs from "../locales/es/translations";
 import translationsAr from "../locales/ar/translations";
 import translationsFr from "../locales/fr/translations";
 
-
 // TODO: Implement cookies to store information on reactjs, rather than using the `history` object
 // TODO: Remove interpolation from i18next for security (so we can set escape value: true)
 // Do this by converting {value} to {{value}} in the string, then pass `value` as a parameter into the `t` function
 // Example `hello`: `Hello {{user}}!`
 // In other pages:   t("hello", {user: "Jack"})
 
-i18n
-.use(initReactI18next) // passes i18n down to react-i18next
-.init({
-  resources: {
-    en: { translation: translationsEn },
-    fr: { translation: translationsFr },
-    ar: { translation: translationsAr },
-    es: { translation: translationsEs },
-  },
-  lng: "en",
-  fallbackLng: "en",
-  interpolation: { escapeValue: false },
-  // debug: true,
-});
+i18n.use(initReactI18next) // passes i18n down to react-i18next
+	.init({
+		resources: {
+			en: { translation: translationsEn },
+			fr: { translation: translationsFr },
+			ar: { translation: translationsAr },
+			es: { translation: translationsEs },
+		},
+		lng: localStorage.getItem("lng") || "en",
 
+		fallbackLng: "en",
+		interpolation: { escapeValue: false },
+		// debug: true,
+	});
+
+i18n.on("languageChanged", lng => {
+	localStorage.setItem("lng", lng);
+});
 
 export default function Routes() {
 	return (

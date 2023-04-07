@@ -10,4 +10,13 @@ const languageFlagsCSS = {
     'es-ES' : "fi fi-es",
 };
 
-export default languageFlagsCSS;
+const languageCodeTable = {
+    "en" : "en-US",
+    "ar" : "ar-AE",
+    "fr" : "fr-FR",
+    "es" : "es-ES"
+}
+
+
+
+export  {languageFlagsCSS, languageCodeTable};

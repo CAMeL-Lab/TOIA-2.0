@@ -146,7 +146,6 @@ function NavBar(props) {
         // i18n.changeLanguage(props.toiaLanguage);
 
         return function (e) {
-            console.log("Language changed:", i18n.language);
             if (!supportedLanguages.includes(language)) {
                 return;
             }

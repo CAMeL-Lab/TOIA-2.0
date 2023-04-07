@@ -31,7 +31,7 @@ import NavBar from './NavBar.js';
 import i18n from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 
-import languageFlagsCSS from "../services/languageHelper";
+import {languageFlagsCSS, languageCodeTable} from "../services/languageHelper";
 
 
 const videoConstraints = {
@@ -159,7 +159,7 @@ function Recorder() {
     // This is for tracking purpose. These timestamps do not reflect the video start and end timestamps
     const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
     const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
-    const [interactionLanguage, setInteractionLanguage] = useState("en-US");
+    const [interactionLanguage, setInteractionLanguage] = useState(languageCodeTable?.[i18n.language] || "en-US");
 
     const [transcribedAudio, setTranscribedAudio] = useState('');
     const [results, setResults] = useState([]);

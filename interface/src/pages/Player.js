@@ -18,7 +18,7 @@ import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
-import languageFlagsCSS from "../services/languageHelper";
+import {languageFlagsCSS, languageCodeTable} from "../services/languageHelper";
 
 function Player() {
 	const { t } = useTranslation();
@@ -34,7 +34,7 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState("en-US");
+	const [interactionLanguage, setInteractionLanguage] = useState(languageCodeTable?.[i18n.language] || "en-US");
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
