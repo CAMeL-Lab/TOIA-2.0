@@ -118,6 +118,10 @@ router.post("/createTOIA", cors(), async (req, res) => {
 								let dest = `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/`;
 								let destFileName = `All_${stream_entry.insertId}.jpg`;
 								mkdirp(dest).then(() => {
+									if (file?.blob?.[0]?.path == undefined){
+										resolve();
+										return;
+									}
 									mv(
 										file.blob[0].path,
 										dest + destFileName,
