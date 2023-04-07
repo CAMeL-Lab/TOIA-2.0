@@ -1,9 +1,29 @@
-const onboardingQuestions = require("./onboarding-questions.json");
+// const onboardingQuestions = require("./onboarding-questions.json");
+const onboardingQuestionsEN = require("./onboarding-questions-en.json");
+const onboardingQuestionsES = require("./onboarding-questions-es.json");
+const onboardingQuestionsAR = require("./onboarding-questions-ar.json");
+
+// Language added here for ease of use (instead of defined internally in onboarding questions file)
+const withLanguage = (array, language) => {
+	for (let i = 0; i < array.length;i++){
+		array[i] = {
+			...array[i], 
+			language: language
+		};
+	}
+	return array;
+};
+
+const onboardingQuestions = [].concat(
+	withLanguage(onboardingQuestionsEN, "en-US"), 
+	withLanguage(onboardingQuestionsES, "es-ES"), 
+	withLanguage(onboardingQuestionsAR, "ar-AE"));
 
 const loadOnBoardingQuestions = async (
 	connectionInstance,
 	force_load = false,
 ) => {
+	// console.log(onboardingQuestions);
 	let questions_already_loaded = false;
 
 	await (async () => {
@@ -20,7 +40,7 @@ const loadOnBoardingQuestions = async (
 			});
 		}
 	})();
-
+	
 	if (!questions_already_loaded) {
 		console.log("Loading on-boarding questions");
 		// DELETE existing
@@ -29,13 +49,13 @@ const loadOnBoardingQuestions = async (
 			if (err) throw err;
 
 			// Load
-			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester) VALUES(?,?,?,?,?)`;
+			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester, language) VALUES(?,?,?,?,?,?)`;
 
 			for (let ques of onboardingQuestions) {
-				const { question, type, priority, trigger_suggester } = ques;
+				const { question, type, priority, trigger_suggester, language } = ques;
 				connectionInstance.query(
 					query,
-					[question, type, true, priority, trigger_suggester],
+					[question, type, true, priority, trigger_suggester, language],
 					function (err, result) {
 						if (err) {
 							throw err;

@@ -54,10 +54,11 @@ async function addQuestionIfNew(
 	onboarding = 0,
 	priority = 100,
 	trigger_suggester = 1,
+	language = "en-US"
 ) {
 	return new Promise(resolve => {
-		let query = `SELECT * FROM questions WHERE question = ? AND onboarding = 0 LIMIT 1`;
-		connection.query(query, [question], (err, result) => {
+		let query = `SELECT * FROM questions WHERE question = ? AND language = ? AND onboarding = 0 LIMIT 1`;
+		connection.query(query, [question, language], (err, result) => {
 			if (err) throw err;
 			if (result.length === 0) {
 				addQuestion(
@@ -66,6 +67,7 @@ async function addQuestionIfNew(
 					onboarding,
 					priority,
 					trigger_suggester,
+					language
 				).then(insertedID => {
 					resolve(insertedID);
 				});
@@ -82,12 +84,13 @@ async function addQuestion(
 	onboarding = 0,
 	priority = 100,
 	trigger_suggester = 1,
+	language = "en-US"
 ) {
 	return new Promise((resolve, reject) => {
 		if (!QuestionTypes.find(t => t === suggested_type)) {
 			reject("Invalid Type!");
 		} else {
-			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester) VALUES(?, ?, ?, ?, ?);`;
+			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester, language) VALUES(?, ?, ?, ?, ?, ?);`;
 			connection.query(
 				query,
 				[
@@ -96,6 +99,7 @@ async function addQuestion(
 					onboarding,
 					priority,
 					trigger_suggester,
+					language
 				],
 				(err, result) => {
 					if (err) throw err;
@@ -242,7 +246,7 @@ const isRecorded = (id_question, user_id) => {
 
 const getQuestionInfo = id => {
 	return new Promise(resolve => {
-		let query = `SELECT id as id_question, question, suggested_type, onboarding, priority, trigger_suggester FROM questions WHERE id=?`;
+		let query = `SELECT id as id_question, question, suggested_type, onboarding, priority, trigger_suggester, language FROM questions WHERE id=?`;
 		connection.query(query, [id], (err, entry) => {
 			if (err) throw err;
 			if (entry.length === 0) {

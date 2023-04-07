@@ -10,8 +10,8 @@ import { useTranslation } from "react-i18next";
 import "../../node_modules/flag-icons/css/flag-icons.min.css";
 
 //toiaName = null, props.toiaID = null, props.toiaLanguage = null, props.isLoggedIn = false, history = null
-const supportedLanguages = ["en", "fr", "ar"];
-const rightLanguages = [];
+const supportedLanguages = ["en", "fr", "ar", "es"];
+// const rightLanguages = [];
 // const rightLanguages = ["ar"];
 
 function NavBar(props) {
@@ -151,20 +151,6 @@ function NavBar(props) {
                 return;
             }
             i18n.changeLanguage(language);
-            // if (rightLanguages.includes(language)){
-            //     document.getElementsByTagName('html')[0].setAttribute("dir", "rtl");
-            // } else {
-            //     document.getElementsByTagName('html')[0].setAttribute("dir", "ltr");
-            // }
-            // if (i18n.language == "en") {
-            //     i18n.changeLanguage("fr");
-            // } else if (i18n.language == "fr") {
-            //     i18n.changeLanguage("ar");
-            // } else if (i18n.language == "ar") {
-            //     i18n.changeLanguage("en");
-            // } else {
-            //     i18n.changeLanguage("en");
-            // }
         }
     }
 
@@ -255,6 +241,7 @@ function NavBar(props) {
                         <a href="#" onClick={switch_lang("ar")}><span class="fi fi-ae"></span></a>
                         {/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
                         <a href="#" onClick={switch_lang("fr")}><span class="fi fi-fr"></span></a>
+                        <a href="#" onClick={switch_lang("es")}><span class="fi fi-es"></span></a>
                     </div>
                 </div>
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">

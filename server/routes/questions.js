@@ -48,9 +48,10 @@ router.post('/suggestions/:user_id/discard', async (req, res) => {
 
 router.get('/onboarding/:user_id/pending', (req, res) => {
     const user_id = req.params.user_id;
+    const language = req.query.language;
     isValidUser(user_id).then(() => {
-        let query = `SELECT id, question, suggested_type as type, onboarding, priority, trigger_suggester FROM questions WHERE onboarding = 1 AND id NOT IN (SELECT videos_questions_streams.id_question as id FROM videos_questions_streams INNER JOIN video ON videos_questions_streams.id_video = video.id_video WHERE video.toia_id = ?)`;
-        connection.query(query, [user_id], (err, entries) => {
+        let query = `SELECT id, question, suggested_type as type, onboarding, priority, trigger_suggester, language FROM questions WHERE onboarding = 1 AND language = ? AND id NOT IN (SELECT videos_questions_streams.id_question as id FROM videos_questions_streams INNER JOIN video ON videos_questions_streams.id_video = video.id_video WHERE video.toia_id = ?)`;
+        connection.query(query, [language, user_id], (err, entries) => {
             if (err) throw err;
             res.send(entries);
         })

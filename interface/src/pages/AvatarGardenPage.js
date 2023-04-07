@@ -310,7 +310,7 @@ export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
 
 function AvatarGardenPage() {
 
-    const { t } = useTranslation();
+    const { t, i18n  } = useTranslation();
 
     const [toiaName, setName] = useState(null);
     const [toiaLanguage, setLanguage] = useState(null);
@@ -383,6 +383,11 @@ function AvatarGardenPage() {
         getUserData();
     }, []);
 
+    React.useEffect(()=>{
+        console.log("WHEEEE");
+        fetchOnBoardingQuestions();
+    }, [i18n.language]);
+
     function fetchStreamList() {
         return new Promise(((resolve) => {
             axios.post(`/api/getUserStreams`, {
@@ -398,8 +403,15 @@ function AvatarGardenPage() {
     }
 
     function fetchOnBoardingQuestions(cb_success = null, cb_fail = null) {
+        console.log("Fetching...");
         const toiaID = history.location.state.toiaID;
-        const options = {method: 'GET', url: `/api/questions/onboarding/${toiaID}/pending`};
+        const options = {
+            method: 'GET', 
+            url: `/api/questions/onboarding/${toiaID}/pending`,
+            params: {
+                language: t("language") ?? 'en-US'
+            }
+        };
 
         axios.request(options).then(function (response) {
             if (response.status === 200) {
@@ -1327,7 +1339,7 @@ function AvatarGardenPage() {
                 <div className="garden-grid"  ref={scrollRef}>
                     <div className="cards-wrapper ui">
                         <div className="ui cards">
-                            <RecordAVideoCard onClick={add} isDisabled={pendingOnBoardingQs.length !== 0}/>
+                            <RecordAVideoCard onClick={add} isDisabled={false}/>
 
                             {pendingOnBoardingQs.map((q, index) => {
                                 return (

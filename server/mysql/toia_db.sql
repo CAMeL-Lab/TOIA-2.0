@@ -63,7 +63,8 @@ CREATE TABLE `questions` (
   `suggested_type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
   `onboarding` tinyint NOT NULL DEFAULT '0',
   `priority` int NOT NULL,
-  `trigger_suggester` tinyint NOT NULL DEFAULT '1'
+  `trigger_suggester` tinyint NOT NULL DEFAULT '1',
+  `language` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
