@@ -62,6 +62,7 @@ def upload_to_bucket(subtitles, project_id, video_name):
     bucket = storage_client.get_bucket(subtitles)
 
     for f in os.listdir("vtts"):
+        print(f"Uploading vtt file {video_name}-{f}")
         blob = bucket.blob(f'{video_name}-{f}')
         blob.upload_from_filename(f'vtts/{f}')
 

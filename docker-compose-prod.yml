@@ -97,13 +97,14 @@ services:
   translation:
     depends_on:
       - rabbitmq3
+    restart: on-failure
     container_name: "translation_py"
     build: server/translation
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=toia-translation.json
       - ENVIRONMENT=production
     env_file:
-      - ./translation/env
+      - ./server/translation/.env
 
 volumes:
   mysql-vol:
