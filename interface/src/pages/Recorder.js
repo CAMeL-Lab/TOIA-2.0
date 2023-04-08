@@ -565,7 +565,6 @@ function Recorder() {
     }
 
     const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type = '') => {
-        console.log("SSSS", results);
         return new Promise(((resolve, reject) => {
             let endTimestamp = + new Date();
 
@@ -582,8 +581,6 @@ function Recorder() {
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
             form.append('video_duration', videoDuration.toString());
-
-            console.log("SSSS2", results);
 
             form.append('start_time', recordStartTimestamp);
             form.append('end_time', endTimestamp);
