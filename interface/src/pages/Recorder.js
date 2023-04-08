@@ -445,17 +445,14 @@ function Recorder() {
         //setTranscribedAudio(oldData => [...oldData, data])
         //setTranscribedAudio(input.current + " " + data);
 
-        console.log("HDR transcribedAudio:", input.current + " " + data.alternatives[0].transcript);
         setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
-        let isFinal = undefined || data.isFinal
+        let isFinal = undefined || data.isFinal;
 
         if (data && isFinal) {
             setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
             input.current += (" " + data.alternatives[0].transcript);
-            console.log("HDR2 transcribedAudio:", input.current);
-            console.log("HDR2 results:", results, "to", [...results, data.alternatives[0].words]);
             setResults(results => [...results, data.alternatives[0].words]);
           }
           
@@ -464,7 +461,6 @@ function Recorder() {
 
     const handleStartCaptureClick = React.useCallback((e) => {
         // start call  here
-        console.log("HSCC", results, "to", []);
         resetTranscript();
         setRecordedChunks([]);
         setTranscribedAudio("")
@@ -565,7 +561,6 @@ function Recorder() {
     }
 
     const makeSaveVideoRequest = (is_editing = false, save_as_new = false, old_video_id = '', old_video_type = '') => {
-        console.log("SSSS", results);
         return new Promise(((resolve, reject) => {
             let endTimestamp = + new Date();
 
@@ -582,8 +577,6 @@ function Recorder() {
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
             form.append('video_duration', videoDuration.toString());
-
-            console.log("SSSS2", results);
 
             form.append('start_time', recordStartTimestamp);
             form.append('end_time', endTimestamp);
@@ -655,8 +648,6 @@ function Recorder() {
     }
 
     const handleUpdateVideo = () => {
-        console.log(results);
-        return;
         if (!isDefaultStreamSelected()) {
             setDefaultStreamAlertActive(true);
         } else {

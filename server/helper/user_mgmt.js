@@ -633,6 +633,120 @@ const addVideoEntry = async (id_video, toia_id, answer, duration_seconds) => {
 	});
 };
 
+
+const addTimeForTranscript = (time1, delaySeconds, delayNanos) =>{
+  let seconds = parseInt(time1.seconds) + delaySeconds;
+  let nanos = parseInt(time1.nanos) + delayNanos;
+  
+  if (nanos >= 1000000000) {
+    seconds += 1;
+    nanos -= 1000000000;
+  }
+  
+  return {
+    "seconds": seconds.toString(),
+    "nanos": nanos
+  };
+};
+
+const matchTranscription = (data, transcript) => {
+	let manualTranscript = transcript.trim().split(" ");
+	console.log(manualTranscript);
+	if (manualTranscript.length == 0 || transcript.trim() == '') {
+	  return "[]";
+	}
+  
+	let newSpeechTranscript = [];
+	let prevEndTimeSeconds = 0;
+	let prevEndTimeNanos = 0;
+  
+	let subData = JSON.parse(data[0]);
+	let subSpeechTranscript = []; // For maintaining the dimensions
+  
+	let speechTranscript = [];
+	for (let j = 0; j < subData.length; j++) {
+  
+	  let miniSpeechTranscript = subData[j];
+	  let sTLength = miniSpeechTranscript.length;
+  
+	  for (let k = 0; k < sTLength; k++) {
+		miniSpeechTranscript[k].startTime = addTimeForTranscript(
+		  miniSpeechTranscript[k].startTime,
+		  prevEndTimeSeconds,
+		  prevEndTimeNanos
+		);
+		miniSpeechTranscript[k].endTime = addTimeForTranscript(
+		  miniSpeechTranscript[k].endTime,
+		  prevEndTimeSeconds,
+		  prevEndTimeNanos
+		);
+		speechTranscript.push(miniSpeechTranscript[k]);
+	  }
+	  prevEndTimeSeconds += parseInt(
+		miniSpeechTranscript[miniSpeechTranscript.length - 1].endTime.seconds
+	  );
+	  prevEndTimeNanos +=
+		miniSpeechTranscript[miniSpeechTranscript.length - 1].endTime.nanos;
+	}
+	// Start of actual alignment code
+  
+	// Look at length of each array (manualTranscript and speechTranscript) and perform calculations
+  
+	let mTLength = manualTranscript.length;
+	let sTLength = speechTranscript.length;
+  
+	console.log(sTLength, mTLength);
+  
+	if (sTLength <= mTLength) {
+	  let wordsPerBucket = Math.floor(mTLength / sTLength);
+	  let remainder = mTLength % sTLength;
+  
+	  let mTPosition = 0;
+	  // Put extra in the buckets in the beginning because of remainder (unequal division/distribution)
+	  for (let k = 0; k < sTLength; k++) {
+		let tempWordsPerBucket = wordsPerBucket + (k < remainder ? 1 : 0);
+  
+		//   speechTranscript[k].word = joined_words;
+		let joined_words = manualTranscript
+				.slice(mTPosition, mTPosition + tempWordsPerBucket)
+				.join(" ");
+  
+		subSpeechTranscript.push({
+		  ...speechTranscript[k],
+		  word: joined_words,
+		});
+		mTPosition += tempWordsPerBucket;
+	  }
+	  newSpeechTranscript.push(subSpeechTranscript);
+	} else {
+	  let wordsPerBucket = Math.floor(sTLength / mTLength);
+	  let remainder = sTLength % mTLength;
+  
+	  let sTPosition = 0;
+  
+	  for (let k = 0; k < mTLength; k++) {
+		let tempWordsPerBucket = wordsPerBucket + (k < remainder ? 1 : 0);
+  
+		let startTime = speechTranscript[sTPosition].startTime;
+		let endTime =
+		  speechTranscript[sTPosition + tempWordsPerBucket - 1].endTime;
+  
+		// create obj that represents a time frame for speech
+		subSpeechTranscript.push({
+		  startTime: startTime,
+		  endTime: endTime,
+		  confidence: 0,
+		  speakerTag: 0,
+		  word: manualTranscript[k],
+		});
+		sTPosition += tempWordsPerBucket;
+	  }
+	  newSpeechTranscript.push(subSpeechTranscript);
+	}
+	return JSON.stringify(newSpeechTranscript);
+  };
+
+  
 module.exports.addQuestion = addQuestion;
 module.exports.addQuestionIfNew = addQuestionIfNew;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
@@ -669,3 +783,4 @@ module.exports.getVideoLatestIDX = getVideoLatestIDX;
 module.exports.addVideoEntry = addVideoEntry;
 module.exports.QuestionTypes = QuestionTypes;
 module.exports.getEmbeddings = getEmbeddings;
+module.exports.matchTranscription = matchTranscription;

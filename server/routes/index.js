@@ -39,6 +39,7 @@ const {
 	getAccessibleStreams,
 	getVideoDetails,
 	getExactMatchVideo,
+	matchTranscription,
 } = require("../helper/user_mgmt");
 const bcrypt = require("bcrypt");
 const connection = require("../configs/db-connection");
@@ -132,6 +133,10 @@ router.post("/createTOIA", cors(), async (req, res) => {
 									);
 								});
 							} else {
+								if (file?.blob?.[0]?.path == undefined){
+									resolve();
+									return;
+								}
 								// save file to google cloud when in production
 								await videoStore.upload(file.blob[0].path, {
 									destination: `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`,
@@ -868,7 +873,7 @@ router.post("/recorder", cors(), async (req, res) => {
     const fields = req.fields;
     const file = req.file;
     let answer = fields.answer[0].trim();
-    const results = req.fields.results;
+    let results = req.fields.results;
     let language = req.fields.language;
 
 	// Append the answer with '.' if necessary
@@ -888,6 +893,8 @@ router.post("/recorder", cors(), async (req, res) => {
 	}
 
 	videoStreams = JSON.parse(fields.streams[0]);
+
+	console.log(videoStreams);
 
 	let questionsObj = JSON.parse(fields.questions[0]);
 	if (questionsObj.length === 0) {
@@ -933,10 +940,15 @@ router.post("/recorder", cors(), async (req, res) => {
 						"base64",
 					),
 				);
-
-				console.log(answer);
 				console.log(results);
-				console.log(`regex test ${(/[0-9a-zA-Z]+/i).test(answer)}`)
+				console.log("================");
+				try{
+					results = matchTranscription(results, answer);
+				} catch (err) {}
+
+				console.log(results);
+
+				// console.log(`regex test ${(/[0-9a-zA-Z]+/i).test(answer)}`)
 				if((/[0-9a-zA-Z]+/i).test(answer) && results.length > 0){
 
 					console.log("Sending transcript for translation");
