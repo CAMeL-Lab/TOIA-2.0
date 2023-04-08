@@ -63,7 +63,7 @@ def upload_to_bucket(subtitles, project_id, video_name):
 
     for f in os.listdir("vtts"):
         blob = bucket.blob(f'{video_name}-{f}')
-        blob.upload_from_filename(f'{f}')
+        blob.upload_from_filename(f'vtts/{f}')
 
 
 def clear_folders():
