@@ -37,7 +37,7 @@ services:
       - ./.env
 
   multilingual-toia-dm:
-    build: server/multilingual-toia-dm
+    build: server/multilingual-dm
     ports:
       - ${DM_PORT}:${DM_PORT}
     depends_on:
