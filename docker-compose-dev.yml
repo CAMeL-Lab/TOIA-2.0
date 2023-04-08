@@ -130,5 +130,8 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./server/Transcripts:/app/files
+    env_file:
+      - ./.env
+
 volumes:
   mysql-vol:
