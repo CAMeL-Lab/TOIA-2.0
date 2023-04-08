@@ -819,6 +819,8 @@ router.post("/player", cors(), async (req, res) => {
 					answer: videoDetails.data.answer,
 					duration_seconds: videoInfo.duration_seconds,
 					video_id: player_video_id,
+					language: videoDetails.data.language,
+					vtt_url: `https://storage.cloud.google.com/toia_subtitles/${videoName}-${language}.vtt`,
 				});
 			}
 		});
@@ -894,8 +896,6 @@ router.post("/recorder", cors(), async (req, res) => {
 
 	videoStreams = JSON.parse(fields.streams[0]);
 
-	console.log(videoStreams);
-
 	let questionsObj = JSON.parse(fields.questions[0]);
 	if (questionsObj.length === 0) {
 		res.status(400).send("No question supplied!");
@@ -909,6 +909,8 @@ router.post("/recorder", cors(), async (req, res) => {
 	}
 
 	const video_duration = parseInt(fields.video_duration[0]);
+
+	console.log(video_duration);
 
 	let query_getNextIndex = `SELECT MAX(idx) AS maxIndex
                               FROM video;`;
@@ -940,16 +942,20 @@ router.post("/recorder", cors(), async (req, res) => {
 						"base64",
 					),
 				);
-				console.log(results);
+				
 				console.log("================");
+				console.log(results);
 				try{
 					results = matchTranscription(results, answer);
-				} catch (err) {}
+				} catch (err) {
+					console.error("Problem with matching transcription with text");
+					console.log(results);
+					console.error(err);
+				}
 
 				console.log(results);
 
-				// console.log(`regex test ${(/[0-9a-zA-Z]+/i).test(answer)}`)
-				if((/[0-9a-zA-Z]+/i).test(answer) && results.length > 0){
+				if(answer != "" && results.length > 0){
 
 					console.log("Sending transcript for translation");
 					// RabbitMQ setup
