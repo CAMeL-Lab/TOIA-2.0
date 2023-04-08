@@ -165,7 +165,7 @@ CREATE TABLE `videos_questions_streams` (
   `id_question` int NOT NULL,
   `id_stream` int NOT NULL,
   `type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
-  `ada_search` text NOT NULL
+  `ada_search` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --

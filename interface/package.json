@@ -42,7 +42,7 @@
     "react-speech-recognition": "^3.8.2",
     "react-switch": "^6.0.0",
     "react-webcam": "^5.2.4",
-    "sass": "^1.49.9",
+    "sass": "1.39.0",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.0.1",
     "socket.io": "^4.3.2",
