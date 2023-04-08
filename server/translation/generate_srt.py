@@ -24,9 +24,7 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
     OUTPUT_URI = os.getenv('OUTPUT_URI')
     PROJECT_ID = os.getenv('PROJECT_ID')
     SUBTITLES = os.getenv('SUBTITLE_BUCKET')
-    TRANSCRIPTS = os.getenv('TRANSCRIPT_BUCKET')
 
-    transcript_txt = f'txts/{output_file}.txt'
     transcript_srt = f'srts/{output_file}.srt'
 
     msg2srt(data, max_chars, output_file, input_language)
@@ -37,7 +35,7 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
     copy_to_local("txts", OUTPUT_BUCKET, PROJECT_ID)
     txt2srt(transcript_srt, txt_out="txts", srt_out="srts", vtt_out="vtts")
     if env == "PRODUCTION":
-        upload_to_bucket(SUBTITLES, TRANSCRIPTS, PROJECT_ID, video_name)
+        upload_to_bucket(SUBTITLES, PROJECT_ID, video_name)
     elif env == "DEVELOPMENT":
         upload_to_folders("files", video_name)
     clear_folders()
@@ -59,29 +57,13 @@ def clear_bucket(bucket_out, project_id):
         blob.delete()
 
 
-def upload_to_bucket(subtitles, transcripts, project_id, video_name):
+def upload_to_bucket(subtitles, project_id, video_name):
     storage_client = storage.Client(project_id)
     bucket = storage_client.get_bucket(subtitles)
 
-    # for f in os.listdir("srts"):
-    #     blob = bucket.blob(f'{video_name}-{f}')
-    #     blob.upload_from_filename(f'srts/{f}')
-    
     for f in os.listdir("vtts"):
         blob = bucket.blob(f'{video_name}-{f}')
-        blob.upload_from_filename(f'vtts/{f}')
-
-    bucket = storage_client.get_bucket(transcripts)
-    for f in os.listdir("txts"):
-        if f.endswith('.csv'):
-            continue
-        parts = f.split('_')
-        if len(parts) > 1:
-            filename = parts[4]
-        else:
-            filename = f
-        blob = bucket.blob(f'{video_name}-{filename}')
-        blob.upload_from_filename(f'txts/{f}')
+        blob.upload_from_filename(f'{f}')
 
 
 def clear_folders():
@@ -92,18 +74,5 @@ def clear_folders():
 
 
 def upload_to_folders(folder_name, video_name):
-    for f in os.listdir("srts"):
-        shutil.copyfile(f'srts/{f}', f'{folder_name}/srts/{video_name}-{f}')
     for f in os.listdir("vtts"):
         shutil.copyfile(f'vtts/{f}', f'{folder_name}/vtts/{video_name}-{f}')
-
-    for f in os.listdir("txts"):
-        if f.endswith('.csv'):
-            continue
-        parts = f.split('_')
-        if len(parts) > 1:
-            filename = parts[4]
-        else:
-            filename = f.split('.')[0]
-        shutil.copyfile(
-            f'txts/{f}', f'{folder_name}/txts/{video_name}-{filename}.txt')

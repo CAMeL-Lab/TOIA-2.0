@@ -21,7 +21,7 @@ def main():
             channel.queue_declare(queue='translate_transcript', durable= True)
 
             def callback(ch, method, properties, body):
-                # print(" [x] Received %r" % body.decode())
+                print(" [x] Received %r" % body.decode())
                 data = json.loads(body, object_hook = lambda d : Namespace(**d))
                 generate_srt(data.results,data.translate_to, data.video_name, input_language=data.input_language, output_file=data.input_language)
 
