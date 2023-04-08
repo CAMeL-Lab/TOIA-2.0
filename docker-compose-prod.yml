@@ -103,7 +103,7 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=toia-translation.json
       - ENVIRONMENT=production
     env_file:
-      - ./.env
+      - ./translation/env
 
 volumes:
   mysql-vol:

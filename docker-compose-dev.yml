@@ -131,7 +131,7 @@ services:
     volumes:
       - ./server/Transcripts:/app/files
     env_file:
-      - ./.env
+      - ./translation/env
 
 volumes:
   mysql-vol:
