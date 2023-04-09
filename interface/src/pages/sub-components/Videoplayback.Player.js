@@ -28,6 +28,7 @@ export default function VideoPlaybackPlayer({
 	return (
 		<div>
 			<video
+				crossOrigin="use-credentials"
 				muted={muted}
 				className="player-vid"
 				id="vidmain"
@@ -38,7 +39,7 @@ export default function VideoPlaybackPlayer({
 				autoPlay>
 				<source src={source} type="video/mp4"></source>
 				<track
-					label="English"
+					label="Captions"
 					kind="subtitles"
 					srcLang={lang?.split("-")[0] ?? ""}
 					src={source_vtt}
