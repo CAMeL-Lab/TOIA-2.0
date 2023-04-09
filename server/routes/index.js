@@ -81,7 +81,7 @@ if (process.env.ENVIRONMENT === "production") {
 				method: [method],
 				origin: [origin],
 				responseHeader: [responseHeader],
-				credentials:true
+				credentials: true
 			},
 		]);
 
