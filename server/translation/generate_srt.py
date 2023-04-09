@@ -34,7 +34,7 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
                          input_language, target_lang=target_langs)
     copy_to_local("txts", OUTPUT_BUCKET, PROJECT_ID)
     txt2srt(transcript_srt, txt_out="txts", srt_out="srts", vtt_out="vtts")
-    if env == "PRODUCTION":
+    if env == "production":
         upload_to_bucket(SUBTITLES, PROJECT_ID, video_name)
     elif env == "DEVELOPMENT":
         upload_to_folders("files", video_name)
