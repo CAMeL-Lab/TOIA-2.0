@@ -80,7 +80,7 @@ if (process.env.ENVIRONMENT === "production") {
 				maxAgeSeconds,
 				method: [method],
 				origin: [origin],
-				responseHeader: [responseHeader],
+				responseHeader: [responseHeader, "Access-Control-Allow-Credentials"],
 				credentials: true
 			},
 		]);
