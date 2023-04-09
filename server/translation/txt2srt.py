@@ -71,7 +71,7 @@ def txt2srt(srt_file, txt_out, srt_out, vtt_out):
     index_path = f'{txt_out}/index.csv'
     process_translations(subs, index_path, txt_out, srt_out, vtt_out)
 
-def convertsrt2vtt(lang, srt_out_dir, vtt_out_dir = "vtt"):
+def convertsrt2vtt(lang, srt_out_dir, vtt_out_dir = "vtts"):
     srt_file = f'{srt_out_dir}/{lang}.srt'
     vtt_file = f'{vtt_out_dir}/{lang}.vtt'
     vtt = webvtt.from_srt(srt_file)

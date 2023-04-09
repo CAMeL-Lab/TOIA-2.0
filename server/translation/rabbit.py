@@ -1,6 +1,7 @@
 import pika, sys, os, json, msg2srt
 from dotenv import load_dotenv
 from generate_srt import generate_srt
+import time
 
 try:
     from types import SimpleNamespace as Namespace
@@ -45,6 +46,7 @@ def main():
         # Recover on all other connection errors
         except pika.exceptions.AMQPConnectionError:
             print("Connection was closed, retrying...")
+            time.sleep(1)
             continue
 
 if __name__ == '__main__':
