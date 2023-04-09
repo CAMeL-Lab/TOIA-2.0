@@ -64,7 +64,7 @@ const gc = new Storage({
 	projectId: "toia-capstone-2021",
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
-let subtitleStore = gc.bucket(process.env.GC_BUCKET);
+let subtitleStore = gc.bucket(process.env.SUBTITLES_BUCKET);
 
 // Allow cross-origin get requests
 if (process.env.ENVIRONMENT === "production") {
