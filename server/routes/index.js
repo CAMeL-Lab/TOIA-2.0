@@ -64,6 +64,7 @@ const gc = new Storage({
 	projectId: "toia-capstone-2021",
 });
 let videoStore = gc.bucket(process.env.GC_BUCKET);
+let subtitleStore = gc.bucket(process.env.GC_BUCKET);
 
 // Allow cross-origin get requests
 if (process.env.ENVIRONMENT === "production") {
@@ -786,6 +787,7 @@ router.post("/player", cors(), async (req, res) => {
 			conversation_mode,
 		);
 	}
+
 	const videoName = player_video_id.split('.').slice(0,-1).join('');
 
 	if (process.env.ENVIRONMENT === "development") {
@@ -806,23 +808,35 @@ router.post("/player", cors(), async (req, res) => {
 		return;
 	}
 
+	let videoUrl;
+	let subtitleUrl;
 	videoStore
 		.file(
 			`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
 		)
 		.getSignedUrl(config, function (err, url) {
+			videoUrl = url;
 			if (err) {
 				console.error(err);
-			} else {
-				res.send({
-					url,
-					answer: videoDetails.data.answer,
-					duration_seconds: videoInfo.duration_seconds,
-					video_id: player_video_id,
-					language: videoDetails.data.language,
-					vtt_url: `https://storage.cloud.google.com/toia_subtitles/${videoName}-${language}.vtt`,
-				});
 			}
+			subtitleStore
+				.file(
+					`vtts/${videoName}-${language}.vtt`,
+				)
+				.getSignedUrl(config, function (err, url) {
+					subtitleUrl = url;
+					if (err) {
+						console.error(err);
+					}
+					res.send({
+						videoUrl,
+						answer: videoDetails.data.answer,
+						duration_seconds: videoInfo.duration_seconds,
+						video_id: player_video_id,
+						language: videoDetails.data.language,
+						vtt_url: subtitleUrl,
+					});
+				});
 		});
 });
 
