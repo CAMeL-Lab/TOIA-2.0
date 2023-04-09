@@ -75,6 +75,15 @@ if (process.env.ENVIRONMENT === "production") {
 		const origin =
 			process.env.EXPRESS_HOST + ":" + process.env.EXPRESS_PORT;
 
+		await gc.bucket(process.env.SUBTITLES_BUCKET).setCorsConfiguration([
+			{
+				maxAgeSeconds,
+				method: [method],
+				origin: [origin],
+				responseHeader: [responseHeader],
+			},
+		]);
+
 		await gc.bucket(process.env.GC_BUCKET).setCorsConfiguration([
 			{
 				maxAgeSeconds,
@@ -87,6 +96,10 @@ if (process.env.ENVIRONMENT === "production") {
 		console.log(`Bucket ${process.env.GC_BUCKET} was updated with a CORS config
                   to allow ${method} requests from ${origin} sharing 
                   ${responseHeader} responses across origins`);
+		
+		console.log(`Bucket ${process.env.SUBTITLES_BUCKET} was updated with a CORS config
+                  to allow ${method} requests from ${origin} sharing 
+                  ${responseHeader} responses across origins`);		  
 	}
 
 	configureBucketCors().catch(console.error);
