@@ -834,7 +834,7 @@ router.post("/player", cors(), async (req, res) => {
 			}
 			subtitleStore
 				.file(
-					`vtts/${videoName}-${language}.vtt`,
+					`${videoName}-${language}.vtt`,
 				)
 				.getSignedUrl(config, function (err, url) {
 					subtitleUrl = url;
