@@ -786,13 +786,13 @@ router.post("/player", cors(), async (req, res) => {
 			conversation_mode,
 		);
 	}
+	const videoName = player_video_id.split('.').slice(0,-1).join('');
 
 	if (process.env.ENVIRONMENT === "development") {
 		if (videoDetails.data.id_video === "204") {
 			res.send("error");
 			return;
 		}
-		const videoName = player_video_id.split('.').slice(0,-1).join('');
 		console.log(`vtts/${videoName}-${videoDetails.data.language}.vtt`);
 		res.send({
 			url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
