@@ -28,6 +28,7 @@ export default function VideoPlaybackPlayer({
 	return (
 		<div>
 			<video
+			crossOrigin="anonymous"
 				muted={muted}
 				className="player-vid"
 				id="vidmain"
