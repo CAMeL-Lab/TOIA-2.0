@@ -808,7 +808,6 @@ router.post("/player", cors(), async (req, res) => {
 			res.send("error");
 			return;
 		}
-		console.log(`vtts/${videoName}-${videoDetails.data.language}.vtt`);
 		res.send({
 			url: `/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
 			answer: videoDetails.data.answer,
@@ -816,7 +815,6 @@ router.post("/player", cors(), async (req, res) => {
 			video_id: player_video_id,
 			language: videoDetails.data.language,
 			vtt_url: `vtts/${videoName}-${language}.vtt`,
-			// vtt_url: `/Transcripts/`
 		});
 		return;
 	}
@@ -828,7 +826,6 @@ router.post("/player", cors(), async (req, res) => {
 			`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
 		)
 		.getSignedUrl(config, function (err, url) {
-			videoUrl = url;
 			if (err) {
 				console.error(err);
 			}

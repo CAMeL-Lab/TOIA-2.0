@@ -384,7 +384,6 @@ function AvatarGardenPage() {
     }, []);
 
     React.useEffect(()=>{
-        console.log("WHEEEE");
         fetchOnBoardingQuestions();
     }, [i18n.language]);
 
@@ -403,7 +402,6 @@ function AvatarGardenPage() {
     }
 
     function fetchOnBoardingQuestions(cb_success = null, cb_fail = null) {
-        console.log("Fetching...");
         const toiaID = history.location.state.toiaID;
         const options = {
             method: 'GET', 

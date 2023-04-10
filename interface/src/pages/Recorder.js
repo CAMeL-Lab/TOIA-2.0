@@ -451,6 +451,7 @@ function Recorder() {
 
         if (data && isFinal) {
             setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
+            console.log(`Transcript: ${data.alternatives[0].words}`);
 
             input.current += (" " + data.alternatives[0].transcript);
             setResults(results => [...results, data.alternatives[0].words]);

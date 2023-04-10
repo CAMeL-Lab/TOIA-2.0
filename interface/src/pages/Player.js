@@ -330,10 +330,6 @@ function Player() {
 				if (res.data === "error") {
 					setFillerPlaying(true);
 				} else {
-					console.log(res.data)
-					console.log("Setting Video Properties...");
-					console.log("Video URL", res.data.url);
-					console.log("VTT URL", res.data.vtt_url)
 					setFillerPlaying(true);
 
 					isFillerPlaying.current = "false";
@@ -360,7 +356,6 @@ function Player() {
 					});
 
 					setTranscribedAudio("");
-					console.log("End video POST");
 				}
 			})
 			.catch(e => {

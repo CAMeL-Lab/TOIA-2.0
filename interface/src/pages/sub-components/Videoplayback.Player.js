@@ -19,12 +19,6 @@ export default function VideoPlaybackPlayer({
 }) {
 	const videoRef = useRef(null);
 
-	useEffect(() => {
-		console.log("Setting Video Properties...");
-		console.log("Video URL", source);
-		console.log("VTT URL", source_vtt);
-	}, [source]);
-
 	return (
 		<div>
 			<video
