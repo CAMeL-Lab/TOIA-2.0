@@ -80,7 +80,7 @@ if (process.env.ENVIRONMENT === "production") {
 				maxAgeSeconds,
 				method: [method],
 				origin: [origin],
-				responseHeader: [responseHeader, "Access-Control-Allow-Origin"],
+				responseHeader: [responseHeader],
 			},
 		]);
 
