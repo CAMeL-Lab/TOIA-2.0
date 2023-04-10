@@ -842,7 +842,7 @@ router.post("/player", cors(), async (req, res) => {
 						console.error(err);
 					}
 					res.send({
-						videoUrl,
+						url: videoUrl,
 						answer: videoDetails.data.answer,
 						duration_seconds: videoInfo.duration_seconds,
 						video_id: player_video_id,
