@@ -326,10 +326,11 @@ function Player() {
 				},
 			})
 			.then(res => {
-				console.log("Got Video!");
 				if (res.data === "error") {
+					console.log("No video found!")
 					setFillerPlaying(true);
 				} else {
+					console.log("Got Video!");
 					setFillerPlaying(true);
 
 					isFillerPlaying.current = "false";
