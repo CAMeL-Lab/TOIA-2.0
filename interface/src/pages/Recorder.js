@@ -451,10 +451,10 @@ function Recorder() {
 
         // setLastSpeech(data?.alternatives?.[0]?.words ?? []);
 
-        console.log("Transcription received");
+        // console.log("Transcription received");
         // console.log(lastSpeech);
-        console.log(data.isFinal);
-        console.log(data?.alternatives?.[0]?.words);
+        // console.log(data.isFinal);
+        // console.log(data?.alternatives?.[0]?.words);
 
         
 
@@ -483,7 +483,7 @@ function Recorder() {
         const params = {
             language: interactionLanguage
         };
-        console.log("Language Set:", interactionLanguage);
+        // console.log("Language Set:", interactionLanguage);
         speechToTextUtils.initRecording(params, handleDataReceived, (error) => {
             console.error('Error when transcribing', error);
             setIsRecording(false)
@@ -574,16 +574,6 @@ function Recorder() {
         return new Promise(((resolve, reject) => {
             let endTimestamp = + new Date();
 
-            // If the last section of speech-to-text has not been added, then add it
-
-            let finalResults = [...results];
-            // if (lastSpeech.length != 0){
-            //     finalResults = [...finalResults, lastSpeech];
-            //     console.log("Did the extra append!");
-            // }
-
-            console.log("Results");
-            console.log(finalResults);
             
 
             let form = new FormData();
@@ -594,7 +584,7 @@ function Recorder() {
             form.append('language', interactionLanguage);
             form.append('questions', JSON.stringify(questionsSelected));
             form.append('answer', answerProvided);
-            form.append('results', JSON.stringify(finalResults));
+            form.append('results', JSON.stringify(results));
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
@@ -611,7 +601,6 @@ function Recorder() {
                 form.append('old_video_type', old_video_type);
             }
 
-            return;
             axios.post(`/api/recorder`, form, {
                 headers: {
                     "Content-type": "multipart/form-data"
