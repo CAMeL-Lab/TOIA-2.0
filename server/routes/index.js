@@ -819,13 +819,11 @@ router.post("/player", cors(), async (req, res) => {
 		return;
 	}
 
-	let videoUrl;
-	let subtitleUrl;
 	videoStore
 		.file(
 			`Accounts/${req.body.params.toiaFirstNameToTalk}_${req.body.params.toiaIDToTalk}/Videos/${player_video_id}`,
 		)
-		.getSignedUrl(config, function (err, url) {
+		.getSignedUrl(config, function (err, videoUrl) {
 			if (err) {
 				console.error(err);
 			}
@@ -833,8 +831,7 @@ router.post("/player", cors(), async (req, res) => {
 				.file(
 					`${videoName}-${language}.vtt`,
 				)
-				.getSignedUrl(config, function (err, url) {
-					subtitleUrl = url;
+				.getSignedUrl(config, function (err, subtitleUrl) {
 					if (err) {
 						console.error(err);
 					}
