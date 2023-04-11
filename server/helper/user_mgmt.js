@@ -653,7 +653,7 @@ const matchTranscription = (data, transcript) => {
 	let manualTranscript = transcript.trim().split(" ");
 	console.log(manualTranscript);
 	if (manualTranscript.length == 0 || transcript.trim() == '') {
-	  return "[]";
+	  return [];
 	}
   
 	let newSpeechTranscript = [];

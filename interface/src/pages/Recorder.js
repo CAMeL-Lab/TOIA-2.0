@@ -163,6 +163,7 @@ function Recorder() {
 
     const [transcribedAudio, setTranscribedAudio] = useState('');
     const [results, setResults] = useState([]);
+    // const [lastSpeech, setLastSpeech] = useState([]);
 
     //const [socket, setSocket] = useState(null);
     const client = useRef();
@@ -444,12 +445,21 @@ function Recorder() {
     function handleDataReceived(data) {
         //setTranscribedAudio(oldData => [...oldData, data])
         //setTranscribedAudio(input.current + " " + data);
-
         setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
 
         let isFinal = undefined || data.isFinal;
 
+        // setLastSpeech(data?.alternatives?.[0]?.words ?? []);
+
+        console.log("Transcription received");
+        // console.log(lastSpeech);
+        console.log(data.isFinal);
+        console.log(data?.alternatives?.[0]?.words);
+
+        
+
         if (data && isFinal) {
+            // console.log(lastSpeech);
             setTranscribedAudio(input.current + " " + data.alternatives[0].transcript);
             console.log(`Transcript: ${data.alternatives[0].words}`);
 
@@ -565,6 +575,18 @@ function Recorder() {
         return new Promise(((resolve, reject) => {
             let endTimestamp = + new Date();
 
+            // If the last section of speech-to-text has not been added, then add it
+
+            let finalResults = [...results];
+            // if (lastSpeech.length != 0){
+            //     finalResults = [...finalResults, lastSpeech];
+            //     console.log("Did the extra append!");
+            // }
+
+            console.log("Results");
+            console.log(finalResults);
+            
+
             let form = new FormData();
             form.append('blob', recordedVideo);
             form.append('thumb', videoThumbnail);
@@ -573,7 +595,7 @@ function Recorder() {
             form.append('language', interactionLanguage);
             form.append('questions', JSON.stringify(questionsSelected));
             form.append('answer', answerProvided);
-            form.append('results', JSON.stringify(results));
+            form.append('results', JSON.stringify(finalResults));
             form.append('videoType', videoType);
             form.append('private', isPrivate.toString());
             form.append('streams', JSON.stringify(listStreams));
@@ -590,6 +612,7 @@ function Recorder() {
                 form.append('old_video_type', old_video_type);
             }
 
+            return;
             axios.post(`/api/recorder`, form, {
                 headers: {
                     "Content-type": "multipart/form-data"

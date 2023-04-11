@@ -45,8 +45,8 @@ def main():
             break
         # Recover on all other connection errors
         except pika.exceptions.AMQPConnectionError:
-            print("Connection was closed, retrying...")
-            time.sleep(1)
+            print("Connection was closed, retrying in 5 seconds...")
+            time.sleep(5)
             continue
 
 if __name__ == '__main__':
