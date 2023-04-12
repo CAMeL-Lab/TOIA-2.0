@@ -373,7 +373,7 @@ function AvatarGardenPage() {
             setCurrentStream(dataCpy);
         });
         fetchOnBoardingQuestions();
-        fetchSuggestedQuestions();
+        // fetchSuggestedQuestions();
         fetchVideosCount();
         fetchVideosTotalDuration();
 
@@ -1349,7 +1349,7 @@ function AvatarGardenPage() {
                                 )
                             })}
 
-                            {getFilteredSuggestionsList().slice(0,5).map((q, index) => {
+                            {/* {getFilteredSuggestionsList().slice(0,5).map((q, index) => {
                                 return (
                                     <SuggestedQCard data={q}
                                                     onClick={(e) => {
@@ -1366,7 +1366,7 @@ function AvatarGardenPage() {
                                                     }}
                                                     key={index}/>
                                 )
-                            })}
+                            })} */}
 
                             {getFilteredRecordedQsList().slice(0,numberOfVideosDisplayed).map((q, index) => {
                                 return (
@@ -1391,7 +1391,7 @@ function AvatarGardenPage() {
                     }
                 </div>
 
-                {EditSuggestionModal()}
+                {/* {EditSuggestionModal()} */}
 
                 <Confirm
                     open={showVideoDeletePopup}
