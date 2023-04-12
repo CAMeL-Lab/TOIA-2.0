@@ -18,7 +18,10 @@ import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
-import {languageFlagsCSS, languageCodeTable} from "../services/languageHelper";
+import {
+	languageFlagsCSS,
+	languageCodeTable,
+} from "../services/languageHelper";
 
 function Player() {
 	const { t } = useTranslation();
@@ -34,7 +37,9 @@ function Player() {
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState(languageCodeTable?.[i18n.language] || "en-US");
+	const [interactionLanguage, setInteractionLanguage] = useState(
+		languageCodeTable?.[i18n.language] || "en-US",
+	);
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
@@ -44,7 +49,8 @@ function Player() {
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
 	const [answeredQuestions, setAnsweredQuestions] = useState([]);
-	let allSuggestedQuestions = [];
+	// let allSuggestedQuestions = [];
+	const [allSuggestedQuestions, setAllSuggestedQuestions] = useState([]);
 
 	const [videoProperties, setVideoProperties] = useState(null);
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
@@ -64,8 +70,8 @@ function Player() {
 
 	const interimTextInput = React.useRef("");
 
-	let [micMute, setMicStatus] = React.useState(true);
-	let [micString, setMicString] = React.useState("ASK BY VOICE");
+	const [micMute, setMicStatus] = React.useState(true);
+	const [micString, setMicString] = React.useState("ASK BY VOICE");
 
 	useEffect(() => {
 		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -97,7 +103,7 @@ function Player() {
 
 		canAccessStream();
 
-		fetchAnsweredQuestions();
+		// fetchAnsweredQuestions();
 		fetchAllStreamQuestions();
 
 		fetchFiller();
@@ -155,7 +161,11 @@ function Player() {
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
 		if (!hasRated) {
-			NotificationManager.warning("Please provide a rating, or skip", "", 3000);
+			NotificationManager.warning(
+				"Please provide a rating, or skip",
+				"",
+				3000,
+			);
 			return;
 		}
 
@@ -226,11 +236,13 @@ function Player() {
 					) {
 						answeredQuestions.push(q);
 						allSuggestedQuestions.push(q);
+						// setAllSuggestedQuestions([...allSuggestedQuestions, q]);
 					}
 				});
 
 				shouldRefreshQuestions.current = true;
 				setAnsweredQuestions([...answeredQuestions]);
+				setAllSuggestedQuestions([...allSuggestedQuestions]);
 			});
 	}
 
@@ -259,7 +271,7 @@ function Player() {
 		}
 	}, [hasRated]);
 
-	const recordUserRating = function (ratingValue) {
+	function recordUserRating(ratingValue) {
 		const options = {
 			method: "POST",
 			url: "/api/save_player_feedback",
@@ -286,9 +298,9 @@ function Player() {
 			.finally(() => {
 				setHasRated(true);
 			});
-	};
+	}
 
-	function skipUserRating(){
+	function skipUserRating() {
 		setHasRated(true);
 	}
 
@@ -314,7 +326,8 @@ function Player() {
 				params: {
 					toiaIDToTalk: history.location.state.toiaToTalk,
 
-					toiaFirstNameToTalk: history.location.state.toiaFirstNameToTalk,
+					toiaFirstNameToTalk:
+						history.location.state.toiaFirstNameToTalk,
 					question,
 					streamIdToTalk: history.location.state.streamToTalk,
 					record_log: "true",
@@ -324,17 +337,21 @@ function Player() {
 					mode: mode,
 					language: interactionLanguage,
 				},
-			})
+			},
+			{
+				timeout: 5000,
+			}
+			)
 			.then(res => {
 				if (res.data === "error") {
-					console.log("No video found!")
+					console.log("No video found!");
 					setFillerPlaying(true);
 				} else {
 					console.log("Got Video!");
 					setFillerPlaying(true);
 
 					isFillerPlaying.current = "false";
-					fetchAnsweredQuestions(oldQuestion, res.data.answer);
+					// fetchAnsweredQuestions(oldQuestion, res.data.answer);
 					setVideoProperties({
 						key: res.data.url + new Date(),
 						onEnded: () => {
@@ -444,6 +461,10 @@ function Player() {
 								// Show paused UI.
 
 								fetchFiller();
+							})
+							.finally(() => {
+								// memory cleanup
+								playPromise = null; // set playPromise to null in the finally block
 							});
 					}
 				});
@@ -470,8 +491,8 @@ function Player() {
 			: interimTextInput.current;
 
 		if (question.current !== "") {
-			const oldQuestion = question.current;
-			getVideoData(mode, oldQuestion);
+			// const oldQuestion = question.current;
+			getVideoData(mode, question.current);
 		}
 	}
 
@@ -486,7 +507,9 @@ function Player() {
 				showLoginModal={true}
 				endTranscription={endTranscription}
 			/>
-			{!hasRated && <PopModal userRating={recordUserRating} skip={skipUserRating}/>}
+			{!hasRated && (
+				<PopModal userRating={recordUserRating} skip={skipUserRating} />
+			)}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
@@ -615,7 +638,7 @@ function Player() {
 								/>
 							)}
 
-							<SuggestionCard
+							{/* <SuggestionCard
 								questions={answeredQuestions}
 								askQuestion={askQuestionFromCard}
 								shouldRefreshQuestions={shouldRefreshQuestions}
@@ -624,7 +647,7 @@ function Player() {
 								}
 								hasRated={hasRated}
 								notificationManager={NotificationManager}
-							/>
+							/> */}
 
 							<button
 								color="green"

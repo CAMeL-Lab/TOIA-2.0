@@ -739,6 +739,7 @@ router.post("/fillerVideo", cors(), (req, res) => {
 });
 
 router.post("/player", cors(), async (req, res) => {
+	console.log("PLAYER GOT QUESTION!");
 	const question = req.body.params.question.current;
 	const stream_id = req.body.params.streamIdToTalk;
 	const avatar_id = req.body.params.toiaIDToTalk;
