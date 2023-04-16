@@ -462,10 +462,6 @@ function Player() {
 
 								fetchFiller();
 							})
-							.finally(() => {
-								// memory cleanup
-								playPromise = null; // set playPromise to null in the finally block
-							});
 					}
 				});
 		}
