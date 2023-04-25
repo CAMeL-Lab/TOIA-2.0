@@ -703,8 +703,6 @@ const matchTranscription = (data, transcript) => {
 	let mTLength = manualTranscript.length;
 	let sTLength = speechTranscript.length;
   
-	console.log(sTLength, mTLength);
-  
 	if (sTLength <= mTLength) {
 	  let wordsPerBucket = Math.floor(mTLength / sTLength);
 	  let remainder = mTLength % sTLength;

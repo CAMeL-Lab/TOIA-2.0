@@ -956,18 +956,13 @@ router.post("/recorder", cors(), async (req, res) => {
 				);
 				
 				console.log("================");
-				console.log(results);
-				try{
-					results = matchTranscription(results, answer);
-				} catch (err) {
-					console.error("Problem with matching transcription with text");
-					console.log(results);
-					console.error(err);
-				}
-
-				console.log(results);
-
-				if(answer != "" && results.length > 0){
+				if(answer != "" && answer != "." && results.length > 0){
+					try{
+						results = matchTranscription(results, answer);
+					} catch (err) {
+						console.error("Problem with matching transcription with text");
+						console.error(err);
+					}
 
 					console.log("Sending transcript for translation");
 					// RabbitMQ setup
@@ -1039,6 +1034,30 @@ router.post("/recorder", cors(), async (req, res) => {
 					await videoStore.upload(file.blob[0].path, {
 						destination: `Accounts/${fields.name[0]}_${fields.id[0]}/Videos/${videoID}`,
 					});
+				}
+
+				// generate embeddings
+				embeddings = null;
+
+				if (
+					fields.videoType[0] != "filler" && fields.videoType[0] != "exit"
+				){
+					try {
+						console.log("Generating embeddings...")
+						question = questionsObj[0].question
+						console.log(videoID, question, answer);
+						embeddings = await axios.post(`${process.env.EMBEDDINGS_ROUTE}`, {
+							params: {
+								videoID: videoID,
+								question: question,
+								answer: answer,
+							},
+						});
+					} catch (err) {
+						res.send("error");
+						console.log(err);
+						return;
+					}
 				}
 
 				let query_saveVideo = `INSERT INTO video(id_video, toia_id, idx, private, answer, language, likes, views, duration_seconds)
@@ -1118,6 +1137,7 @@ router.post("/recorder", cors(), async (req, res) => {
 										videoID,
 										q_id,
 										fields.videoType[0],
+										embeddings ? embeddings.data : null
 									);
 								}
 

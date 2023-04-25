@@ -36,8 +36,6 @@ VIDEOS = db.Table('video', METADATA, autoload=True, autoload_with=ENGINE)
 print("Connected successfully!")
 
 def adaSearch(x):
-    time.sleep(1)
-    # return get_embedding(x, engine='text-search-ada-doc-001')
     return labse.normalization(labse.encoder(labse.preprocessor(tf.constant([x])))["default"]).numpy()[0].tolist()
 
 

@@ -5,14 +5,16 @@ import pandas as pd
 import numpy as np
 import os
 import ast
+from sqlalchemy.sql import text as sql_text
+import labse
 
-# from utils import toia_answer, NLP, PS
 from utils_labse import toia_answer
-# from utils_gpt3 import getFirstNSimilar
 from dotenv import load_dotenv
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+import tensorflow as tf
+
 load_dotenv()
 
 SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
@@ -36,9 +38,17 @@ class QuestionInput(BaseModel):
 class DMpayload(BaseModel):  #I know this nesting is stupid --- correct this later in the nodejs backend when defining the payload there
     params: QuestionInput
 
-@app.post("/test")
-def test(payload: DMpayload):
-    return "Hello", 200
+class EmbeddingsInput(BaseModel):
+    videoID: str
+    question: str
+    answer: str
+
+class EmbeddingsPayload(BaseModel):  #I know this nesting is stupid --- correct this later in the nodejs backend when defining the payload there
+    params: EmbeddingsInput
+
+def adaSearch(x):
+    print("Creating Embeddings...")
+    return labse.normalization(labse.encoder(labse.preprocessor(tf.constant([x])))["default"]).numpy()[0].tolist()
 
 @app.post("/dialogue_manager")
 def dialogue_manager(payload: DMpayload):
@@ -79,9 +89,9 @@ def dialogue_manager(payload: DMpayload):
     
     vector_length = len(ast.literal_eval(df_avatar['ada_search'].values[0]))
 
-    default_vector = [0 for i in range(vector_length)]
+    default_vector = [0 for _ in range(vector_length)]
 
-    df_avatar['ada_search'] = df_avatar.ada_search.apply(lambda x: eval(x) if x is not None else default_vector)  #needed when np array stored as txt
+    df_avatar['ada_search'] = df_avatar.ada_search.apply(lambda x: ast.literal_eval(x) if x is not None else default_vector)  #needed when np array stored as txt
     if query is None:
         return 'Please enter a query', 400
 
@@ -102,6 +112,21 @@ def dialogue_manager(payload: DMpayload):
 
     json.dumps(result)
     return result
+
+@app.post("/generate_embeddings")
+def generate_embeddings(payload: EmbeddingsPayload):
+    question = payload.params.question
+    answer = payload.params.answer
+    videoID = payload.params.videoID
+
+    combined = question.strip() + \
+    " " + answer.strip()
+
+    embeddings = adaSearch(combined)
+    print("Returning embeddings")
+
+    return json.dumps(embeddings)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("DM_PORT")))
