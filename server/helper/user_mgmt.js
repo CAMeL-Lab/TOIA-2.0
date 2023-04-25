@@ -453,10 +453,12 @@ const getUserTotalVideoDuration = user_id => {
 	});
 };
 
-const savePlayerFeedback = (video_id, question, rating, video_language, interactor_language, subject="UNKNOWN", user_id = null) => {
+const savePlayerFeedback = (video_id, question, rating, video_language, interactor_language, similarity_score = null, subject="UNKNOWN", user_id = null) => {
 	return new Promise((resolve, reject) => {
-		let query = `INSERT INTO player_feedback(video_id, user_id, question, rating, video_language, interactor_language, subject) VALUES(?, ?, ?, ?, ?, ?, ?)`;
-		connection.query(query, [video_id, user_id, question, rating, video_language, interactor_language, subject], err => {
+		let current_timestamp = +new Date();
+
+		let query = `INSERT INTO player_feedback(timestamp, video_id, user_id, question, rating, video_language, interactor_language, similarity_score, subject) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+		connection.query(query, [current_timestamp, video_id, user_id, question, rating, video_language, interactor_language, similarity_score, subject], err => {
 			if (err){ 
 				console.error(err);
 				reject(err);

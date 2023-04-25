@@ -284,6 +284,7 @@ function Player() {
 		}
 	}, [hasRated]);
 
+	// TODO: Refactor recordUserRating and recordSubtitlesRating (difference is the subject)
 	function recordUserRating(ratingValue, ratingParams, interactionLanguage) {
 		const options = {
 			method: "POST",
@@ -299,6 +300,7 @@ function Player() {
 				rating: ratingValue,
 				video_language: ratingParams.video_language,
 				interactor_language: interactionLanguage,
+				similarity_score: ratingParams.similarity_score,
 				subject: "Dialogue"
 			},
 		};
@@ -328,6 +330,7 @@ function Player() {
 				rating: ratingValue,
 				video_language: ratingParams.video_language,
 				interactor_language: interactionLanguage,
+				similarity_score: ratingParams.similarity_score,
 				subject: "Subtitles"
 			},
 		};
@@ -399,6 +402,7 @@ function Player() {
 								video_id: res.data.video_id,
 								video_language: res.data.language,
 								question: oldQuestion,
+								similarity_score: res.data.similarity_score
 							});
 							setHasRated(false);
 							fetchFiller();

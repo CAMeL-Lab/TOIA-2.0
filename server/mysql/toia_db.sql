@@ -48,12 +48,14 @@ CREATE TABLE `conversations_log` (
 --
 
 CREATE TABLE `player_feedback` (
+  `timestamp` bigint NOT NULL,
   `video_id` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `user_id` int DEFAULT NULL,
   `question` text NOT NULL,
   `rating` int NOT NULL,
   `video_language` varchar(45) NOT NULL,
   `interactor_language` varchar(45) NOT NULL,
+  `similarity_score` float DEFAULT NULL,
   `subject` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

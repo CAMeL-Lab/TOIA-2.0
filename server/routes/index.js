@@ -778,15 +778,15 @@ router.post("/player", cors(), async (req, res) => {
 		player_video_id !== "204"
 	) {
 		let interactor_id = req.body.params.interactor_id || null;
-		saveConversationLog(
-			interactor_id,
-			req.body.params.toiaIDToTalk,
-			false,
-			req.body.params.question.current,
-			player_video_id,
-			ada_similarity_score,
-			conversation_mode,
-		);
+		// saveConversationLog(
+		// 	interactor_id,
+		// 	req.body.params.toiaIDToTalk,
+		// 	false,
+		// 	req.body.params.question.current,
+		// 	player_video_id,
+		// 	ada_similarity_score,
+		// 	conversation_mode,
+		// );
 	}
 
 	const videoName = player_video_id.split('.').slice(0,-1).join('');
@@ -804,6 +804,7 @@ router.post("/player", cors(), async (req, res) => {
 			video_id: player_video_id,
 			language: videoDetails.data.language,
 			vtt_url: `vtts/${videoName}-${language}.vtt`,
+			similarity_score: ada_similarity_score
 		});
 		return;
 	}
@@ -1432,8 +1433,6 @@ router.post("/getTotalVideoDuration", cors(), (req, res) => {
 });
 
 router.post("/save_player_feedback", cors(), async (req, res) => {
-	console.log("save_player_feedback body:");
-	console.log(req.body);
 	let user_id = req.body.user_id || null;
 	let video_id = req.body.video_id || null;
 	let question = req.body.question?.toString() || null;
@@ -1442,6 +1441,7 @@ router.post("/save_player_feedback", cors(), async (req, res) => {
 	let userValid = false;
 	let videoLanguage = req.body.video_language;
 	let interactorLanguage = req.body.interactor_language;
+	let similarity_score = req.body.similarity_score;
 
 	if (video_id != null && question != null && rating != null) {
 		try {
@@ -1452,7 +1452,7 @@ router.post("/save_player_feedback", cors(), async (req, res) => {
 
 		if (!userValid) user_id = null;
 
-		savePlayerFeedback(video_id, question, rating, videoLanguage, interactorLanguage, subject, user_id).then(() => {
+		savePlayerFeedback(video_id, question, rating, videoLanguage, interactorLanguage, similarity_score, subject, user_id).then(() => {
 			res.sendStatus(200);
 		});
 		

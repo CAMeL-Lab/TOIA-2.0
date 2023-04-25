@@ -4,6 +4,7 @@ from sqlalchemy.sql import text
 import pandas as pd
 import numpy as np
 import os
+import ast
 
 # from utils import toia_answer, NLP, PS
 from utils_labse import toia_answer
@@ -51,7 +52,7 @@ def dialogue_manager(payload: DMpayload):
     print(avatar_id)
     print(stream_id)
 
-    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, videos_questions_streams.ada_search, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.likes, video.views FROM video
+    statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, videos_questions_streams.ada_search, questions.question, video.language, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
                             INNER JOIN questions ON questions.id = videos_questions_streams.id_question
                             WHERE videos_questions_streams.id_stream = :streamID AND video.private = 0 AND videos_questions_streams.type NOT IN ('filler', 'exit');""")
@@ -66,6 +67,7 @@ def dialogue_manager(payload: DMpayload):
                                     'type',
                                     'ada_search',
                                     'question',
+                                    'language',
                                     'id_video',
                                     'toia_id',
                                     'idx',
@@ -74,11 +76,12 @@ def dialogue_manager(payload: DMpayload):
                                     'likes',
                                     'views',
                                 ])
+    
+    vector_length = len(ast.literal_eval(df_avatar['ada_search'].values[0]))
 
-    df_avatar['ada_search'] = df_avatar.ada_search.apply(eval).apply(np.array)  #needed when np array stored as txt
+    default_vector = [0 for i in range(vector_length)]
 
-    # df_greetings = df_avatar[df_avatar['type'] == "greeting"]
-
+    df_avatar['ada_search'] = df_avatar.ada_search.apply(lambda x: eval(x) if x is not None else default_vector)  #needed when np array stored as txt
     if query is None:
         return 'Please enter a query', 400
 
@@ -87,12 +90,14 @@ def dialogue_manager(payload: DMpayload):
 
     answer = response[0]
     id_video = response[1]
-    ada_similarity_score = response[2]
+    language = response[2]
+    ada_similarity_score = response[3]
 
     result = {
         'answer': answer,
         'id_video': id_video,
-        'ada_similarity_score': ada_similarity_score
+        'ada_similarity_score': ada_similarity_score,
+        'language' : language,
     }
 
     json.dumps(result)
