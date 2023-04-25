@@ -453,11 +453,15 @@ const getUserTotalVideoDuration = user_id => {
 	});
 };
 
-const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
-	return new Promise(resolve => {
-		let query = `INSERT INTO player_feedback(video_id, user_id, question, rating) VALUES(?, ?, ?, ?)`;
-		connection.query(query, [video_id, user_id, question, rating], err => {
-			if (err) throw err;
+const savePlayerFeedback = (video_id, question, rating, video_language, interactor_language, subject="UNKNOWN", user_id = null) => {
+	return new Promise((resolve, reject) => {
+		let query = `INSERT INTO player_feedback(video_id, user_id, question, rating, video_language, interactor_language, subject) VALUES(?, ?, ?, ?, ?, ?, ?)`;
+		connection.query(query, [video_id, user_id, question, rating, video_language, interactor_language, subject], err => {
+			if (err){ 
+				console.error(err);
+				reject(err);
+				return;
+			}
 			resolve();
 		});
 	});
@@ -472,29 +476,31 @@ const saveConversationLog = (
 	ada_similarity_score = null,
 	mode = "UNKNOWN",
 ) => {
-	return new Promise(resolve => {
-		resolve();
-		// let currentTimestamp = +new Date();
-		// const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+	return;
+	// return new Promise(resolve => {
+	// 	// resolve();
+	// 	let currentTimestamp = +new Date();
+	// 	const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, video_language, interactor_language) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-		// connection.query(
-		// 	query,
-		// 	[
-		// 		interactor_id,
-		// 		toia_id,
-		// 		currentTimestamp,
-		// 		filler,
-		// 		question_asked,
-		// 		video_played,
-		// 		ada_similarity_score,
-		// 		mode,
-		// 	],
-		// 	(err, res) => {
-		// 		if (err) throw err;
-		// 		resolve();
-		// 	},
-		// );
-	});
+	// 	connection.query(
+	// 		query,
+	// 		[
+	// 			interactor_id,
+	// 			toia_id,
+	// 			currentTimestamp,
+	// 			filler,
+	// 			question_asked,
+	// 			video_played,
+	// 			ada_similarity_score,
+	// 	     video_language,
+	// 	     interactor_language
+	// 		],
+	// 		(err, res) => {
+	// 			if (err) throw err;
+	// 			resolve();
+	// 		},
+	// 	);
+	// });
 };
 
 const canAccessStream = (user_id, stream_id) => {

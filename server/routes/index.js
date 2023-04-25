@@ -706,7 +706,7 @@ router.post("/fillerVideo", cors(), (req, res) => {
 					req.body.params.record_log === "true"
 				) {
 					let interactor_id = req.body.params.interactor_id || null;
-					await saveConversationLog(
+					saveConversationLog(
 						interactor_id,
 						req.body.params.toiaIDToTalk,
 						true,
@@ -739,39 +739,26 @@ router.post("/fillerVideo", cors(), (req, res) => {
 });
 
 router.post("/player", cors(), async (req, res) => {
-	console.log("PLAYER GOT QUESTION!");
 	const question = req.body.params.question.current;
 	const stream_id = req.body.params.streamIdToTalk;
 	const avatar_id = req.body.params.toiaIDToTalk;
 	const language = req.body.params.language;
 
-	const exactMatch = await getExactMatchVideo(stream_id, question);
-
 	let videoDetails;
-	if (exactMatch === null) {
-		try {
-			console.log(`${process.env.DM_ROUTE}`);
-			videoDetails = await axios.post(`${process.env.DM_ROUTE}`, {
-				params: {
-					query: question,
-					avatar_id: avatar_id,
-					stream_id: stream_id,
-				},
-			});
-		} catch (err) {
-			res.send("error");
-			console.log(err);
-			return;
-		}
-	} else {
-		videoDetails = {
-			data: {
-				ada_similarity_score: null,
-				id_video: exactMatch["id_video"],
-				answer: exactMatch["answer"],
-				language: exactMatch["language"],
+
+	try {
+		console.log(`${process.env.DM_ROUTE}`);
+		videoDetails = await axios.post(`${process.env.DM_ROUTE}`, {
+			params: {
+				query: question,
+				avatar_id: avatar_id,
+				stream_id: stream_id,
 			},
-		};
+		});
+	} catch (err) {
+		res.send("error");
+		console.log(err);
+		return;
 	}
 
 	const ada_similarity_score = videoDetails.data.ada_similarity_score;
@@ -791,7 +778,7 @@ router.post("/player", cors(), async (req, res) => {
 		player_video_id !== "204"
 	) {
 		let interactor_id = req.body.params.interactor_id || null;
-		await saveConversationLog(
+		saveConversationLog(
 			interactor_id,
 			req.body.params.toiaIDToTalk,
 			false,
@@ -803,7 +790,8 @@ router.post("/player", cors(), async (req, res) => {
 	}
 
 	const videoName = player_video_id.split('.').slice(0,-1).join('');
-
+	console.log("Video id");
+	console.log(player_video_id);
 	if (process.env.ENVIRONMENT === "development") {
 		if (videoDetails.data.id_video === "204") {
 			res.send("error");
@@ -1444,13 +1432,16 @@ router.post("/getTotalVideoDuration", cors(), (req, res) => {
 });
 
 router.post("/save_player_feedback", cors(), async (req, res) => {
+	console.log("save_player_feedback body:");
+	console.log(req.body);
 	let user_id = req.body.user_id || null;
 	let video_id = req.body.video_id || null;
-	let question = req.body.question.toString() || null;
+	let question = req.body.question?.toString() || null;
 	let rating = req.body.rating || null;
+	let subject = req.body.subject || null;
 	let userValid = false;
-
-	console.log(video_id, question, rating);
+	let videoLanguage = req.body.video_language;
+	let interactorLanguage = req.body.interactor_language;
 
 	if (video_id != null && question != null && rating != null) {
 		try {
@@ -1459,15 +1450,12 @@ router.post("/save_player_feedback", cors(), async (req, res) => {
 			userValid = false;
 		}
 
-		if (userValid) {
-			savePlayerFeedback(video_id, question, rating, user_id).then(() => {
-				res.sendStatus(200);
-			});
-		} else {
-			savePlayerFeedback(video_id, question, rating).then(() => {
-				res.sendStatus(200);
-			});
-		}
+		if (!userValid) user_id = null;
+
+		savePlayerFeedback(video_id, question, rating, videoLanguage, interactorLanguage, subject, user_id).then(() => {
+			res.sendStatus(200);
+		});
+		
 	} else {
 		res.sendStatus(401);
 	}

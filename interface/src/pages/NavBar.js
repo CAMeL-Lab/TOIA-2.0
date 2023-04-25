@@ -233,14 +233,13 @@ function NavBar(props) {
             {props.showLoginModal ? login_modal() : ''}
 
             <div className="nav-heading-bar">
-                <div class="nav-dropdown">
-                    <div class="nav-dropbtn"><span className={t("current_lang")}></span></div>
-                    <div class="nav-dropdown-content">
-                        <a href="#" onClick={switch_lang("en")}><span class="fi fi-us"></span></a>
-                        <a href="#" onClick={switch_lang("ar")}><span class="fi fi-ae"></span></a>
-                        {/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
-                        <a href="#" onClick={switch_lang("fr")}><span class="fi fi-fr"></span></a>
-                        <a href="#" onClick={switch_lang("es")}><span class="fi fi-es"></span></a>
+                <div className="nav-dropdown">
+                    <div className="nav-dropbtn"><span className={t("current_lang")}></span></div>
+                    <div className="nav-dropdown-content">
+                        <a href="#" onClick={switch_lang("en")}><span className="fi fi-us"></span></a>
+                        <a href="#" onClick={switch_lang("ar")}><span className="fi fi-ae"></span></a>
+                        <a href="#" onClick={switch_lang("fr")}><span className="fi fi-fr"></span></a>
+                        <a href="#" onClick={switch_lang("es")}><span className="fi fi-es"></span></a>
                     </div>
                 </div>
                 <div onClick={home} className="nav-toia_icon app-opensans-normal">

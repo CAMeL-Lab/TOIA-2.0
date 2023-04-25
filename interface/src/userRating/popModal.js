@@ -2,27 +2,68 @@ import React from "react";
 import "./popModal.css";
 import RatingWords from "./ratingWords";
 
-function PopModal({ userRating, skip }) {
-	return (
-		<div className="modalBackground">
-			<div className="modalContainer">
-				<div className="title">
-					<h2>
-						How well does this answer fit with your question or the
-						conversation you're having with the avatar?
-					</h2>
-				</div>
+function PopModal({ ratingNodes, setRatingNodes, hasRated, setHasRated, ratingParams, interactionLanguage }) {
+	
+	function skipRatings() {
+		setHasRated(true);
+	}
 
-				<div className="body">
-					<h3>
-						<RatingWords recUserRating={userRating} />
-					</h3>
+	function submitRatings() {
+		// submit all ratings one by one
+		ratingNodes.forEach((node, index) => {
+			node.onSubmitRating(ratingNodes[index].rating, ratingParams, interactionLanguage);
+		});
+		setHasRated(true);
+	}
+
+	// Returns a function that sets the appropriate rating node's rating
+	function changeRatingFunction(nodeIndex){
+		return function(ratingValue) {
+			ratingNodes[nodeIndex].rating = ratingValue
+			setRatingNodes(ratingNodes);
+		}
+	}
+
+	function getRatingForm(){
+		let ratingFormNodes = [];
+		ratingNodes.forEach((node, index) => {
+			ratingFormNodes.push(
+					<>
+						<div className="popup-title">
+							<h2>
+							{node.text}
+							</h2>
+						</div>
+						<div className="popup-body">
+							<h3>
+								<RatingWords recUserRating={changeRatingFunction(index)} />
+							</h3>
+						</div>
+						<hr/>
+					</>
+				);
+			}
+		);
+		return ratingFormNodes;
+	}
+
+	return (<>
+		{!hasRated && (<div className="modalBackground">
+			<div className="modalContainer">
+
+				{ getRatingForm() }
+				
+
+				<div onClick={skipRatings} className="pop-modal-skiptext">
+					Skip
 				</div>
-				<div onClick={skip} className="skipText">
-						Skip
-					</div>
+				<div onClick={submitRatings} className="pop-modal-submittext">
+					Submit
+				</div>
 			</div>
-		</div>
+		</div>)
+		}
+		</>
 	);
 }
 

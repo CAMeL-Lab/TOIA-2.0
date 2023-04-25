@@ -1,7 +1,7 @@
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import history from "../services/history";
 import PopModal from "../userRating/popModal";
@@ -49,7 +49,6 @@ function Player() {
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
 	const [answeredQuestions, setAnsweredQuestions] = useState([]);
-	// let allSuggestedQuestions = [];
 	const [allSuggestedQuestions, setAllSuggestedQuestions] = useState([]);
 
 	const [videoProperties, setVideoProperties] = useState(null);
@@ -61,17 +60,31 @@ function Player() {
 
 	// suggested questions for cards
 
-	const textInput = React.useRef("");
-	const question = React.useRef("");
-	const interacting = React.useRef("false");
-	const isFillerPlaying = React.useRef("true");
-	const allQuestions = React.useRef([]);
-	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
+	const textInput = useRef("");
+	const question = useRef("");
+	const interacting = useRef("false");
+	const isFillerPlaying = useRef("true");
+	const allQuestions = useRef([]);
+	const shouldRefreshQuestions = useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
-	const interimTextInput = React.useRef("");
+	const interimTextInput = useRef("");
 
-	const [micMute, setMicStatus] = React.useState(true);
-	const [micString, setMicString] = React.useState("ASK BY VOICE");
+	const [micMute, setMicStatus] = useState(true);
+	const [micString, setMicString] = useState("ASK BY VOICE");
+
+
+	const [ratingNodes, setRatingNodes] = useState([
+		{
+			text: "How well does this answer fit with your question or the conversation you're having with the avatar?",
+			rating: 5,
+			onSubmitRating: recordUserRating
+		},
+		{
+			text: "How well do the subtitles reflect what is being said?",
+			rating: 5,
+			onSubmitRating: recordSubtitlesRating
+		}
+	]);
 
 	useEffect(() => {
 		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -271,7 +284,7 @@ function Player() {
 		}
 	}, [hasRated]);
 
-	function recordUserRating(ratingValue) {
+	function recordUserRating(ratingValue, ratingParams, interactionLanguage) {
 		const options = {
 			method: "POST",
 			url: "/api/save_player_feedback",
@@ -284,24 +297,49 @@ function Player() {
 
 				question: ratingParams.question,
 				rating: ratingValue,
+				video_language: ratingParams.video_language,
+				interactor_language: interactionLanguage,
+				subject: "Dialogue"
 			},
 		};
 
 		axios
 			.request(options)
 			.then(function (response) {
-				console.log(response.data);
+				// console.log(response.data);
 			})
 			.catch(function (error) {
 				console.error(error);
-			})
-			.finally(() => {
-				setHasRated(true);
 			});
 	}
 
-	function skipUserRating() {
-		setHasRated(true);
+	function recordSubtitlesRating(ratingValue, ratingParams, interactionLanguage) {
+		const options = {
+			method: "POST",
+			url: "/api/save_player_feedback",
+			headers: { "Content-Type": "application/json" },
+			data: {
+				...(history.location.state.toiaID && {
+					user_id: history.location.state.toiaID,
+				}),
+				video_id: ratingParams.video_id,
+
+				question: ratingParams.question,
+				rating: ratingValue,
+				video_language: ratingParams.video_language,
+				interactor_language: interactionLanguage,
+				subject: "Subtitles"
+			},
+		};
+
+		axios
+			.request(options)
+			.then(function (response) {
+				// console.log(response.data);
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
 	}
 
 	function fetchData(mode = "UNKNOWN") {
@@ -351,12 +389,15 @@ function Player() {
 					setFillerPlaying(true);
 
 					isFillerPlaying.current = "false";
+					console.log("Video id");
+					console.log(res.data.video_id);
 					// fetchAnsweredQuestions(oldQuestion, res.data.answer);
 					setVideoProperties({
 						key: res.data.url + new Date(),
 						onEnded: () => {
 							setRatingParams({
 								video_id: res.data.video_id,
+								video_language: res.data.language,
 								question: oldQuestion,
 							});
 							setHasRated(false);
@@ -504,7 +545,12 @@ function Player() {
 				endTranscription={endTranscription}
 			/>
 			{!hasRated && (
-				<PopModal userRating={recordUserRating} skip={skipUserRating} />
+				<PopModal 
+				ratingNodes={ratingNodes} setRatingNodes={setRatingNodes} 
+				hasRated={hasRated} setHasRated={setHasRated} 
+				ratingParams={ratingParams}
+				interactionLanguage={interactionLanguage}
+				/>
 			)}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">

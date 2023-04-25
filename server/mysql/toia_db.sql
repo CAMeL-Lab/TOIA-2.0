@@ -35,7 +35,10 @@ CREATE TABLE `conversations_log` (
   `timestamp` bigint NOT NULL,
   `filler` tinyint(1) NOT NULL,
   `question_asked` text,
-  `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+  `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `ada_similarity_score` float DEFAULT NULL,
+  `video_language` varchar(45) NOT NULL,
+  `interactor_language` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -48,7 +51,10 @@ CREATE TABLE `player_feedback` (
   `video_id` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `user_id` int DEFAULT NULL,
   `question` text NOT NULL,
-  `rating` int NOT NULL
+  `rating` int NOT NULL,
+  `video_language` varchar(45) NOT NULL,
+  `interactor_language` varchar(45) NOT NULL,
+  `subject` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
