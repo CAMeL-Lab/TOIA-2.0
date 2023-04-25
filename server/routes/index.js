@@ -832,6 +832,7 @@ router.post("/player", cors(), async (req, res) => {
 						video_id: player_video_id,
 						language: videoDetails.data.language,
 						vtt_url: subtitleUrl,
+						similarity_score: ada_similarity_score
 					});
 				});
 		});
