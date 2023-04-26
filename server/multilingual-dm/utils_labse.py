@@ -13,6 +13,7 @@ def toia_answer(query, data, k=1):
     embedding = labse.normalization(labse.encoder(labse.preprocessor(tf.constant([query])))["default"]).numpy()[0]
     data['similarities'] = data.ada_search.apply(lambda x: labse.similarity(embedding, x))
     res = data.sort_values('similarities', ascending=False).head(k)
+    print("Similarities: ", data.sort_values('similarities', ascending=False).head(15))
 
     ada_similarity_score = res.similarities.values[0]
     print("Similarity Score", ada_similarity_score)
