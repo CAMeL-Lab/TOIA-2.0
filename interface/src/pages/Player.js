@@ -398,13 +398,14 @@ function Player() {
 					setVideoProperties({
 						key: res.data.url + new Date(),
 						onEnded: () => {
-							setRatingParams({
-								video_id: res.data.video_id,
-								video_language: res.data.language,
-								question: oldQuestion,
-								similarity_score: res.data.similarity_score
-							});
-							setHasRated(false);
+							// Temporarily disabled
+							// setRatingParams({
+							// 	video_id: res.data.video_id,
+							// 	video_language: res.data.language,
+							// 	question: oldQuestion,
+							// 	similarity_score: res.data.similarity_score
+							// });
+							// setHasRated(false);
 							fetchFiller();
 						},
 						source: res.data.url,
