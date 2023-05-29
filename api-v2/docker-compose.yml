@@ -1,0 +1,30 @@
+version: '3'
+services:
+  apiv2:
+    build: .
+    volumes:
+      - ./toia:/root/app
+    ports:
+      - 4000:4000
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: toia_dev
+      MYSQL_USER: apiv2
+      MYSQL_PASSWORD: apiv2
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u apiv2 --password=apiv2
+  phpMyAdmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: apiv2
+      PMA_PASSWORD: apiv2
