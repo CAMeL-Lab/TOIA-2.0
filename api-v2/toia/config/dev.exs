@@ -4,7 +4,7 @@ import Config
 config :toia, Toia.Repo,
   username: "root",
   password: "root",
-  hostname: "mysql",
+  hostname: "localhost",
   database: "toia_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,

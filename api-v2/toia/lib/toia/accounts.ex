@@ -1,0 +1,119 @@
+defmodule Toia.Accounts do
+  @moduledoc """
+  The Accounts context.
+  """
+
+  import Ecto.Query, warn: false
+  alias Toia.Repo
+
+  alias Toia.Accounts.Toia_User
+
+  @doc """
+  Returns the list of toia_users.
+
+  ## Examples
+
+      iex> list_toia_users()
+      [%Toia_User{}, ...]
+
+  """
+  def list_toia_users do
+    Repo.all(Toia_User)
+  end
+
+  @doc """
+  Gets a single toia__user.
+
+  Raises `Ecto.NoResultsError` if the Toia  user does not exist.
+
+  ## Examples
+
+      iex> get_toia__user!(123)
+      %Toia_User{}
+
+      iex> get_toia__user!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_toia__user!(id), do: Repo.get!(Toia_User, id)
+
+  @doc """
+  Creates a toia__user.
+
+  ## Examples
+
+      iex> create_toia__user(%{field: value})
+      {:ok, %Toia_User{}}
+
+      iex> create_toia__user(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_toia__user(attrs \\ %{}) do
+    newAttrs = hash_password(attrs)
+
+    %Toia_User{}
+    |> Toia_User.changeset(newAttrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a toia__user.
+
+  ## Examples
+
+      iex> update_toia__user(toia__user, %{field: new_value})
+      {:ok, %Toia_User{}}
+
+      iex> update_toia__user(toia__user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_toia__user(%Toia_User{} = toia__user, attrs) do
+    newAttrs = hash_password(attrs)
+
+    toia__user
+    |> hash_password()
+    |> Toia_User.changeset(newAttrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a toia__user.
+
+  ## Examples
+
+      iex> delete_toia__user(toia__user)
+      {:ok, %Toia_User{}}
+
+      iex> delete_toia__user(toia__user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_toia__user(%Toia_User{} = toia__user) do
+    Repo.delete(toia__user)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking toia__user changes.
+
+  ## Examples
+
+      iex> change_toia__user(toia__user)
+      %Ecto.Changeset{data: %Toia_User{}}
+
+  """
+  def change_toia__user(%Toia_User{} = toia__user, attrs \\ %{}) do
+    Toia_User.changeset(toia__user, attrs)
+  end
+
+  @doc """
+    Hash a password using bcrypt with a salt round of 12
+  """
+  defp hash_password(%{"password" => password} = toia__user) do
+    hashedPassword = Bcrypt.hash_pwd_salt(password)
+    %{toia__user | "password" => hashedPassword}
+  end
+
+  defp hash_password(toia__user), do: toia__user
+end
