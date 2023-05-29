@@ -64,4 +64,64 @@ defmodule Toia.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_toia__user(toia__user)
     end
   end
+
+  describe "stream" do
+    alias Toia.Accounts.Stream
+
+    import Toia.AccountsFixtures
+
+    @invalid_attrs %{likes: nil, name: nil, private: nil, views: nil}
+
+    test "list_stream/0 returns all stream" do
+      stream = stream_fixture()
+      assert Accounts.list_stream() == [stream]
+    end
+
+    test "get_stream!/1 returns the stream with given id" do
+      stream = stream_fixture()
+      assert Accounts.get_stream!(stream.id) == stream
+    end
+
+    test "create_stream/1 with valid data creates a stream" do
+      valid_attrs = %{likes: 42, name: "some name", private: true, views: 42}
+
+      assert {:ok, %Stream{} = stream} = Accounts.create_stream(valid_attrs)
+      assert stream.likes == 42
+      assert stream.name == "some name"
+      assert stream.private == true
+      assert stream.views == 42
+    end
+
+    test "create_stream/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_stream(@invalid_attrs)
+    end
+
+    test "update_stream/2 with valid data updates the stream" do
+      stream = stream_fixture()
+      update_attrs = %{likes: 43, name: "some updated name", private: false, views: 43}
+
+      assert {:ok, %Stream{} = stream} = Accounts.update_stream(stream, update_attrs)
+      assert stream.likes == 43
+      assert stream.name == "some updated name"
+      assert stream.private == false
+      assert stream.views == 43
+    end
+
+    test "update_stream/2 with invalid data returns error changeset" do
+      stream = stream_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_stream(stream, @invalid_attrs)
+      assert stream == Accounts.get_stream!(stream.id)
+    end
+
+    test "delete_stream/1 deletes the stream" do
+      stream = stream_fixture()
+      assert {:ok, %Stream{}} = Accounts.delete_stream(stream)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_stream!(stream.id) end
+    end
+
+    test "change_stream/1 returns a stream changeset" do
+      stream = stream_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_stream(stream)
+    end
+  end
 end

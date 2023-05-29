@@ -21,4 +21,21 @@ defmodule Toia.AccountsFixtures do
 
     toia__user
   end
+
+  @doc """
+  Generate a stream.
+  """
+  def stream_fixture(attrs \\ %{}) do
+    {:ok, stream} =
+      attrs
+      |> Enum.into(%{
+        likes: 42,
+        name: "some name",
+        private: true,
+        views: 42
+      })
+      |> Toia.Accounts.create_stream()
+
+    stream
+  end
 end

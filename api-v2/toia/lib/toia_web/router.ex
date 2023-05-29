@@ -9,6 +9,7 @@ defmodule ToiaWeb.Router do
     pipe_through :api
 
     resources "/toia_users", Toia_UserController, except: [:new, :edit]
+    resources "/stream", StreamController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
