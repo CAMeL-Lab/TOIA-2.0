@@ -10,6 +10,7 @@ defmodule ToiaWeb.Router do
 
     resources "/toia_users", Toia_UserController, except: [:new, :edit]
     resources "/stream", StreamController, except: [:new, :edit]
+    resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

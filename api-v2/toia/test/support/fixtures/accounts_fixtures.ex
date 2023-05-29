@@ -38,4 +38,18 @@ defmodule Toia.AccountsFixtures do
 
     stream
   end
+
+  @doc """
+  Generate a stream_view_permission.
+  """
+  def stream_view_permission_fixture(attrs \\ %{}) do
+    {:ok, stream_view_permission} =
+      attrs
+      |> Enum.into(%{
+
+      })
+      |> Toia.Accounts.create_stream_view_permission()
+
+    stream_view_permission
+  end
 end
