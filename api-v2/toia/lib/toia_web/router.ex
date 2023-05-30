@@ -8,9 +8,16 @@ defmodule ToiaWeb.Router do
   scope "/api", ToiaWeb do
     pipe_through :api
 
-    resources "/toia_users", Toia_UserController, except: [:new, :edit]
+    resources "/toia_user", ToiaUserController, except: [:new, :edit]
     resources "/stream", StreamController, except: [:new, :edit]
     resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
+    resources "/questions", QuestionController, except: [:new, :edit]
+    resources "/question_suggestions", QuestionSuggestionController, except: [:new, :edit]
+    resources "/video", VideoController, except: [:new, :edit]
+    resources "/videos_questions_streams", VideoQuestionStreamController, except: [:new, :edit]
+    resources "/conversations_log", ConversationLogController, except: [:new, :edit]
+    resources "/player_feedback", PlayerFeedbackController, except: [:new, :edit]
+    resources "/tracker", TrackerController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

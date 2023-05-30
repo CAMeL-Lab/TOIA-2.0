@@ -1,9 +1,9 @@
 defmodule ToiaWeb.StreamControllerTest do
   use ToiaWeb.ConnCase
 
-  import Toia.AccountsFixtures
+  import Toia.StreamsFixtures
 
-  alias Toia.Accounts.Stream
+  alias Toia.Streams.Stream
 
   @create_attrs %{
     likes: 42,

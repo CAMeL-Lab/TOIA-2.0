@@ -2,10 +2,10 @@ import Config
 
 # Configure your database
 config :toia, Toia.Repo,
-  username: "root",
-  password: "root",
-  hostname: "localhost",
-  database: "toia_dev",
+  username: System.get_env("MYSQL_USER"),
+  password: System.get_env("MYSQL_PASSWORD"),
+  hostname: System.get_env("MYSQL_HOST"),
+  database: System.get_env("MYSQL_DATABASE"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -23,7 +23,7 @@ config :toia, ToiaWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "PF58u/MST1aQqD6Fu+H8IZo8qLP5u0dCtwZJvvHbPIPhjWxFiXbZMzqoUqdDUKpH",
+  secret_key_base: "g0F1OifqQ5Z67IHmzK+VXXEGcVpFFkj5IksegfPbPXU4tInxEstPhTmYweeUxUy0",
   watchers: []
 
 # ## SSL Support

@@ -18,7 +18,7 @@ config :toia, ToiaWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Toia.PubSub,
-  live_view: [signing_salt: "3YljYBk7"]
+  live_view: [signing_salt: "+EaElx9f"]
 
 # Configures the mailer
 #

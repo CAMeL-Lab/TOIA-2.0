@@ -1,9 +1,9 @@
 defmodule ToiaWeb.StreamViewPermissionControllerTest do
   use ToiaWeb.ConnCase
 
-  import Toia.AccountsFixtures
+  import Toia.StreamViewPermissionsFixtures
 
-  alias Toia.Accounts.StreamViewPermission
+  alias Toia.StreamViewPermissions.StreamViewPermission
 
   @create_attrs %{
 

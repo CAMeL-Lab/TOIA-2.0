@@ -7,7 +7,7 @@ defmodule ToiaWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_toia_key",
-    signing_salt: "2W7tE6nv",
+    signing_salt: "i5m6hLaq",
     same_site: "Lax"
   ]
 

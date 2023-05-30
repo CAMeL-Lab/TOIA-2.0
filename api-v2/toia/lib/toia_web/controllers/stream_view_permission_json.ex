@@ -1,5 +1,5 @@
 defmodule ToiaWeb.StreamViewPermissionJSON do
-  alias Toia.Accounts.StreamViewPermission
+  alias Toia.StreamViewPermissions.StreamViewPermission
 
   @doc """
   Renders a list of stream_view_permission.

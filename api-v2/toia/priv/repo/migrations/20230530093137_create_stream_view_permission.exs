@@ -1,0 +1,12 @@
+defmodule Toia.Repo.Migrations.CreateStreamViewPermission do
+  use Ecto.Migration
+
+  def change do
+    create table(:stream_view_permission, primary_key: false) do
+      add :toia_id, references(:toia_user, on_delete: :delete_all, type: :integer), primary_key: true, null: false
+      add :stream_id, references(:stream, on_delete: :delete_all, type: :integer, column: :id_stream), primary_key: true, null: false
+    end
+
+    create unique_index(:stream_view_permission, [:toia_id, :stream_id])
+  end
+end

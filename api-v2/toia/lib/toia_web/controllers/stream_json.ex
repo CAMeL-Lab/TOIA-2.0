@@ -1,5 +1,5 @@
 defmodule ToiaWeb.StreamJSON do
-  alias Toia.Accounts.Stream
+  alias Toia.Streams.Stream
 
   @doc """
   Renders a list of stream.
