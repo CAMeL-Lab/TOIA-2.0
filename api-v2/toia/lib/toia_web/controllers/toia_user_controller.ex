@@ -11,7 +11,7 @@ defmodule ToiaWeb.ToiaUserController do
     render(conn, :index, toia_user: toia_user)
   end
 
-  def create(conn, %{"toia_user" => toia_user_params}) do
+  def create(conn, toia_user_params) do
     with {:ok, %ToiaUser{} = toia_user} <- ToiaUsers.create_toia_user(toia_user_params) do
       conn
       |> put_status(:created)

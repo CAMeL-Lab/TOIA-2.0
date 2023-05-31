@@ -3,8 +3,8 @@ defmodule Toia.Repo.Migrations.CreateConversationsLog do
 
   def change do
     create table(:conversations_log, primary_key: false) do
-      add :interactor_id, references(:toia_user, on_delete: :delete_all, type: :integer), default: nil
-      add :toia_id, references(:toia_user, on_delete: :delete_all, type: :integer), null: false
+      add :interactor_id, references(:toia_user, on_delete: :delete_all, type: :serial), default: nil
+      add :toia_id, references(:toia_user, on_delete: :delete_all, type: :serial), null: false
       add :timestamp, :bigint, null: false
       add :filler, :boolean, default: true, null: false
       add :question_asked, :text

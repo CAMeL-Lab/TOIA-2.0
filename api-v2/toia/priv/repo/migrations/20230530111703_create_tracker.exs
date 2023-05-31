@@ -3,8 +3,8 @@ defmodule Toia.Repo.Migrations.CreateTracker do
 
   def change do
     create table(:tracker, primary_key: false) do
-      add :track_id, :integer, null: false, primary_key: true, auto_increment: true
-      add :user_id, references(:toia_user, on_delete: :delete_all, type: :integer), null: false
+      add :track_id, :serial, null: false, primary_key: true
+      add :user_id, references(:toia_user, on_delete: :delete_all, type: :serial), null: false
       add :activity, :string, null: false
       add :start_time, :bigint, null: false
       add :end_time, :bigint, default: nil

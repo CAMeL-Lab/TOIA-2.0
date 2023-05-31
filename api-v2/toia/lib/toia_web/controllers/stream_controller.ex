@@ -11,7 +11,7 @@ defmodule ToiaWeb.StreamController do
     render(conn, :index, stream: stream)
   end
 
-  def create(conn, %{"stream" => stream_params}) do
+  def create(conn, stream_params) do
     with {:ok, %Stream{} = stream} <- Streams.create_stream(stream_params) do
       conn
       |> put_status(:created)

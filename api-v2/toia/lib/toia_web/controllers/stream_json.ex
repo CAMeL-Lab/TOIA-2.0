@@ -17,11 +17,12 @@ defmodule ToiaWeb.StreamJSON do
 
   defp data(%Stream{} = stream) do
     %{
-      id: stream.id,
+      id_stream: stream.id_stream,
       name: stream.name,
       private: stream.private,
       likes: stream.likes,
-      views: stream.views
+      views: stream.views,
+      toia_id: stream.toia_id
     }
   end
 end
