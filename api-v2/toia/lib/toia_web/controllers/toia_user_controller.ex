@@ -13,10 +13,12 @@ defmodule ToiaWeb.ToiaUserController do
 
   def create(conn, toia_user_params) do
     with {:ok, %ToiaUser{} = toia_user} <- ToiaUsers.create_toia_user(toia_user_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/toia_user/#{toia_user}")
-      |> render(:show, toia_user: toia_user)
+      with {:ok, token, _claims} = Toia.Guardian.encode_and_sign(toia_user) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/toia_user/#{toia_user}")
+        |> render(:show, toia_user: toia_user, token: token)
+      end
     end
   end
 

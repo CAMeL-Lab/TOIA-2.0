@@ -30,6 +30,9 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    restart: always
+    volumes:
+      - ./toia:/app
   nginx:
     build: ./nginx
     ports:

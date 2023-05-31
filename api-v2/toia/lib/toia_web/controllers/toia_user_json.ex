@@ -11,9 +11,14 @@ defmodule ToiaWeb.ToiaUserJSON do
   @doc """
   Renders a single toia_user.
   """
+  def show(%{toia_user: toia_user, token: token}) do
+    %{data: data(toia_user), token: token}
+  end
+
   def show(%{toia_user: toia_user}) do
     %{data: data(toia_user)}
   end
+
 
   defp data(%ToiaUser{} = toia_user) do
     %{
@@ -22,7 +27,6 @@ defmodule ToiaWeb.ToiaUserJSON do
       last_name: toia_user.last_name,
       language: toia_user.language,
       email: toia_user.email,
-      password: toia_user.password
     }
   end
 end

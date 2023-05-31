@@ -5,11 +5,14 @@ defmodule ToiaWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug ToiaWeb.Plugs.Auth
+  end
+
   scope "/api", ToiaWeb do
     pipe_through :api
 
     resources "/toia_user", ToiaUserController, except: [:new, :edit]
-    resources "/stream", StreamController, except: [:new, :edit]
     resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
     resources "/questions", QuestionController, except: [:new, :edit]
     resources "/question_suggestions", QuestionSuggestionController, except: [:new, :edit]
@@ -18,6 +21,12 @@ defmodule ToiaWeb.Router do
     resources "/conversations_log", ConversationLogController, except: [:new, :edit]
     resources "/player_feedback", PlayerFeedbackController, except: [:new, :edit]
     resources "/tracker", TrackerController, except: [:new, :edit]
+  end
+
+  scope "/api", ToiaWeb do
+    pipe_through [:api, :auth]
+
+    resources "/stream", StreamController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
