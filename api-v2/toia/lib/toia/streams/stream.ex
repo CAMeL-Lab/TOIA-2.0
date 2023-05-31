@@ -6,10 +6,10 @@ defmodule Toia.Streams.Stream do
   @primary_key {:id_stream, :id, autogenerate: true}
 
   schema "stream" do
-    field :likes, :integer
+    field :likes, :integer, default: 0
     field :name, :string
     field :private, :boolean, default: false
-    field :views, :integer
+    field :views, :integer, default: 0
     field :toia_id, :id
   end
 

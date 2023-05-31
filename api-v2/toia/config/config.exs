@@ -37,6 +37,8 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :bcrypt_elixir, :log_rounds, 12
+
 config :toia, Toia.Guardian,
        issuer: "toia",
        secret_key: System.get_env("GUARDIAN_SECRET_KEY")

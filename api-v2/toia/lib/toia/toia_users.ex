@@ -7,6 +7,7 @@ defmodule Toia.ToiaUsers do
   alias Toia.Repo
 
   alias Toia.ToiaUsers.ToiaUser
+  alias Toia.Streams.Stream
 
   @doc """
   Returns the list of toia_user.
@@ -49,7 +50,36 @@ defmodule Toia.ToiaUsers do
       {:error, %Ecto.Changeset{}}
 
   """
+  # `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`;
+  def create_toia_user_with_stream(%{"profile_pic" => %Plug.Upload{path: path, content_type: _content_type, filename: filename}} = toia_user_params) do
+    toia_user_params = Map.delete(toia_user_params, "profile_pic")
+    {:ok, toia_user, stream} = create_toia_user_with_stream(toia_user_params)
+    destDir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"
+    destFilename = "All_#{stream.id_stream}.jpg"
+
+    case File.mkdir_p(destDir) do
+      :ok ->
+        case File.rename(path, destDir <> destFilename) do
+          :ok -> {:ok, toia_user, stream}
+          {:error, reason} -> {:error_pic, reason}
+        end
+      {:error, reason} -> {:error_pic, reason}
+    end
+  end
+
+  def create_toia_user_with_stream(attrs) do
+    {:ok, %ToiaUser{} = toia_user} = create_toia_user(attrs)
+    stream = %{name: "All", toia_id: toia_user.id}
+    {:ok, %Stream{} = stream} = Toia.Streams.create_stream(stream)
+
+    {:ok, toia_user, stream}
+  end
+
   def create_toia_user(attrs \\ %{}) do
+    %{"password" => password} = attrs
+    hash = Bcrypt.hash_pwd_salt(password)
+    attrs = %{attrs | "password" => hash}
+
     %ToiaUser{}
     |> ToiaUser.changeset(attrs)
     |> Repo.insert()
