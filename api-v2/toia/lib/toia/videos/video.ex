@@ -7,9 +7,9 @@ defmodule Toia.Videos.Video do
     field :duration_seconds, :integer
     field :idx, :integer
     field :language, :string
-    field :likes, :integer
+    field :likes, :integer, default: 0
     field :private, :boolean, default: false
-    field :views, :integer
+    field :views, :integer, default: 0
     field :toia_id, :id
   end
 

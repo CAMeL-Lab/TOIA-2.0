@@ -4,14 +4,12 @@ defmodule Toia.Trackers.Tracker do
 
   schema "tracker" do
     field :activity, :string
-    field :end_time, :integer
-    field :old_video_id, :string
+    field :end_time, :integer, default: nil
+    field :old_video_id, :string, default: nil
     field :start_time, :integer
     field :track_id, :integer
-    field :video_id, :string
+    field :video_id, :string, default: nil
     field :user_id, :id
-
-    timestamps()
   end
 
   @doc false

@@ -3,12 +3,13 @@ defmodule Toia.Repo.Migrations.CreatePlayerFeedback do
 
   def change do
     create table(:player_feedback) do
-      add :video_id, :string, null: false
+      add :video_id, references(:video, on_delete: :delete_all, type: :string, column: :id_video), null: false
+      add :user_id, references(:toia_user, on_delete: :delete_all, type: :integer), default: nil
       add :question, :text, null: false
       add :rating, :integer, null: false
-      add :user_id, references(:toia_user, on_delete: :delete_all, type: :integer)
     end
 
     create index(:player_feedback, [:user_id])
+    create index(:player_feedback, [:video_id])
   end
 end

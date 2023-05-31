@@ -3,7 +3,7 @@ defmodule Toia.Repo.Migrations.CreateStream do
 
   def change do
     create table(:stream, primary_key: false) do
-      add :id_stream, :integer, primary_key: true
+      add :id_stream, :integer, primary_key: true, auto_increment: true
       add :name, :string, null: false
       add :private, :boolean, default: false, null: false
       add :likes, :integer, default: 0, null: false

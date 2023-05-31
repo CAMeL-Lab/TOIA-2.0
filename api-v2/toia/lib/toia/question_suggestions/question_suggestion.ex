@@ -5,6 +5,7 @@ defmodule Toia.QuestionSuggestions.QuestionSuggestion do
   schema "question_suggestions" do
     field :isPending, :boolean, default: true
     field :toia_id, :id
+    field :id_question, :id
   end
 
   @doc false

@@ -3,10 +3,10 @@ defmodule Toia.ConversationsLogs.ConversationLog do
   import Ecto.Changeset
 
   schema "conversations_log" do
-    field :ada_similarity_score, :float
+    field :ada_similarity_score, :float, default: nil
     field :filler, :boolean, default: true
-    field :interactor_id, :integer
-    field :mode, :string
+    field :interactor_id, :integer, default: nil
+    field :mode, :string, default: nil
     field :question_asked, :string
     field :timestamp, :integer
     field :video_played, :string

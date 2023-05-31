@@ -7,6 +7,7 @@ defmodule Toia.Repo.Migrations.CreateStreamViewPermission do
       add :stream_id, references(:stream, on_delete: :delete_all, type: :integer, column: :id_stream), primary_key: true, null: false
     end
 
+    create index(:stream_view_permission, [:stream_id])
     create unique_index(:stream_view_permission, [:toia_id, :stream_id])
   end
 end

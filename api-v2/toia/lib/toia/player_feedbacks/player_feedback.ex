@@ -6,7 +6,7 @@ defmodule Toia.PlayerFeedbacks.PlayerFeedback do
     field :question, :string
     field :rating, :integer
     field :video_id, :string
-    field :user_id, :id
+    field :user_id, :id, default: nil
   end
 
   @doc false
