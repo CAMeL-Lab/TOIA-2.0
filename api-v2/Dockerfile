@@ -8,10 +8,15 @@ RUN mix archive.install hex phx_new --force
 
 WORKDIR /toia
 
+ENV MIX_ENV="dev"
+
 COPY toia/mix.exs toia/mix.lock ./
 RUN mix deps.get
 COPY toia/ ./
 
+COPY phoenix-start.sh ./
+RUN chmod +x phoenix-start.sh
+
 EXPOSE 4000
 
-CMD ["mix", "phx.server"]
+CMD ["./phoenix-start.sh"]

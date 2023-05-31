@@ -19,3 +19,20 @@ services:
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       PMA_ARBITRARY: 1
       UPLOAD_LIMIT: 1024M
+  api:
+    build: .
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MIX_ENV: dev
+    depends_on:
+      mysql:
+        condition: service_healthy
+  nginx:
+    build: ./nginx
+    ports:
+      - 4000:4000
+    depends_on:
+      - api
