@@ -28,7 +28,7 @@ defmodule ToiaWeb.Router do
   scope "/api", ToiaWeb do
     pipe_through [:api, :auth]
 
-    resources "/stream", StreamController, only: [:index] # legacy: /api/getAllStreams
+    resources "/stream", StreamController, only: [:index, :create] # legacy: /api/getAllStreams
     resources "/question_suggestions", QuestionSuggestionController, only: [:index, :delete] # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ
     resources "/video", VideoController, only: [:index] # legacy: /api/getUserVideos
 

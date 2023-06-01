@@ -53,10 +53,24 @@ defmodule Toia.Streams do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_stream(attrs \\ %{}) do
-    %Stream{}
-    |> Stream.changeset(attrs)
-    |> Repo.insert()
+  def create_stream(attrs, user, filePath) do
+    if attrs["name"] == "" or attrs["name"] == nil or attrs["name"] == "All" do
+      {:error, "Stream name cannot be empty or All"}
+    else
+      {:ok, %Stream{} = stream} = %Stream{} |> Stream.changeset(attrs) |> Repo.insert()
+
+      destDir = "Accounts/#{user.first_name}_#{user.id}/StreamPic/"
+      destFilename = "#{attrs["name"]}_#{stream.id_stream}.jpg"
+
+      case File.mkdir_p(destDir) do
+        :ok ->
+          case File.rename(filePath, destDir <> destFilename) do
+            :ok -> {:ok, stream}
+            {:error, reason} -> {:error, reason}
+          end
+        {:error, reason} -> {:error, reason}
+      end
+    end
   end
 
   @doc """
