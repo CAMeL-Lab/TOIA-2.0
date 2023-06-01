@@ -1,6 +1,9 @@
 defmodule ToiaWeb.QuestionSuggestionController do
   use ToiaWeb, :controller
 
+
+  import Ecto.Query, warn: false
+  alias Toia.Repo
   alias Toia.QuestionSuggestions
   alias Toia.QuestionSuggestions.QuestionSuggestion
 
@@ -47,11 +50,11 @@ defmodule ToiaWeb.QuestionSuggestionController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    question_suggestion = QuestionSuggestions.get_question_suggestion!(id)
+  def delete(%{assigns: %{current_user: user}} = conn, %{"id" => idStr}) do
+    {id, _} = Integer.parse(idStr)
+    %QuestionSuggestion{id_question: id, toia_id: user.id}
+    |> Toia.Repo.delete()
 
-    with {:ok, %QuestionSuggestion{}} <- QuestionSuggestions.delete_question_suggestion(question_suggestion) do
-      send_resp(conn, :no_content, "")
-    end
+    send_resp(conn, :no_content, "")
   end
 end

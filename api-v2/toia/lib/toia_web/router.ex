@@ -29,7 +29,7 @@ defmodule ToiaWeb.Router do
     pipe_through [:api, :auth]
 
     resources "/stream", StreamController, only: [:index] # legacy: /api/getAllStreams
-    resources "/question_suggestions", QuestionSuggestionController, only: [:index] # legacy: /api/getUserSuggestedQs
+    resources "/question_suggestions", QuestionSuggestionController, only: [:index, :delete] # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
