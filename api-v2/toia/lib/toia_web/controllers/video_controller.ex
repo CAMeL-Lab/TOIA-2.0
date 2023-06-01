@@ -6,8 +6,8 @@ defmodule ToiaWeb.VideoController do
 
   action_fallback ToiaWeb.FallbackController
 
-  def index(conn, _params) do
-    video = Videos.list_video()
+  def index(%{assigns: %{current_user: user}} = conn, _params) do
+    video = Videos.list_video(user.id)
     render(conn, :index, video: video)
   end
 

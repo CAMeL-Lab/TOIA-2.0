@@ -1,8 +1,12 @@
 defmodule ToiaWeb.ToiaUserController do
   use ToiaWeb, :controller
 
+  import Ecto.Query, warn: false
+  alias Toia.Repo
+
   alias Toia.ToiaUsers
   alias Toia.ToiaUsers.ToiaUser
+  alias Toia.Streams.Stream
 
   action_fallback ToiaWeb.FallbackController
 
@@ -64,6 +68,33 @@ defmodule ToiaWeb.ToiaUserController do
 
     with {:ok, %ToiaUser{}} <- ToiaUsers.delete_toia_user(toia_user) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+  def list_stream(user_id) do
+    query = from s in Stream, where: s.toia_id == ^user_id
+    Repo.all(query)
+  end
+
+  def list_public_stream(user_id) do
+    query = from s in Stream, where: s.toia_id == ^user_id and s.private == false
+    Repo.all(query)
+  end
+
+  def streams(%{assigns: %{current_user: user}} = conn, %{"user_id" => other_user_idStr}) do
+    {other_user_id, _} = Integer.parse(other_user_idStr)
+    if user.id == other_user_id do
+      streams = list_stream(user.id)
+
+      conn
+      |> put_view(ToiaWeb.StreamJSON)
+      |> render(:index, stream: streams)
+    else
+      streams = list_public_stream(other_user_id)
+
+      conn
+      |> put_view(ToiaWeb.StreamJSON)
+      |> render(:index, stream: streams)
     end
   end
 end

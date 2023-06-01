@@ -30,6 +30,9 @@ defmodule ToiaWeb.Router do
 
     resources "/stream", StreamController, only: [:index] # legacy: /api/getAllStreams
     resources "/question_suggestions", QuestionSuggestionController, only: [:index, :delete] # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ
+    resources "/video", VideoController, only: [:index] # legacy: /api/getUserVideos
+
+    get "/toia_user/:user_id/streams", ToiaUserController, :streams # legacy: /api/getUserStreams
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

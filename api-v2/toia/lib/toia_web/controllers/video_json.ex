@@ -17,14 +17,15 @@ defmodule ToiaWeb.VideoJSON do
 
   defp data(%Video{} = video) do
     %{
-      id: video.id,
+      id_video: video.id_video,
       idx: video.idx,
       private: video.private,
       answer: video.answer,
       language: video.language,
       likes: video.likes,
       views: video.views,
-      duration_seconds: video.duration_seconds
+      duration_seconds: video.duration_seconds,
+      toia_id: video.toia_id
     }
   end
 end
