@@ -7,6 +7,7 @@ defmodule Toia.QuestionSuggestions do
   alias Toia.Repo
 
   alias Toia.QuestionSuggestions.QuestionSuggestion
+  alias Toia.Questions.Question
 
   @doc """
   Returns the list of question_suggestions.
@@ -17,8 +18,27 @@ defmodule Toia.QuestionSuggestions do
       [%QuestionSuggestion{}, ...]
 
   """
-  def list_question_suggestions do
-    Repo.all(QuestionSuggestion)
+  def list_question_suggestions(user_id, limit) do
+    query = from qs in QuestionSuggestion,
+            join: q in Question,
+            on: qs.id_question == q.id,
+            where: qs.toia_id == ^user_id and qs.isPending == true
+    query = from [qs, q] in query,
+            select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type, priority: q.priority},
+            order_by: [desc: q.priority],
+            limit: ^limit
+    Repo.all(query)
+  end
+
+  def list_question_suggestions(user_id) do
+    query = from qs in QuestionSuggestion,
+            join: q in Question,
+            on: qs.id_question == q.id,
+            where: qs.toia_id == ^user_id and qs.isPending == true
+    query = from [qs, q] in query,
+            select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type, priority: q.priority},
+            order_by: [desc: q.priority]
+    Repo.all(query)
   end
 
   @doc """

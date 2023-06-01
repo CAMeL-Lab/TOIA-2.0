@@ -4,10 +4,24 @@ defmodule ToiaWeb.QuestionSuggestionController do
   alias Toia.QuestionSuggestions
   alias Toia.QuestionSuggestions.QuestionSuggestion
 
+  alias Toia.ToiaUser
+
   action_fallback ToiaWeb.FallbackController
 
-  def index(conn, _params) do
-    question_suggestions = QuestionSuggestions.list_question_suggestions()
+  def index(%{query_params: %{"limit" => limitStr}, assigns: %{current_user: user}} = conn, _params) do
+    limit = 10
+    case Integer.parse(limitStr) do
+      {limitParsed, _} when limitParsed > 0 ->
+        limit = limitParsed
+      _ ->
+        limit = 10
+    end
+    question_suggestions = QuestionSuggestions.list_question_suggestions(user.id, limit)
+    render(conn, :index, question_suggestions: question_suggestions)
+  end
+
+  def index(%{assigns: %{current_user: user}} = conn, _params) do
+    question_suggestions = QuestionSuggestions.list_question_suggestions(user.id)
     render(conn, :index, question_suggestions: question_suggestions)
   end
 

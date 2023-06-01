@@ -2,6 +2,8 @@ defmodule Toia.QuestionSuggestions.QuestionSuggestion do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key false
+
   schema "question_suggestions" do
     field :isPending, :boolean, default: true
     field :toia_id, :id

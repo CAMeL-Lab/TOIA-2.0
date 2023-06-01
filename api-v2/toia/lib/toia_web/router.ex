@@ -12,23 +12,24 @@ defmodule ToiaWeb.Router do
   scope "/api", ToiaWeb do
     pipe_through :api
 
-    post "/login", AuthController, :login
-    resources "/toia_user", ToiaUserController, only: [:create]
-    resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
-    resources "/questions", QuestionController, except: [:new, :edit]
-    resources "/question_suggestions", QuestionSuggestionController, except: [:new, :edit]
-    resources "/video", VideoController, except: [:new, :edit]
-    resources "/videos_questions_streams", VideoQuestionStreamController, except: [:new, :edit]
-    resources "/conversations_log", ConversationLogController, except: [:new, :edit]
-    resources "/player_feedback", PlayerFeedbackController, except: [:new, :edit]
-    resources "/tracker", TrackerController, except: [:new, :edit]
+    post "/login", AuthController, :login # legacy: /api/login
+    resources "/toia_user", ToiaUserController, only: [:create] # legacy: /api/createTOIA
+
+    # resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
+    # resources "/questions", QuestionController, except: [:new, :edit]
+    # resources "/question_suggestions", QuestionSuggestionController, except: [:new, :edit]
+    # resources "/video", VideoController, except: [:new, :edit]
+    # resources "/videos_questions_streams", VideoQuestionStreamController, except: [:new, :edit]
+    # resources "/conversations_log", ConversationLogController, except: [:new, :edit]
+    # resources "/player_feedback", PlayerFeedbackController, except: [:new, :edit]
+    # resources "/tracker", TrackerController, except: [:new, :edit]
   end
 
   scope "/api", ToiaWeb do
     pipe_through [:api, :auth]
 
-    resources "/toia_user", ToiaUserController, except: [:create]
-    resources "/stream", StreamController, only: [:index, :show, :create, :update, :delete]
+    resources "/stream", StreamController, only: [:index] # legacy: /api/getAllStreams
+    resources "/question_suggestions", QuestionSuggestionController, only: [:index] # legacy: /api/getUserSuggestedQs
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

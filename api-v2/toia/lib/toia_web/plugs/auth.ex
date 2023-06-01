@@ -13,9 +13,13 @@ defmodule ToiaWeb.Plugs.Auth do
 
   def ensureLogin(conn, token) do
     with {:ok, claims} <- Toia.Guardian.decode_and_verify(token) do
-      user = Toia.Guardian.resource_from_claims(claims)
-      conn
-      |> Plug.Conn.assign(:current_user, user)
+      case Toia.Guardian.resource_from_claims(claims) do
+        {:ok, user} ->
+          user = Map.delete(user, :password)
+          conn
+          |> Plug.Conn.assign(:current_user, user)
+        {:error, _reason} -> unauthorized(conn)
+      end
     else
       {:error, _reason} -> unauthorized(conn)
     end
