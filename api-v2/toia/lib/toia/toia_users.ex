@@ -37,6 +37,7 @@ defmodule Toia.ToiaUsers do
 
   """
   def get_toia_user!(id), do: Repo.get!(ToiaUser, id)
+  def get_toia_user_by_email!(email), do: Repo.get_by!(ToiaUser, email: email)
 
   @doc """
   Creates a toia_user.
@@ -51,7 +52,7 @@ defmodule Toia.ToiaUsers do
 
   """
   # `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`;
-  def create_toia_user_with_stream(%{"profile_pic" => %Plug.Upload{path: path, content_type: _content_type, filename: filename}} = toia_user_params) do
+  def create_toia_user_with_stream(%{"profile_pic" => %Plug.Upload{path: path}} = toia_user_params) do
     toia_user_params = Map.delete(toia_user_params, "profile_pic")
     {:ok, toia_user, stream} = create_toia_user_with_stream(toia_user_params)
     destDir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"

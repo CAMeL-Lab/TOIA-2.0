@@ -21,6 +21,10 @@ defmodule Toia.Streams do
     Repo.all(Stream)
   end
 
+  def list_public_stream do
+    Repo.all(from s in Stream, where: s.private == false)
+  end
+
   @doc """
   Gets a single stream.
 

@@ -28,4 +28,16 @@ defmodule Toia.Guardian do
   def resource_from_claims(_claims) do
     {:error, :reason_for_error}
   end
+
+  def authenticate(email, password) do
+    try do
+      user = ToiaUsers.get_toia_user_by_email!(email)
+      case Bcrypt.verify_pass(password, user.password) do
+        true -> Toia.Guardian.encode_and_sign(user)
+        false -> {:error, :invalid_credentials}
+      end
+    rescue
+      e in Ecto.NoResultsError -> {:error, :invalid_credentials}
+    end
+  end
 end

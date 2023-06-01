@@ -7,7 +7,7 @@ defmodule ToiaWeb.StreamController do
   action_fallback ToiaWeb.FallbackController
 
   def index(conn, _params) do
-    stream = Streams.list_stream()
+    stream = Streams.list_public_stream()
     render(conn, :index, stream: stream)
   end
 
