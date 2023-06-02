@@ -1,6 +1,7 @@
 # TOIA-2.0
 
-This is a repository for TOIA 2.0 System with Soojin's Capstone Project "Elephant in the Room". You can watch a short demo [here]([https://pages.github.com/](https://www.youtube.com/watch?v=4EK19DnM4_c)) and read the full documentation [here]([https://pages.github.com/](https://meadow-oboe-807.notion.site/Elephant-in-the-Room-060a99def2bb4b8192e351aac2db52f1))
+This is a repository for TOIA 2.0 System with Soojin's Capstone Project "Elephant in the Room". You can watch a short demo
+[here](https://www.youtube.com/watch?v=4EK19DnM4_c) and read the full documentation [here](https://meadow-oboe-807.notion.site/Elephant-in-the-Room-060a99def2bb4b8192e351aac2db52f1)
 
 
 # Developer Setup
