@@ -7,6 +7,9 @@ defmodule Toia.Streams do
   alias Toia.Repo
 
   alias Toia.Streams.Stream
+  alias Toia.Questions.Question
+  alias Toia.Videos.Video
+  alias Toia.VideosQuestionsStreams.VideoQuestionStream
 
   @doc """
   Returns the list of stream.
@@ -118,5 +121,47 @@ defmodule Toia.Streams do
   """
   def change_stream(%Stream{} = stream, attrs \\ %{}) do
     Stream.changeset(stream, attrs)
+  end
+
+  @doc """
+  Returns a filler video for the stream.
+  """
+  def get_random_filler_video(user_id, stream_id) do
+    stream = get_stream!(stream_id)
+
+    case stream.toia_id == user_id do
+      true ->
+        query = from q in Question,
+                inner_join: vqs in VideoQuestionStream, on: q.id == vqs.id_question,
+                inner_join: v in Video, on: v.id_video == vqs.id_video,
+                where: vqs.id_stream == ^stream_id and vqs.type == :filler
+        query = from [_q, vqs, _v] in query,
+                select: {vqs.id_video}
+
+        all_videos = Repo.all(query)
+
+        if length(all_videos) == 0 do
+          IO.warn("No filler video found for stream #{stream_id}")
+          nil
+        else
+          all_videos |> Enum.random()
+        end
+      false ->
+        query = from q in Question,
+                inner_join: vqs in VideoQuestionStream, on: q.id == vqs.id_question,
+                inner_join: v in Video, on: v.id_video == vqs.id_video,
+                where: vqs.id_stream == ^stream_id and v.private == false and vqs.type == :filler
+        query = from [_q, vqs, _v] in query,
+                select: {vqs.id_video}
+
+        all_videos = Repo.all(query)
+
+        if length(all_videos) == 0 do
+          IO.warn("No filler video found for stream #{stream_id}")
+          nil
+        else
+          all_videos |> Enum.random()
+        end
+    end
   end
 end

@@ -60,4 +60,12 @@ defmodule ToiaWeb.StreamController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def filler(%{assigns: %{current_user: user}} = conn, %{"id" => stream_id} = _params) do
+    {filler_video} = Streams.get_random_filler_video(user.id, stream_id)
+    IO.inspect(filler_video)
+    conn
+    |> put_status(:ok)
+    |> json(%{filler_video: "Accounts/#{user.first_name}_#{user.id}/Videos/#{filler_video}"})
+  end
 end

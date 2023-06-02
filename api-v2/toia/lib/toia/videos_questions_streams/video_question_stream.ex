@@ -2,12 +2,13 @@ defmodule Toia.VideosQuestionsStreams.VideoQuestionStream do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key false
   schema "videos_questions_streams" do
     field :ada_search, :string
     field :type, Ecto.Enum, values: [:filler, :greeting, :answer, :exit, :"no-answer", :"y/n-answer"]
-    field :id_video, :id
-    field :id_question, :id
-    field :id_stream, :id
+    field :id_video, :string, primary_key: true
+    field :id_question, :id, primary_key: true
+    field :id_stream, :id, primary_key: true
   end
 
   @doc false
