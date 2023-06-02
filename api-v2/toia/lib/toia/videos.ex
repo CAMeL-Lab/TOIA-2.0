@@ -104,4 +104,20 @@ defmodule Toia.Videos do
   def change_video(%Video{} = video, attrs \\ %{}) do
     Video.changeset(video, attrs)
   end
+
+  @doc """
+  Returns true if the user is allowed to access this video
+  """
+  def canAccess(user, video) do
+    user_id = user.id
+    video_id = video.id_video
+    video.toia_id == user_id || video.private == false
+  end
+
+  @doc """
+  Returns the playback url. Legacy: `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`
+  """
+  def getPlaybackUrl(first_name, toia_id, video_id) do
+    "/#{first_name}_#{toia_id}/Videos/#{video_id}"
+  end
 end
