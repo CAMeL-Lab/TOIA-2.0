@@ -9,6 +9,7 @@ defmodule Toia.Streams do
   alias Toia.Streams.Stream
   alias Toia.Questions.Question
   alias Toia.Videos.Video
+  alias Toia.Videos
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
 
   @doc """
@@ -74,6 +75,12 @@ defmodule Toia.Streams do
         {:error, reason} -> {:error, reason}
       end
     end
+  end
+
+  def create_stream(attrs \\ %{}) do
+    %Stream{}
+    |> Stream.changeset(attrs)
+    |> Repo.insert()
   end
 
   @doc """
@@ -162,6 +169,59 @@ defmodule Toia.Streams do
         else
           all_videos |> Enum.random()
         end
+    end
+  end
+
+  @doc """
+  Returns the exact match video of a question
+  """
+  def getExactMatch(stream_id, question) do
+    query = from q in Question,
+            inner_join: vqs in VideoQuestionStream, on: q.id == vqs.id_question,
+            inner_join: v in Video, on: v.id_video == vqs.id_video,
+            where: vqs.id_stream == ^stream_id and q.question == ^question
+
+    query = from [_q, vqs, v] in query,
+            select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
+
+    all_videos = Repo.all(query)
+    if length(all_videos) == 0 do
+      nil
+    else
+      all_videos |> Enum.random()
+    end
+  end
+
+  @doc """
+  Retrieve next video to play based on the question
+  """
+  def get_next_video(user, stream_id, question) do
+    case getExactMatch(stream_id, question) do
+      nil ->
+        stream = get_stream!(stream_id)
+        req_body = Poison.encode!(%{
+          params: %{
+            query: question,
+            stream_id: to_string(stream_id),
+            avatar_id: to_string(stream.toia_id)
+          }
+        })
+        dm_response = HTTPoison.post!("http://localhost:5001/dialogue_manager", req_body, [{"Content-Type", "application/json"}])
+        if dm_response.status_code != 200 do
+          IO.inspect(dm_response)
+          {:error, "error"}
+        else
+          body = Poison.decode!(dm_response.body)
+
+          id_video = body["id_video"]
+          if id_video == "204" do
+            {:error, "error"}
+          else
+            video = Videos.get_video!(id_video)
+            %{id_video: video.id_video, answer: video.answer, duration_seconds: video.duration_seconds, url: Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)}
+          end
+        end
+      x -> Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))
     end
   end
 end
