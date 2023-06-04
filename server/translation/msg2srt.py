@@ -23,6 +23,7 @@ def break_sentences(max_chars, subs, words, prev_end_time):
     idx = len(subs) + 1
     content = ""
 
+    # shift start time to prev end time when transcript timer restarts
     shift = prev_end_time if prev_end_time else timedelta(seconds=0)
 
     for w in words:
@@ -85,5 +86,6 @@ def msg2srt(results, max_chars, out_file, language_code):
     write_srt(out_file, language_code, subs)
     write_txt(out_file, subs)
     
+    # convert to vtt
     vtt = webvtt.from_srt(f'srts/{out_file}.srt')
     vtt.save(f'vtts/{out_file}.vtt')

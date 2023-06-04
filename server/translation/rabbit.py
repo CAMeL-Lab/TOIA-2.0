@@ -8,6 +8,9 @@ try:
 except ImportError:
     from argparse import Namespace
 
+"""
+Run rabbitmq to listen for messages from the recorder API
+"""
 def main():
     load_dotenv()
     while True:

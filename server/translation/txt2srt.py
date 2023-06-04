@@ -28,7 +28,7 @@ def load_srt(filename):
 
 
 def process_translations(subs, indexfile, output_dir, srt_out, vtt_out):
-    # read index.csv and foreach translated file,
+    # read index.csv and for each translated file,
 
     print("Updating subtitles for each translated language")
     with open(indexfile) as f:

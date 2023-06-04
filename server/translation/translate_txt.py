@@ -22,6 +22,7 @@ def batch_translate_text(input_uri, output_uri, project_id, source_lang, target_
 
     client = translate.TranslationServiceClient()
 
+    # configs for translation
     target_language_codes = target_lang
     gcs_source = {"input_uri": input_uri}
     mime_type = "text/plain"
@@ -60,6 +61,7 @@ def batch_translate_text(input_uri, output_uri, project_id, source_lang, target_
 
 def copy_to_local(dir, bucket, project_id):
     
+    # download translated files from GCS to local
     storage_client = storage.Client(project_id)
     blobs = storage_client.list_blobs(bucket)
     for blob in blobs:
