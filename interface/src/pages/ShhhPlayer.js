@@ -1,3 +1,4 @@
+//Elephant in the Room Interaction Page 
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
@@ -8,12 +9,13 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
-//import SuggestionCard from "../suggestiveSearch/shhhsuggesitonCards.js";
 import SuggestiveSearch from "../suggestiveSearch/shhhsuggestiveSearch.js";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
 import ShhhVideoPlaybackPlayer from "./sub-components/shhh-Videoplayback.Player";
 import './ShhhPage.css';
+//Characters in each stream
+//Death
 import james from "../images/death/james.png";
 import rina from "../images/death/rina.png";
 import sally from "../images/death/sally.png";
@@ -22,6 +24,7 @@ import jj from "../images/death/jj.png";
 import ian from "../images/death/ian.png";
 import layla from "../images/death/leila.png";
 import norman from "../images/death/norman.png";
+//Sex
 import lucy from "../images/sex/lucy.png";
 import lauren from "../images/sex/lauren.png";
 import klarissa from "../images/sex/klarissa.png";
@@ -30,6 +33,7 @@ import kenny from "../images/sex/kenny.png";
 import kendel from "../images/sex/kendel.png";
 import chris from "../images/sex/chris.png";
 import zaldy from "../images/sex/zaldy.png";
+//Birth
 import krista from "../images/birth/krista.png";
 import ashley from "../images/birth/ashley.png";
 import alison from "../images/birth/alison.png";
@@ -37,7 +41,7 @@ import kieona from "../images/birth/kieona.png";
 import kaylee from "../images/birth/kaylee.png";
 import christian from "../images/birth/christian.png";
 import stephanie from "../images/birth/stephanie.png";
-import elephantIcon from "../images/elephant-icon.png";
+
 const death_icons = [brian, jj, layla, james, rina, sally, ian, norman];
 const sex_icons = [lucy, lauren, klarissa, ellis, kenny, kendel, chris, zaldy];
 const birth_icons = [krista, ashley, alison, kieona, kaylee, christian, stephanie];
@@ -48,6 +52,7 @@ const death_descriptions = ['[Brian] A man with Parkinsons and its symptoms that
 const sex_descriptions = ['[Lucy] A young woman who grew up in a culture of taboo around sex', '[Lauren] A sexual confidence coach who encourages open and non-judgmental conversations about sex', '[Klarissa] A bubbly young woman who talks about her first sexual experience and the things she wished she knew beforehand', '[Ellis] A gay man discusses his frustration with categorizing people and setting expectations in sexual encounters', '[Kenny] A gay man shares his insights on gay pornography and the importance of setting boundaries', '[Kendel] A gay man who gives a candid advice for first-time sex', '[Chris] A straight man who shares his past sexual insecurities and anxieties', '[Zaldy] A straight man who shares his definition of consent and shares his sexual insecurities, pressures, and more'];
 const birth_descriptions = ['[Krista] A mother with one child delivered vaginally in a hospital setting and had an epidural.', '[Ashley]A mother of two children, both born vaginally.',
     '[Alison] A mother of two daughters delivered via two scheduled c-sections', '[Kieona] A mother of one daughter had a regular vaginal birth.', '[Kaylee] A mother who shares her candid pregnancy experiences', '[Christian] A mother who gave a birth through c-section and shares her high-blood pressure issues during pregnancy', '[Stephanie] A mother who underwent an emergency C-section and shares her body-transformation stories during pregnancy.'];
+//Questions listed to help users ideate type of questions they can ask 
 const death_questions = [
     "Are you afraid of death?",
     "Who is not invited to your funeral?",
@@ -106,7 +111,6 @@ function ShhhPlayer() {
     const [icons, setIcons] = useState([]);
     const [iconNames, setIconNames] = useState([]);
     const [iconDescriptions, setIconDescriptions] = useState([]);
-    // suggested questions for cards
 
     const textInput = React.useRef("");
     const question = React.useRef("");
@@ -119,9 +123,9 @@ function ShhhPlayer() {
     var input1, input2;
     const [micMute, setMicMute] = useState(true);
     const [micString, setMicString] = useState("ASK BY VOICE");
-    const interacting = React.useRef(false);
-    const [textInputValue, setTextInputValue] = React.useState("");
-    const [dataIsFinal, setDataIsFinal] = React.useState(null)
+    const interacting = React.useRef(false); // Ref for indicating whether the user is currently interacting or not
+    const [textInputValue, setTextInputValue] = React.useState(""); // Stores the value of the text input
+    const [dataIsFinal, setDataIsFinal] = React.useState(null) // Differentiates space key up with and without data
 
     useEffect(() => {
         // Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
@@ -198,12 +202,11 @@ function ShhhPlayer() {
     const isSpaceKey = React.useRef("false")
     const firstRender = React.useRef(false)
 
+    //identify whether the spacebar is up or down (recording or not)
     useEffect(() => {
-        // listener for spacebar down
-        // console.log("current", isSpaceKey.current)
+        // listener for spacebar down (not for while typing)
         const listenDown = event => {
             if (textInput.current == "" && event.code === "Space" && isSpaceKey.current === "false") {
-                //event.preventDefault();
                 setIsSpaceKeyPressed(true)
                 isSpaceKey.current = "true"
                 setMicMute(false)
@@ -213,14 +216,10 @@ function ShhhPlayer() {
         // listener for spacebar up
         const listenUp = event => {
             if (textInput.current == "" && event.code === "Space" && isSpaceKey.current === "true") {
-                //event.preventDefault();
-                // micStatusChange(event);
                 setIsSpaceKeyPressed(false)
                 isSpaceKey.current = "false"
                 setMicMute(true)
                 console.log("key up");
-
-                // submitResponse(event, "SEARCH");
             }
         };
         document.addEventListener("keydown", listenDown);
@@ -231,17 +230,16 @@ function ShhhPlayer() {
         };
     }, []);
 
+    //identify whether it is now being recorded, or not 
     useEffect((e) => {
 
         if (firstRender.current) {
             if (!micMute) {
                 speechToTextUtils.stopRecording();
-                // console.log(dataIsFinal)
                 if (dataIsFinal === false) {
                     textInput.current = transcribedAudio
                     submitResponse(e, "SEARCH")
                 }
-                // dataIsFinal === false ? textInput.current = transcribedAudio || submitResponse(e, "SEARCH") : null;
 
             } else {
                 interacting.current = true;
@@ -300,60 +298,6 @@ function ShhhPlayer() {
                 library();
             });
     }
-    // // if user asks one of the suggested questions
-    // function askQuestionFromCard(question) {
-    //     const mode = "CARD";
-
-    //     const oldQuestion = question;
-    //     axios
-    //         .post(`/api/player`, {
-    //             params: {
-    //                 toiaIDToTalk: history.location.state.toiaToTalk,
-    //                 toiaFirstNameToTalk:
-    //                     history.location.state.toiaFirstNameToTalk,
-    //                 question: {
-    //                     current: oldQuestion.question,
-    //                 },
-    //                 streamIdToTalk: history.location.state.streamToTalk,
-    //                 record_log: "true",
-    //                 ...(history.location.state.toiaID && {
-    //                     interactor_id: history.location.state.toiaID,
-    //                 }),
-    //                 mode: mode,
-    //             },
-    //         })
-    //         .then(res => {
-    //             if (res.data === "error") {
-    //                 setFillerPlaying(true);
-    //                 console.log("error");
-    //             } else {
-    //                 setFillerPlaying(true);
-
-    //                 isFillerPlaying.current = "false";
-
-    //                 setVideoProperties({
-    //                     key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-    //                     onEnded: () => {
-    //                         fetchFiller();
-    //                     },
-    //                     source: res.data.url,
-    //                     fetchFiller: fetchFiller,
-    //                     muted: false,
-    //                     filler: false,
-    //                     duration_seconds: res.data.duration_seconds || null,
-    //                     question: oldQuestion.question,
-    //                     video_id: res.data.video_id,
-    //                 });
-
-    //                 fetchAnsweredQuestions(
-    //                     oldQuestion.question,
-    //                     res.data.answer || "",
-    //                 );
-    //                 setTranscribedAudio("");
-    //             }
-    //         });
-    // }
-    // Function ends here
 
     // handling data recieved from server
     function handleDataReceived(data) {
@@ -364,7 +308,6 @@ function ShhhPlayer() {
             if (data.isFinal) {
                 question.current = data.alternatives[0].transcript;
                 setDataIsFinal(true)
-                // speechToTextUtils.stopRecording();
                 fetchData("VOICE");
             }
         } else {
@@ -469,7 +412,7 @@ function ShhhPlayer() {
                         });
 
                         setTranscribedAudio("");
-                    }
+                    } dataisfinal
                 })
                 .catch(e => {
                     console.error(e);
@@ -480,15 +423,15 @@ function ShhhPlayer() {
     function endTranscription() {
         speechToTextUtils.stopRecording();
     }
+
+    //changeing the status of the mic button  
     const micStatusChange = (e) => {
         if (!micMute) {
             speechToTextUtils.stopRecording();
-            // console.log(dataIsFinal)
             if (dataIsFinal === false) {
                 textInput.current = transcribedAudio
                 submitResponse(e, "SEARCH")
             }
-            // dataIsFinal === false ? textInput.current = transcribedAudio || submitResponse(e, "SEARCH") : null;
 
         } else {
             interacting.current = true;
@@ -884,30 +827,7 @@ function ShhhPlayer() {
                         </i>
                     </button>
                 )
-
-                /* {micMute ? (
-                    <button
-                        className="ui microphone button shhh-mute-button"
-                        onClick={micStatusChange}>
-                        <i aria-hidden="true">
-                            <RecordVoiceOverRoundedIcon
-                                sx={{
-                                    paddingTop: "0px",
-                                    paddingRight: "0px",
-                                    fontSize: "1.7rem",
-                                }}
-                            />
-                        </i>
-                    </button>
-                ) : (
-                    <button
-                        className="ui secondary button shhh-mute-button"
-                        onClick={micStatusChange}>
-                        <i aria-hidden="true">
-                            <VoiceOverOffRoundedIcon />
-                        </i>
-                    </button>
-                )} */}
+                }
 
 
                 {isFillerPlaying.current == "false" ? (

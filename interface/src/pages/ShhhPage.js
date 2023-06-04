@@ -1,3 +1,4 @@
+//Landing page for Elephant in the room 
 import React, { useState, useEffect } from "react";
 import Fuse from "fuse.js";
 import sampleVideo from "../icons/sample-video.svg";
@@ -6,18 +7,16 @@ import history from "../services/history";
 import { Modal } from "semantic-ui-react";
 import axios from "axios";
 import Tracker from "../utils/tracker";
-//import ShhhNavBar from './ShhhNavBar.js';
 import elephant from "../images/elephant.png";
 import './ShhhPage.css';
 
+//Description for each card
 const BirthText = "Ask moms about their childbirth experiences that you're too afraid to ask, from labor horror stories to body transformations.";
 const DeathText = "Join in a heartfelt conversation about death with elderly individuals and people with chronic conditions. Are you scared of death?";
 const SexText = "Don't be shy! Join us to have open, juicy, and playful conversations about sex that you are curious but don't dare to ask in real-life. We welcome your curiosity!";
 
 
 function ShhhPage() {
-
-	/*functions in charge of opening and closing the various pop up menus*/
 
 	const [open2, dispatch2] = useState(false); // this is to open the view pop up
 
@@ -60,8 +59,6 @@ function ShhhPage() {
 					let filtered_streams = res.data.filter(item => {
 						return permission_res.data.includes(item.id_stream);
 					});
-					// console.log(permission_res);
-					// console.log(filtered_streams);
 					setAllData(filtered_streams);
 					setSearchData(filtered_streams);
 				});
@@ -99,7 +96,7 @@ function ShhhPage() {
 			});
 		}
 	}
-
+	//Display stream cards under the name of "Birth, Sex and Death"
 	const renderStream = (card, index) => {
 		console.log(card);
 		console.log('cardname' + card.name);
@@ -155,14 +152,6 @@ function ShhhPage() {
 
 	return (
 		<div className="shhh-page">
-			{/* <ShhhNavBar
-				toiaName={toiaName}
-				toiaID={toiaID}
-				isLoggedIn={isLoggedIn}
-				toiaLanguage={toiaLanguage}
-				history={history}
-				showLoginModal={true}
-			/> */}
 			<img src={elephant} className="elephant" alt="ELEPHANT IN THE ROOM" />
 			<h1 class="title">Elephant In the Room</h1>
 			<Modal //This is the stream settings pop menu
