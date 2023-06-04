@@ -7,7 +7,7 @@ import tensorflow as tf
 
 config = dotenv_values()
 
-
+# calculate similarity and return answer if it is higher than threshold
 def toia_answer(query, data, k=1):
     print("Query", query)
     embedding = labse.normalization(labse.encoder(labse.preprocessor(tf.constant([query])))["default"]).numpy()[0]

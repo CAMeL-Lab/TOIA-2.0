@@ -19,7 +19,6 @@ load_dotenv()
 
 SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
 
-
 ENGINE = db.create_engine(SQL_URL)
 
 METADATA = db.MetaData()
@@ -89,6 +88,7 @@ def dialogue_manager(payload: DMpayload):
     
     vector_length = len(ast.literal_eval(df_avatar['ada_search'].values[0]))
 
+    # default vector if ada_search is NULL
     default_vector = [0 for _ in range(vector_length)]
 
     df_avatar['ada_search'] = df_avatar.ada_search.apply(lambda x: ast.literal_eval(x) if x is not None else default_vector)  #needed when np array stored as txt
@@ -96,6 +96,7 @@ def dialogue_manager(payload: DMpayload):
         return 'Please enter a query', 400
 
     print("checking for response")
+    # calculate similarity score
     response = toia_answer(query, df_avatar)
 
     answer = response[0]
@@ -117,11 +118,12 @@ def dialogue_manager(payload: DMpayload):
 def generate_embeddings(payload: EmbeddingsPayload):
     question = payload.params.question
     answer = payload.params.answer
-    videoID = payload.params.videoID
 
+    # combine the question and answer
     combined = question.strip() + \
     " " + answer.strip()
 
+    # generate embeddings
     embeddings = adaSearch(combined)
     print("Returning embeddings")
 

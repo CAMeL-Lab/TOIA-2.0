@@ -1,3 +1,9 @@
+"""
+This file is no longer being used. 
+In the case that embeddings need to be generated manually, this script can be used.
+Embeddings are now created on the fly in main.py
+"""
+
 import os
 from dotenv import dotenv_values
 import pandas as pd
