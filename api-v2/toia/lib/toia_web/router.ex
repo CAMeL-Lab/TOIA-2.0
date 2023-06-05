@@ -36,7 +36,7 @@ defmodule ToiaWeb.Router do
 
     # Question Suggestion routes
     get "/question_suggestions/latest", QuestionSuggestionController, :latest # legacy: /api/getLastestQuestionSuggestion
-    resources "/question_suggestions", QuestionSuggestionController, only: [:index, :delete] # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ
+    resources "/question_suggestions", QuestionSuggestionController, only: [:index, :delete, :create] # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id
 
     # Video routes
     resources "/video", VideoController, only: [:index, :show] # legacy: /api/getUserVideos

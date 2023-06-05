@@ -101,4 +101,23 @@ defmodule Toia.Questions do
   def change_question(%Question{} = question, attrs \\ %{}) do
     Question.changeset(question, attrs)
   end
+
+  @doc """
+  Checks if a question exists in the database.
+  """
+  def exists(question) do
+    query = from q in Question,
+      where: q.question == ^question.question
+    Repo.exists?(query)
+  end
+
+  @doc """
+  Get by question
+  """
+  def get_by_question(question) do
+    query = from q in Question,
+      where: q.question == ^question,
+      select: q
+    Repo.one(query)
+  end
 end

@@ -6,6 +6,9 @@ defmodule Toia.QuestionSuggestions do
   import Ecto.Query, warn: false
   alias Toia.Repo
 
+  alias Toia.VideosQuestionsStreams
+  alias Toia.Questions
+
   alias Toia.QuestionSuggestions.QuestionSuggestion
   alias Toia.Questions.Question
 
@@ -69,10 +72,30 @@ defmodule Toia.QuestionSuggestions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_question_suggestion(attrs \\ %{}) do
-    %QuestionSuggestion{}
-    |> QuestionSuggestion.changeset(attrs)
-    |> Repo.insert()
+  def create_question_suggestion(attrs) do
+    case Questions.get_by_question(attrs.question) do
+      %Question{} = question ->
+        case VideosQuestionsStreams.has_recorded(attrs.toia_id, question.id) or suggestion_exists(attrs.toia_id, question.id) do
+          true -> {:ok, %{id_question: question.id, question: question.question, type: question.suggested_type, priority: question.priority}}
+          false ->
+            newAttrs = %{id_question: question.id, toia_id: attrs.toia_id, isPending: true}
+            insertResult = %QuestionSuggestion{} |> QuestionSuggestion.changeset(newAttrs) |> Repo.insert()
+
+            case insertResult do
+              {:ok, result} -> {:ok, %{id_question: result.id_question, question: question.question, type: question.suggested_type, priority: question.priority}}
+              {:error, _} -> insertResult
+            end
+        end
+      nil ->
+        {:ok, newQuestion} = Questions.create_question(%{question: attrs.question})
+        newAttrs = %{id_question: newQuestion.id, toia_id: attrs.toia_id, isPending: true}
+        insertResult = %QuestionSuggestion{} |> QuestionSuggestion.changeset(newAttrs) |> Repo.insert()
+
+        case insertResult do
+          {:ok, result} -> {:ok, %{id_question: result.id_question, question: newQuestion.question, type: newQuestion.suggested_type, priority: newQuestion.priority}}
+          {:error, _} -> insertResult
+        end
+    end
   end
 
   @doc """
@@ -137,5 +160,14 @@ defmodule Toia.QuestionSuggestions do
       select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type}
 
     Repo.one(query)
+  end
+
+  @doc """
+  Returns true if the given user and question pair exists
+  """
+  def suggestion_exists(user_id, question_id) do
+    query = from qs in QuestionSuggestion,
+            where: qs.toia_id == ^user_id and qs.id_question == ^question_id
+    Repo.exists?(query)
   end
 end

@@ -7,6 +7,7 @@ defmodule Toia.VideosQuestionsStreams do
   alias Toia.Repo
 
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
+  alias Toia.Videos.Video
 
   @doc """
   Returns the list of videos_questions_streams.
@@ -100,5 +101,15 @@ defmodule Toia.VideosQuestionsStreams do
   """
   def change_video_question_stream(%VideoQuestionStream{} = video_question_stream, attrs \\ %{}) do
     VideoQuestionStream.changeset(video_question_stream, attrs)
+  end
+
+  @doc """
+  Returns true if the question has been recorded by the user.
+  """
+  def has_recorded(user_id, question_id) do
+    query = from vqs in VideoQuestionStream,
+            inner_join: v in Video, on: vqs.id_video == v.id_video,
+            where: v.toia_id == ^user_id and vqs.id_question == ^question_id
+    Repo.exists?(query)
   end
 end

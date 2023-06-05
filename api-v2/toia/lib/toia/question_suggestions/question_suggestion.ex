@@ -13,7 +13,7 @@ defmodule Toia.QuestionSuggestions.QuestionSuggestion do
   @doc false
   def changeset(question_suggestion, attrs) do
     question_suggestion
-    |> cast(attrs, [:isPending])
-    |> validate_required([:isPending])
+    |> cast(attrs, [:toia_id, :id_question, :isPending])
+    |> validate_required([:toia_id, :id_question, :isPending])
   end
 end

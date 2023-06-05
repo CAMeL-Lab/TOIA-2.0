@@ -28,11 +28,11 @@ defmodule ToiaWeb.QuestionSuggestionController do
     render(conn, :index, question_suggestions: question_suggestions)
   end
 
-  def create(conn, %{"question_suggestion" => question_suggestion_params}) do
-    with {:ok, %QuestionSuggestion{} = question_suggestion} <- QuestionSuggestions.create_question_suggestion(question_suggestion_params) do
+  def create(%{assigns: %{current_user: user}} = conn, %{"question" => question} = _params) do
+    suggestion = %{question: question, toia_id: user.id}
+    with {:ok, question_suggestion} <- QuestionSuggestions.create_question_suggestion(suggestion) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/question_suggestions/#{question_suggestion}")
       |> render(:show, question_suggestion: question_suggestion)
     end
   end
