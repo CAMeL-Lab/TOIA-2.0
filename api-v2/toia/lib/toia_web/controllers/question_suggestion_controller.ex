@@ -57,4 +57,10 @@ defmodule ToiaWeb.QuestionSuggestionController do
 
     send_resp(conn, :no_content, "")
   end
+
+  def latest(%{assigns: %{current_user: user}} = conn, _params) do
+    conn
+    |> put_status(:ok)
+    |> json(%{question_suggestion: QuestionSuggestions.get_latest_suggestion(user.id)})
+  end
 end

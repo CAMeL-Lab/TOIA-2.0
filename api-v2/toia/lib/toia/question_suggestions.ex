@@ -121,4 +121,21 @@ defmodule Toia.QuestionSuggestions do
   def change_question_suggestion(%QuestionSuggestion{} = question_suggestion, attrs \\ %{}) do
     QuestionSuggestion.changeset(question_suggestion, attrs)
   end
+
+
+  @doc """
+  Returns the latest suggested question for a user.
+  """
+  def get_latest_suggestion(user_id) do
+    query =
+      from qs in QuestionSuggestion,
+      join: q in Question, on: q.id == qs.id_question,
+      where: qs.toia_id == ^user_id,
+      where: qs.isPending == true,
+      order_by: qs.id_question,
+      limit: 1,
+      select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type}
+
+    Repo.one(query)
+  end
 end
