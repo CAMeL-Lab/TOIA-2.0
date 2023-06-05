@@ -224,4 +224,51 @@ defmodule Toia.Streams do
       x -> Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))
     end
   end
+
+  @doc """
+  Retrieve suggestion from q_api
+  """
+  def get_smart_questions(avatar_id, stream_id, latest_question, latest_answer) do
+    post_req_data = %{
+      new_q: latest_question,
+      new_a: latest_answer,
+      n_suggestions: 5,
+      avatar_id: avatar_id,
+      stream_id: stream_id
+    }
+    timeout = 20000
+    method = :post
+    url = System.get_env("SMARTQ_ROUTE")
+    headers = [{"content-type", "application/json"}]
+    body = Jason.encode!(post_req_data)
+
+    request = HTTPoison.request(method, url, headers, body, timeout)
+    case request do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        body
+        |> Jason.decode!()
+        |> Map.get("suggestions")
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        IO.puts("404")
+        nil
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.puts(reason)
+        nil
+    end
+  end
+
+  def get_smart_questions(avatar_id, stream_id) do
+    question_ids = [19, 20]
+    query =
+      from q in Question,
+      join: vqs in VideoQuestionStream, on: vqs.id_question == q.id,
+      join: v in Video, on: v.id_video == vqs.id_video,
+      where: vqs.id_stream == ^stream_id,
+      where: q.suggested_type in [:"answer", :"y/n-answer"],
+      where: not(q.id in ^question_ids),
+      order_by: q.id,
+      limit: 5,
+      select: q.question
+    Repo.all(query)
+  end
 end

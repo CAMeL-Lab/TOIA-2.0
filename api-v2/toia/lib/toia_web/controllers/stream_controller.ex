@@ -82,4 +82,28 @@ defmodule ToiaWeb.StreamController do
         |> json(%{error: "error"})
     end
   end
+
+  def smart_questions(%{assigns: %{current_user: user}} = conn, %{"id" => stream_id, "latest_question" => latest_question, "latest_answer" => latest_answer} = _params) do
+    stream = Streams.get_stream!(stream_id)
+    avatar_id = stream.toia_id
+    data = Streams.get_smart_questions(user.id, stream_id, latest_question, latest_answer)
+    case data do
+      x ->
+        conn
+        |> put_status(:ok)
+        |> json(x)
+      nil ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "error"})
+    end
+  end
+
+  def smart_questions(conn, %{"id" => stream_id}) do
+    stream = Streams.get_stream!(stream_id)
+    avatar_id = stream.toia_id
+    conn
+    |> put_status(:ok)
+    |> json(Streams.get_smart_questions(avatar_id, stream_id))
+  end
 end
