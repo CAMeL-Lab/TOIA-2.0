@@ -46,8 +46,15 @@ defmodule ToiaWeb.QuestionSuggestionControllerTest do
   describe "update question_suggestion" do
     setup [:create_question_suggestion]
 
-    test "renders question_suggestion when data is valid", %{conn: conn, question_suggestion: %QuestionSuggestion{id: id} = question_suggestion} do
-      conn = put(conn, ~p"/api/question_suggestions/#{question_suggestion}", question_suggestion: @update_attrs)
+    test "renders question_suggestion when data is valid", %{
+      conn: conn,
+      question_suggestion: %QuestionSuggestion{id: id} = question_suggestion
+    } do
+      conn =
+        put(conn, ~p"/api/question_suggestions/#{question_suggestion}",
+          question_suggestion: @update_attrs
+        )
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/question_suggestions/#{id}")
@@ -58,8 +65,15 @@ defmodule ToiaWeb.QuestionSuggestionControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, question_suggestion: question_suggestion} do
-      conn = put(conn, ~p"/api/question_suggestions/#{question_suggestion}", question_suggestion: @invalid_attrs)
+    test "renders errors when data is invalid", %{
+      conn: conn,
+      question_suggestion: question_suggestion
+    } do
+      conn =
+        put(conn, ~p"/api/question_suggestions/#{question_suggestion}",
+          question_suggestion: @invalid_attrs
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -67,7 +81,10 @@ defmodule ToiaWeb.QuestionSuggestionControllerTest do
   describe "delete question_suggestion" do
     setup [:create_question_suggestion]
 
-    test "deletes chosen question_suggestion", %{conn: conn, question_suggestion: question_suggestion} do
+    test "deletes chosen question_suggestion", %{
+      conn: conn,
+      question_suggestion: question_suggestion
+    } do
       conn = delete(conn, ~p"/api/question_suggestions/#{question_suggestion}")
       assert response(conn, 204)
 

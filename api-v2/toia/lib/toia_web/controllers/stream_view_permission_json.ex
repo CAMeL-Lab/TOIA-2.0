@@ -5,7 +5,10 @@ defmodule ToiaWeb.StreamViewPermissionJSON do
   Renders a list of stream_view_permission.
   """
   def index(%{stream_view_permission: stream_view_permission}) do
-    %{data: for(stream_view_permission <- stream_view_permission, do: data(stream_view_permission))}
+    %{
+      data:
+        for(stream_view_permission <- stream_view_permission, do: data(stream_view_permission))
+    }
   end
 
   @doc """

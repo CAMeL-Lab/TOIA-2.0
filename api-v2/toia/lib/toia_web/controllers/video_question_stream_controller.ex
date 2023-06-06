@@ -12,7 +12,8 @@ defmodule ToiaWeb.VideoQuestionStreamController do
   end
 
   def create(conn, %{"video_question_stream" => video_question_stream_params}) do
-    with {:ok, %VideoQuestionStream{} = video_question_stream} <- VideosQuestionsStreams.create_video_question_stream(video_question_stream_params) do
+    with {:ok, %VideoQuestionStream{} = video_question_stream} <-
+           VideosQuestionsStreams.create_video_question_stream(video_question_stream_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/videos_questions_streams/#{video_question_stream}")
@@ -28,7 +29,11 @@ defmodule ToiaWeb.VideoQuestionStreamController do
   def update(conn, %{"id" => id, "video_question_stream" => video_question_stream_params}) do
     video_question_stream = VideosQuestionsStreams.get_video_question_stream!(id)
 
-    with {:ok, %VideoQuestionStream{} = video_question_stream} <- VideosQuestionsStreams.update_video_question_stream(video_question_stream, video_question_stream_params) do
+    with {:ok, %VideoQuestionStream{} = video_question_stream} <-
+           VideosQuestionsStreams.update_video_question_stream(
+             video_question_stream,
+             video_question_stream_params
+           ) do
       render(conn, :show, video_question_stream: video_question_stream)
     end
   end
@@ -36,7 +41,8 @@ defmodule ToiaWeb.VideoQuestionStreamController do
   def delete(conn, %{"id" => id}) do
     video_question_stream = VideosQuestionsStreams.get_video_question_stream!(id)
 
-    with {:ok, %VideoQuestionStream{}} <- VideosQuestionsStreams.delete_video_question_stream(video_question_stream) do
+    with {:ok, %VideoQuestionStream{}} <-
+           VideosQuestionsStreams.delete_video_question_stream(video_question_stream) do
       send_resp(conn, :no_content, "")
     end
   end

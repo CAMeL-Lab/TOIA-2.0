@@ -5,12 +5,8 @@ defmodule ToiaWeb.StreamViewPermissionControllerTest do
 
   alias Toia.StreamViewPermissions.StreamViewPermission
 
-  @create_attrs %{
-
-  }
-  @update_attrs %{
-
-  }
+  @create_attrs %{}
+  @update_attrs %{}
   @invalid_attrs %{}
 
   setup %{conn: conn} do
@@ -45,8 +41,15 @@ defmodule ToiaWeb.StreamViewPermissionControllerTest do
   describe "update stream_view_permission" do
     setup [:create_stream_view_permission]
 
-    test "renders stream_view_permission when data is valid", %{conn: conn, stream_view_permission: %StreamViewPermission{id: id} = stream_view_permission} do
-      conn = put(conn, ~p"/api/stream_view_permission/#{stream_view_permission}", stream_view_permission: @update_attrs)
+    test "renders stream_view_permission when data is valid", %{
+      conn: conn,
+      stream_view_permission: %StreamViewPermission{id: id} = stream_view_permission
+    } do
+      conn =
+        put(conn, ~p"/api/stream_view_permission/#{stream_view_permission}",
+          stream_view_permission: @update_attrs
+        )
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/stream_view_permission/#{id}")
@@ -56,8 +59,15 @@ defmodule ToiaWeb.StreamViewPermissionControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, stream_view_permission: stream_view_permission} do
-      conn = put(conn, ~p"/api/stream_view_permission/#{stream_view_permission}", stream_view_permission: @invalid_attrs)
+    test "renders errors when data is invalid", %{
+      conn: conn,
+      stream_view_permission: stream_view_permission
+    } do
+      conn =
+        put(conn, ~p"/api/stream_view_permission/#{stream_view_permission}",
+          stream_view_permission: @invalid_attrs
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -65,7 +75,10 @@ defmodule ToiaWeb.StreamViewPermissionControllerTest do
   describe "delete stream_view_permission" do
     setup [:create_stream_view_permission]
 
-    test "deletes chosen stream_view_permission", %{conn: conn, stream_view_permission: stream_view_permission} do
+    test "deletes chosen stream_view_permission", %{
+      conn: conn,
+      stream_view_permission: stream_view_permission
+    } do
       conn = delete(conn, ~p"/api/stream_view_permission/#{stream_view_permission}")
       assert response(conn, 204)
 

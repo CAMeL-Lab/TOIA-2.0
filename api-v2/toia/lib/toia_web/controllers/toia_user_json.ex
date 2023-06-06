@@ -19,14 +19,13 @@ defmodule ToiaWeb.ToiaUserJSON do
     %{data: data(toia_user)}
   end
 
-
   defp data(%ToiaUser{} = toia_user) do
     %{
       id: toia_user.id,
       first_name: toia_user.first_name,
       last_name: toia_user.last_name,
       language: toia_user.language,
-      email: toia_user.email,
+      email: toia_user.email
     }
   end
 end

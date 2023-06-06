@@ -19,7 +19,13 @@ defmodule ToiaWeb.QuestionControllerTest do
     suggested_type: :greeting,
     trigger_suggester: false
   }
-  @invalid_attrs %{onboarding: nil, priority: nil, question: nil, suggested_type: nil, trigger_suggester: nil}
+  @invalid_attrs %{
+    onboarding: nil,
+    priority: nil,
+    question: nil,
+    suggested_type: nil,
+    trigger_suggester: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -58,7 +64,10 @@ defmodule ToiaWeb.QuestionControllerTest do
   describe "update question" do
     setup [:create_question]
 
-    test "renders question when data is valid", %{conn: conn, question: %Question{id: id} = question} do
+    test "renders question when data is valid", %{
+      conn: conn,
+      question: %Question{id: id} = question
+    } do
       conn = put(conn, ~p"/api/questions/#{question}", question: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

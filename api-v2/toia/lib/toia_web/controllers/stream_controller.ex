@@ -12,10 +12,15 @@ defmodule ToiaWeb.StreamController do
     render(conn, :index, stream: stream)
   end
 
-  def create(%{assigns: %{current_user: user}} = conn, %{"stream_pic" => %Plug.Upload{path: filePath}} = stream_params) do
+  def create(
+        %{assigns: %{current_user: user}} = conn,
+        %{"stream_pic" => %Plug.Upload{path: filePath}} = stream_params
+      ) do
     stream_params = Map.put(stream_params, "toia_id", user.id)
+
     with {:ok, %Stream{} = stream} <- Streams.create_stream(stream_params, user, filePath) do
       streams = ToiaUserController.list_stream(user.id)
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/stream/#{stream.id_stream}")
@@ -24,11 +29,14 @@ defmodule ToiaWeb.StreamController do
       {:error, reason} ->
         IO.warn("Photo couldn't be uploaded")
         IO.warn(reason)
+
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: reason})
+
       _ ->
         IO.inspect("Something went wrong")
+
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "Internal server error"})
@@ -64,34 +72,49 @@ defmodule ToiaWeb.StreamController do
   def filler(%{assigns: %{current_user: user}} = conn, %{"id" => stream_id} = _params) do
     {filler_video} = Streams.get_random_filler_video(user.id, stream_id)
     IO.inspect(filler_video)
+
     conn
     |> put_status(:ok)
     |> json(%{filler_video: "Accounts/#{user.first_name}_#{user.id}/Videos/#{filler_video}"})
   end
 
-  def next(%{assigns: %{current_user: user}} = conn, %{"id" => stream_id, "question" => question} = _params) do
+  def next(
+        %{assigns: %{current_user: user}} = conn,
+        %{"id" => stream_id, "question" => question} = _params
+      ) do
     case Streams.get_next_video(user, stream_id, question) do
       %{id_video: _, answer: _, duration_seconds: _, url: _} = x ->
         conn
         |> put_status(:ok)
         |> json(x)
+
       {:error, error} ->
         IO.warn(error)
+
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "error"})
     end
   end
 
-  def smart_questions(%{assigns: %{current_user: user}} = conn, %{"id" => stream_id, "latest_question" => latest_question, "latest_answer" => latest_answer} = _params) do
+  def smart_questions(
+        %{assigns: %{current_user: user}} = conn,
+        %{
+          "id" => stream_id,
+          "latest_question" => latest_question,
+          "latest_answer" => latest_answer
+        } = _params
+      ) do
     stream = Streams.get_stream!(stream_id)
     avatar_id = stream.toia_id
     data = Streams.get_smart_questions(user.id, stream_id, latest_question, latest_answer)
+
     case data do
       x ->
         conn
         |> put_status(:ok)
         |> json(x)
+
       nil ->
         conn
         |> put_status(:internal_server_error)
@@ -102,6 +125,7 @@ defmodule ToiaWeb.StreamController do
   def smart_questions(conn, %{"id" => stream_id}) do
     stream = Streams.get_stream!(stream_id)
     avatar_id = stream.toia_id
+
     conn
     |> put_status(:ok)
     |> json(Streams.get_smart_questions(avatar_id, stream_id))

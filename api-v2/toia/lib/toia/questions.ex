@@ -106,8 +106,10 @@ defmodule Toia.Questions do
   Checks if a question exists in the database.
   """
   def exists(question) do
-    query = from q in Question,
-      where: q.question == ^question.question
+    query =
+      from q in Question,
+        where: q.question == ^question.question
+
     Repo.exists?(query)
   end
 
@@ -115,9 +117,11 @@ defmodule Toia.Questions do
   Get by question
   """
   def get_by_question(question) do
-    query = from q in Question,
-      where: q.question == ^question,
-      select: q
+    query =
+      from q in Question,
+        where: q.question == ^question,
+        select: q
+
     Repo.one(query)
   end
 end

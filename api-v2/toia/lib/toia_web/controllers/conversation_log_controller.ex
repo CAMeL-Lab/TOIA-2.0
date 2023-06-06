@@ -12,7 +12,8 @@ defmodule ToiaWeb.ConversationLogController do
   end
 
   def create(conn, %{"conversation_log" => conversation_log_params}) do
-    with {:ok, %ConversationLog{} = conversation_log} <- ConversationsLogs.create_conversation_log(conversation_log_params) do
+    with {:ok, %ConversationLog{} = conversation_log} <-
+           ConversationsLogs.create_conversation_log(conversation_log_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/conversations_log/#{conversation_log}")
@@ -28,7 +29,8 @@ defmodule ToiaWeb.ConversationLogController do
   def update(conn, %{"id" => id, "conversation_log" => conversation_log_params}) do
     conversation_log = ConversationsLogs.get_conversation_log!(id)
 
-    with {:ok, %ConversationLog{} = conversation_log} <- ConversationsLogs.update_conversation_log(conversation_log, conversation_log_params) do
+    with {:ok, %ConversationLog{} = conversation_log} <-
+           ConversationsLogs.update_conversation_log(conversation_log, conversation_log_params) do
       render(conn, :show, conversation_log: conversation_log)
     end
   end

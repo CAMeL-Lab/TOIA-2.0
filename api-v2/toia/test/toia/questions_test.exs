@@ -8,7 +8,13 @@ defmodule Toia.QuestionsTest do
 
     import Toia.QuestionsFixtures
 
-    @invalid_attrs %{onboarding: nil, priority: nil, question: nil, suggested_type: nil, trigger_suggester: nil}
+    @invalid_attrs %{
+      onboarding: nil,
+      priority: nil,
+      question: nil,
+      suggested_type: nil,
+      trigger_suggester: nil
+    }
 
     test "list_questions/0 returns all questions" do
       question = question_fixture()
@@ -21,7 +27,13 @@ defmodule Toia.QuestionsTest do
     end
 
     test "create_question/1 with valid data creates a question" do
-      valid_attrs = %{onboarding: true, priority: 42, question: "some question", suggested_type: :filler, trigger_suggester: true}
+      valid_attrs = %{
+        onboarding: true,
+        priority: 42,
+        question: "some question",
+        suggested_type: :filler,
+        trigger_suggester: true
+      }
 
       assert {:ok, %Question{} = question} = Questions.create_question(valid_attrs)
       assert question.onboarding == true
@@ -37,7 +49,14 @@ defmodule Toia.QuestionsTest do
 
     test "update_question/2 with valid data updates the question" do
       question = question_fixture()
-      update_attrs = %{onboarding: false, priority: 43, question: "some updated question", suggested_type: :greeting, trigger_suggester: false}
+
+      update_attrs = %{
+        onboarding: false,
+        priority: 43,
+        question: "some updated question",
+        suggested_type: :greeting,
+        trigger_suggester: false
+      }
 
       assert {:ok, %Question{} = question} = Questions.update_question(question, update_attrs)
       assert question.onboarding == false

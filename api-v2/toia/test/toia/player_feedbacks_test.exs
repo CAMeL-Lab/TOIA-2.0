@@ -23,7 +23,9 @@ defmodule Toia.PlayerFeedbacksTest do
     test "create_player_feedback/1 with valid data creates a player_feedback" do
       valid_attrs = %{question: "some question", rating: 42, video_id: "some video_id"}
 
-      assert {:ok, %PlayerFeedback{} = player_feedback} = PlayerFeedbacks.create_player_feedback(valid_attrs)
+      assert {:ok, %PlayerFeedback{} = player_feedback} =
+               PlayerFeedbacks.create_player_feedback(valid_attrs)
+
       assert player_feedback.question == "some question"
       assert player_feedback.rating == 42
       assert player_feedback.video_id == "some video_id"
@@ -35,9 +37,16 @@ defmodule Toia.PlayerFeedbacksTest do
 
     test "update_player_feedback/2 with valid data updates the player_feedback" do
       player_feedback = player_feedback_fixture()
-      update_attrs = %{question: "some updated question", rating: 43, video_id: "some updated video_id"}
 
-      assert {:ok, %PlayerFeedback{} = player_feedback} = PlayerFeedbacks.update_player_feedback(player_feedback, update_attrs)
+      update_attrs = %{
+        question: "some updated question",
+        rating: 43,
+        video_id: "some updated video_id"
+      }
+
+      assert {:ok, %PlayerFeedback{} = player_feedback} =
+               PlayerFeedbacks.update_player_feedback(player_feedback, update_attrs)
+
       assert player_feedback.question == "some updated question"
       assert player_feedback.rating == 43
       assert player_feedback.video_id == "some updated video_id"
@@ -45,14 +54,20 @@ defmodule Toia.PlayerFeedbacksTest do
 
     test "update_player_feedback/2 with invalid data returns error changeset" do
       player_feedback = player_feedback_fixture()
-      assert {:error, %Ecto.Changeset{}} = PlayerFeedbacks.update_player_feedback(player_feedback, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               PlayerFeedbacks.update_player_feedback(player_feedback, @invalid_attrs)
+
       assert player_feedback == PlayerFeedbacks.get_player_feedback!(player_feedback.id)
     end
 
     test "delete_player_feedback/1 deletes the player_feedback" do
       player_feedback = player_feedback_fixture()
       assert {:ok, %PlayerFeedback{}} = PlayerFeedbacks.delete_player_feedback(player_feedback)
-      assert_raise Ecto.NoResultsError, fn -> PlayerFeedbacks.get_player_feedback!(player_feedback.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        PlayerFeedbacks.get_player_feedback!(player_feedback.id)
+      end
     end
 
     test "change_player_feedback/1 returns a player_feedback changeset" do

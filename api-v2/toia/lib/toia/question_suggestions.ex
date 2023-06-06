@@ -22,25 +22,43 @@ defmodule Toia.QuestionSuggestions do
 
   """
   def list_question_suggestions(user_id, limit) do
-    query = from qs in QuestionSuggestion,
-            join: q in Question,
-            on: qs.id_question == q.id,
-            where: qs.toia_id == ^user_id and qs.isPending == true
-    query = from [qs, q] in query,
-            select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type, priority: q.priority},
-            order_by: [desc: q.priority],
-            limit: ^limit
+    query =
+      from qs in QuestionSuggestion,
+        join: q in Question,
+        on: qs.id_question == q.id,
+        where: qs.toia_id == ^user_id and qs.isPending == true
+
+    query =
+      from [qs, q] in query,
+        select: %{
+          id_question: qs.id_question,
+          question: q.question,
+          type: q.suggested_type,
+          priority: q.priority
+        },
+        order_by: [desc: q.priority],
+        limit: ^limit
+
     Repo.all(query)
   end
 
   def list_question_suggestions(user_id) do
-    query = from qs in QuestionSuggestion,
-            join: q in Question,
-            on: qs.id_question == q.id,
-            where: qs.toia_id == ^user_id and qs.isPending == true
-    query = from [qs, q] in query,
-            select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type, priority: q.priority},
-            order_by: [desc: q.priority]
+    query =
+      from qs in QuestionSuggestion,
+        join: q in Question,
+        on: qs.id_question == q.id,
+        where: qs.toia_id == ^user_id and qs.isPending == true
+
+    query =
+      from [qs, q] in query,
+        select: %{
+          id_question: qs.id_question,
+          question: q.question,
+          type: q.suggested_type,
+          priority: q.priority
+        },
+        order_by: [desc: q.priority]
+
     Repo.all(query)
   end
 
@@ -75,25 +93,57 @@ defmodule Toia.QuestionSuggestions do
   def create_question_suggestion(attrs) do
     case Questions.get_by_question(attrs.question) do
       %Question{} = question ->
-        case VideosQuestionsStreams.has_recorded(attrs.toia_id, question.id) or suggestion_exists(attrs.toia_id, question.id) do
-          true -> {:ok, %{id_question: question.id, question: question.question, type: question.suggested_type, priority: question.priority}}
+        case VideosQuestionsStreams.has_recorded(attrs.toia_id, question.id) or
+               suggestion_exists(attrs.toia_id, question.id) do
+          true ->
+            {:ok,
+             %{
+               id_question: question.id,
+               question: question.question,
+               type: question.suggested_type,
+               priority: question.priority
+             }}
+
           false ->
             newAttrs = %{id_question: question.id, toia_id: attrs.toia_id, isPending: true}
-            insertResult = %QuestionSuggestion{} |> QuestionSuggestion.changeset(newAttrs) |> Repo.insert()
+
+            insertResult =
+              %QuestionSuggestion{} |> QuestionSuggestion.changeset(newAttrs) |> Repo.insert()
 
             case insertResult do
-              {:ok, result} -> {:ok, %{id_question: result.id_question, question: question.question, type: question.suggested_type, priority: question.priority}}
-              {:error, _} -> insertResult
+              {:ok, result} ->
+                {:ok,
+                 %{
+                   id_question: result.id_question,
+                   question: question.question,
+                   type: question.suggested_type,
+                   priority: question.priority
+                 }}
+
+              {:error, _} ->
+                insertResult
             end
         end
+
       nil ->
         {:ok, newQuestion} = Questions.create_question(%{question: attrs.question})
         newAttrs = %{id_question: newQuestion.id, toia_id: attrs.toia_id, isPending: true}
-        insertResult = %QuestionSuggestion{} |> QuestionSuggestion.changeset(newAttrs) |> Repo.insert()
+
+        insertResult =
+          %QuestionSuggestion{} |> QuestionSuggestion.changeset(newAttrs) |> Repo.insert()
 
         case insertResult do
-          {:ok, result} -> {:ok, %{id_question: result.id_question, question: newQuestion.question, type: newQuestion.suggested_type, priority: newQuestion.priority}}
-          {:error, _} -> insertResult
+          {:ok, result} ->
+            {:ok,
+             %{
+               id_question: result.id_question,
+               question: newQuestion.question,
+               type: newQuestion.suggested_type,
+               priority: newQuestion.priority
+             }}
+
+          {:error, _} ->
+            insertResult
         end
     end
   end
@@ -102,28 +152,54 @@ defmodule Toia.QuestionSuggestions do
   Updates a suggestion.
   """
   def update_suggestion(%QuestionSuggestion{} = old_suggestion, new_question) do
-    suggestion = Repo.get_by!(QuestionSuggestion, [id_question: old_suggestion.id_question, toia_id: old_suggestion.toia_id])
-    question = Repo.get_by!(Question, [id: old_suggestion.id_question])
+    suggestion =
+      Repo.get_by!(QuestionSuggestion,
+        id_question: old_suggestion.id_question,
+        toia_id: old_suggestion.toia_id
+      )
+
+    question = Repo.get_by!(Question, id: old_suggestion.id_question)
 
     if question.question == new_question do
-      {:ok, %{id_question: question.id, question: question.question, type: question.suggested_type, priority: question.priority}}
+      {:ok,
+       %{
+         id_question: question.id,
+         question: question.question,
+         type: question.suggested_type,
+         priority: question.priority
+       }}
     else
-      allSuggestions = Repo.all(from qs in QuestionSuggestion, where: qs.id_question == ^question.id)
+      allSuggestions =
+        Repo.all(from qs in QuestionSuggestion, where: qs.id_question == ^question.id)
 
       if length(allSuggestions) == 1 do
         Questions.update_question(question, %{question: new_question})
-        {:ok, %{id_question: question.id, question: new_question, type: question.suggested_type, priority: question.priority}}
+
+        {:ok,
+         %{
+           id_question: question.id,
+           question: new_question,
+           type: question.suggested_type,
+           priority: question.priority
+         }}
       else
         # Duplicate question
         new_q_attr = Map.delete(question, :id)
-        new_q_attr = Map.delete(new_q_attr, :"__struct__")
-        new_q_attr = Map.delete(new_q_attr, :"__meta__")
+        new_q_attr = Map.delete(new_q_attr, :__struct__)
+        new_q_attr = Map.delete(new_q_attr, :__meta__)
         new_q_attr = Map.put(new_q_attr, :question, new_question)
         {:ok, new_q} = Questions.create_question(new_q_attr)
 
         # Update old suggestion
         update_question_suggestion(suggestion, %{id_question: new_q.id})
-        {:ok, %{id_question: new_q.id, question: new_q.question, type: new_q.suggested_type, priority: new_q.priority}}
+
+        {:ok,
+         %{
+           id_question: new_q.id,
+           question: new_q.question,
+           type: new_q.suggested_type,
+           priority: new_q.priority
+         }}
       end
     end
   end
@@ -175,19 +251,19 @@ defmodule Toia.QuestionSuggestions do
     QuestionSuggestion.changeset(question_suggestion, attrs)
   end
 
-
   @doc """
   Returns the latest suggested question for a user.
   """
   def get_latest_suggestion(user_id) do
     query =
       from qs in QuestionSuggestion,
-      join: q in Question, on: q.id == qs.id_question,
-      where: qs.toia_id == ^user_id,
-      where: qs.isPending == true,
-      order_by: qs.id_question,
-      limit: 1,
-      select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type}
+        join: q in Question,
+        on: q.id == qs.id_question,
+        where: qs.toia_id == ^user_id,
+        where: qs.isPending == true,
+        order_by: qs.id_question,
+        limit: 1,
+        select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type}
 
     Repo.one(query)
   end
@@ -196,8 +272,10 @@ defmodule Toia.QuestionSuggestions do
   Returns true if the given user and question pair exists
   """
   def suggestion_exists(user_id, question_id) do
-    query = from qs in QuestionSuggestion,
-            where: qs.toia_id == ^user_id and qs.id_question == ^question_id
+    query =
+      from qs in QuestionSuggestion,
+        where: qs.toia_id == ^user_id and qs.id_question == ^question_id
+
     Repo.exists?(query)
   end
 end

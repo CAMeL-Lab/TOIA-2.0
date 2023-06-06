@@ -22,12 +22,14 @@ defmodule ToiaWeb.VideoController do
 
   def show(%{assigns: %{current_user: user}} = conn, %{"id" => id} = _video_params) do
     video = Videos.get_video!(id)
+
     case Videos.canAccess(user, video) do
       true ->
         playbackUrl = Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)
         video = Map.put(video, :videoURL, playbackUrl)
         IO.inspect(video)
         render(conn, :show, video: video)
+
       false ->
         conn
         |> put_status(:unauthorized)

@@ -3,7 +3,6 @@ defmodule Toia.StreamViewPermissions.StreamViewPermission do
   import Ecto.Changeset
 
   schema "stream_view_permission" do
-
     field :toia_id, :id
     field :stream_id, :id
   end

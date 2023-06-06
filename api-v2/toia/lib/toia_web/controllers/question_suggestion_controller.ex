@@ -55,7 +55,7 @@ defmodule ToiaWeb.QuestionSuggestionController do
         "new_value" => new_question
       }) do
     {id, _} = Integer.parse(idStr)
-    old_suggestion = Repo.get_by!(QuestionSuggestion, [id_question: id, toia_id: user.id])
+    old_suggestion = Repo.get_by!(QuestionSuggestion, id_question: id, toia_id: user.id)
 
     with {:ok, question_suggestion} <-
            QuestionSuggestions.update_suggestion(old_suggestion, new_question) do
@@ -70,7 +70,7 @@ defmodule ToiaWeb.QuestionSuggestionController do
         "isPending" => isPendingStr
       }) do
     {id, _} = Integer.parse(idStr)
-    old_suggestion = Repo.get_by!(QuestionSuggestion, [id_question: id, toia_id: user.id])
+    old_suggestion = Repo.get_by!(QuestionSuggestion, id_question: id, toia_id: user.id)
     isPending = isPendingStr == "true" or isPendingStr == "1" or isPendingStr == true
 
     question_suggestion =

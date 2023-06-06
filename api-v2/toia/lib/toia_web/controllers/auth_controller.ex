@@ -9,6 +9,7 @@ defmodule ToiaWeb.AuthController do
         conn
         |> put_status(:ok)
         |> json(%{token: token})
+
       {:error, :invalid_credentials} ->
         conn
         |> put_status(:unauthorized)

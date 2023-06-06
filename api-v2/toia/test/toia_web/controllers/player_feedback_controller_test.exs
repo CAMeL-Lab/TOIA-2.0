@@ -52,8 +52,13 @@ defmodule ToiaWeb.PlayerFeedbackControllerTest do
   describe "update player_feedback" do
     setup [:create_player_feedback]
 
-    test "renders player_feedback when data is valid", %{conn: conn, player_feedback: %PlayerFeedback{id: id} = player_feedback} do
-      conn = put(conn, ~p"/api/player_feedback/#{player_feedback}", player_feedback: @update_attrs)
+    test "renders player_feedback when data is valid", %{
+      conn: conn,
+      player_feedback: %PlayerFeedback{id: id} = player_feedback
+    } do
+      conn =
+        put(conn, ~p"/api/player_feedback/#{player_feedback}", player_feedback: @update_attrs)
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/player_feedback/#{id}")
@@ -67,7 +72,9 @@ defmodule ToiaWeb.PlayerFeedbackControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, player_feedback: player_feedback} do
-      conn = put(conn, ~p"/api/player_feedback/#{player_feedback}", player_feedback: @invalid_attrs)
+      conn =
+        put(conn, ~p"/api/player_feedback/#{player_feedback}", player_feedback: @invalid_attrs)
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

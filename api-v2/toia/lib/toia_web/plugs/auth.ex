@@ -1,4 +1,3 @@
-
 defmodule ToiaWeb.Plugs.Auth do
   def init(opts) do
     opts
@@ -16,9 +15,12 @@ defmodule ToiaWeb.Plugs.Auth do
       case Toia.Guardian.resource_from_claims(claims) do
         {:ok, user} ->
           user = Map.delete(user, :password)
+
           conn
           |> Plug.Conn.assign(:current_user, user)
-        {:error, _reason} -> unauthorized(conn)
+
+        {:error, _reason} ->
+          unauthorized(conn)
       end
     else
       {:error, _reason} -> unauthorized(conn)

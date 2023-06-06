@@ -2,18 +2,20 @@ defmodule ToiaWeb.Router do
   use ToiaWeb, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   pipeline :auth do
-    plug ToiaWeb.Plugs.Auth
+    plug(ToiaWeb.Plugs.Auth)
   end
 
   scope "/api", ToiaWeb do
-    pipe_through :api
+    pipe_through(:api)
 
-    post "/login", AuthController, :login # legacy: /api/login
-    resources "/toia_user", ToiaUserController, only: [:create] # legacy: /api/createTOIA
+    # legacy: /api/login
+    post("/login", AuthController, :login)
+    # legacy: /api/createTOIA
+    resources("/toia_user", ToiaUserController, only: [:create])
 
     # resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
     # resources "/questions", QuestionController, except: [:new, :edit]
@@ -26,23 +28,34 @@ defmodule ToiaWeb.Router do
   end
 
   scope "/api", ToiaWeb do
-    pipe_through [:api, :auth]
+    pipe_through([:api, :auth])
 
     # Stream routes
-    get "/stream/:id/filler", StreamController, :filler # legacy: /api/fillerVideo
-    get "/stream/:id/next", StreamController, :next # legacy: /api/player
-    get "/stream/:id/smart_questions", StreamController, :smart_questions # legacy: /api/getSmartQuestions
-    resources "/stream", StreamController, only: [:index, :create] # legacy: /api/getAllStreams
+    # legacy: /api/fillerVideo
+    get("/stream/:id/filler", StreamController, :filler)
+    # legacy: /api/player
+    get("/stream/:id/next", StreamController, :next)
+    # legacy: /api/getSmartQuestions
+    get("/stream/:id/smart_questions", StreamController, :smart_questions)
+    # legacy: /api/getAllStreams
+    resources("/stream", StreamController, only: [:index, :create])
 
     # Question Suggestion routes
-    get "/question_suggestions/latest", QuestionSuggestionController, :latest # legacy: /api/getLastestQuestionSuggestion
-    resources "/question_suggestions", QuestionSuggestionController, only: [:index, :delete, :create, :update] # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, /questions/suggestions/:user_id/edit
+    # legacy: /api/getLastestQuestionSuggestion
+    get("/question_suggestions/latest", QuestionSuggestionController, :latest)
+
+    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, /questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard
+    resources("/question_suggestions", QuestionSuggestionController,
+      only: [:index, :delete, :create, :update]
+    )
 
     # Video routes
-    resources "/video", VideoController, only: [:index, :show] # legacy: /api/getUserVideos
+    # legacy: /api/getUserVideos
+    resources("/video", VideoController, only: [:index, :show])
 
     # User routes
-    get "/toia_user/:user_id/streams", ToiaUserController, :streams # legacy: /api/getUserStreams
+    # legacy: /api/getUserStreams
+    get("/toia_user/:user_id/streams", ToiaUserController, :streams)
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
@@ -55,10 +68,10 @@ defmodule ToiaWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:fetch_session, :protect_from_forgery]
+      pipe_through([:fetch_session, :protect_from_forgery])
 
-      live_dashboard "/dashboard", metrics: ToiaWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: ToiaWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end

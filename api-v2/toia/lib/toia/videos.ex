@@ -18,9 +18,11 @@ defmodule Toia.Videos do
 
   """
   def list_video(user_id) do
-    query = from v in Video,
-            where: v.toia_id == ^user_id,
-            order_by: [desc: v.idx]
+    query =
+      from v in Video,
+        where: v.toia_id == ^user_id,
+        order_by: [desc: v.idx]
+
     Repo.all(query)
   end
 

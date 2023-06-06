@@ -23,7 +23,15 @@ defmodule ToiaWeb.ConversationLogControllerTest do
     timestamp: 43,
     video_played: "some updated video_played"
   }
-  @invalid_attrs %{ada_similarity_score: nil, filler: nil, interactor_id: nil, mode: nil, question_asked: nil, timestamp: nil, video_played: nil}
+  @invalid_attrs %{
+    ada_similarity_score: nil,
+    filler: nil,
+    interactor_id: nil,
+    mode: nil,
+    question_asked: nil,
+    timestamp: nil,
+    video_played: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -64,8 +72,13 @@ defmodule ToiaWeb.ConversationLogControllerTest do
   describe "update conversation_log" do
     setup [:create_conversation_log]
 
-    test "renders conversation_log when data is valid", %{conn: conn, conversation_log: %ConversationLog{id: id} = conversation_log} do
-      conn = put(conn, ~p"/api/conversations_log/#{conversation_log}", conversation_log: @update_attrs)
+    test "renders conversation_log when data is valid", %{
+      conn: conn,
+      conversation_log: %ConversationLog{id: id} = conversation_log
+    } do
+      conn =
+        put(conn, ~p"/api/conversations_log/#{conversation_log}", conversation_log: @update_attrs)
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/conversations_log/#{id}")
@@ -83,7 +96,9 @@ defmodule ToiaWeb.ConversationLogControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, conversation_log: conversation_log} do
-      conn = put(conn, ~p"/api/conversations_log/#{conversation_log}", conversation_log: @invalid_attrs)
+      conn =
+        put(conn, ~p"/api/conversations_log/#{conversation_log}", conversation_log: @invalid_attrs)
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

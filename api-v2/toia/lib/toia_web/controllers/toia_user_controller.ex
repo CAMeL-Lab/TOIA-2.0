@@ -16,7 +16,8 @@ defmodule ToiaWeb.ToiaUserController do
   end
 
   def create(conn, toia_user_params) do
-    with {:ok, %ToiaUser{} = toia_user, _stream} <- ToiaUsers.create_toia_user_with_stream(toia_user_params) do
+    with {:ok, %ToiaUser{} = toia_user, _stream} <-
+           ToiaUsers.create_toia_user_with_stream(toia_user_params) do
       with {:ok, token, _claims} <- Toia.Guardian.encode_and_sign(toia_user) do
         conn
         |> put_status(:created)
@@ -24,13 +25,15 @@ defmodule ToiaWeb.ToiaUserController do
         |> render(:show, toia_user: toia_user, token: token)
       else
         {:error, :secret_not_found} ->
-          IO.warn "Guardian Secret not found in the environment"
+          IO.warn("Guardian Secret not found in the environment")
+
           conn
           |> put_status(:internal_server_error)
           |> json(%{error: "Internal server error"})
 
         {:error, :reason} ->
           IO.inspect(:reason)
+
           conn
           |> put_status(:internal_server_error)
           |> json(%{error: "Internal server error"})
@@ -39,11 +42,14 @@ defmodule ToiaWeb.ToiaUserController do
       {:error_pic, reason} ->
         IO.warn("Photo couldn't be uploaded")
         IO.warn(reason)
+
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "Photo couldn't be uploaded"})
+
       _ ->
         IO.inspect("Something went wrong")
+
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "Internal server error"})
@@ -83,6 +89,7 @@ defmodule ToiaWeb.ToiaUserController do
 
   def streams(%{assigns: %{current_user: user}} = conn, %{"user_id" => other_user_idStr}) do
     {other_user_id, _} = Integer.parse(other_user_idStr)
+
     if user.id == other_user_id do
       streams = list_stream(user.id)
 

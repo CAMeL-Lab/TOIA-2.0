@@ -21,7 +21,13 @@ defmodule Toia.ToiaUsersTest do
     end
 
     test "create_toia_user/1 with valid data creates a toia_user" do
-      valid_attrs = %{email: "some email", first_name: "some first_name", language: "some language", last_name: "some last_name", password: "some password"}
+      valid_attrs = %{
+        email: "some email",
+        first_name: "some first_name",
+        language: "some language",
+        last_name: "some last_name",
+        password: "some password"
+      }
 
       assert {:ok, %ToiaUser{} = toia_user} = ToiaUsers.create_toia_user(valid_attrs)
       assert toia_user.email == "some email"
@@ -37,7 +43,14 @@ defmodule Toia.ToiaUsersTest do
 
     test "update_toia_user/2 with valid data updates the toia_user" do
       toia_user = toia_user_fixture()
-      update_attrs = %{email: "some updated email", first_name: "some updated first_name", language: "some updated language", last_name: "some updated last_name", password: "some updated password"}
+
+      update_attrs = %{
+        email: "some updated email",
+        first_name: "some updated first_name",
+        language: "some updated language",
+        last_name: "some updated last_name",
+        password: "some updated password"
+      }
 
       assert {:ok, %ToiaUser{} = toia_user} = ToiaUsers.update_toia_user(toia_user, update_attrs)
       assert toia_user.email == "some updated email"

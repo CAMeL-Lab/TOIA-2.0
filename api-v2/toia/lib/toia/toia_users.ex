@@ -52,7 +52,9 @@ defmodule Toia.ToiaUsers do
 
   """
   # `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`;
-  def create_toia_user_with_stream(%{"profile_pic" => %Plug.Upload{path: path}} = toia_user_params) do
+  def create_toia_user_with_stream(
+        %{"profile_pic" => %Plug.Upload{path: path}} = toia_user_params
+      ) do
     toia_user_params = Map.delete(toia_user_params, "profile_pic")
     {:ok, toia_user, stream} = create_toia_user_with_stream(toia_user_params)
     destDir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"
@@ -64,7 +66,9 @@ defmodule Toia.ToiaUsers do
           :ok -> {:ok, toia_user, stream}
           {:error, reason} -> {:error_pic, reason}
         end
-      {:error, reason} -> {:error_pic, reason}
+
+      {:error, reason} ->
+        {:error_pic, reason}
     end
   end
 

@@ -40,8 +40,8 @@ config :phoenix, :json_library, Jason
 config :bcrypt_elixir, :log_rounds, 12
 
 config :toia, Toia.Guardian,
-       issuer: "toia",
-       secret_key: System.get_env("GUARDIAN_SECRET_KEY")
+  issuer: "toia",
+  secret_key: System.get_env("GUARDIAN_SECRET_KEY")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

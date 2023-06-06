@@ -58,7 +58,10 @@ defmodule ToiaWeb.ToiaUserControllerTest do
   describe "update toia_user" do
     setup [:create_toia_user]
 
-    test "renders toia_user when data is valid", %{conn: conn, toia_user: %ToiaUser{id: id} = toia_user} do
+    test "renders toia_user when data is valid", %{
+      conn: conn,
+      toia_user: %ToiaUser{id: id} = toia_user
+    } do
       conn = put(conn, ~p"/api/toia_user/#{toia_user}", toia_user: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

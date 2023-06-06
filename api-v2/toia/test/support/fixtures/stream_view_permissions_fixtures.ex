@@ -10,9 +10,7 @@ defmodule Toia.StreamViewPermissionsFixtures do
   def stream_view_permission_fixture(attrs \\ %{}) do
     {:ok, stream_view_permission} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> Toia.StreamViewPermissions.create_stream_view_permission()
 
     stream_view_permission

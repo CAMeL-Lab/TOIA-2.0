@@ -22,7 +22,7 @@ defmodule Toia.Guardian do
     # found in the `"sub"` key. In above `subject_for_token/2` we returned
     # the resource id so here we'll rely on that to look it up.
     resource = ToiaUsers.get_toia_user!(String.to_integer(id))
-    {:ok,  resource}
+    {:ok, resource}
   end
 
   def resource_from_claims(_claims) do
@@ -32,6 +32,7 @@ defmodule Toia.Guardian do
   def authenticate(email, password) do
     try do
       user = ToiaUsers.get_toia_user_by_email!(email)
+
       case Bcrypt.verify_pass(password, user.password) do
         true -> Toia.Guardian.encode_and_sign(user)
         false -> {:error, :invalid_credentials}

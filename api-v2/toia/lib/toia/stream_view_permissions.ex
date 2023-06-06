@@ -98,7 +98,10 @@ defmodule Toia.StreamViewPermissions do
       %Ecto.Changeset{data: %StreamViewPermission{}}
 
   """
-  def change_stream_view_permission(%StreamViewPermission{} = stream_view_permission, attrs \\ %{}) do
+  def change_stream_view_permission(
+        %StreamViewPermission{} = stream_view_permission,
+        attrs \\ %{}
+      ) do
     StreamViewPermission.changeset(stream_view_permission, attrs)
   end
 end

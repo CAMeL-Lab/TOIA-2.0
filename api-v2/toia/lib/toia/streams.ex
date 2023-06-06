@@ -72,7 +72,9 @@ defmodule Toia.Streams do
             :ok -> {:ok, stream}
             {:error, reason} -> {:error, reason}
           end
-        {:error, reason} -> {:error, reason}
+
+        {:error, reason} ->
+          {:error, reason}
       end
     end
   end
@@ -138,12 +140,17 @@ defmodule Toia.Streams do
 
     case stream.toia_id == user_id do
       true ->
-        query = from q in Question,
-                inner_join: vqs in VideoQuestionStream, on: q.id == vqs.id_question,
-                inner_join: v in Video, on: v.id_video == vqs.id_video,
-                where: vqs.id_stream == ^stream_id and vqs.type == :filler
-        query = from [_q, vqs, _v] in query,
-                select: {vqs.id_video}
+        query =
+          from q in Question,
+            inner_join: vqs in VideoQuestionStream,
+            on: q.id == vqs.id_question,
+            inner_join: v in Video,
+            on: v.id_video == vqs.id_video,
+            where: vqs.id_stream == ^stream_id and vqs.type == :filler
+
+        query =
+          from [_q, vqs, _v] in query,
+            select: {vqs.id_video}
 
         all_videos = Repo.all(query)
 
@@ -153,13 +160,19 @@ defmodule Toia.Streams do
         else
           all_videos |> Enum.random()
         end
+
       false ->
-        query = from q in Question,
-                inner_join: vqs in VideoQuestionStream, on: q.id == vqs.id_question,
-                inner_join: v in Video, on: v.id_video == vqs.id_video,
-                where: vqs.id_stream == ^stream_id and v.private == false and vqs.type == :filler
-        query = from [_q, vqs, _v] in query,
-                select: {vqs.id_video}
+        query =
+          from q in Question,
+            inner_join: vqs in VideoQuestionStream,
+            on: q.id == vqs.id_question,
+            inner_join: v in Video,
+            on: v.id_video == vqs.id_video,
+            where: vqs.id_stream == ^stream_id and v.private == false and vqs.type == :filler
+
+        query =
+          from [_q, vqs, _v] in query,
+            select: {vqs.id_video}
 
         all_videos = Repo.all(query)
 
@@ -176,15 +189,20 @@ defmodule Toia.Streams do
   Returns the exact match video of a question
   """
   def getExactMatch(stream_id, question) do
-    query = from q in Question,
-            inner_join: vqs in VideoQuestionStream, on: q.id == vqs.id_question,
-            inner_join: v in Video, on: v.id_video == vqs.id_video,
-            where: vqs.id_stream == ^stream_id and q.question == ^question
+    query =
+      from q in Question,
+        inner_join: vqs in VideoQuestionStream,
+        on: q.id == vqs.id_question,
+        inner_join: v in Video,
+        on: v.id_video == vqs.id_video,
+        where: vqs.id_stream == ^stream_id and q.question == ^question
 
-    query = from [_q, vqs, v] in query,
-            select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
+    query =
+      from [_q, vqs, v] in query,
+        select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
 
     all_videos = Repo.all(query)
+
     if length(all_videos) == 0 do
       nil
     else
@@ -199,14 +217,21 @@ defmodule Toia.Streams do
     case getExactMatch(stream_id, question) do
       nil ->
         stream = get_stream!(stream_id)
-        req_body = Poison.encode!(%{
-          params: %{
-            query: question,
-            stream_id: to_string(stream_id),
-            avatar_id: to_string(stream.toia_id)
-          }
-        })
-        dm_response = HTTPoison.post!("http://localhost:5001/dialogue_manager", req_body, [{"Content-Type", "application/json"}])
+
+        req_body =
+          Poison.encode!(%{
+            params: %{
+              query: question,
+              stream_id: to_string(stream_id),
+              avatar_id: to_string(stream.toia_id)
+            }
+          })
+
+        dm_response =
+          HTTPoison.post!("http://localhost:5001/dialogue_manager", req_body, [
+            {"Content-Type", "application/json"}
+          ])
+
         if dm_response.status_code != 200 do
           IO.inspect(dm_response)
           {:error, "error"}
@@ -214,14 +239,23 @@ defmodule Toia.Streams do
           body = Poison.decode!(dm_response.body)
 
           id_video = body["id_video"]
+
           if id_video == "204" do
             {:error, "error"}
           else
             video = Videos.get_video!(id_video)
-            %{id_video: video.id_video, answer: video.answer, duration_seconds: video.duration_seconds, url: Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)}
+
+            %{
+              id_video: video.id_video,
+              answer: video.answer,
+              duration_seconds: video.duration_seconds,
+              url: Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)
+            }
           end
         end
-      x -> Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))
+
+      x ->
+        Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))
     end
   end
 
@@ -236,6 +270,7 @@ defmodule Toia.Streams do
       avatar_id: avatar_id,
       stream_id: stream_id
     }
+
     timeout = 20000
     method = :post
     url = System.get_env("SMARTQ_ROUTE")
@@ -243,14 +278,17 @@ defmodule Toia.Streams do
     body = Jason.encode!(post_req_data)
 
     request = HTTPoison.request(method, url, headers, body, timeout)
+
     case request do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
         |> Jason.decode!()
         |> Map.get("suggestions")
+
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts("404")
         nil
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.puts(reason)
         nil
@@ -259,16 +297,20 @@ defmodule Toia.Streams do
 
   def get_smart_questions(avatar_id, stream_id) do
     question_ids = [19, 20]
+
     query =
       from q in Question,
-      join: vqs in VideoQuestionStream, on: vqs.id_question == q.id,
-      join: v in Video, on: v.id_video == vqs.id_video,
-      where: vqs.id_stream == ^stream_id,
-      where: q.suggested_type in [:"answer", :"y/n-answer"],
-      where: not(q.id in ^question_ids),
-      order_by: q.id,
-      limit: 5,
-      select: q.question
+        join: vqs in VideoQuestionStream,
+        on: vqs.id_question == q.id,
+        join: v in Video,
+        on: v.id_video == vqs.id_video,
+        where: vqs.id_stream == ^stream_id,
+        where: q.suggested_type in [:answer, :"y/n-answer"],
+        where: q.id not in ^question_ids,
+        order_by: q.id,
+        limit: 5,
+        select: q.question
+
     Repo.all(query)
   end
 end

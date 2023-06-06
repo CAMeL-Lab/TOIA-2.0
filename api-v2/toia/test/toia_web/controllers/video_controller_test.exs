@@ -23,7 +23,15 @@ defmodule ToiaWeb.VideoControllerTest do
     private: false,
     views: 43
   }
-  @invalid_attrs %{answer: nil, duration_seconds: nil, idx: nil, language: nil, likes: nil, private: nil, views: nil}
+  @invalid_attrs %{
+    answer: nil,
+    duration_seconds: nil,
+    idx: nil,
+    language: nil,
+    likes: nil,
+    private: nil,
+    views: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

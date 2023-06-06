@@ -16,7 +16,23 @@ defmodule Toia.ConversationsLogs.ConversationLog do
   @doc false
   def changeset(conversation_log, attrs) do
     conversation_log
-    |> cast(attrs, [:interactor_id, :timestamp, :filler, :question_asked, :video_played, :ada_similarity_score, :mode])
-    |> validate_required([:interactor_id, :timestamp, :filler, :question_asked, :video_played, :ada_similarity_score, :mode])
+    |> cast(attrs, [
+      :interactor_id,
+      :timestamp,
+      :filler,
+      :question_asked,
+      :video_played,
+      :ada_similarity_score,
+      :mode
+    ])
+    |> validate_required([
+      :interactor_id,
+      :timestamp,
+      :filler,
+      :question_asked,
+      :video_played,
+      :ada_similarity_score,
+      :mode
+    ])
   end
 end

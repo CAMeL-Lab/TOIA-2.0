@@ -12,7 +12,8 @@ defmodule ToiaWeb.StreamViewPermissionController do
   end
 
   def create(conn, %{"stream_view_permission" => stream_view_permission_params}) do
-    with {:ok, %StreamViewPermission{} = stream_view_permission} <- StreamViewPermissions.create_stream_view_permission(stream_view_permission_params) do
+    with {:ok, %StreamViewPermission{} = stream_view_permission} <-
+           StreamViewPermissions.create_stream_view_permission(stream_view_permission_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/stream_view_permission/#{stream_view_permission}")
@@ -28,7 +29,11 @@ defmodule ToiaWeb.StreamViewPermissionController do
   def update(conn, %{"id" => id, "stream_view_permission" => stream_view_permission_params}) do
     stream_view_permission = StreamViewPermissions.get_stream_view_permission!(id)
 
-    with {:ok, %StreamViewPermission{} = stream_view_permission} <- StreamViewPermissions.update_stream_view_permission(stream_view_permission, stream_view_permission_params) do
+    with {:ok, %StreamViewPermission{} = stream_view_permission} <-
+           StreamViewPermissions.update_stream_view_permission(
+             stream_view_permission,
+             stream_view_permission_params
+           ) do
       render(conn, :show, stream_view_permission: stream_view_permission)
     end
   end
@@ -36,7 +41,8 @@ defmodule ToiaWeb.StreamViewPermissionController do
   def delete(conn, %{"id" => id}) do
     stream_view_permission = StreamViewPermissions.get_stream_view_permission!(id)
 
-    with {:ok, %StreamViewPermission{}} <- StreamViewPermissions.delete_stream_view_permission(stream_view_permission) do
+    with {:ok, %StreamViewPermission{}} <-
+           StreamViewPermissions.delete_stream_view_permission(stream_view_permission) do
       send_resp(conn, :no_content, "")
     end
   end

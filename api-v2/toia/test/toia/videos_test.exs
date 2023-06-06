@@ -8,7 +8,15 @@ defmodule Toia.VideosTest do
 
     import Toia.VideosFixtures
 
-    @invalid_attrs %{answer: nil, duration_seconds: nil, idx: nil, language: nil, likes: nil, private: nil, views: nil}
+    @invalid_attrs %{
+      answer: nil,
+      duration_seconds: nil,
+      idx: nil,
+      language: nil,
+      likes: nil,
+      private: nil,
+      views: nil
+    }
 
     test "list_video/0 returns all video" do
       video = video_fixture()
@@ -21,7 +29,15 @@ defmodule Toia.VideosTest do
     end
 
     test "create_video/1 with valid data creates a video" do
-      valid_attrs = %{answer: "some answer", duration_seconds: 42, idx: 42, language: "some language", likes: 42, private: true, views: 42}
+      valid_attrs = %{
+        answer: "some answer",
+        duration_seconds: 42,
+        idx: 42,
+        language: "some language",
+        likes: 42,
+        private: true,
+        views: 42
+      }
 
       assert {:ok, %Video{} = video} = Videos.create_video(valid_attrs)
       assert video.answer == "some answer"
@@ -39,7 +55,16 @@ defmodule Toia.VideosTest do
 
     test "update_video/2 with valid data updates the video" do
       video = video_fixture()
-      update_attrs = %{answer: "some updated answer", duration_seconds: 43, idx: 43, language: "some updated language", likes: 43, private: false, views: 43}
+
+      update_attrs = %{
+        answer: "some updated answer",
+        duration_seconds: 43,
+        idx: 43,
+        language: "some updated language",
+        likes: 43,
+        private: false,
+        views: 43
+      }
 
       assert {:ok, %Video{} = video} = Videos.update_video(video, update_attrs)
       assert video.answer == "some updated answer"

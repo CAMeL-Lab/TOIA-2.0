@@ -3,8 +3,14 @@ defmodule Toia.Repo.Migrations.CreateQuestionSuggestions do
 
   def change do
     create table(:question_suggestions, primary_key: false) do
-      add :id_question, references(:questions, on_delete: :delete_all, type: :serial), primary_key: true, null: false
-      add :toia_id, references(:toia_user, on_delete: :delete_all, type: :serial), null: false, primary_key: true
+      add :id_question, references(:questions, on_delete: :delete_all, type: :serial),
+        primary_key: true,
+        null: false
+
+      add :toia_id, references(:toia_user, on_delete: :delete_all, type: :serial),
+        null: false,
+        primary_key: true
+
       add :isPending, :boolean, default: true, null: false
     end
 

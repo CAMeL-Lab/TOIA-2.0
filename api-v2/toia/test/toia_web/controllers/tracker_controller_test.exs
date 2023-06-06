@@ -21,7 +21,14 @@ defmodule ToiaWeb.TrackerControllerTest do
     track_id: 43,
     video_id: "some updated video_id"
   }
-  @invalid_attrs %{activity: nil, end_time: nil, old_video_id: nil, start_time: nil, track_id: nil, video_id: nil}
+  @invalid_attrs %{
+    activity: nil,
+    end_time: nil,
+    old_video_id: nil,
+    start_time: nil,
+    track_id: nil,
+    video_id: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

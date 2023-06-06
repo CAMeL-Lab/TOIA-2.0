@@ -2,7 +2,6 @@ defmodule Toia.Videos.Video do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   @primary_key {:id_video, :string, []}
   @derive {Phoenix.Param, key: :id_video}
 

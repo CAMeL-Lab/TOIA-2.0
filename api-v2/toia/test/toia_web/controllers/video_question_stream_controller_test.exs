@@ -49,8 +49,15 @@ defmodule ToiaWeb.VideoQuestionStreamControllerTest do
   describe "update video_question_stream" do
     setup [:create_video_question_stream]
 
-    test "renders video_question_stream when data is valid", %{conn: conn, video_question_stream: %VideoQuestionStream{id: id} = video_question_stream} do
-      conn = put(conn, ~p"/api/videos_questions_streams/#{video_question_stream}", video_question_stream: @update_attrs)
+    test "renders video_question_stream when data is valid", %{
+      conn: conn,
+      video_question_stream: %VideoQuestionStream{id: id} = video_question_stream
+    } do
+      conn =
+        put(conn, ~p"/api/videos_questions_streams/#{video_question_stream}",
+          video_question_stream: @update_attrs
+        )
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/videos_questions_streams/#{id}")
@@ -62,8 +69,15 @@ defmodule ToiaWeb.VideoQuestionStreamControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, video_question_stream: video_question_stream} do
-      conn = put(conn, ~p"/api/videos_questions_streams/#{video_question_stream}", video_question_stream: @invalid_attrs)
+    test "renders errors when data is invalid", %{
+      conn: conn,
+      video_question_stream: video_question_stream
+    } do
+      conn =
+        put(conn, ~p"/api/videos_questions_streams/#{video_question_stream}",
+          video_question_stream: @invalid_attrs
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -71,7 +85,10 @@ defmodule ToiaWeb.VideoQuestionStreamControllerTest do
   describe "delete video_question_stream" do
     setup [:create_video_question_stream]
 
-    test "deletes chosen video_question_stream", %{conn: conn, video_question_stream: video_question_stream} do
+    test "deletes chosen video_question_stream", %{
+      conn: conn,
+      video_question_stream: video_question_stream
+    } do
       conn = delete(conn, ~p"/api/videos_questions_streams/#{video_question_stream}")
       assert response(conn, 204)
 
