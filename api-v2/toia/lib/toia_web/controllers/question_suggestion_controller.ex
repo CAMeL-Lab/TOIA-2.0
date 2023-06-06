@@ -6,6 +6,8 @@ defmodule ToiaWeb.QuestionSuggestionController do
   alias Toia.Repo
   alias Toia.QuestionSuggestions
   alias Toia.QuestionSuggestions.QuestionSuggestion
+  alias Toia.Questions
+  alias Toia.Questions.Question
 
   alias Toia.ToiaUser
 
@@ -42,11 +44,13 @@ defmodule ToiaWeb.QuestionSuggestionController do
     render(conn, :show, question_suggestion: question_suggestion)
   end
 
-  def update(conn, %{"id" => id, "question_suggestion" => question_suggestion_params}) do
-    question_suggestion = QuestionSuggestions.get_question_suggestion!(id)
+  def update(%{assigns: %{current_user: user}} = conn, %{"id" => id, "new_value" => new_question}) do
+    old_suggestion = %QuestionSuggestion{id_question: id, toia_id: user.id}
 
-    with {:ok, %QuestionSuggestion{} = question_suggestion} <- QuestionSuggestions.update_question_suggestion(question_suggestion, question_suggestion_params) do
-      render(conn, :show, question_suggestion: question_suggestion)
+    with {:ok, question_suggestion} <- QuestionSuggestions.update_suggestion(old_suggestion, new_question) do
+      conn
+      |> put_status(:ok)
+      |> render(:show, question_suggestion: question_suggestion)
     end
   end
 

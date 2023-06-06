@@ -99,6 +99,36 @@ defmodule Toia.QuestionSuggestions do
   end
 
   @doc """
+  Updates a suggestion.
+  """
+  def update_suggestion(%QuestionSuggestion{} = old_suggestion, new_question) do
+    suggestion = Repo.get_by!(QuestionSuggestion, [id_question: old_suggestion.id_question, toia_id: old_suggestion.toia_id])
+    question = Repo.get_by!(Question, [id: old_suggestion.id_question])
+
+    if question.question == new_question do
+      {:ok, %{id_question: question.id, question: question.question, type: question.suggested_type, priority: question.priority}}
+    else
+      allSuggestions = Repo.all(from qs in QuestionSuggestion, where: qs.id_question == ^question.id)
+
+      if length(allSuggestions) == 1 do
+        Questions.update_question(question, %{question: new_question})
+        {:ok, %{id_question: question.id, question: new_question, type: question.suggested_type, priority: question.priority}}
+      else
+        # Duplicate question
+        new_q_attr = Map.delete(question, :id)
+        new_q_attr = Map.delete(new_q_attr, :"__struct__")
+        new_q_attr = Map.delete(new_q_attr, :"__meta__")
+        new_q_attr = Map.put(new_q_attr, :question, new_question)
+        {:ok, new_q} = Questions.create_question(new_q_attr)
+
+        # Update old suggestion
+        update_question_suggestion(suggestion, %{id_question: new_q.id})
+        {:ok, %{id_question: new_q.id, question: new_q.question, type: new_q.suggested_type, priority: new_q.priority}}
+      end
+    end
+  end
+
+  @doc """
   Updates a question_suggestion.
 
   ## Examples
