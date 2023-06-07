@@ -54,8 +54,11 @@ defmodule ToiaWeb.Router do
     resources("/video", VideoController, only: [:index, :show])
 
     # User routes
+    # legacy: questions/onboarding/:user_id/pending, /questions/onboarding/:user_id/completed
+    get("/toia_user/questions/onboarding", ToiaUserController, :onboarding_questions)
     # legacy: /api/getUserStreams
     get("/toia_user/:user_id/streams", ToiaUserController, :streams)
+
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

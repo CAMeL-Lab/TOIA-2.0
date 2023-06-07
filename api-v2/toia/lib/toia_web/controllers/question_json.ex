@@ -15,7 +15,7 @@ defmodule ToiaWeb.QuestionJSON do
     %{data: data(question)}
   end
 
-  defp data(%Question{} = question) do
+  defp data(question) do
     %{
       id: question.id,
       question: question.question,

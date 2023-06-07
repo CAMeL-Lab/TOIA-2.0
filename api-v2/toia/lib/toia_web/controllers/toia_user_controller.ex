@@ -104,4 +104,11 @@ defmodule ToiaWeb.ToiaUserController do
       |> render(:index, stream: streams)
     end
   end
+
+  def onboarding_questions(%{assigns: %{current_user: user}} = conn, _params) do
+    questions = ToiaUsers.get_onboarding_questions(user.id)
+    conn
+    |> put_view(ToiaWeb.QuestionJSON)
+    |> render(:index, questions: questions)
+  end
 end

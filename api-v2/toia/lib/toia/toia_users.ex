@@ -8,6 +8,12 @@ defmodule Toia.ToiaUsers do
 
   alias Toia.ToiaUsers.ToiaUser
   alias Toia.Streams.Stream
+  alias Toia.Questions.Question
+  alias Toia.Questions
+  alias Toia.VideosQuestionsStreams
+  alias Toia.VideosQuestionsStreams.VideoQuestionStream
+  alias Toia.Videos
+  alias Toia.Videos.Video
 
   @doc """
   Returns the list of toia_user.
@@ -135,5 +141,30 @@ defmodule Toia.ToiaUsers do
   """
   def change_toia_user(%ToiaUser{} = toia_user, attrs \\ %{}) do
     ToiaUser.changeset(toia_user, attrs)
+  end
+
+  @doc """
+  Returns the list of onbaording questions for a toia_user.
+  """
+  def get_onboarding_questions(user_id) do
+    completed =
+      from vqs in VideoQuestionStream,
+        join: v in Video,
+        on: vqs.id_video == v.id_video,
+        join: q in Question,
+        on: q.id == vqs.id_question,
+        where: v.toia_id == ^user_id,
+        where: q.onboarding == true,
+        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester}
+    pending =
+      from q in Question,
+        left_join: vqs in VideoQuestionStream,
+        on: q.id == vqs.id_question,
+        join: v in Video,
+        on: vqs.id_video == v.id_video,
+        where: q.onboarding == true and is_nil(vqs.id_video) and v.toia_id == ^user_id,
+        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester}
+
+    Repo.all(completed) ++ Repo.all(pending)
   end
 end
