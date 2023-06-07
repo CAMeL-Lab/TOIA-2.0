@@ -15,7 +15,7 @@ defmodule ToiaWeb.QuestionJSON do
     %{data: data(question)}
   end
 
-  defp data(question) do
+  defp data(%Question{} = question) do
     %{
       id: question.id,
       question: question.question,
@@ -23,6 +23,18 @@ defmodule ToiaWeb.QuestionJSON do
       onboarding: question.onboarding,
       priority: question.priority,
       trigger_suggester: question.trigger_suggester
+    }
+  end
+
+  defp data(%{pending: _} = question) do
+    %{
+      id: question.id,
+      question: question.question,
+      suggested_type: question.suggested_type,
+      onboarding: question.onboarding,
+      priority: question.priority,
+      trigger_suggester: question.trigger_suggester,
+      pending: question.pending
     }
   end
 end

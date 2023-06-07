@@ -155,7 +155,7 @@ defmodule Toia.ToiaUsers do
         on: q.id == vqs.id_question,
         where: v.toia_id == ^user_id,
         where: q.onboarding == true,
-        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester}
+        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester, pending: false}
     pending =
       from q in Question,
         left_join: vqs in VideoQuestionStream,
@@ -163,7 +163,7 @@ defmodule Toia.ToiaUsers do
         join: v in Video,
         on: vqs.id_video == v.id_video,
         where: q.onboarding == true and is_nil(vqs.id_video) and v.toia_id == ^user_id,
-        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester}
+        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester, pending: true}
 
     Repo.all(completed) ++ Repo.all(pending)
   end
