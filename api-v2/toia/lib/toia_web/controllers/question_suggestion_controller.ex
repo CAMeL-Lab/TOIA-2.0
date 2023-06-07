@@ -52,6 +52,39 @@ defmodule ToiaWeb.QuestionSuggestionController do
 
   def update(%{assigns: %{current_user: user}} = conn, %{
         "id" => idStr,
+        "new_value" => new_question,
+        "isPending" => isPendingStr
+      }) do
+    {id, _} = Integer.parse(idStr)
+    old_suggestion = Repo.get_by!(QuestionSuggestion, id_question: id, toia_id: user.id)
+
+    isPending = isPendingStr == "true" or isPendingStr == "1" or isPendingStr == true
+
+    {:ok, _} = QuestionSuggestions.update_suggestion(old_suggestion, new_question)
+    old_suggestion = Repo.get_by!(QuestionSuggestion, id_question: id, toia_id: user.id)
+
+    question_suggestion =
+      QuestionSuggestions.update_question_suggestion(
+        old_suggestion,
+        %{isPending: isPending, id_question: id, toia_id: user.id}
+      )
+
+    question = Repo.get!(Question, id)
+
+    conn
+    |> put_status(:ok)
+    |> render(:show,
+      question_suggestion: %{
+        id_question: question.id,
+        question: question.question,
+        type: question.suggested_type,
+        priority: question.priority
+      }
+    )
+  end
+
+  def update(%{assigns: %{current_user: user}} = conn, %{
+        "id" => idStr,
         "new_value" => new_question
       }) do
     {id, _} = Integer.parse(idStr)
