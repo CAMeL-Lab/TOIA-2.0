@@ -64,7 +64,7 @@ defmodule ToiaWeb.Router do
     delete("/video_question_stream", VideoQuestionStreamController, :delete)
 
     # Question routes
-    # legacy: /api/questions/answered/:user_id
+    # legacy: /api/questions/answered/:user_id, api/questions/answered/:user_id/:stream_id
     get("/question/answered", QuestionController, :index_answered)
   end
 

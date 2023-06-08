@@ -9,6 +9,7 @@ defmodule Toia.Questions do
   alias Toia.Questions.Question
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.Videos.Video
+  alias Toia.Streams.Stream
 
   @doc """
   Returns the list of questions.
@@ -132,6 +133,34 @@ defmodule Toia.Questions do
   @doc """
   Returns recorded questions
   """
+  def get_answered_question(user_id, other_userid, streamid) do
+    query =
+      from(q in Question,
+        join: vqs in VideoQuestionStream,
+        on: q.id == vqs.id_question,
+        join: v in Video,
+        on: vqs.id_video == v.id_video,
+        join: s in Stream,
+        on: s.id_stream == vqs.id_stream,
+        where: v.toia_id == ^other_userid,
+        where: v.private == false,
+        where: s.private == false,
+        where: s.id_stream == ^streamid,
+        select: %{
+          id: q.id,
+          question: q.question,
+          suggested_type: q.suggested_type,
+          onboarding: q.onboarding,
+          priority: q.priority,
+          trigger_suggester: q.trigger_suggester,
+          type: vqs.type,
+          id_video: v.id_video
+        }
+      )
+
+    Repo.all(query)
+  end
+
   def get_answered_question(user_id) do
     query =
       from(q in Question,
