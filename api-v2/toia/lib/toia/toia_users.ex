@@ -9,10 +9,7 @@ defmodule Toia.ToiaUsers do
   alias Toia.ToiaUsers.ToiaUser
   alias Toia.Streams.Stream
   alias Toia.Questions.Question
-  alias Toia.Questions
-  alias Toia.VideosQuestionsStreams
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
-  alias Toia.Videos
   alias Toia.Videos.Video
 
   @doc """

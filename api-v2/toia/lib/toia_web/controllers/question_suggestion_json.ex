@@ -15,6 +15,16 @@ defmodule ToiaWeb.QuestionSuggestionJSON do
     %{data: data(question_suggestion)}
   end
 
+  defp data(%{isPending: _} = question_suggestion) do
+    %{
+      id_question: question_suggestion.id_question,
+      question: question_suggestion.question,
+      type: question_suggestion.type,
+      priority: question_suggestion.priority,
+      isPending: question_suggestion.isPending
+    }
+  end
+
   defp data(question_suggestion) do
     %{
       id_question: question_suggestion.id_question,

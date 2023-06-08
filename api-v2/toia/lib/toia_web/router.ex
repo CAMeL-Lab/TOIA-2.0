@@ -44,7 +44,7 @@ defmodule ToiaWeb.Router do
     # legacy: /api/getLastestQuestionSuggestion
     get("/question_suggestions/latest", QuestionSuggestionController, :latest)
 
-    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, /questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard
+    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, /questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard, /questions/suggestions/:user_id/pending
     resources("/question_suggestions", QuestionSuggestionController,
       only: [:index, :delete, :create, :update]
     )

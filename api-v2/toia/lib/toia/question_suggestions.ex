@@ -34,7 +34,8 @@ defmodule Toia.QuestionSuggestions do
           id_question: qs.id_question,
           question: q.question,
           type: q.suggested_type,
-          priority: q.priority
+          priority: q.priority,
+          isPending: qs.isPending
         },
         order_by: [desc: q.priority],
         limit: ^limit
@@ -55,7 +56,8 @@ defmodule Toia.QuestionSuggestions do
           id_question: qs.id_question,
           question: q.question,
           type: q.suggested_type,
-          priority: q.priority
+          priority: q.priority,
+          isPending: qs.isPending
         },
         order_by: [desc: q.priority]
 
