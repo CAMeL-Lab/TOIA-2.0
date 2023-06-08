@@ -44,7 +44,7 @@ defmodule ToiaWeb.Router do
     # legacy: /api/getLastestQuestionSuggestion
     get("/question_suggestions/latest", QuestionSuggestionController, :latest)
 
-    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, /questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard, /questions/suggestions/:user_id/pending
+    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, api/questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard, /questions/suggestions/:user_id/pending
     resources("/question_suggestions", QuestionSuggestionController,
       only: [:index, :delete, :create, :update]
     )
@@ -54,14 +54,18 @@ defmodule ToiaWeb.Router do
     resources("/video", VideoController, only: [:index, :show])
 
     # User routes
-    # legacy: questions/onboarding/:user_id/pending, /questions/onboarding/:user_id/completed
+    # legacy: api/questions/onboarding/:user_id/pending, api/questions/onboarding/:user_id/completed
     get("/toia_user/questions/onboarding", ToiaUserController, :onboarding_questions)
     # legacy: /api/getUserStreams
     get("/toia_user/:user_id/streams", ToiaUserController, :streams)
 
     # Video Question Stream routes
-    # Legacy: /questions/answered/delete
+    # Legacy: api/questions/answered/delete
     delete("/video_question_stream", VideoQuestionStreamController, :delete)
+
+    # Question routes
+    # legacy: /api/questions/answered/:user_id
+    get("/question/answered", QuestionController, :index_answered)
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -11,6 +11,11 @@ defmodule ToiaWeb.QuestionController do
     render(conn, :index, questions: questions)
   end
 
+  def index_answered(%{assigns: %{current_user: user}} = conn, _params) do
+    questions = Questions.get_answered_question(user.id)
+    render(conn, :index, questions: questions)
+  end
+
   def create(conn, %{"question" => question_params}) do
     with {:ok, %Question{} = question} <- Questions.create_question(question_params) do
       conn
