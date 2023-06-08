@@ -38,12 +38,10 @@ defmodule ToiaWeb.VideoQuestionStreamController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    video_question_stream = VideosQuestionsStreams.get_video_question_stream!(id)
-
-    with {:ok, %VideoQuestionStream{}} <-
-           VideosQuestionsStreams.delete_video_question_stream(video_question_stream) do
-      send_resp(conn, :no_content, "")
-    end
+  def delete(%{assigns: %{current_user: user}} = conn, %{"question_id" => question_id, "video_id" => video_id}) do
+    {removedEntries, _} = VideosQuestionsStreams.delete_video_question_stream_by(user.id, question_id, video_id)
+    conn
+    |> put_status(:ok)
+    |> json(%{removedEntries: removedEntries})
   end
 end

@@ -59,6 +59,9 @@ defmodule ToiaWeb.Router do
     # legacy: /api/getUserStreams
     get("/toia_user/:user_id/streams", ToiaUserController, :streams)
 
+    # Video Question Stream routes
+    # Legacy: /questions/answered/delete
+    delete("/video_question_stream", VideoQuestionStreamController, :delete)
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -90,6 +90,15 @@ defmodule Toia.VideosQuestionsStreams do
     Repo.delete(video_question_stream)
   end
 
+  def delete_video_question_stream_by(user_id, question_id, video_id) do
+    query = from vqs in VideoQuestionStream,
+      inner_join: v in Video,
+      on: vqs.id_video == v.id_video,
+      where: v.toia_id == ^user_id and vqs.id_question == ^question_id and vqs.id_video == ^video_id
+
+    Repo.delete_all(query)
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking video_question_stream changes.
 
