@@ -56,8 +56,9 @@ defmodule ToiaWeb.ToiaUserController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    toia_user = ToiaUsers.get_toia_user!(id)
+  def show(%{assigns: %{current_user: user}} = conn, _) do
+    toia_user = ToiaUsers.get_toia_user!(user.id)
+    toia_user = Map.delete(toia_user, :password)
     render(conn, :show, toia_user: toia_user)
   end
 
