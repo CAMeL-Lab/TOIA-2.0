@@ -28,4 +28,8 @@ defmodule ToiaWeb.ToiaUserJSON do
       email: toia_user.email
     }
   end
+
+  def stats(%{stats: stats_}) do
+    %{data: stats_}
+  end
 end

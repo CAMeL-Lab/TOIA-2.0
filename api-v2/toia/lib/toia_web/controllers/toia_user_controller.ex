@@ -112,4 +112,11 @@ defmodule ToiaWeb.ToiaUserController do
     |> put_view(ToiaWeb.QuestionJSON)
     |> render(:index, questions: questions)
   end
+
+  def stats(%{assigns: %{current_user: user}} = conn, _params) do
+    stats = ToiaUsers.get_stats(user.id)
+    conn
+    |> put_view(ToiaWeb.ToiaUserJSON)
+    |> render(:stats, stats: stats)
+  end
 end

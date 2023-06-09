@@ -164,4 +164,58 @@ defmodule Toia.ToiaUsers do
 
     Repo.all(completed) ++ Repo.all(pending)
   end
+
+  @doc """
+  Returns totalVideosCount, totalStreamCounts, totalVideoDuration
+  """
+  def get_stats(user_id) do
+    videos_count = video_count(user_id)
+    streams_count = stream_count(user_id)
+    video_duration = video_duration(user_id)
+
+    %{totalVideosCount: videos_count, totalStreamCounts: streams_count, totalVideoDuration: video_duration}
+  end
+
+  @doc """
+  Returns a list of recorded video ids
+  """
+  def recorded_video_ids(user_id) do
+    query = from v in Video,
+      join: vqs in VideoQuestionStream,
+      on: v.id_video == vqs.id_video,
+      where: v.toia_id == ^user_id,
+      select: v.id_video
+
+    Repo.all(query) |> Enum.uniq()
+  end
+
+  @doc """
+  Returns the number of videos uploaded by this user
+  """
+  def video_count(user_id) do
+    valid_ids = recorded_video_ids(user_id)
+    query = from v in Video,
+      where: v.id_video in ^valid_ids,
+      select: count(v.id_video)
+    Repo.one(query)
+  end
+
+  @doc """
+  Returns the number of streams created by this user
+  """
+  def stream_count(user_id) do
+    query = from s in Stream, where: s.toia_id == ^user_id, select: count(s.id_stream)
+    Repo.one(query)
+  end
+
+  @doc """
+  Returns the total duration of videos uploaded by this user
+  """
+  def video_duration(user_id) do
+    valid_ids = recorded_video_ids(user_id)
+    query = from v in Video,
+      where: v.id_video in ^valid_ids,
+      select: sum(v.duration_seconds)
+    Repo.one(query)
+  end
 end
