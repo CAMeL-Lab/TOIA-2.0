@@ -12,7 +12,7 @@ defmodule Toia.PlayerFeedbacks.PlayerFeedback do
   @doc false
   def changeset(player_feedback, attrs) do
     player_feedback
-    |> cast(attrs, [:video_id, :question, :rating])
+    |> cast(attrs, [:user_id, :video_id, :question, :rating])
     |> validate_required([:video_id, :question, :rating])
   end
 end

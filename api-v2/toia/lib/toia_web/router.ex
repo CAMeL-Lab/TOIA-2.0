@@ -70,6 +70,10 @@ defmodule ToiaWeb.Router do
     # Question routes
     # legacy: /api/questions/answered/:user_id, api/questions/answered/:user_id/:stream_id
     get("/question/answered", QuestionController, :index_answered)
+
+    # Player feedback routes
+    # legacy: api/save_player_feedback
+    resources("/player_feedback", PlayerFeedbackController, only: [:create])
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -11,12 +11,12 @@ defmodule ToiaWeb.PlayerFeedbackController do
     render(conn, :index, player_feedback: player_feedback)
   end
 
-  def create(conn, %{"player_feedback" => player_feedback_params}) do
+  def create(%{assigns: %{current_user: user}} = conn, %{"video_id" => _, "question" => _, "rating" => _} = params) do
+    player_feedback_params = Map.put(params, "user_id", user.id)
     with {:ok, %PlayerFeedback{} = player_feedback} <-
            PlayerFeedbacks.create_player_feedback(player_feedback_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/player_feedback/#{player_feedback}")
       |> render(:show, player_feedback: player_feedback)
     end
   end
