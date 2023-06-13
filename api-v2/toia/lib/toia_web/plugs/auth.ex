@@ -11,6 +11,7 @@ defmodule ToiaWeb.Plugs.Auth do
   end
 
   def ensureLogin(conn, token) do
+    token = String.replace(token, "Bearer ", "")
     with {:ok, claims} <- Toia.Guardian.decode_and_verify(token) do
       case Toia.Guardian.resource_from_claims(claims) do
         {:ok, user} ->
