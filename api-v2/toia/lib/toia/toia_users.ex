@@ -218,4 +218,12 @@ defmodule Toia.ToiaUsers do
       select: sum(v.duration_seconds)
     Repo.one(query)
   end
+
+  @doc """
+  Returns if the user owns a stream
+  """
+  def owns_stream(user_id, stream_id) do
+    query = from s in Stream, where: s.id_stream == ^stream_id, where: s.toia_id == ^user_id, select: count(s.id_stream)
+    Repo.one(query) > 0
+  end
 end
