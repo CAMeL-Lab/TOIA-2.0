@@ -21,7 +21,6 @@ defmodule ToiaWeb.ToiaUserController do
       with {:ok, token, _claims} <- Toia.Guardian.encode_and_sign(toia_user) do
         conn
         |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/toia_user/#{toia_user}")
         |> render(:show, toia_user: toia_user, token: token)
       else
         {:error, :secret_not_found} ->

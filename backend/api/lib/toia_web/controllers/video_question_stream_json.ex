@@ -20,7 +20,9 @@ defmodule ToiaWeb.VideoQuestionStreamJSON do
 
   defp data(%VideoQuestionStream{} = video_question_stream) do
     %{
-      id: video_question_stream.id,
+      id_question: video_question_stream.id_question,
+      id_stream: video_question_stream.id_stream,
+      id_video: video_question_stream.id_video,
       type: video_question_stream.type,
       ada_search: video_question_stream.ada_search
     }

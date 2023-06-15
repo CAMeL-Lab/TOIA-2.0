@@ -26,3 +26,5 @@ erl_crash.dump
 toia-*.tar
 
 Accounts
+
+*.env

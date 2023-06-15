@@ -1,21 +1,36 @@
 import React from "react";
 import ReactDOM from "react-dom";
-// import './App.css'
-// import './index.css';
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-// import 'semantic-ui-css/semantic.min.css';
-// import 'react-notifications/lib/notifications.css';
 import "./main.scss";
+import axios from "axios";
+import { Service } from "axios-middleware";
+import { getToken, saveToken, saveUser } from "./auth/auth";
+import API_URLS from "./configs/api";
 
-{
-	/* <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
-  integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
-  crossorigin="anonymous"
-/> */
-}
+const service = new Service(axios);
+
+service.register({
+	onRequest(config) {
+		// Attach token to the header
+		const token = getToken();
+		token &&
+			token !== "" &&
+			(config.headers.Authorization = `Bearer ${token}`);
+		return config;
+	},
+	onResponse(response) {
+		const url = response.config.url;
+		if (url === API_URLS.SIGN_UP) {
+			const responseData = JSON.parse(response.data);
+			const token = responseData.token;
+			const user = responseData.data;
+			saveToken(token);
+			saveUser(user);
+		}
+		return response;
+	},
+});
 
 ReactDOM.render(
 	<React.StrictMode>

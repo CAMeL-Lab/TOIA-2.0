@@ -38,7 +38,7 @@ defmodule Toia.Guardian do
         false -> {:error, :invalid_credentials}
       end
     rescue
-      e in Ecto.NoResultsError -> {:error, :invalid_credentials}
+      _e in Ecto.NoResultsError -> {:error, :invalid_credentials}
     end
   end
 end
