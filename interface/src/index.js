@@ -21,7 +21,7 @@ service.register({
 	},
 	onResponse(response) {
 		const url = response.config.url;
-		if (url === API_URLS.SIGN_UP) {
+		if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
 			const responseData = JSON.parse(response.data);
 			const token = responseData.token;
 			const user = responseData.data;
