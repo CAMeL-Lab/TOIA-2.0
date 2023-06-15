@@ -59,28 +59,53 @@ defmodule Toia.ToiaUsers do
         %{"profile_pic" => %Plug.Upload{path: path}} = toia_user_params
       ) do
     toia_user_params = Map.delete(toia_user_params, "profile_pic")
-    {:ok, toia_user, stream} = create_toia_user_with_stream(toia_user_params)
-    destDir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"
-    destFilename = "All_#{stream.id_stream}.jpg"
 
-    case File.mkdir_p(destDir) do
-      :ok ->
-        case File.rename(path, destDir <> destFilename) do
-          :ok -> {:ok, toia_user, stream}
-          {:error, reason} -> {:error_pic, reason}
+    case create_toia_user_with_stream(toia_user_params) do
+      {:ok, toia_user, stream} ->
+        destDir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"
+        destFilename = "All_#{stream.id_stream}.jpg"
+
+        case File.mkdir_p(destDir) do
+          :ok ->
+            case File.rename(path, destDir <> destFilename) do
+              :ok ->
+                {:ok, toia_user, stream}
+
+              {:error, reason} ->
+                {:error_pic, reason}
+            end
+
+          {:error, reason} ->
+            {:error_pic, reason}
         end
 
-      {:error, reason} ->
-        {:error_pic, reason}
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 
   def create_toia_user_with_stream(attrs) do
-    {:ok, %ToiaUser{} = toia_user} = create_toia_user(attrs)
-    stream = %{name: "All", toia_id: toia_user.id}
-    {:ok, %Stream{} = stream} = Toia.Streams.create_stream(stream)
+    case create_toia_user(attrs) do
+      {:ok, %ToiaUser{} = toia_user} ->
+        stream = %{name: "All", toia_id: toia_user.id}
 
-    {:ok, toia_user, stream}
+        case Toia.Streams.create_stream(stream) do
+          {:ok, %Stream{} = created_stream} ->
+            {:ok, toia_user, created_stream}
+
+          {:error, changeset} ->
+            {:error, changeset}
+
+          _ ->
+            {:error, "Failed to create stream"}
+        end
+
+      {:error, changeset} ->
+        {:error, changeset}
+
+      _ ->
+        {:error, "Failed to create user"}
+    end
   end
 
   def create_toia_user(attrs \\ %{}) do
@@ -145,22 +170,41 @@ defmodule Toia.ToiaUsers do
   """
   def get_onboarding_questions(user_id) do
     completed =
-      from vqs in VideoQuestionStream,
+      from(vqs in VideoQuestionStream,
         join: v in Video,
         on: vqs.id_video == v.id_video,
         join: q in Question,
         on: q.id == vqs.id_question,
         where: v.toia_id == ^user_id,
         where: q.onboarding == true,
-        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester, pending: false}
+        select: %{
+          id: q.id,
+          question: q.question,
+          suggested_type: q.suggested_type,
+          onboarding: q.onboarding,
+          priority: q.priority,
+          trigger_suggester: q.trigger_suggester,
+          pending: false
+        }
+      )
+
     pending =
-      from q in Question,
+      from(q in Question,
         left_join: vqs in VideoQuestionStream,
         on: q.id == vqs.id_question,
         join: v in Video,
         on: vqs.id_video == v.id_video,
         where: q.onboarding == true and is_nil(vqs.id_video) and v.toia_id == ^user_id,
-        select: %{id: q.id, question: q.question, suggested_type: q.suggested_type, onboarding: q.onboarding, priority: q.priority, trigger_suggester: q.trigger_suggester, pending: true}
+        select: %{
+          id: q.id,
+          question: q.question,
+          suggested_type: q.suggested_type,
+          onboarding: q.onboarding,
+          priority: q.priority,
+          trigger_suggester: q.trigger_suggester,
+          pending: true
+        }
+      )
 
     Repo.all(completed) ++ Repo.all(pending)
   end
@@ -173,18 +217,24 @@ defmodule Toia.ToiaUsers do
     streams_count = stream_count(user_id)
     video_duration = video_duration(user_id)
 
-    %{totalVideosCount: videos_count, totalStreamCounts: streams_count, totalVideoDuration: video_duration}
+    %{
+      totalVideosCount: videos_count,
+      totalStreamCounts: streams_count,
+      totalVideoDuration: video_duration
+    }
   end
 
   @doc """
   Returns a list of recorded video ids
   """
   def recorded_video_ids(user_id) do
-    query = from v in Video,
-      join: vqs in VideoQuestionStream,
-      on: v.id_video == vqs.id_video,
-      where: v.toia_id == ^user_id,
-      select: v.id_video
+    query =
+      from(v in Video,
+        join: vqs in VideoQuestionStream,
+        on: v.id_video == vqs.id_video,
+        where: v.toia_id == ^user_id,
+        select: v.id_video
+      )
 
     Repo.all(query) |> Enum.uniq()
   end
@@ -194,9 +244,13 @@ defmodule Toia.ToiaUsers do
   """
   def video_count(user_id) do
     valid_ids = recorded_video_ids(user_id)
-    query = from v in Video,
-      where: v.id_video in ^valid_ids,
-      select: count(v.id_video)
+
+    query =
+      from(v in Video,
+        where: v.id_video in ^valid_ids,
+        select: count(v.id_video)
+      )
+
     Repo.one(query)
   end
 
@@ -204,7 +258,7 @@ defmodule Toia.ToiaUsers do
   Returns the number of streams created by this user
   """
   def stream_count(user_id) do
-    query = from s in Stream, where: s.toia_id == ^user_id, select: count(s.id_stream)
+    query = from(s in Stream, where: s.toia_id == ^user_id, select: count(s.id_stream))
     Repo.one(query)
   end
 
@@ -213,9 +267,13 @@ defmodule Toia.ToiaUsers do
   """
   def video_duration(user_id) do
     valid_ids = recorded_video_ids(user_id)
-    query = from v in Video,
-      where: v.id_video in ^valid_ids,
-      select: sum(v.duration_seconds)
+
+    query =
+      from(v in Video,
+        where: v.id_video in ^valid_ids,
+        select: sum(v.duration_seconds)
+      )
+
     Repo.one(query)
   end
 
@@ -223,7 +281,13 @@ defmodule Toia.ToiaUsers do
   Returns if the user owns a stream
   """
   def owns_stream(user_id, stream_id) do
-    query = from s in Stream, where: s.id_stream == ^stream_id, where: s.toia_id == ^user_id, select: count(s.id_stream)
+    query =
+      from(s in Stream,
+        where: s.id_stream == ^stream_id,
+        where: s.toia_id == ^user_id,
+        select: count(s.id_stream)
+      )
+
     Repo.one(query) > 0
   end
 end

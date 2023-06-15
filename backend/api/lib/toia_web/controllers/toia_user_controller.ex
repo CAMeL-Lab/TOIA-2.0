@@ -8,7 +8,7 @@ defmodule ToiaWeb.ToiaUserController do
   alias Toia.ToiaUsers.ToiaUser
   alias Toia.Streams.Stream
 
-  action_fallback ToiaWeb.FallbackController
+  action_fallback(ToiaWeb.FallbackController)
 
   def index(conn, _params) do
     toia_user = ToiaUsers.list_toia_user()
@@ -46,6 +46,11 @@ defmodule ToiaWeb.ToiaUserController do
         |> put_status(:internal_server_error)
         |> json(%{error: "Photo couldn't be uploaded"})
 
+      {:error, changeset} ->
+        conn
+        |> put_view(json: ToiaWeb.ChangesetJSON)
+        |> render(:error, changeset: changeset)
+
       _ ->
         IO.inspect("Something went wrong")
 
@@ -78,12 +83,12 @@ defmodule ToiaWeb.ToiaUserController do
   end
 
   def list_stream(user_id) do
-    query = from s in Stream, where: s.toia_id == ^user_id
+    query = from(s in Stream, where: s.toia_id == ^user_id)
     Repo.all(query)
   end
 
   def list_public_stream(user_id) do
-    query = from s in Stream, where: s.toia_id == ^user_id and s.private == false
+    query = from(s in Stream, where: s.toia_id == ^user_id and s.private == false)
     Repo.all(query)
   end
 
@@ -107,6 +112,7 @@ defmodule ToiaWeb.ToiaUserController do
 
   def onboarding_questions(%{assigns: %{current_user: user}} = conn, _params) do
     questions = ToiaUsers.get_onboarding_questions(user.id)
+
     conn
     |> put_view(ToiaWeb.QuestionJSON)
     |> render(:index, questions: questions)
@@ -114,6 +120,7 @@ defmodule ToiaWeb.ToiaUserController do
 
   def stats(%{assigns: %{current_user: user}} = conn, _params) do
     stats = ToiaUsers.get_stats(user.id)
+
     conn
     |> put_view(ToiaWeb.ToiaUserJSON)
     |> render(:stats, stats: stats)
