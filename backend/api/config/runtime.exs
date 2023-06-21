@@ -20,6 +20,12 @@ if System.get_env("PHX_SERVER") do
   config :toia, ToiaWeb.Endpoint, server: true
 end
 
+if System.get_env("API_URL") == nil do
+  raise """
+  environment variable API_URL is missing.
+  """
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

@@ -347,6 +347,6 @@ defmodule Toia.Streams do
   def get_stream_pic(stream) do
     user_id = stream.toia_id
     user = ToiaUsers.get_toia_user!(user_id)
-    "/#{user.first_name}_#{user.id}/StreamPic/#{stream.name}_#{stream.id_stream}.jpg"
+    "#{System.get_env("API_URL")}/media/#{user.first_name}_#{user.id}/StreamPic/#{stream.name}_#{stream.id_stream}.jpg"
   end
 end
