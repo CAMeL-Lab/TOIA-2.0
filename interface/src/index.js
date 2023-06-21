@@ -19,7 +19,9 @@ service.register({
 		if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
 			const responseData = JSON.parse(response.data);
 			const token = responseData.token;
-			saveToken(token);
+			if (token) {
+				saveToken(token);
+			}
 		}
 		return response;
 	},

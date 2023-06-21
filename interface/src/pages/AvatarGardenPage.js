@@ -387,7 +387,7 @@ function AvatarGardenPage() {
 		axios
 			.request(options)
 			.then(function (response) {
-				const data = response.data;
+				const data = response.data.data;
 
 				setVideosCount(data.totalVideosCount);
 				setVideosTotalDuration(data.totalVideoDuration);

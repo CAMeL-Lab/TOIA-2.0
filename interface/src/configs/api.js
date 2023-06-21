@@ -1,8 +1,8 @@
 const BASE_URL = "http://localhost:4000/api";
 
 const API_URLS = {
-	SIGN_UP: `${BASE_URL}/toia_user`,
-	LOGIN: `${BASE_URL}/login`,
+	SIGN_UP: `${BASE_URL}/auth/toia_user`,
+	LOGIN: `${BASE_URL}/auth/login`,
 	CREATE_NEW_STREAM: `${BASE_URL}/stream`,
 	GET_USER_STREAMS: user_id => `${BASE_URL}/toia_user/${user_id}/streams`,
 	VIDEO_INFO: video_id => `${BASE_URL}/video/${video_id}`,

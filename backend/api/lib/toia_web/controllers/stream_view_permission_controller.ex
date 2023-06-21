@@ -16,7 +16,6 @@ defmodule ToiaWeb.StreamViewPermissionController do
            StreamViewPermissions.create_stream_view_permission(stream_view_permission_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/stream_view_permission/#{stream_view_permission}")
       |> render(:show, stream_view_permission: stream_view_permission)
     end
   end

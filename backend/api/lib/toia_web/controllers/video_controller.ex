@@ -15,7 +15,6 @@ defmodule ToiaWeb.VideoController do
     with {:ok, %Video{} = video} <- Videos.create_video(video_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/video/#{video}")
       |> render(:show, video: video)
     end
   end

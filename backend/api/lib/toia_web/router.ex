@@ -9,7 +9,7 @@ defmodule ToiaWeb.Router do
     plug(ToiaWeb.Plugs.Auth)
   end
 
-  scope "/api", ToiaWeb do
+  scope "/api/auth", ToiaWeb do
     pipe_through(:api)
 
     # legacy: /api/login

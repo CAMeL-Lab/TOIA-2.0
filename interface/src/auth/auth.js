@@ -2,11 +2,11 @@ import jwtDecode from "jwt-decode";
 
 const saveToken = token => {
 	console.log("saveToken", token);
-	window.localStorage.setItem("token", token);
+	window.localStorage.setItem("auth_token", token);
 };
 
 const getToken = () => {
-	return window.localStorage.getItem("token");
+	return window.localStorage.getItem("auth_token");
 };
 
 const getUser = () => {
@@ -21,7 +21,7 @@ const getUser = () => {
 };
 
 const removeToken = () => {
-	window.localStorage.removeItem("token");
+	window.localStorage.removeItem("auth_token");
 };
 
 const logout = () => {
