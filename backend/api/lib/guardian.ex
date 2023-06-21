@@ -34,8 +34,17 @@ defmodule Toia.Guardian do
       user = ToiaUsers.get_toia_user_by_email!(email)
 
       case Bcrypt.verify_pass(password, user.password) do
-        true -> Toia.Guardian.encode_and_sign(user)
-        false -> {:error, :invalid_credentials}
+        true ->
+          Toia.Guardian.encode_and_sign(user, %{
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            language: user.language,
+            email: user.email
+          })
+
+        false ->
+          {:error, :invalid_credentials}
       end
     rescue
       _e in Ecto.NoResultsError -> {:error, :invalid_credentials}

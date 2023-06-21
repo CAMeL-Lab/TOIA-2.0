@@ -1,22 +1,17 @@
+import jwtDecode from "jwt-decode";
+
 const saveToken = token => {
-    console.log("saveToken", token);
+	console.log("saveToken", token);
 	window.localStorage.setItem("token", token);
 };
 
 const getToken = () => {
-	return window.localStorage.getItem("token") ?? "";
-};
-
-const saveUser = user => {
-	window.localStorage.setItem("user", JSON.stringify(user));
+	return window.localStorage.getItem("token");
 };
 
 const getUser = () => {
-	return JSON.parse(window.localStorage.getItem("user")) ?? {};
-};
-
-const removeUser = () => {
-	window.localStorage.removeItem("user");
+	let user = jwtDecode(getToken());
+	return user;
 };
 
 const removeToken = () => {
@@ -24,16 +19,26 @@ const removeToken = () => {
 };
 
 const logout = () => {
-	removeUser();
 	removeToken();
+};
+
+const attachToken = config => {
+	const token = getToken();
+	token && (config.headers.Authorization = `Bearer ${token}`);
+	return config;
+};
+
+const isLoggedIn = () => {
+	const token = getToken();
+	return !!token;
 };
 
 export {
 	saveToken,
 	getToken,
-	saveUser,
 	getUser,
-	removeUser,
 	removeToken,
 	logout,
+	attachToken,
+	isLoggedIn,
 };

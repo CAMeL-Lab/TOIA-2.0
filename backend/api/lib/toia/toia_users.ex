@@ -188,13 +188,13 @@ defmodule Toia.ToiaUsers do
         }
       )
 
+    completed = Repo.all(completed) |> Enum.uniq_by(& &1.id)
+    completed_ids = Enum.map(completed, & &1.id)
+
     pending =
       from(q in Question,
-        left_join: vqs in VideoQuestionStream,
-        on: q.id == vqs.id_question,
-        join: v in Video,
-        on: vqs.id_video == v.id_video,
-        where: q.onboarding == true and is_nil(vqs.id_video) and v.toia_id == ^user_id,
+        where: q.onboarding == true,
+        where: q.id not in ^completed_ids,
         select: %{
           id: q.id,
           question: q.question,
@@ -206,7 +206,8 @@ defmodule Toia.ToiaUsers do
         }
       )
 
-    Repo.all(completed) ++ Repo.all(pending)
+    pending = Repo.all(pending) |> Enum.uniq_by(& &1.id)
+    pending ++ completed
   end
 
   @doc """

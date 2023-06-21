@@ -19,7 +19,14 @@ defmodule ToiaWeb.ToiaUserController do
   def create(conn, toia_user_params) do
     with {:ok, %ToiaUser{} = toia_user, _stream} <-
            ToiaUsers.create_toia_user_with_stream(toia_user_params) do
-      with {:ok, token, _claims} <- Toia.Guardian.encode_and_sign(toia_user) do
+      with {:ok, token, _claims} <-
+             Toia.Guardian.encode_and_sign(toia_user, %{
+               id: toia_user.id,
+               first_name: toia_user.first_name,
+               last_name: toia_user.last_name,
+               langauge: toia_user.language,
+               email: toia_user.email
+             }) do
         conn
         |> put_status(:created)
         |> render(:show, toia_user: toia_user, token: token)

@@ -1,32 +1,25 @@
+import axios from "axios";
+import { Service } from "axios-middleware";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import "./main.scss";
-import axios from "axios";
-import { Service } from "axios-middleware";
-import { getToken, saveToken, saveUser } from "./auth/auth";
+import { attachToken, saveToken } from "./auth/auth";
 import API_URLS from "./configs/api";
+import "./main.scss";
+import reportWebVitals from "./reportWebVitals";
 
 const service = new Service(axios);
 
 service.register({
 	onRequest(config) {
-		// Attach token to the header
-		const token = getToken();
-		token &&
-			token !== "" &&
-			(config.headers.Authorization = `Bearer ${token}`);
-		return config;
+		return attachToken(config);
 	},
 	onResponse(response) {
 		const url = response.config.url;
 		if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
 			const responseData = JSON.parse(response.data);
 			const token = responseData.token;
-			const user = responseData.data;
 			saveToken(token);
-			saveUser(user);
 		}
 		return response;
 	},
