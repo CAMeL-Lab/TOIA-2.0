@@ -25,10 +25,13 @@ defmodule ToiaWeb.VideoController do
 
     case Videos.canAccess(user, video) do
       true ->
+        video = videoWithStreams(video, user.id)
+        video = videoWithQuestions(video, user.id)
         playbackUrl = Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)
         video = Map.put(video, :videoURL, playbackUrl)
-        IO.inspect(video)
-        render(conn, :show, video: video)
+        conn
+        |> put_status(:ok)
+        |> render(:videoWithInfo, video: video)
 
       false ->
         conn
@@ -50,6 +53,28 @@ defmodule ToiaWeb.VideoController do
 
     with {:ok, %Video{}} <- Videos.delete_video(video) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+  def videoWithStreams(video, user_id) do
+    if video.toia_id == user_id do
+      video = Map.put(video, :isOwner, true)
+      streams = Videos.getVideoStreams(video.id_video)
+      Map.put(video, :streams, streams)
+    else
+      video = Map.put(video, :isOwner, false)
+      streams = Videos.getVideoPublicStreams(video.id_video)
+      Map.put(video, :streams, streams)
+    end
+  end
+
+  def videoWithQuestions(video, user_id) do
+    if video.toia_id == user_id do
+        questions = Videos.getVideoQuestions(video.id_video)
+        Map.put(video, :questions, questions)
+    else
+        questions = Videos.getVideoPublicQuestions(video.id_video)
+        Map.put(video, :questions, questions)
     end
   end
 end

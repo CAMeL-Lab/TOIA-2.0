@@ -11,6 +11,8 @@ defmodule Toia.Streams do
   alias Toia.Videos.Video
   alias Toia.Videos
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
+  alias Toia.ToiaUsers.ToiaUser
+  alias Toia.ToiaUsers
 
   @doc """
   Returns the list of stream.
@@ -27,6 +29,12 @@ defmodule Toia.Streams do
 
   def list_public_stream do
     Repo.all(from s in Stream, where: s.private == false)
+  end
+
+  def list_accessible_stream(user_id) do
+    query = from s in Stream,
+      where: s.private == false or s.toia_id == ^user_id
+    Repo.all(query)
   end
 
   @doc """
@@ -263,6 +271,7 @@ defmodule Toia.Streams do
   Retrieve suggestion from q_api
   """
   def get_smart_questions(avatar_id, stream_id, latest_question, latest_answer) do
+    # TODO: TEST this function
     post_req_data = %{
       new_q: latest_question,
       new_a: latest_answer,
@@ -309,8 +318,36 @@ defmodule Toia.Streams do
         where: q.id not in ^question_ids,
         order_by: q.id,
         limit: 5,
-        select: q.question
+        select: %{question: q.question}
 
     Repo.all(query)
+  end
+
+  def get_videos_count(stream_id) do
+    query =
+      from vqs in VideoQuestionStream,
+        where: vqs.id_stream == ^stream_id,
+        select: count(vqs.id_video)
+
+    Repo.one(query)
+  end
+
+  def get_videos_count(stream_id, _private) do
+    query =
+      from vqs in VideoQuestionStream,
+        join: v in Video,
+        on: v.id_video == vqs.id_video,
+        where: vqs.id_stream == ^stream_id,
+        where: v.private == false,
+        select: count(vqs.id_video)
+
+    Repo.one(query)
+  end
+
+  #  `/${fields.toiaName[0]}_${fields.toiaID[0]}/StreamPic/${streamEntry.name}_${streamEntry.id_stream}.jpg`;
+  def get_stream_pic(stream) do
+    user_id = stream.toia_id
+    user = ToiaUsers.get_toia_user!(user_id)
+    "/#{user.first_name}_#{user.id}/StreamPic/#{stream.name}_#{stream.id_stream}.jpg"
   end
 end

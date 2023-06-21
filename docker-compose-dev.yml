@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
     ports:
-      - "3307:3306"
+      - "3306:3306"
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
     volumes:
@@ -55,9 +55,9 @@ services:
       - PYTHONUNBUFFERED=1
 
   express-api:
-    depends_on:
-      mysql:
-        condition: service_healthy
+    # depends_on:
+    #   mysql:
+    #     condition: service_healthy
     build:
       context: ./
       dockerfile: server/Dockerfile.dev

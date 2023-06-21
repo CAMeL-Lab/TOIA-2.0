@@ -7,6 +7,9 @@ defmodule Toia.Videos do
   alias Toia.Repo
 
   alias Toia.Videos.Video
+  alias Toia.Streams.Stream
+  alias Toia.VideosQuestionsStreams.VideoQuestionStream
+  alias Toia.Questions.Question
 
   @doc """
   Returns the list of video.
@@ -121,5 +124,54 @@ defmodule Toia.Videos do
   """
   def getPlaybackUrl(first_name, toia_id, video_id) do
     "/#{first_name}_#{toia_id}/Videos/#{video_id}"
+  end
+
+  @doc """
+  Returns list of all the streams this video is in
+  """
+  def getVideoStreams(video_id) do
+    query = from s in Stream,
+      join: vqs in VideoQuestionStream, on: s.id_stream == vqs.id_stream,
+      where: vqs.id_video == ^video_id,
+      select: s,
+      distinct: true
+    Repo.all(query)
+  end
+
+  @doc """
+  Return list of public streams this video is in
+  """
+  def getVideoPublicStreams(video_id) do
+    query = from s in Stream,
+      join: vqs in VideoQuestionStream, on: s.id_stream == vqs.id_stream,
+      where: vqs.id_video == ^video_id and s.private == false,
+      select: s,
+      distinct: true
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns the list of all the questions this video is attached to
+  """
+  def getVideoQuestions(video_id) do
+    query = from vqs in VideoQuestionStream,
+      join: q in Question, on: vqs.id_question == q.id,
+      where: vqs.id_video == ^video_id,
+      select: q,
+      distinct: true
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns the list of all the questions this video is attached to, but the stream must be public
+  """
+  def getVideoPublicQuestions(video_id) do
+    query = from vqs in VideoQuestionStream,
+      join: q in Question, on: vqs.id_question == q.id,
+      join: s in Stream, on: vqs.id_stream == s.id_stream,
+      where: vqs.id_video == ^video_id and s.private == false,
+      select: q,
+      distinct: true
+    Repo.all(query)
   end
 end

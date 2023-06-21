@@ -37,8 +37,8 @@ defmodule ToiaWeb.Router do
     get("/stream/:id/next", StreamController, :next)
     # legacy: /api/getSmartQuestions
     get("/stream/:id/smart_questions", StreamController, :smart_questions)
-    # legacy: /api/getAllStreams
-    resources("/stream", StreamController, only: [:index, :create])
+    # legacy: /api/getAllStreams, /api/getStreamVideosCount
+    resources("/stream", StreamController, only: [:index, :create, :show])
 
     # Question Suggestion routes
     # legacy: /api/getLastestQuestionSuggestion
@@ -50,7 +50,7 @@ defmodule ToiaWeb.Router do
     )
 
     # Video routes
-    # legacy: /api/getUserVideos
+    # legacy: /api/getUserVideos, /api/getVideoPlayback, /api/videos/:user_id
     resources("/video", VideoController, only: [:index, :show])
 
     # User routes
@@ -60,7 +60,7 @@ defmodule ToiaWeb.Router do
     get("/toia_user/:user_id/streams", ToiaUserController, :streams)
     # legacy: /api/getUserData
     get("/toia_user/", ToiaUserController, :show)
-    # legacy: /api/getStreamVideosCount, /api/getUserVideosCount, /api/getTotalVideoDuration
+    # legacy: /api/getUserVideosCount, /api/getTotalVideoDuration
     get("/toia_user/stats", ToiaUserController, :stats)
 
     # Video Question Stream routes

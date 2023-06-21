@@ -5,14 +5,14 @@ defmodule ToiaWeb.QuestionJSON do
   Renders a list of questions.
   """
   def index(%{questions: questions}) do
-    %{data: for(question <- questions, do: data(question))}
+    for(question <- questions, do: data(question))
   end
 
   @doc """
   Renders a single question.
   """
   def show(%{question: question}) do
-    %{data: data(question)}
+    data(question)
   end
 
   defp data(%Question{} = question) do

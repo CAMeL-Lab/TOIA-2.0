@@ -7,6 +7,7 @@ defmodule ToiaWeb.ToiaUserController do
   alias Toia.ToiaUsers
   alias Toia.ToiaUsers.ToiaUser
   alias Toia.Streams.Stream
+  alias Toia.Streams
 
   action_fallback(ToiaWeb.FallbackController)
 
@@ -84,12 +85,24 @@ defmodule ToiaWeb.ToiaUserController do
 
   def list_stream(user_id) do
     query = from(s in Stream, where: s.toia_id == ^user_id)
-    Repo.all(query)
+    streams = Repo.all(query)
+    # Add stream video count to each stream
+    Enum.map(streams, fn stream ->
+      stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream))
+      stream = Map.put(stream, :pic, Streams.get_stream_pic(stream))
+      stream
+    end)
   end
 
   def list_public_stream(user_id) do
     query = from(s in Stream, where: s.toia_id == ^user_id and s.private == false)
-    Repo.all(query)
+    streams = Repo.all(query)
+    # Add stream video count to each stream
+    Enum.map(streams, fn stream ->
+      stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream, true))
+      stream = Map.put(stream, :pic, Streams.get_stream_pic(stream))
+      stream
+    end)
   end
 
   def streams(%{assigns: %{current_user: user}} = conn, %{"user_id" => other_user_idStr}) do

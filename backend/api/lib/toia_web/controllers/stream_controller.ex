@@ -5,10 +5,10 @@ defmodule ToiaWeb.StreamController do
   alias Toia.Streams.Stream
   alias ToiaWeb.ToiaUserController
 
-  action_fallback ToiaWeb.FallbackController
+  action_fallback(ToiaWeb.FallbackController)
 
-  def index(conn, _params) do
-    stream = Streams.list_public_stream()
+  def index(%{assigns: %{current_user: user}} = conn, _params) do
+    stream = Streams.list_accessible_stream(user.id)
     render(conn, :index, stream: stream)
   end
 
@@ -23,7 +23,6 @@ defmodule ToiaWeb.StreamController do
 
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/stream/#{stream.id_stream}")
       |> render(:index, stream: streams)
     else
       {:error, reason} ->
@@ -48,9 +47,23 @@ defmodule ToiaWeb.StreamController do
     |> json(%{error: "Please also attach a photo"})
   end
 
-  def show(conn, %{"id" => id}) do
+  def show(%{assigns: %{current_user: user}} = conn, %{"id" => id}) do
     stream = Streams.get_stream!(id)
-    render(conn, :show, stream: stream)
+    stream = Map.put(stream, :pic, Streams.get_stream_pic(stream))
+
+    if stream.toia_id == user.id do
+      stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream))
+      render(conn, :show, stream: stream)
+    else
+      if stream.private do
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Unauthorized"})
+      else
+        stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream, true))
+        render(conn, :show, stream: stream)
+      end
+    end
   end
 
   def update(conn, %{"id" => id, "stream" => stream_params}) do
@@ -75,7 +88,8 @@ defmodule ToiaWeb.StreamController do
 
     conn
     |> put_status(:ok)
-    |> json(%{filler_video: "Accounts/#{user.first_name}_#{user.id}/Videos/#{filler_video}"})
+    |> put_resp_header("content-type", "text/plain")
+    |> text("/#{user.first_name}_#{user.id}/Videos/#{filler_video}")
   end
 
   def next(
