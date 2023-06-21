@@ -162,26 +162,11 @@ function NavBar(props) {
 		axios
 			.post(API_URLS.LOGIN, params)
 			.then(res => {
-				if (res.data == -1) {
-					//alert('Email not found');
-					NotificationManager.error("Incorrect e-mail address.");
-				} else if (res.data == -2) {
-					NotificationManager.error("Incorrect password.");
-				} else {
-					console.log(res.data);
-					history.push({
-						pathname: "mytoia",
-						state: {
-							toiaName: res.data.firstName,
-							toiaLanguage: res.data.language,
-							toiaID: res.data.toia_id,
-						},
-					});
-				}
+				history.push({
+					pathname: "mytoia",
+				});
 			})
-			.catch(err => {
-				console.log(err);
-			});
+			.catch(console.error);
 	}
 
 	const inlineStyle = {
@@ -247,20 +232,20 @@ function NavBar(props) {
 			{props.showLoginModal ? login_modal() : ""}
 
 			<div className="nav-heading-bar">
-				<div class="nav-dropdown">
-					<div class="nav-dropbtn">
+				<div className="nav-dropdown">
+					<div className="nav-dropbtn">
 						<span className={t("current_lang")}></span>
 					</div>
-					<div class="nav-dropdown-content">
+					<div className="nav-dropdown-content">
 						<a href="#" onClick={switch_lang("en")}>
-							<span class="fi fi-us"></span>
+							<span className="fi fi-us"></span>
 						</a>
 						<a href="#" onClick={switch_lang("ar")}>
-							<span class="fi fi-ae"></span>
+							<span className="fi fi-ae"></span>
 						</a>
-						{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+						{/* <a href="#"><span className="fi fi-es"></span>SP</a> */}
 						<a href="#" onClick={switch_lang("fr")}>
-							<span class="fi fi-fr"></span>
+							<span className="fi fi-fr"></span>
 						</a>
 					</div>
 				</div>

@@ -10,8 +10,14 @@ const getToken = () => {
 };
 
 const getUser = () => {
-	let user = jwtDecode(getToken());
-	return user;
+	try {
+		let user = jwtDecode(getToken());
+		return user;
+	} catch (error) {
+		logout();
+		console.error(error);
+		return null;
+	}
 };
 
 const removeToken = () => {
