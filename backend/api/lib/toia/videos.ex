@@ -115,7 +115,6 @@ defmodule Toia.Videos do
   """
   def canAccess(user, video) do
     user_id = user.id
-    video_id = video.id_video
     video.toia_id == user_id || video.private == false
   end
 

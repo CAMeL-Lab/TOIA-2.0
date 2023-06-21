@@ -16,7 +16,6 @@ defmodule ToiaWeb.VideoQuestionStreamController do
            VideosQuestionsStreams.create_video_question_stream(video_question_stream_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/videos_questions_streams/#{video_question_stream}")
       |> render(:show, video_question_stream: video_question_stream)
     end
   end

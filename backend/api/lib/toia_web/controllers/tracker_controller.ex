@@ -15,7 +15,6 @@ defmodule ToiaWeb.TrackerController do
     with {:ok, %Tracker{} = tracker} <- Trackers.create_tracker(tracker_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/tracker/#{tracker}")
       |> render(:show, tracker: tracker)
     end
   end

@@ -11,7 +11,6 @@ defmodule Toia.Streams do
   alias Toia.Videos.Video
   alias Toia.Videos
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
-  alias Toia.ToiaUsers.ToiaUser
   alias Toia.ToiaUsers
 
   @doc """
@@ -304,7 +303,7 @@ defmodule Toia.Streams do
     end
   end
 
-  def get_smart_questions(avatar_id, stream_id) do
+  def get_smart_questions(_avatar_id, stream_id) do
     question_ids = [19, 20]
 
     query =

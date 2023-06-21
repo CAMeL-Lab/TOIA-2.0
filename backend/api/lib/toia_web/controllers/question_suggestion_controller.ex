@@ -5,10 +5,8 @@ defmodule ToiaWeb.QuestionSuggestionController do
   alias Toia.Repo
   alias Toia.QuestionSuggestions
   alias Toia.QuestionSuggestions.QuestionSuggestion
-  alias Toia.Questions
   alias Toia.Questions.Question
 
-  alias Toia.ToiaUser
 
   action_fallback(ToiaWeb.FallbackController)
 
@@ -21,13 +19,13 @@ defmodule ToiaWeb.QuestionSuggestionController do
     case Integer.parse(limitStr) do
       {limitParsed, _} when limitParsed > 0 ->
         limit = limitParsed
+        question_suggestions = QuestionSuggestions.list_question_suggestions(user.id, limit)
+        render(conn, :index, question_suggestions: question_suggestions)
 
       _ ->
-        limit = 10
+        question_suggestions = QuestionSuggestions.list_question_suggestions(user.id, limit)
+        render(conn, :index, question_suggestions: question_suggestions)
     end
-
-    question_suggestions = QuestionSuggestions.list_question_suggestions(user.id, limit)
-    render(conn, :index, question_suggestions: question_suggestions)
   end
 
   def index(%{assigns: %{current_user: user}} = conn, _params) do
@@ -63,11 +61,10 @@ defmodule ToiaWeb.QuestionSuggestionController do
     {:ok, _} = QuestionSuggestions.update_suggestion(old_suggestion, new_question)
     old_suggestion = Repo.get_by!(QuestionSuggestion, id_question: id, toia_id: user.id)
 
-    question_suggestion =
-      QuestionSuggestions.update_question_suggestion(
-        old_suggestion,
-        %{isPending: isPending, id_question: id, toia_id: user.id}
-      )
+    QuestionSuggestions.update_question_suggestion(
+      old_suggestion,
+      %{isPending: isPending, id_question: id, toia_id: user.id}
+    )
 
     question = Repo.get!(Question, id)
 
@@ -106,11 +103,10 @@ defmodule ToiaWeb.QuestionSuggestionController do
     old_suggestion = Repo.get_by!(QuestionSuggestion, id_question: id, toia_id: user.id)
     isPending = isPendingStr == "true" or isPendingStr == "1" or isPendingStr == true
 
-    question_suggestion =
-      QuestionSuggestions.update_question_suggestion(
-        old_suggestion,
-        %{isPending: isPending, id_question: id, toia_id: user.id}
-      )
+    QuestionSuggestions.update_question_suggestion(
+      old_suggestion,
+      %{isPending: isPending, id_question: id, toia_id: user.id}
+    )
 
     question = Repo.get!(Question, id)
 

@@ -18,7 +18,7 @@ defmodule ToiaWeb.StreamController do
       ) do
     stream_params = Map.put(stream_params, "toia_id", user.id)
 
-    with {:ok, %Stream{} = stream} <- Streams.create_stream(stream_params, user, filePath) do
+    with {:ok, %Stream{} = _stream} <- Streams.create_stream(stream_params, user, filePath) do
       streams = ToiaUserController.list_stream(user.id)
 
       conn
@@ -120,19 +120,18 @@ defmodule ToiaWeb.StreamController do
         } = _params
       ) do
     stream = Streams.get_stream!(stream_id)
-    avatar_id = stream.toia_id
-    data = Streams.get_smart_questions(user.id, stream_id, latest_question, latest_answer)
+    data = Streams.get_smart_questions(user.id, stream.id_stream, latest_question, latest_answer)
 
     case data do
-      x ->
-        conn
-        |> put_status(:ok)
-        |> json(x)
-
       nil ->
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "error"})
+
+      x ->
+        conn
+        |> put_status(:ok)
+        |> json(x)
     end
   end
 

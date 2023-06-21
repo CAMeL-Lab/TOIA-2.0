@@ -275,7 +275,7 @@ defmodule Toia.ToiaUsers do
         select: sum(v.duration_seconds)
       )
 
-    Repo.one(query)
+    Repo.one(query) || 0
   end
 
   @doc """

@@ -1,5 +1,4 @@
 defmodule ToiaWeb.QuestionSuggestionJSON do
-  alias Toia.QuestionSuggestions.QuestionSuggestion
 
   @doc """
   Renders a list of question_suggestions.
