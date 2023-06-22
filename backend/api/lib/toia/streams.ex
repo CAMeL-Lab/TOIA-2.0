@@ -33,7 +33,14 @@ defmodule Toia.Streams do
   def list_accessible_stream(user_id) do
     query = from s in Stream,
       where: s.private == false or s.toia_id == ^user_id
-    Repo.all(query)
+    streams = Repo.all(query)
+    streams = Enum.map(streams, fn stream ->
+      Map.put(stream, :pic, get_stream_pic(stream))
+    end)
+
+    Enum.map(streams, fn stream ->
+      Map.put(stream, :videos_count, get_videos_count(stream.id_stream))
+    end)
   end
 
   @doc """

@@ -58,10 +58,13 @@ defmodule ToiaWeb.Router do
     get("/toia_user/questions/onboarding", ToiaUserController, :onboarding_questions)
     # legacy: /api/getUserStreams
     get("/toia_user/:user_id/streams", ToiaUserController, :streams)
-    # legacy: /api/getUserData
-    get("/toia_user/", ToiaUserController, :show)
+
     # legacy: /api/getUserVideosCount, /api/getTotalVideoDuration
     get("/toia_user/stats", ToiaUserController, :stats)
+    # legacy: /api/getUserData
+    get("/toia_user/", ToiaUserController, :show)
+    get("/toia_user/:user_id", ToiaUserController, :show)
+
 
     # Video Question Stream routes
     # Legacy: api/questions/answered/delete

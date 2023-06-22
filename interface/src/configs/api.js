@@ -11,9 +11,12 @@ const API_URLS = {
 	ANSWERED_QUESTION_LIST: `${BASE_URL}/question/answered`,
 	USER_STATS: `${BASE_URL}/toia_user/stats`,
 	USER_INFO: `${BASE_URL}/toia_user`,
+	OTHER_USER_INFO: user_id => `${BASE_URL}/toia_user/${user_id}`,
 	REMOVE_VIDEO: `${BASE_URL}/video_question_stream`,
 	DISCARD_SUGGESTION: question_id => `${BASE_URL}/question_suggestions/${question_id}`,
 	EDIT_SUGGESTION: question_id => `${BASE_URL}/question_suggestions/${question_id}`,
+	STREAM_INFO: stream_id => `${BASE_URL}/stream/${stream_id}`,
+	STREAMS: () => `${BASE_URL}/stream`,
 };
 
 export default API_URLS;

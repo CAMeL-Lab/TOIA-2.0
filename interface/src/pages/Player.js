@@ -2,35 +2,27 @@ import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRound
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { NotificationManager } from "react-notifications";
+import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import history from "../services/history";
-import PopModal from "../userRating/popModal";
 import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
-import { NotificationManager } from "react-notifications";
-import NotificationContainer from "react-notifications/lib/NotificationContainer";
-import Tracker from "../utils/tracker"
+import PopModal from "../userRating/popModal";
+import Tracker from "../utils/tracker";
 
-import NavBar from './NavBar.js';
+import NavBar from "./NavBar.js";
 
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
-import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player"
+import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
 import languageFlagsCSS from "../services/languageHelper";
+import { getUser } from "../auth/auth";
+import API_URLS from "../configs/api";
 
 function Player() {
 	const { t } = useTranslation();
-
-	function exampleReducer(state, action) {
-		switch (action.type) {
-			case "close":
-				return { open: false };
-			case "open":
-				return { open: true };
-		}
-	}
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
@@ -68,28 +60,13 @@ function Player() {
 	let [micString, setMicString] = React.useState("ASK BY VOICE");
 
 	useEffect(() => {
-		// Login check. Note: This is very insecure and naive approach. Replace once a proper authentication system has been adopted.
-		if (
-			history.location.state === undefined ||
-			history.location.state.toiaName === undefined ||
-			history.location.state.toiaLanguage === undefined ||
-			history.location.state.toiaID === undefined
-		) {
-			alert("You must be logged in to access this page");
-			history.push({
-				pathname: "/",
-			});
+		if (!isLoggedIn()) {
+			history.push("/login");
 		}
-		setName(history.location.state.toiaName);
-		setLanguage(history.location.state.toiaLanguage);
-		setTOIAid(history.location.state.toiaID);
-
-		if (history.location.state.toiaID != undefined) {
-			setLoginState(true);
-			setTOIAid(history.location.state.toiaID);
-			setName(history.location.state.toiaName);
-			setLanguage(history.location.state.toiaLanguage);
-		}
+		setName(getUser().first_name);
+		setLanguage(getUser().language);
+		setTOIAid(getUser().id);
+		setLoginState(true);
 
 		setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
@@ -120,38 +97,31 @@ function Player() {
 	}, []);
 
 	function canAccessStream() {
-		let toiaID = history.location.state.toiaID;
 		let streamID = history.location.state.streamToTalk;
 
 		const options = {
-			method: "POST",
-			url: "/api/permission/stream",
-			headers: { "Content-Type": "application/json" },
-			data: { user_id: toiaID, stream_id: streamID },
+			method: "GET",
+			url: API_URLS.STREAM_INFO(streamID),
 		};
 
 		axios
 			.request(options)
-			.then(function (response) { })
 			.catch(function (error) {
-				alert("You do not have permission to access this page");
-				// Navigate to /library
-				if (isLoggedIn) {
+				if (error.response.status === 401) {
+					alert("You do not have permission to access this stream");
 					history.push({
-						pathname: '/library',
-						state: {
-							toiaName,
-							toiaLanguage,
-							toiaID
-						}
+						pathname: "/library",
 					});
 				} else {
+					console.error(error);
+					alert("Something went wrong");
 					history.push({
-						pathname: '/library',
+						pathname: "/library",
 					});
 				}
 			});
 	}
+
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
 		if (!hasRated) {
@@ -297,12 +267,16 @@ function Player() {
 		if (hasRated) {
 			if (interacting.current == "true") {
 				const params = {
-					language: interactionLanguage
+					language: interactionLanguage,
 					// language: "ko-KR"
 				};
-				speechToTextUtils.initRecording(params, handleDataReceived, error => {
-					console.error("Error when transcribing", error);
-				});
+				speechToTextUtils.initRecording(
+					params,
+					handleDataReceived,
+					error => {
+						console.error("Error when transcribing", error);
+					},
+				);
 			}
 		}
 	}, [hasRated]);
@@ -412,13 +386,17 @@ function Player() {
 
 			if (hasRated) {
 				const params = {
-					language: interactionLanguage
+					language: interactionLanguage,
 					// language: "ko-KR"
 				};
-				speechToTextUtils.initRecording(params, handleDataReceived, error => {
-					console.error("Error when transcribing", error);
-					// No further action needed, as stream already closes itself on error
-				});
+				speechToTextUtils.initRecording(
+					params,
+					handleDataReceived,
+					error => {
+						console.error("Error when transcribing", error);
+						// No further action needed, as stream already closes itself on error
+					},
+				);
 			} else {
 				NotificationManager.warning(
 					"Please provide a rating",
@@ -576,8 +554,7 @@ function Player() {
 						<CSSTransition
 							key={videoProperties.key}
 							timeout={500}
-							classNames="fade"
-						>
+							classNames="fade">
 							<VideoPlaybackPlayer
 								onEnded={videoProperties.onEnded}
 								key={videoProperties.key}
@@ -599,20 +576,44 @@ function Player() {
 					<div>
 						<div class="lang-container">
 							<div class="lang-dropdown">
-								<div class="lang-dropbtn"><span className={languageFlagsCSS[interactionLanguage]}></span></div>
+								<div class="lang-dropbtn">
+									<span
+										className={
+											languageFlagsCSS[
+												interactionLanguage
+											]
+										}></span>
+								</div>
 								<div class="lang-dropdown-content">
-									<a href="#" onClick={() => setInteractionLanguage("en-US")}><span class="fi fi-us"></span></a>
-									<a href="#" onClick={() => setInteractionLanguage("ar-AE")}><span class="fi fi-ae"></span></a>
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("en-US")
+										}>
+										<span class="fi fi-us"></span>
+									</a>
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("ar-AE")
+										}>
+										<span class="fi fi-ae"></span>
+									</a>
 									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
-									<a href="#" onClick={() => setInteractionLanguage("fr-FR")}><span class="fi fi-fr"></span></a>
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("fr-FR")
+										}>
+										<span class="fi fi-fr"></span>
+									</a>
 								</div>
 							</div>
 						</div>
 						<button
 							color="green"
 							className="ui linkedin microphone button mute-button"
-							onClick={micStatusChange}
-						>
+							onClick={micStatusChange}>
 							<i aria-hidden="true" class="">
 								<RecordVoiceOverRoundedIcon
 									sx={{
@@ -628,8 +629,7 @@ function Player() {
 				) : (
 					<button
 						className="ui secondary button mute-button"
-						onClick={micStatusChange}
-					>
+						onClick={micStatusChange}>
 						<i aria-hidden="true" class="">
 							<VoiceOverOffRoundedIcon />
 						</i>
@@ -640,14 +640,12 @@ function Player() {
 				{isFillerPlaying.current == "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
-						onClick={fetchFiller}
-					>
+						onClick={fetchFiller}>
 						{" "}
 						Skip to End{" "}
 						<i
 							aria-hidden="true"
-							class="angle double right icon"
-						></i>
+							class="angle double right icon"></i>
 					</button>
 				) : null}
 
@@ -679,8 +677,7 @@ function Player() {
 								className="ui linkedin button submit-button"
 								onClick={e => {
 									submitResponse(e, "SEARCH");
-								}}
-							>
+								}}>
 								<i aria-hidden="true" class="send icon"></i>
 								ASK
 							</button>
