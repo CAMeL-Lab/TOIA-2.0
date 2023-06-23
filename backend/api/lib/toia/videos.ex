@@ -247,7 +247,6 @@ defmodule Toia.Videos do
   Link to the streams
   """
   def linkVideoQuestionsStreams(video_id, questions, streams, type) do
-    IO.inspect(questions)
     {:ok,
      Enum.map(streams, fn stream_id ->
        linkVideoQuestionsStream(video_id, questions, stream_id, type)
