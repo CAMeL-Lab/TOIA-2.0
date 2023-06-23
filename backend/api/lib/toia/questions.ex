@@ -11,6 +11,7 @@ defmodule Toia.Questions do
   alias Toia.Videos.Video
   alias Toia.Streams.Stream
   alias Toia.ToiaUsers
+  alias Toia.QuestionSuggestions
 
   @doc """
   Returns the list of questions.
@@ -40,6 +41,7 @@ defmodule Toia.Questions do
 
   """
   def get_question!(id), do: Repo.get!(Question, id)
+  def get_question(id), do: Repo.get(Question, id)
 
   @doc """
   Creates a question.
@@ -209,5 +211,81 @@ defmodule Toia.Questions do
       )
 
     Repo.all(query)
+  end
+
+  @doc """
+  Process new questions.
+  If the id is -1, add new.
+  If the id is valid but the question is different, add new. Don't touch the old one.
+  """
+  def pre_process_new_questions(questions, type) do
+    {:ok,
+     Enum.map(questions, fn question ->
+       process_new_question_individual(question, type)
+     end)}
+  end
+
+  defp process_new_question_individual(%{question: q, id_question: id}, type) do
+    case get_question(id) do
+      nil ->
+        {:ok, question} =
+          create_question(%{
+            question: q,
+            suggested_type: type,
+            onboarding: false,
+            priority: 100,
+            trigger_suggester: true
+          })
+
+        question
+
+      question when question.question == q ->
+        question
+
+      _ ->
+        {:ok, question} =
+          create_question(%{
+            question: q,
+            suggested_type: type,
+            onboarding: false,
+            priority: 100,
+            trigger_suggester: true
+          })
+
+        question
+    end
+  end
+
+  defp process_new_question_individual(%{question: q}, type) do
+    {:ok, question} =
+      create_question(%{
+        question: q,
+        suggested_type: type,
+        onboarding: false,
+        priority: 100,
+        trigger_suggester: true
+      })
+
+    question
+  end
+
+  @doc """
+  Post process new questions.
+  If it's a suggested question, mark it as not pending
+  """
+  def post_process_new_questions(questions, user_id) do
+    {:ok,
+     Enum.map(questions, fn question ->
+       suggestion = QuestionSuggestions.get_question_suggestion(question.id, user_id)
+
+       if suggestion != nil do
+         {:ok, qs} =
+           QuestionSuggestions.update_question_suggestion(suggestion, %{isPending: false})
+
+         qs
+       else
+         question
+       end
+     end)}
   end
 end

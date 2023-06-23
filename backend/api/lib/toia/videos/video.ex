@@ -19,7 +19,7 @@ defmodule Toia.Videos.Video do
   @doc false
   def changeset(video, attrs) do
     video
-    |> cast(attrs, [:idx, :private, :answer, :language, :likes, :views, :duration_seconds])
-    |> validate_required([:idx, :private, :answer, :language, :likes, :views, :duration_seconds])
+    |> cast(attrs, [:id_video, :idx, :private, :answer, :language, :likes, :views, :duration_seconds, :toia_id])
+    |> validate_required([:id_video, :idx, :private, :answer, :language, :likes, :views, :duration_seconds, :toia_id])
   end
 end

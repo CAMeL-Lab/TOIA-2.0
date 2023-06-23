@@ -47,7 +47,8 @@ defmodule Toia.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       {:httpoison, "~> 2.0"},
       {:poison, "~> 5.0"},
-      {:cors_plug, "~> 3.0"}
+      {:cors_plug, "~> 3.0"},
+      {:tarams, "~> 1.7.1"}
     ]
   end
 

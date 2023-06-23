@@ -23,13 +23,14 @@ defmodule Toia.QuestionSuggestions do
   """
   def list_question_suggestions(user_id, limit) do
     query =
-      from qs in QuestionSuggestion,
+      from(qs in QuestionSuggestion,
         join: q in Question,
         on: qs.id_question == q.id,
         where: qs.toia_id == ^user_id and qs.isPending == true
+      )
 
     query =
-      from [qs, q] in query,
+      from([qs, q] in query,
         select: %{
           id_question: qs.id_question,
           question: q.question,
@@ -41,19 +42,21 @@ defmodule Toia.QuestionSuggestions do
         },
         order_by: [desc: q.priority],
         limit: ^limit
+      )
 
     Repo.all(query)
   end
 
   def list_question_suggestions(user_id) do
     query =
-      from qs in QuestionSuggestion,
+      from(qs in QuestionSuggestion,
         join: q in Question,
         on: qs.id_question == q.id,
         where: qs.toia_id == ^user_id and qs.isPending == true
+      )
 
     query =
-      from [qs, q] in query,
+      from([qs, q] in query,
         select: %{
           id_question: qs.id_question,
           question: q.question,
@@ -64,6 +67,7 @@ defmodule Toia.QuestionSuggestions do
           trigger_suggester: q.trigger_suggester
         },
         order_by: [desc: q.priority]
+      )
 
     Repo.all(query)
   end
@@ -82,7 +86,11 @@ defmodule Toia.QuestionSuggestions do
       ** (Ecto.NoResultsError)
 
   """
-  def get_question_suggestion!(id), do: Repo.get!(QuestionSuggestion, id)
+  def get_question_suggestion!(question_id, user_id),
+    do: Repo.get_by!(QuestionSuggestion, id_question: question_id, toia_id: user_id)
+
+  def get_question_suggestion(question_id, user_id),
+    do: Repo.get_by(QuestionSuggestion, id_question: question_id, toia_id: user_id)
 
   @doc """
   Creates a question_suggestion.
@@ -176,7 +184,7 @@ defmodule Toia.QuestionSuggestions do
        }}
     else
       allSuggestions =
-        Repo.all(from qs in QuestionSuggestion, where: qs.id_question == ^question.id)
+        Repo.all(from(qs in QuestionSuggestion, where: qs.id_question == ^question.id))
 
       if length(allSuggestions) == 1 do
         Questions.update_question(question, %{question: new_question})
@@ -262,7 +270,7 @@ defmodule Toia.QuestionSuggestions do
   """
   def get_latest_suggestion(user_id) do
     query =
-      from qs in QuestionSuggestion,
+      from(qs in QuestionSuggestion,
         join: q in Question,
         on: q.id == qs.id_question,
         where: qs.toia_id == ^user_id,
@@ -270,6 +278,7 @@ defmodule Toia.QuestionSuggestions do
         order_by: qs.id_question,
         limit: 1,
         select: %{id_question: qs.id_question, question: q.question, type: q.suggested_type}
+      )
 
     Repo.one(query)
   end
@@ -279,8 +288,9 @@ defmodule Toia.QuestionSuggestions do
   """
   def suggestion_exists(user_id, question_id) do
     query =
-      from qs in QuestionSuggestion,
+      from(qs in QuestionSuggestion,
         where: qs.toia_id == ^user_id and qs.id_question == ^question_id
+      )
 
     Repo.exists?(query)
   end

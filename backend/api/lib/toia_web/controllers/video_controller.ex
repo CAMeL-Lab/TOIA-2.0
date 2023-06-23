@@ -3,19 +3,80 @@ defmodule ToiaWeb.VideoController do
 
   alias Toia.Videos
   alias Toia.Videos.Video
+  alias Toia.Questions
 
-  action_fallback ToiaWeb.FallbackController
+  import ToiaWeb.VideoValidator,
+    only: [
+      validateAnswerParam: 1,
+      validateQuestionsParam: 1,
+      validateVideoTypeParam: 1,
+      validateStreamsList: 2
+    ]
+
+  action_fallback(ToiaWeb.FallbackController)
 
   def index(%{assigns: %{current_user: user}} = conn, _params) do
     video = Videos.list_video(user.id)
     render(conn, :index, video: video)
   end
 
-  def create(conn, %{"video" => video_params}) do
-    with {:ok, %Video{} = video} <- Videos.create_video(video_params) do
+  @create_params %{
+    answer: [type: :string, required: true, into: &validateAnswerParam/1],
+    private: [type: :string, required: true],
+    streams: [type: :string, required: true, into: &Poison.decode!/1],
+    questions: [
+      type: :string,
+      required: true,
+      into: &validateQuestionsParam/1
+    ],
+    video_duration: [type: :integer, required: true],
+    language: [type: :string, required: true],
+    videoType: [
+      type: :string,
+      required: true,
+      into: &validateVideoTypeParam/1
+    ]
+  }
+  def create(
+        %{assigns: %{current_user: user}} = conn,
+        %{"video" => %Plug.Upload{path: path}} = video_params
+      ) do
+    with {:ok, params} <- Tarams.cast(video_params, @create_params),
+         {:ok, streams} <- validateStreamsList(params.streams, user.id),
+         {:ok, nextIDX} <- Videos.getNextIdx(),
+         {:ok, videoID} <- Videos.generateRandomVideoID(user.first_name, user.id, nextIDX),
+         {:ok, questions} <- Questions.pre_process_new_questions(params.questions, params.videoType),
+         {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
+         {:ok, videoEntry} <-
+           Videos.create_video(%{
+             id_video: videoID,
+             toia_id: user.id,
+             idx: nextIDX,
+             private: params.private,
+             answer: params.answer,
+             language: params.language,
+             duration_seconds: params.video_duration
+           }),
+         {:ok, _} <-
+           Videos.linkVideoQuestionsStreams(videoID, questions, streams, params.videoType),
+         {:ok, _} <- Questions.post_process_new_questions(questions, user.id) do
       conn
-      |> put_status(:created)
-      |> render(:show, video: video)
+      |> put_status(:ok)
+      |> json(%{videoID: videoID})
+    else
+      {:error, errors, msg} ->
+        IO.inspect(errors)
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: msg})
+
+      {:error, errors} ->
+        IO.inspect(errors)
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Unauthorized"})
     end
   end
 
@@ -28,6 +89,7 @@ defmodule ToiaWeb.VideoController do
         video = videoWithQuestions(video, user.id)
         playbackUrl = Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)
         video = Map.put(video, :videoURL, playbackUrl)
+
         conn
         |> put_status(:ok)
         |> render(:videoWithInfo, video: video)
@@ -69,11 +131,11 @@ defmodule ToiaWeb.VideoController do
 
   def videoWithQuestions(video, user_id) do
     if video.toia_id == user_id do
-        questions = Videos.getVideoQuestions(video.id_video)
-        Map.put(video, :questions, questions)
+      questions = Videos.getVideoQuestions(video.id_video)
+      Map.put(video, :questions, questions)
     else
-        questions = Videos.getVideoPublicQuestions(video.id_video)
-        Map.put(video, :questions, questions)
+      questions = Videos.getVideoPublicQuestions(video.id_video)
+      Map.put(video, :questions, questions)
     end
   end
 end
