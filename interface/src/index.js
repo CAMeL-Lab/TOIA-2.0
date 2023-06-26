@@ -1,31 +1,69 @@
 import axios from "axios";
-import { Service } from "axios-middleware";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import { attachToken, saveToken } from "./auth/auth";
+import { getToken, saveToken } from "./auth/auth";
 import API_URLS from "./configs/api";
 import "./main.scss";
 import reportWebVitals from "./reportWebVitals";
 
-const service = new Service(axios);
-
-service.register({
-	onRequest(config) {
-		return attachToken(config);
-	},
-	onResponse(response) {
-		const url = response.config.url;
-		if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
-			const responseData = JSON.parse(response.data);
-			const token = responseData.token;
-			if (token) {
-				saveToken(token);
-			}
+axios.interceptors.request.use(
+	request => {
+		try {
+			request.headers.Authorization = `Bearer ${getToken()}`;
+		} catch (error) {
+			console.error(error);
 		}
+		return request;
+	},
+	error => {
+		return Promise.reject(error);
+	},
+);
+
+axios.interceptors.response.use(
+	response => {
+		try {
+			const url = response.config.url;
+			if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
+				const responseData = response.data;
+				if (responseData.hasOwnProperty("token")) {
+					const token = responseData.token;
+					if (token) {
+						saveToken(token);
+					}
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+
 		return response;
 	},
-});
+	error => {
+		if (error.response.status === 401) {
+			window.location.href = "/login";
+		}
+		return Promise.reject(error);
+	},
+);
+
+// service.register({
+// 	onRequest(config) {
+// 		return attachToken(config);
+// 	},
+// 	onResponse(response) {
+// 		const url = response.config.url;
+// 		if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
+// 			const responseData = JSON.parse(response.data);
+// 			const token = responseData.token;
+// 			if (token) {
+// 				saveToken(token);
+// 			}
+// 		}
+// 		return response;
+// 	},
+// });
 
 ReactDOM.render(
 	<React.StrictMode>

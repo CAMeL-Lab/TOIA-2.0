@@ -127,7 +127,7 @@ defmodule Toia.Videos do
   Returns the playback url. Legacy: `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`
   """
   def getPlaybackUrl(first_name, toia_id, video_id) do
-    "/#{first_name}_#{toia_id}/Videos/#{video_id}"
+    "#{System.get_env("API_URL")}/media/#{first_name}_#{toia_id}/Videos/#{video_id}"
   end
 
   @doc """
@@ -258,6 +258,7 @@ defmodule Toia.Videos do
   """
   def removeVideoFile(first_name, user_id, id_video) do
     dest = getVideoPath(first_name, user_id, id_video)
+
     with :ok <- File.rm(dest) do
       {:ok, "File removed"}
     else
@@ -282,12 +283,20 @@ defmodule Toia.Videos do
 
   defp linkVideoQuestionsStream(video_id, questions, stream_id, type) do
     Enum.map(questions, fn question ->
-      VideosQuestionsStreams.create_video_question_stream(%{
-        id_video: video_id,
-        id_question: question.id,
-        id_stream: stream_id,
-        type: type
-      })
+      case VideosQuestionsStreams.create_video_question_stream(%{
+             id_video: video_id,
+             id_question: question.id,
+             id_stream: stream_id,
+             type: type,
+             ada_search: getAdaSearch()
+           }) do
+        {:ok, vqs} ->
+          {:ok, vqs}
+
+        {:error, changeset} ->
+          IO.inspect(changeset)
+          {:error, changeset}
+      end
     end)
   end
 
@@ -306,5 +315,12 @@ defmodule Toia.Videos do
     query = from(vqs in VideoQuestionStream, where: vqs.id_video == ^video_id)
     {deletedCount, _} = Repo.delete_all(query)
     {:ok, deletedCount}
+  end
+
+  @doc """
+  Returns ada_search
+  """
+  def getAdaSearch() do
+    "FIX ME"
   end
 end

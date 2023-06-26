@@ -10,7 +10,8 @@ defmodule ToiaWeb.VideoController do
       validateAnswerParam: 1,
       validateQuestionsParam: 1,
       validateVideoTypeParam: 1,
-      validateStreamsList: 2
+      validateStreamsList: 2,
+      validateVideoDuration: 1
     ]
 
   action_fallback(ToiaWeb.FallbackController)
@@ -29,7 +30,7 @@ defmodule ToiaWeb.VideoController do
       required: true,
       into: &validateQuestionsParam/1
     ],
-    video_duration: [type: :integer, required: true],
+    video_duration: [type: :float, required: true, into: &validateVideoDuration/1],
     language: [type: :string, required: true],
     videoType: [
       type: :string,

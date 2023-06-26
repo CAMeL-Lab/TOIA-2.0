@@ -17,7 +17,6 @@
     "@testing-library/user-event": "^12.2.2",
     "av": "^0.4.9",
     "axios": "^0.21.0",
-    "axios-middleware": "^0.3.1",
     "editable-creatable-multiselect": "^2.1.0",
     "ffmpeg": "0.0.4",
     "firebase": "^8.6.8",

@@ -17,6 +17,8 @@ const API_URLS = {
 	EDIT_SUGGESTION: question_id => `${BASE_URL}/question_suggestions/${question_id}`,
 	STREAM_INFO: stream_id => `${BASE_URL}/stream/${stream_id}`,
 	STREAMS: () => `${BASE_URL}/stream`,
+	RECORD_VIDEO: () => `${BASE_URL}/video`,
+	UPDATE_VIDEO: video_id => `${BASE_URL}/video/${video_id}`,
 };
 
 export default API_URLS;

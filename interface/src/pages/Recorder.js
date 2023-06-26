@@ -536,36 +536,46 @@ function Recorder() {
 		return new Promise((resolve, reject) => {
 			let endTimestamp = +new Date();
 
+			// Format data for new API
+			const listOfStreams = listStreams.map(stream => stream.id);
+
 			let form = new FormData();
-			form.append("blob", recordedVideo);
-			form.append("thumb", videoThumbnail);
-			form.append("id", toiaID);
-			form.append("name", toiaName);
+			form.append("video", recordedVideo);
 			form.append("language", toiaLanguage);
 			form.append("questions", JSON.stringify(questionsSelected));
 			form.append("answer", answerProvided);
 			form.append("videoType", videoType);
 			form.append("private", isPrivate.toString());
-			form.append("streams", JSON.stringify(listStreams));
-			form.append("video_duration", videoDuration.toString());
+			form.append("streams", JSON.stringify(listOfStreams));
+			form.append("video_duration", videoDuration);
 
 			form.append("start_time", recordStartTimestamp);
 			form.append("end_time", endTimestamp);
 			setRecordEndTimestamp(endTimestamp);
 
-			if (is_editing) {
-				form.append("is_editing", true);
-				form.append("save_as_new", save_as_new.toString());
-				form.append("old_video_id", old_video_id);
-				form.append("old_video_type", old_video_type);
+			let options = null;
+			if (is_editing && !save_as_new) {
+				options = {
+					method: "PATCH",
+					url: API_URLS.UPDATE_VIDEO(old_video_id),
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+					data: form,
+				};
+			} else {
+				options = {
+					method: "POST",
+					url: API_URLS.RECORD_VIDEO(),
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+					data: form,
+				};
 			}
 
 			axios
-				.post(`/api/recorder`, form, {
-					headers: {
-						"Content-type": "multipart/form-data",
-					},
-				})
+				.request(options)
 				.then(res => {
 					if (res.status === 200) {
 						resolve(res.data);

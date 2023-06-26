@@ -17,7 +17,7 @@ defmodule Toia.VideosQuestionsStreams.VideoQuestionStream do
   @doc false
   def changeset(video_question_stream, attrs) do
     video_question_stream
-    |> cast(attrs, [:type, :ada_search])
-    |> validate_required([:type, :ada_search])
+    |> cast(attrs, [:type, :ada_search, :id_video, :id_stream, :id_question])
+    |> validate_required([:type, :ada_search, :id_video, :id_stream, :id_question])
   end
 end

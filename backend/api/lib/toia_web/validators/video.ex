@@ -53,4 +53,12 @@ defmodule ToiaWeb.VideoValidator do
          "Invalid streams or user isn't the owner"}
     end
   end
+
+  def validateVideoDuration(duration) do
+    if trunc(duration) > 0 do
+      {:ok, trunc(duration)}
+    else
+      {:error, "Invalid video duration", "Invalid video duration"}
+    end
+  end
 end
