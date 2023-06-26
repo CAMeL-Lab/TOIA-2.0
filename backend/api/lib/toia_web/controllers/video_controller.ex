@@ -48,7 +48,7 @@ defmodule ToiaWeb.VideoController do
          {:ok, questions} <-
            Questions.pre_process_new_questions(params.questions, params.videoType),
          {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
-         {:ok, videoEntry} <-
+         {:ok, _videoEntry} <-
            Videos.create_video(%{
              id_video: videoID,
              toia_id: user.id,
@@ -124,7 +124,7 @@ defmodule ToiaWeb.VideoController do
          {:ok, questions} <-
            Questions.pre_process_new_questions(params.questions, params.videoType),
          {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
-         {:ok, videoEntry} <-
+         {:ok, _videoEntry} <-
            Videos.create_video(%{
              id_video: videoID,
              toia_id: user.id,

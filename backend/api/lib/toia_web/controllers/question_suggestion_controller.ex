@@ -7,7 +7,6 @@ defmodule ToiaWeb.QuestionSuggestionController do
   alias Toia.QuestionSuggestions.QuestionSuggestion
   alias Toia.Questions.Question
 
-
   action_fallback(ToiaWeb.FallbackController)
 
   def index(
@@ -43,8 +42,8 @@ defmodule ToiaWeb.QuestionSuggestionController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    question_suggestion = QuestionSuggestions.get_question_suggestion!(id)
+  def show(%{assigns: %{current_user: user}} = conn, %{"id" => id}) do
+    question_suggestion = QuestionSuggestions.get_question_suggestion!(id, user.id)
     render(conn, :show, question_suggestion: question_suggestion)
   end
 
