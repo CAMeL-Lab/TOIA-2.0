@@ -11,6 +11,8 @@ defmodule Toia.Videos do
   alias Toia.VideosQuestionsStreams
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.Questions.Question
+  alias Toia.ToiaUsers.ToiaUser
+  alias Toia.ToiaUsers
 
   @doc """
   Returns the list of video.
@@ -46,6 +48,7 @@ defmodule Toia.Videos do
 
   """
   def get_video!(id), do: Repo.get!(Video, id)
+  def get_video(id), do: Repo.get(Video, id)
 
   @doc """
   Creates a video.
@@ -221,6 +224,13 @@ defmodule Toia.Videos do
   end
 
   @doc """
+  Returns the video path given a video id
+  """
+  def getVideoPath(first_name, user_id, id_video) do
+    "Accounts/#{first_name}_#{user_id}/Videos/#{id_video}"
+  end
+
+  @doc """
   Move a file
   """
   def moveFile(oldPath, newPath) do
@@ -239,8 +249,25 @@ defmodule Toia.Videos do
   Save the video file
   """
   def saveVideoFile(first_name, user_id, id_video, upload_path) do
-    dest = "Accounts/#{first_name}_#{user_id}/Videos/#{id_video}"
+    dest = getVideoPath(first_name, user_id, id_video)
     moveFile(upload_path, dest)
+  end
+
+  @doc """
+  Remove the video file
+  """
+  def removeVideoFile(first_name, user_id, id_video) do
+    dest = getVideoPath(first_name, user_id, id_video)
+    with :ok <- File.rm(dest) do
+      {:ok, "File removed"}
+    else
+      {:error, :eacces} -> {:error, "Permission Denied"}
+      {:error, :enoent} -> {:error, "No such file or directory"}
+      {:error, :enospc} -> {:error, "No space left on device"}
+      {:error, :enotdir} -> {:error, "Not a directory"}
+      {:error, :eperm} -> {:error, "The file is a directory and user is not super-user"}
+      {:error, :einval} -> {:error, "Invalid argument"}
+    end
   end
 
   @doc """
@@ -262,5 +289,22 @@ defmodule Toia.Videos do
         type: type
       })
     end)
+  end
+
+  @doc """
+  Returns true if user owns the video
+  """
+  def isOwner(user_id, video_id) do
+    query = from(v in Video, where: v.id_video == ^video_id and v.toia_id == ^user_id)
+    Repo.one(query) != nil
+  end
+
+  @doc """
+  Unlink the streams, questions for a video
+  """
+  def unlinkVideoQuestionsStreams(video_id) do
+    query = from(vqs in VideoQuestionStream, where: vqs.id_video == ^video_id)
+    {deletedCount, _} = Repo.delete_all(query)
+    {:ok, deletedCount}
   end
 end

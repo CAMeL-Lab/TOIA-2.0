@@ -51,7 +51,7 @@ defmodule ToiaWeb.Router do
 
     # Video routes
     # legacy: /api/getUserVideos, /api/getVideoPlayback, /api/videos/:user_id
-    resources("/video", VideoController, only: [:index, :show, :create])
+    resources("/video", VideoController, only: [:index, :show, :create, :update])
 
     # User routes
     # legacy: api/questions/onboarding/:user_id/pending, api/questions/onboarding/:user_id/completed

@@ -45,7 +45,8 @@ defmodule ToiaWeb.VideoController do
          {:ok, streams} <- validateStreamsList(params.streams, user.id),
          {:ok, nextIDX} <- Videos.getNextIdx(),
          {:ok, videoID} <- Videos.generateRandomVideoID(user.first_name, user.id, nextIDX),
-         {:ok, questions} <- Questions.pre_process_new_questions(params.questions, params.videoType),
+         {:ok, questions} <-
+           Questions.pre_process_new_questions(params.questions, params.videoType),
          {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
          {:ok, videoEntry} <-
            Videos.create_video(%{
@@ -80,6 +81,12 @@ defmodule ToiaWeb.VideoController do
     end
   end
 
+  def create(conn, _) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> json(%{error: "Invalid parameters"})
+  end
+
   def show(%{assigns: %{current_user: user}} = conn, %{"id" => id} = _video_params) do
     video = Videos.get_video!(id)
 
@@ -101,11 +108,70 @@ defmodule ToiaWeb.VideoController do
     end
   end
 
-  def update(conn, %{"id" => id, "video" => video_params}) do
-    video = Videos.get_video!(id)
+  def update(
+        %{assigns: %{current_user: user}} = conn,
+        %{"id" => oldVideoID, "video" => %Plug.Upload{path: path}} = video_params
+      ) do
+    with oldVideo <- Videos.get_video!(oldVideoID),
+         true <- Videos.isOwner(user.id, oldVideoID),
+         {:ok, params} <- Tarams.cast(video_params, @create_params),
+         {:ok, streams} <- validateStreamsList(params.streams, user.id),
+         {:ok, nextIDX} <- Videos.getNextIdx(),
+         {:ok, videoID} <- Videos.generateRandomVideoID(user.first_name, user.id, nextIDX),
+         {:ok, _deletedCount} <- Videos.unlinkVideoQuestionsStreams(oldVideoID),
+         {:ok, _} <- Videos.delete_video(oldVideo),
+         {:ok, _} <- Videos.removeVideoFile(user.first_name, user.id, oldVideoID),
+         {:ok, questions} <-
+           Questions.pre_process_new_questions(params.questions, params.videoType),
+         {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
+         {:ok, videoEntry} <-
+           Videos.create_video(%{
+             id_video: videoID,
+             toia_id: user.id,
+             idx: nextIDX,
+             private: params.private,
+             answer: params.answer,
+             language: params.language,
+             duration_seconds: params.video_duration
+           }),
+         {:ok, _} <-
+           Videos.linkVideoQuestionsStreams(videoID, questions, streams, params.videoType),
+         {:ok, _} <- Questions.post_process_new_questions(questions, user.id) do
+      conn
+      |> put_status(:ok)
+      |> json(%{videoID: videoID})
+    else
+      {:error, err} ->
+        IO.inspect(err)
 
-    with {:ok, %Video{} = video} <- Videos.update_video(video, video_params) do
-      render(conn, :show, video: video)
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Unauthorized"})
+
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Not found"})
+
+      false ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Unauthorized"})
+
+      {:error, errors, msg} ->
+        IO.inspect(errors)
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: msg})
+
+      x ->
+        IO.puts("======== Unknown error ==========")
+        IO.inspect(x)
+
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Something went wrong"})
     end
   end
 
