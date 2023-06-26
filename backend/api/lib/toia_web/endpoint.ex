@@ -27,8 +27,8 @@ defmodule ToiaWeb.Endpoint do
   plug Plug.Static,
     at: "/media",
     from: "Accounts",
-    gzip: false,
-    headers: %{"Access-Control-Allow-Origin" => "*"}
+    gzip: false
+    # headers: %{"Access-Control-Allow-Origin" => "*"}
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

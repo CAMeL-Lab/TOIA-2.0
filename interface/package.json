@@ -80,6 +80,5 @@
   "devDependencies": {
     "@types/react-speech-recognition": "^3.6.1",
     "prettier": "2.7.1"
-  },
-  "proxy": "http://localhost:4000"
+  }
 }
