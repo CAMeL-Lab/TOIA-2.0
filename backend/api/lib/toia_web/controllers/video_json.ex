@@ -16,7 +16,6 @@ defmodule ToiaWeb.VideoJSON do
   end
 
   def videoWithInfo(%{video: video}) do
-    IO.inspect(video)
     streams = video.streams
     streams = Enum.map(streams, fn stream ->
       %{

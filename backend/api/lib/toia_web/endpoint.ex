@@ -11,11 +11,10 @@ defmodule ToiaWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  # socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   plug CORSPlug, origin: ["*"]
-  # Serve at "/" the static files from "priv/static" directory.
-  #
+
   # You should set gzip to true if you are running phx.digest
   # when deploying your static files in production.
   plug Plug.Static,
@@ -28,7 +27,6 @@ defmodule ToiaWeb.Endpoint do
     at: "/media",
     from: "Accounts",
     gzip: false
-    # headers: %{"Access-Control-Allow-Origin" => "*"}
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

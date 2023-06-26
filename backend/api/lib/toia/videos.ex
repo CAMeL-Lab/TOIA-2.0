@@ -11,8 +11,6 @@ defmodule Toia.Videos do
   alias Toia.VideosQuestionsStreams
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.Questions.Question
-  alias Toia.ToiaUsers.ToiaUser
-  alias Toia.ToiaUsers
 
   @doc """
   Returns the list of video.
