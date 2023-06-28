@@ -9,7 +9,7 @@ import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
 import { getUser, isLoggedIn } from "../auth/auth";
-import API_URLS from "../configs/api";
+import API_URLS from "../configs/backend-urls";
 
 function AvatarLibraryPage() {
 	const { t } = useTranslation();

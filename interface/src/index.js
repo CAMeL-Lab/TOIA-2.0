@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { getToken, saveToken } from "./auth/auth";
-import API_URLS from "./configs/api";
+import API_URLS from "./configs/backend-urls";
 import "./main.scss";
 import reportWebVitals from "./reportWebVitals";
 

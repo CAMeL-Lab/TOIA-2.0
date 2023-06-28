@@ -10,7 +10,7 @@ import history from "../services/history";
 import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
-import API_URLS from "../configs/api";
+import API_URLS from "../configs/backend-urls";
 
 function SignUpPage() {
 	const { t } = useTranslation();

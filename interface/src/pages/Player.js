@@ -19,7 +19,7 @@ import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
 import languageFlagsCSS from "../services/languageHelper";
 import { getUser } from "../auth/auth";
-import API_URLS from "../configs/api";
+import API_URLS from "../configs/backend-urls";
 
 function Player() {
 	const { t } = useTranslation();

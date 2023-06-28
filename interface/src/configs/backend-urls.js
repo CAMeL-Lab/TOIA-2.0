@@ -13,12 +13,17 @@ const API_URLS = {
 	USER_INFO: `${BASE_URL}/toia_user`,
 	OTHER_USER_INFO: user_id => `${BASE_URL}/toia_user/${user_id}`,
 	REMOVE_VIDEO: `${BASE_URL}/video_question_stream`,
-	DISCARD_SUGGESTION: question_id => `${BASE_URL}/question_suggestions/${question_id}`,
-	EDIT_SUGGESTION: question_id => `${BASE_URL}/question_suggestions/${question_id}`,
+	DISCARD_SUGGESTION: question_id =>
+		`${BASE_URL}/question_suggestions/${question_id}`,
+	EDIT_SUGGESTION: question_id =>
+		`${BASE_URL}/question_suggestions/${question_id}`,
 	STREAM_INFO: stream_id => `${BASE_URL}/stream/${stream_id}`,
 	STREAMS: () => `${BASE_URL}/stream`,
 	RECORD_VIDEO: () => `${BASE_URL}/video`,
 	UPDATE_VIDEO: video_id => `${BASE_URL}/video/${video_id}`,
 };
 
+const SPEECH_TO_TEXT = () => "http://localhost:3002";
+
 export default API_URLS;
+export { SPEECH_TO_TEXT };

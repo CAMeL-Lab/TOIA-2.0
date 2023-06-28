@@ -1,6 +1,7 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
 const speech = require("@google-cloud/speech");
 const speech_to_text = require("./speech_to_text");
 
@@ -84,8 +85,11 @@ io.on("connect", function (socket) {
     }
 });
 
-const PORT = process.env.PORT || 3002;
+const PORT = 3002;
 
 httpServer.listen(PORT, () => {
-    console.log(`server listening on port ${PORT}`);
+    console.log(`====================================`);
+    console.log(`Speech To Text: GCloud`);
+    console.log(`PORT: ${PORT}`);
+    console.log(`====================================`);
 });

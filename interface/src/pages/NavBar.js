@@ -1,14 +1,13 @@
-import { Modal } from "semantic-ui-react";
-import React from "react";
-import { NotificationManager } from "react-notifications";
 import axios from "axios";
+import React from "react";
+import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
-
+import { logout as LogoutUser } from "../auth/auth";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import "../../node_modules/flag-icons/css/flag-icons.min.css";
-import API_URLS from "../configs/api";
+import API_URLS from "../configs/backend-urls";
 
 //toiaName = null, props.toiaID = null, props.toiaLanguage = null, props.isLoggedIn = false, history = null
 const supportedLanguages = ["en", "fr", "ar"];
@@ -123,6 +122,7 @@ function NavBar(props) {
 		if (typeof props?.endTranscription === "function") {
 			props.endTranscription();
 		}
+		LogoutUser();
 		history.push({
 			pathname: "/",
 		});

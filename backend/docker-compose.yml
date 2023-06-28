@@ -39,3 +39,9 @@ services:
       - 4000:4000
     depends_on:
       - api
+  speech-to-text:
+    build: ./speech-to-text/gcloud
+    ports:
+      - 3002:3002
+    env_file:
+      - ./speech-to-text/gcloud/.env
