@@ -21,9 +21,16 @@ const client = new speech.SpeechClient({
     clientConfig: speech_to_text.clientConfig,
 });
 
+let origin = "*";
+if (process.env.NODE_ENV === "production") {
+    if (!process.env.API_URL)
+        throw "API_URL env variable not set when running in production!";
+    origin = process.env.API_URL;
+}
+
 const io = new Server(httpServer, {
     cors: {
-        origin: "*",
+        origin: origin,
     },
     transports: ["websocket"],
 });
