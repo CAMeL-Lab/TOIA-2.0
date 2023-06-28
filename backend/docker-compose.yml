@@ -3,45 +3,55 @@ services:
   mysql:
     image: mysql:8.0.33
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
     ports:
       - 3306:3306
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
   phpMyAdmin:
     image: phpmyadmin/phpmyadmin
     ports:
       - 8080:80
     environment:
       PMA_HOST: mysql
-      PMA_USER: ${MYSQL_USER}
-      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
       PMA_ARBITRARY: 1
       UPLOAD_LIMIT: 1024M
-  api:
-    build: .
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MIX_ENV: dev
-    depends_on:
-      mysql:
-        condition: service_healthy
-    restart: always
-    volumes:
-      - ./toia:/app
-  nginx:
-    build: ./nginx
-    ports:
-      - 4000:4000
-    depends_on:
-      - api
+  # api:
+  #   build: .
+  #   environment:
+  #     MYSQL_HOST: mysql
+  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #     MIX_ENV: dev
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #   restart: always
+  #   volumes:
+  #     - ./toia:/app
+  # nginx:
+  #   build: ./nginx
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - api
   speech-to-text:
     build: ./speech-to-text/gcloud
     ports:
       - 3002:3002
     env_file:
       - ./speech-to-text/gcloud/.env
+  q_api:
+    build: ./q_api
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - ./q_api/.env
+    tty: true

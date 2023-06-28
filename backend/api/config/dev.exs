@@ -2,10 +2,10 @@ import Config
 
 # Configure your database
 config :toia, Toia.Repo,
-  username: System.get_env("MYSQL_USER"),
-  password: System.get_env("MYSQL_PASSWORD"),
-  hostname: System.get_env("MYSQL_HOST"),
-  database: System.get_env("MYSQL_DATABASE"),
+  username: System.get_env("DB_USERNAME"),
+  password: System.get_env("DB_PASSWORD"),
+  hostname: System.get_env("DB_HOST"),
+  database: System.get_env("DB_DATABASE"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
