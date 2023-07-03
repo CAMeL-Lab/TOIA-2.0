@@ -97,7 +97,7 @@ defmodule ToiaWeb.StreamController do
         %{"id" => stream_id, "question" => question} = _params
       ) do
     case Streams.get_next_video(user, stream_id, question) do
-      %{id_video: _, answer: _, duration_seconds: _, url: _} = x ->
+      {:ok, x} ->
         conn
         |> put_status(:ok)
         |> json(x)

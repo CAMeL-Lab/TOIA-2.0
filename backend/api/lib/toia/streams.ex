@@ -12,6 +12,7 @@ defmodule Toia.Streams do
   alias Toia.Videos
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.ToiaUsers
+  alias ServiceHandlers.DialogueManager
 
   @doc """
   Returns the list of stream.
@@ -27,16 +28,21 @@ defmodule Toia.Streams do
   end
 
   def list_public_stream do
-    Repo.all(from s in Stream, where: s.private == false)
+    Repo.all(from(s in Stream, where: s.private == false))
   end
 
   def list_accessible_stream(user_id) do
-    query = from s in Stream,
-      where: s.private == false or s.toia_id == ^user_id
+    query =
+      from(s in Stream,
+        where: s.private == false or s.toia_id == ^user_id
+      )
+
     streams = Repo.all(query)
-    streams = Enum.map(streams, fn stream ->
-      Map.put(stream, :pic, get_stream_pic(stream))
-    end)
+
+    streams =
+      Enum.map(streams, fn stream ->
+        Map.put(stream, :pic, get_stream_pic(stream))
+      end)
 
     Enum.map(streams, fn stream ->
       Map.put(stream, :videos_count, get_videos_count(stream.id_stream))
@@ -155,16 +161,18 @@ defmodule Toia.Streams do
     case stream.toia_id == user_id do
       true ->
         query =
-          from q in Question,
+          from(q in Question,
             inner_join: vqs in VideoQuestionStream,
             on: q.id == vqs.id_question,
             inner_join: v in Video,
             on: v.id_video == vqs.id_video,
             where: vqs.id_stream == ^stream_id and vqs.type == :filler
+          )
 
         query =
-          from [_q, vqs, _v] in query,
+          from([_q, vqs, _v] in query,
             select: {vqs.id_video}
+          )
 
         all_videos = Repo.all(query)
 
@@ -177,16 +185,18 @@ defmodule Toia.Streams do
 
       false ->
         query =
-          from q in Question,
+          from(q in Question,
             inner_join: vqs in VideoQuestionStream,
             on: q.id == vqs.id_question,
             inner_join: v in Video,
             on: v.id_video == vqs.id_video,
             where: vqs.id_stream == ^stream_id and v.private == false and vqs.type == :filler
+          )
 
         query =
-          from [_q, vqs, _v] in query,
+          from([_q, vqs, _v] in query,
             select: {vqs.id_video}
+          )
 
         all_videos = Repo.all(query)
 
@@ -204,23 +214,45 @@ defmodule Toia.Streams do
   """
   def getExactMatch(stream_id, question) do
     query =
-      from q in Question,
+      from(q in Question,
         inner_join: vqs in VideoQuestionStream,
         on: q.id == vqs.id_question,
         inner_join: v in Video,
         on: v.id_video == vqs.id_video,
         where: vqs.id_stream == ^stream_id and q.question == ^question
+      )
 
     query =
-      from [_q, vqs, v] in query,
+      from([_q, vqs, v] in query,
         select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
+      )
 
     all_videos = Repo.all(query)
 
     if length(all_videos) == 0 do
-      nil
+      {:no_match}
     else
-      all_videos |> Enum.random()
+      rand_video = all_videos |> Enum.random()
+      {:ok, rand_video}
+    end
+  end
+
+  def request_dm(query, stream_id) do
+    body = %{"query" => query, "stream_id" => to_string(stream_id)}
+
+    with {:ok, response} <- DialogueManager.post("", body) do
+      {:ok, response.body}
+    else
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.puts(:stderr, "**** TOIA_DM ERROR ****")
+        IO.puts(:stderr, reason)
+        IO.puts(:stderr, "***********************")
+        {:error, reason}
+
+      x ->
+        IO.puts(:stderr, "**** TOIA_DM ERROR ****")
+        IO.inspect(x)
+        {:error, "unknown error"}
     end
   end
 
@@ -228,48 +260,16 @@ defmodule Toia.Streams do
   Retrieve next video to play based on the question
   """
   def get_next_video(user, stream_id, question) do
-    case getExactMatch(stream_id, question) do
-      nil ->
-        stream = get_stream!(stream_id)
+    with {:no_match} <- getExactMatch(stream_id, question),
+         {:ok, response} <- request_dm(question, stream_id) do
+      {:ok, response}
+    else
+      {:error, reason} ->
+        {:error, reason}
 
-        req_body =
-          Poison.encode!(%{
-            params: %{
-              query: question,
-              stream_id: to_string(stream_id),
-              avatar_id: to_string(stream.toia_id)
-            }
-          })
-
-        dm_response =
-          HTTPoison.post!("http://localhost:5001/dialogue_manager", req_body, [
-            {"Content-Type", "application/json"}
-          ])
-
-        if dm_response.status_code != 200 do
-          IO.inspect(dm_response)
-          {:error, "error"}
-        else
-          body = Poison.decode!(dm_response.body)
-
-          id_video = body["id_video"]
-
-          if id_video == "204" do
-            {:error, "error"}
-          else
-            video = Videos.get_video!(id_video)
-
-            %{
-              id_video: video.id_video,
-              answer: video.answer,
-              duration_seconds: video.duration_seconds,
-              url: Videos.getPlaybackUrl(user.first_name, user.id, video.id_video)
-            }
-          end
-        end
-
-      x ->
-        Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))
+      # A match was found
+      {:ok, x} ->
+        {:ok, Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))}
     end
   end
 
@@ -314,7 +314,7 @@ defmodule Toia.Streams do
     question_ids = [19, 20]
 
     query =
-      from q in Question,
+      from(q in Question,
         join: vqs in VideoQuestionStream,
         on: vqs.id_question == q.id,
         join: v in Video,
@@ -325,27 +325,30 @@ defmodule Toia.Streams do
         order_by: q.id,
         limit: 5,
         select: %{question: q.question}
+      )
 
     Repo.all(query)
   end
 
   def get_videos_count(stream_id) do
     query =
-      from vqs in VideoQuestionStream,
+      from(vqs in VideoQuestionStream,
         where: vqs.id_stream == ^stream_id,
         select: count(vqs.id_video)
+      )
 
     Repo.one(query)
   end
 
   def get_videos_count(stream_id, _private) do
     query =
-      from vqs in VideoQuestionStream,
+      from(vqs in VideoQuestionStream,
         join: v in Video,
         on: v.id_video == vqs.id_video,
         where: vqs.id_stream == ^stream_id,
         where: v.private == false,
         select: count(vqs.id_video)
+      )
 
     Repo.one(query)
   end
@@ -354,6 +357,7 @@ defmodule Toia.Streams do
   def get_stream_pic(stream) do
     user_id = stream.toia_id
     user = ToiaUsers.get_toia_user!(user_id)
+
     "#{System.get_env("API_URL")}/media/#{user.first_name}_#{user.id}/StreamPic/#{stream.name}_#{stream.id_stream}.jpg"
   end
 end

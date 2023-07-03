@@ -12,8 +12,13 @@ from utils_gpt3 import toia_answer
 from dotenv import load_dotenv
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 load_dotenv()
+
+ALLOWED_HOSTS = ["*"]
+if os.environ.get("ENVIRONMENT") == "production":
+    ALLOWED_HOSTS = [os.environ.get("API_URL")]
 
 SQL_URL = "{dbconnection}://{dbusername}:{dbpassword}@{dbhost}/{dbname}".format(dbconnection=os.environ.get("DB_CONNECTION"),dbusername=os.environ.get("DB_USERNAME"),dbpassword=os.environ.get("DB_PASSWORD"),dbhost=os.environ.get("DB_HOST"),dbname=os.environ.get("DB_DATABASE"))
 
@@ -27,6 +32,13 @@ print("Connected successfully!")
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_HOSTS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class QuestionInput(BaseModel):
     query: str
@@ -47,6 +59,9 @@ def dialogue_manager(payload: DMpayload):
     print(query)
     print(avatar_id)
     print(stream_id)
+
+    if query is None:
+        return 'Please enter a query', 400
 
     statement = text("""SELECT videos_questions_streams.id_stream as stream_id_stream, videos_questions_streams.type, videos_questions_streams.ada_search, questions.question, video.id_video, video.toia_id, video.idx, video.private, video.answer, video.likes, video.views FROM video
                             INNER JOIN videos_questions_streams ON videos_questions_streams.id_video = video.id_video
@@ -73,11 +88,6 @@ def dialogue_manager(payload: DMpayload):
                                 ])
 
     df_avatar['ada_search'] = df_avatar.ada_search.apply(eval).apply(np.array)  #needed when np array stored as txt
-
-    # df_greetings = df_avatar[df_avatar['type'] == "greeting"]
-
-    if query is None:
-        return 'Please enter a query', 400
 
     response = toia_answer(query, df_avatar)
 

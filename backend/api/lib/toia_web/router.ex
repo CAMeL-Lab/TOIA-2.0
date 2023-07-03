@@ -16,15 +16,6 @@ defmodule ToiaWeb.Router do
     post("/login", AuthController, :login)
     # legacy: /api/createTOIA
     resources("/toia_user", ToiaUserController, only: [:create])
-
-    # resources "/stream_view_permission", StreamViewPermissionController, except: [:new, :edit]
-    # resources "/questions", QuestionController, except: [:new, :edit]
-    # resources "/question_suggestions", QuestionSuggestionController, except: [:new, :edit]
-    # resources "/video", VideoController, except: [:new, :edit]
-    # resources "/videos_questions_streams", VideoQuestionStreamController, except: [:new, :edit]
-    # resources "/conversations_log", ConversationLogController, except: [:new, :edit]
-    # resources "/player_feedback", PlayerFeedbackController, except: [:new, :edit]
-    # resources "/tracker", TrackerController, except: [:new, :edit]
   end
 
   scope "/api", ToiaWeb do
