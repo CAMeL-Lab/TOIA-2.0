@@ -112,7 +112,7 @@ defmodule ToiaWeb.StreamController do
   end
 
   def smart_questions(
-        %{assigns: %{current_user: user}} = conn,
+        %{assigns: %{current_user: _user}} = conn,
         %{
           "id" => stream_id,
           "params" => %{
@@ -135,7 +135,7 @@ defmodule ToiaWeb.StreamController do
         |> put_status(:ok)
         |> json(x)
 
-      {:error, reason} ->
+      {:error, _reason} ->
         conn
         |> put_status(:internal_server_error)
         |> json(%{error: "error"})
