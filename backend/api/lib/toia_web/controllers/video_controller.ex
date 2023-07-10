@@ -62,6 +62,12 @@ defmodule ToiaWeb.VideoController do
          {:ok, _} <-
            Videos.linkVideoQuestionsStreams(videoID, questions, streams, params.videoType),
          {:ok, _} <- Questions.post_process_new_questions(questions, user.id) do
+      # Generate Suggestion in the background
+      task =
+        Task.async(fn ->
+          Toia.Videos.triggerSuggester(questions, params.answer, user.id)
+        end)
+
       conn
       |> put_status(:ok)
       |> json(%{videoID: videoID})

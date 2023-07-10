@@ -9,6 +9,13 @@ defmodule ToiaWeb.Router do
     plug(ToiaWeb.Plugs.Auth)
   end
 
+  # Unauthorized routes
+  scope "/api", ToiaWeb do
+    pipe_through(:api)
+    # legacy: /api/saveSuggestedQuestion/:user_id
+    resources("/question_suggestions", QuestionSuggestionController, only: [:create])
+  end
+
   scope "/api/auth", ToiaWeb do
     pipe_through(:api)
 
@@ -35,9 +42,9 @@ defmodule ToiaWeb.Router do
     # legacy: /api/getLastestQuestionSuggestion
     get("/question_suggestions/latest", QuestionSuggestionController, :latest)
 
-    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, /api/saveSuggestedQuestion/:user_id, api/questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard, /questions/suggestions/:user_id/pending
+    # legacy: /api/getUserSuggestedQs, /api/removeSuggestedQ, api/questions/suggestions/:user_id/edit, /questions/suggestions/:user_id/discard, /questions/suggestions/:user_id/pending
     resources("/question_suggestions", QuestionSuggestionController,
-      only: [:index, :delete, :create, :update]
+      only: [:index, :delete, :update]
     )
 
     # Video routes
@@ -55,7 +62,6 @@ defmodule ToiaWeb.Router do
     # legacy: /api/getUserData
     get("/toia_user/", ToiaUserController, :show)
     get("/toia_user/:user_id", ToiaUserController, :show)
-
 
     # Video Question Stream routes
     # Legacy: api/questions/answered/delete

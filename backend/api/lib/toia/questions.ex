@@ -41,6 +41,7 @@ defmodule Toia.Questions do
 
   """
   def get_question!(id), do: Repo.get!(Question, id)
+  def get_question(nil), do: nil
   def get_question(id), do: Repo.get(Question, id)
 
   @doc """

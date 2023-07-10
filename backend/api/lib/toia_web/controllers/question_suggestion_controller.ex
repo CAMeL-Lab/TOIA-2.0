@@ -32,8 +32,8 @@ defmodule ToiaWeb.QuestionSuggestionController do
     render(conn, :index, question_suggestions: question_suggestions)
   end
 
-  def create(%{assigns: %{current_user: user}} = conn, %{"question" => question} = _params) do
-    suggestion = %{question: question, toia_id: user.id}
+  def create(conn, %{"q" => question, "toia_id" => toia_id} = _params) do
+    suggestion = %{question: question, toia_id: toia_id}
 
     with {:ok, question_suggestion} <- QuestionSuggestions.create_question_suggestion(suggestion) do
       conn

@@ -11,6 +11,9 @@ defmodule Toia.Videos do
   alias Toia.VideosQuestionsStreams
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.Questions.Question
+  alias Toia.Questions
+
+  alias ServiceHandlers.QuestionSuggester
 
   @doc """
   Returns the list of video.
@@ -320,5 +323,37 @@ defmodule Toia.Videos do
   """
   def getAdaSearch() do
     "FIX ME"
+  end
+
+  @doc """
+  Trigger Suggester if necessary
+  """
+  def triggerSuggester(questions, answer, user_id) do
+    Enum.map(questions, fn question ->
+      triggerSuggesterEach(question, answer, user_id)
+    end)
+  end
+
+  defp triggerSuggesterEach(question, answer, user_id) do
+    question = Questions.get_question(question.id)
+
+    if question != nil do
+      if question.trigger_suggester do
+        payload = %{
+          "latest_question" => question.id,
+          "latest_answer" => answer,
+          "toia_id" => user_id
+        }
+
+        with {:ok, response} <- QuestionSuggester.post("", payload) do
+          {:ok, response.body}
+        else
+          {:error, reason} -> {:error, reason}
+        end
+      end
+    else
+      IO.inspect("Question not found, cannot trigger suggester")
+      {:error, "Question not found, cannot trigger suggester"}
+    end
   end
 end
