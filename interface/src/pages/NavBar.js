@@ -160,7 +160,7 @@ function NavBar(props) {
 		};
 
 		axios
-			.post(API_URLS.LOGIN, params)
+			.post(API_URLS.LOGIN(), params)
 			.then(res => {
 				history.push({
 					pathname: "mytoia",

@@ -27,7 +27,7 @@ defmodule ToiaWeb.Router do
     # legacy: /api/player
     get("/stream/:id/next", StreamController, :next)
     # legacy: /api/getSmartQuestions
-    get("/stream/:id/smart_questions", StreamController, :smart_questions)
+    post("/stream/:id/smart_questions", StreamController, :smart_questions)
     # legacy: /api/getAllStreams, /api/getStreamVideosCount
     resources("/stream", StreamController, only: [:index, :create, :show])
 
@@ -62,7 +62,7 @@ defmodule ToiaWeb.Router do
     delete("/video_question_stream", VideoQuestionStreamController, :delete)
 
     # Question routes
-    # legacy: /api/questions/answered/:user_id, api/questions/answered/:user_id/:stream_id
+    # legacy: /api/questions/answered/:user_id, api/questions/answered/:user_id/:stream_id, api/questions/answered_filtered/:user_id/:stream_id
     get("/question/answered", QuestionController, :index_answered)
 
     # Player feedback routes

@@ -1,20 +1,11 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const path = require("path");
 const speech = require("@google-cloud/speech");
 const speech_to_text = require("./speech_to_text");
-
-if (!process.env.GOOGLE_SPEECH_API_CREDENTIALS_FILE)
-    throw "GOOGLE_SPEECH_API_CREDENTIALS_FILE env variable not set!";
-
-process.env["GOOGLE_APPLICATION_CREDENTIALS"] = path.join(
-    __dirname,
-    process.env.GOOGLE_SPEECH_API_CREDENTIALS_FILE
-);
+const ENV = require("./config");
 
 const app = express();
-
 const httpServer = createServer(app);
 
 const client = new speech.SpeechClient({
@@ -22,10 +13,10 @@ const client = new speech.SpeechClient({
 });
 
 let origin = "*";
-if (process.env.NODE_ENV === "production") {
-    if (!process.env.API_URL)
+if (ENV.NODE_ENV === "production") {
+    if (!ENV.API_URL)
         throw "API_URL env variable not set when running in production!";
-    origin = process.env.API_URL;
+    origin = ENV.API_URL;
 }
 
 const io = new Server(httpServer, {
@@ -92,7 +83,7 @@ io.on("connect", function (socket) {
     }
 });
 
-const PORT = 3002;
+const PORT = ENV.PORT;
 
 httpServer.listen(PORT, () => {
     console.log(`====================================`);

@@ -104,22 +104,20 @@ function Player() {
 			url: API_URLS.STREAM_INFO(streamID),
 		};
 
-		axios
-			.request(options)
-			.catch(function (error) {
-				if (error.response.status === 401) {
-					alert("You do not have permission to access this stream");
-					history.push({
-						pathname: "/library",
-					});
-				} else {
-					console.error(error);
-					alert("Something went wrong");
-					history.push({
-						pathname: "/library",
-					});
-				}
-			});
+		axios.request(options).catch(function (error) {
+			if (error.response.status === 401) {
+				alert("You do not have permission to access this stream");
+				history.push({
+					pathname: "/library",
+				});
+			} else {
+				console.error(error);
+				alert("Something went wrong");
+				history.push({
+					pathname: "/library",
+				});
+			}
+		});
 	}
 
 	// if user asks one of the suggested questions
@@ -129,32 +127,21 @@ function Player() {
 			return;
 		}
 
-		const mode = "CARD";
-
 		const oldQuestion = question;
-		console.log(oldQuestion);
 		axios
-			.post(`/api/player`, {
-				params: {
-					toiaIDToTalk: history.location.state.toiaToTalk,
-					toiaFirstNameToTalk:
-						history.location.state.toiaFirstNameToTalk,
-					question: {
-						current: oldQuestion.question,
-					},
-					streamIdToTalk: history.location.state.streamToTalk,
-					record_log: "true",
-					...(history.location.state.toiaID && {
-						interactor_id: history.location.state.toiaID,
-					}),
-					mode: mode,
-				},
-			})
+			.get(
+				API_URLS.NEXT_VIDEO(
+					history.location.state.streamToTalk,
+					oldQuestion,
+				),
+			)
 			.then(res => {
 				if (res.data === "error") {
 					setFillerPlaying(true);
 					console.log("error");
 				} else {
+					res.data["video_id"] = res.data["id_video"];
+					delete res.data["id_video"];
 					setFillerPlaying(true);
 
 					isFillerPlaying.current = "false";
@@ -207,12 +194,25 @@ function Player() {
 	// Sets the value of 'allQuestions' array
 	// to be the string list of all questions of the stream
 	function fetchAllStreamQuestions() {
+		const options = {
+			method: "GET",
+			url: API_URLS.STREAM_ANSWERED_QUESTIONS(
+				history.location.state.streamToTalk,
+			),
+		};
+
 		axios
-			.get(
-				`/api/questions/answered_filtered/${history.location.state.toiaToTalk}/${history.location.state.streamToTalk}`,
-			)
+			.request(options)
 			.then(res => {
+				res.data = res.data.filter(
+					item =>
+						item.suggested_type === "y/n-answer" ||
+						item.suggested_type === "answer",
+				);
 				allQuestions.current = res.data || [];
+			})
+			.catch(err => {
+				console.log(err);
 			});
 	}
 	// function to fetch answered smart questions from the database
@@ -220,17 +220,15 @@ function Player() {
 	// answer: the answer given by the avatar
 	function fetchAnsweredQuestions(question = "", answer = "") {
 		axios
-			.post("/api/getSmartQuestions", {
-				params: {
-					toiaIDToTalk: history.location.state.toiaToTalk,
-					toiaFirstNameToTalk:
-						history.location.state.toiaFirstNameToTalk,
-					avatar_id: history.location.state.toiaToTalk,
-					stream_id: history.location.state.streamToTalk,
-					latest_question: question,
-					latest_answer: answer,
+			.post(
+				API_URLS.SMART_QUESTIONS(history.location.state.streamToTalk),
+				{
+					params: {
+						latest_question: question,
+						latest_answer: answer,
+					},
 				},
-			})
+			)
 			.then(res => {
 				// res.data contains the smart questions generated
 				// If res.data is not an array, then there is an error, so stop.
@@ -242,7 +240,7 @@ function Player() {
 					// If the question is not an empty string AND has not been previously asked AND is not in the current list of possible questions
 					// then add it to the list of possible suggestions
 					if (
-						q.question != "" &&
+						q.question !== "" &&
 						!allSuggestedQuestions.includes(q)
 					) {
 						answeredQuestions.push(q);
@@ -284,14 +282,10 @@ function Player() {
 	const recordUserRating = function (ratingValue) {
 		const options = {
 			method: "POST",
-			url: "/api/save_player_feedback",
+			url: API_URLS.SAVE_FEEDBACK(),
 			headers: { "Content-Type": "application/json" },
 			data: {
-				...(history.location.state.toiaID && {
-					user_id: history.location.state.toiaID,
-				}),
 				video_id: ratingParams.video_id,
-
 				question: ratingParams.question,
 				rating: ratingValue,
 			},
@@ -316,31 +310,20 @@ function Player() {
 			return;
 		}
 
+		const streamID = history.location.state.streamToTalk;
 		const oldQuestion = question.current;
-		if (question.current == null || question.current == "") {
+		if (question.current == null || question.current === "") {
 			setFillerPlaying(true);
 			fetchFiller();
 		} else {
 			axios
-				.post(`/api/player`, {
-					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
-
-						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
-						question,
-						streamIdToTalk: history.location.state.streamToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
-						mode: mode,
-					},
-				})
+				.get(API_URLS.NEXT_VIDEO(streamID, oldQuestion))
 				.then(res => {
 					if (res.data === "error") {
 						setFillerPlaying(true);
 					} else {
+						res.data["video_id"] = res.data["id_video"];
+						delete res.data["id_video"];
 						setFillerPlaying(true);
 
 						isFillerPlaying.current = "false";
@@ -417,18 +400,9 @@ function Player() {
 		isFillerPlaying.current = "true";
 		if (fillerPlaying) {
 			axios
-				.post(`/api/fillerVideo`, {
-					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
-						streamIdToTalk: history.location.state.streamToTalk,
-						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
-					},
-				})
+				.get(
+					API_URLS.STREAM_FILLER(history.location.state.streamToTalk),
+				)
 				.then(async res => {
 					setVideoProperties({
 						key: res.data + new Date(), // add timestamp to force video transition animation when the key hasn't changed
@@ -482,23 +456,17 @@ function Player() {
 		if (question.current != "") {
 			const oldQuestion = question.current;
 			axios
-				.post(`/api/player`, {
-					params: {
-						toiaIDToTalk: history.location.state.toiaToTalk,
-						toiaFirstNameToTalk:
-							history.location.state.toiaFirstNameToTalk,
-						question,
-						streamIdToTalk: history.location.state.streamToTalk,
-						record_log: "true",
-						...(history.location.state.toiaID && {
-							interactor_id: history.location.state.toiaID,
-						}),
-						mode: mode,
-					},
-				})
+				.get(
+					API_URLS.NEXT_VIDEO(
+						history.location.state.streamToTalk,
+						oldQuestion,
+					),
+				)
 				.then(res => {
 					setFillerPlaying(true);
 					if (res.data !== "error") {
+						res.data["video_id"] = res.data["id_video"];
+						delete res.data["id_video"];
 						isFillerPlaying.current = "false";
 
 						setVideoProperties({

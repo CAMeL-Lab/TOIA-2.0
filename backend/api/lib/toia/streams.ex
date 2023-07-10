@@ -13,6 +13,7 @@ defmodule Toia.Streams do
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.ToiaUsers
   alias ServiceHandlers.DialogueManager
+  alias ServiceHandlers.SmartSuggester
 
   @doc """
   Returns the list of stream.
@@ -276,41 +277,7 @@ defmodule Toia.Streams do
   @doc """
   Retrieve suggestion from q_api
   """
-  def get_smart_questions(avatar_id, stream_id, latest_question, latest_answer) do
-    # TODO: TEST this function
-    post_req_data = %{
-      new_q: latest_question,
-      new_a: latest_answer,
-      n_suggestions: 5,
-      avatar_id: avatar_id,
-      stream_id: stream_id
-    }
-
-    timeout = 20000
-    method = :post
-    url = System.get_env("SMARTQ_ROUTE")
-    headers = [{"content-type", "application/json"}]
-    body = Jason.encode!(post_req_data)
-
-    request = HTTPoison.request(method, url, headers, body, timeout)
-
-    case request do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        body
-        |> Jason.decode!()
-        |> Map.get("suggestions")
-
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts("404")
-        nil
-
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.puts(reason)
-        nil
-    end
-  end
-
-  def get_smart_questions(_avatar_id, stream_id) do
+  def get_smart_questions(stream_id, "", _) do
     question_ids = [19, 20]
 
     query =
@@ -326,8 +293,26 @@ defmodule Toia.Streams do
         limit: 5,
         select: %{question: q.question}
       )
+    data = Repo.all(query)
 
-    Repo.all(query)
+    {:ok, data}
+  end
+
+  def get_smart_questions(stream_id, latest_question, latest_answer) do
+    body = %{
+      "stream_id" => to_string(stream_id),
+      "latest_question" => latest_question,
+      "latest_answer" => latest_answer
+    }
+
+    with {:ok, response} <- SmartSuggester.post("", body) do
+      {:ok, response.body}
+    else
+      {:error, reason} ->
+        IO.puts(:stderr, "**** TOIA_SMART_SUGGESTER ERROR ****")
+        IO.inspect(reason)
+        {:error, reason}
+    end
   end
 
   def get_videos_count(stream_id) do

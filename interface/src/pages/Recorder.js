@@ -249,7 +249,7 @@ function Recorder() {
 		return new Promise(resolve => {
 			const options = {
 				method: "GET",
-				url: API_URLS.QUESTION_SUGGESTIONS,
+				url: API_URLS.QUESTION_SUGGESTIONS(),
 			};
 			axios.request(options).then(res => {
 				setSuggestedQsListCopy(res.data);
@@ -262,7 +262,7 @@ function Recorder() {
 	const fetchUserStats = () => {
 		const options = {
 			method: "GET",
-			url: API_URLS.USER_STATS,
+			url: API_URLS.USER_STATS(),
 		};
 
 		axios

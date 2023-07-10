@@ -25,7 +25,7 @@ axios.interceptors.response.use(
 	response => {
 		try {
 			const url = response.config.url;
-			if (url === API_URLS.SIGN_UP || url === API_URLS.LOGIN) {
+			if (url === API_URLS.SIGN_UP() || url === API_URLS.LOGIN()) {
 				const responseData = response.data;
 				if (responseData.hasOwnProperty("token")) {
 					const token = responseData.token;

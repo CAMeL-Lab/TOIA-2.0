@@ -34,7 +34,7 @@ function SignUpPage() {
 			form.append("password", pass);
 			form.append("language", language);
 			axios
-				.post(API_URLS.SIGN_UP, form)
+				.post(API_URLS.SIGN_UP(), form)
 				.then(res => {
 					// Redirect
 					history.push({

@@ -290,7 +290,7 @@ function AvatarGardenPage() {
 	function fetchOnBoardingQuestions(cb_success = null, cb_fail = null) {
 		const options = {
 			method: "GET",
-			url: API_URLS.ONBOARDING_QUESTIONS_LIST,
+			url: API_URLS.ONBOARDING_QUESTIONS_LIST(),
 		};
 
 		axios
@@ -324,7 +324,7 @@ function AvatarGardenPage() {
 	function fetchSuggestedQuestions(cb_success = null, cb_fail = null) {
 		const options = {
 			method: "GET",
-			url: API_URLS.QUESTION_SUGGESTIONS,
+			url: API_URLS.QUESTION_SUGGESTIONS(),
 		};
 
 		axios
@@ -358,7 +358,7 @@ function AvatarGardenPage() {
 	) {
 		const options = {
 			method: "GET",
-			url: API_URLS.ANSWERED_QUESTION_LIST,
+			url: API_URLS.ANSWERED_QUESTIONS(),
 			params: { stream_id: streamID },
 		};
 
@@ -381,7 +381,7 @@ function AvatarGardenPage() {
 	function fetchUserStats() {
 		const options = {
 			method: "GET",
-			url: API_URLS.USER_STATS,
+			url: API_URLS.USER_STATS(),
 		};
 
 		axios
@@ -532,7 +532,7 @@ function AvatarGardenPage() {
 
 	// querying the database for user data
 	function getUserData() {
-		axios.get(API_URLS.USER_INFO).then(res => {
+		axios.get(API_URLS.USER_INFO()).then(res => {
 			const user = res.data.data;
 			setCurrentUserFullname(`${user.first_name} ${user.last_name}`);
 			setCurrentUserLanguage(user.language);
@@ -561,7 +561,7 @@ function AvatarGardenPage() {
 		NotificationManager.info("Deleting video...");
 		const options = {
 			method: "DELETE",
-			url: API_URLS.REMOVE_VIDEO,
+			url: API_URLS.REMOVE_VIDEO(),
 			data: {
 				question_id: questionBeingDeleted.id,
 				video_id: questionBeingDeleted.id_video,
@@ -890,7 +890,7 @@ function AvatarGardenPage() {
 		form.append("name", newStreamName);
 		form.append("private", newStreamPrivacy === "public" ? true : false);
 
-		axios.post(API_URLS.CREATE_NEW_STREAM, form).then(res => {
+		axios.post(API_URLS.CREATE_NEW_STREAM(), form).then(res => {
 			setStreamList(res.data);
 			dispatch4({ type: "close" });
 

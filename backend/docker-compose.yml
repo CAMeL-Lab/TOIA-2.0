@@ -40,8 +40,10 @@ services:
   #     - 4000:4000
   #   depends_on:
   #     - api
-  speech-to-text:
+
+  speech-to-text-gcloud:
     build: ./speech-to-text/gcloud
+    image: bishnudev/toia-stt:gcloud-v1.0
     ports:
       - 3002:3002
     env_file:
@@ -49,17 +51,19 @@ services:
 
   q_api:
     build: ./q_api
+    image: bishnudev/toia-q-api:latest
     ports:
       - "5000:5000"
     depends_on:
       mysql:
         condition: service_healthy
     env_file:
-      - ./q_api/.env # Custom .env file because of host.docker.internal. Can you the default one when in production
+      - ./q_api/.env # Custom .env file because of host.docker.internal. Can use the default one when in production
     tty: true
 
   toia-dm:
     build: ./toia-dm
+    image: bishnudev/toia-dm:latest
     ports:
       - "5001:5001"
     depends_on:
@@ -70,4 +74,4 @@ services:
       - PYTHONUNBUFFERED=1
       - DM_PORT=5001
     env_file:
-      - ./toia-dm/.env # Custom .env file because of host.docker.internal. Can you the default one when in production
+      - ./toia-dm/.env # Custom .env file because of host.docker.internal. Can use the default one when in production
