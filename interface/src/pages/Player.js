@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
 
 import languageFlagsCSS from "../services/languageHelper";
-import { getUser } from "../auth/auth";
+import { getUser, isLoggedIn } from "../auth/auth";
 import API_URLS from "../configs/backend-urls";
 
 function Player() {
@@ -28,7 +28,7 @@ function Player() {
 	const [toiaLanguage, setLanguage] = React.useState(null);
 	const [interactionLanguage, setInteractionLanguage] = useState("en-US");
 	const [toiaID, setTOIAid] = React.useState(null);
-	const [isLoggedIn, setLoginState] = useState(false);
+	const [loginState, setLoginState] = useState(false);
 
 	const [toiaFirstNameToTalk, setTOIAFirstNameToTalk] = useState(null);
 	const [toiaLastNameToTalk, setTOIALastNameToTalk] = useState(null);
@@ -503,7 +503,7 @@ function Player() {
 			<NavBar
 				toiaName={toiaName}
 				toiaID={toiaID}
-				isLoggedIn={isLoggedIn}
+				isLoggedIn={loginState}
 				toiaLanguage={toiaLanguage}
 				history={history}
 				showLoginModal={true}

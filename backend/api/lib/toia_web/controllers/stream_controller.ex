@@ -89,7 +89,7 @@ defmodule ToiaWeb.StreamController do
     conn
     |> put_status(:ok)
     |> put_resp_header("content-type", "text/plain")
-    |> text("/#{user.first_name}_#{user.id}/Videos/#{filler_video}")
+    |> text("#{System.get_env("API_URL")}/media/#{user.first_name}_#{user.id}/Videos/#{filler_video}")
   end
 
   def next(
@@ -115,8 +115,10 @@ defmodule ToiaWeb.StreamController do
         %{assigns: %{current_user: user}} = conn,
         %{
           "id" => stream_id,
-          "latest_question" => latest_question,
-          "latest_answer" => latest_answer
+          "params" => %{
+            "latest_question" => latest_question,
+            "latest_answer" => latest_answer
+          }
         } = _params
       ) do
     stream = Streams.get_stream!(stream_id)
