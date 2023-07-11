@@ -14,6 +14,7 @@ defmodule Toia.Videos do
   alias Toia.Questions
 
   alias ServiceHandlers.QuestionSuggester
+  alias ServiceHandlers.GenerateEmbeddings
 
   @doc """
   Returns the list of video.
@@ -283,13 +284,14 @@ defmodule Toia.Videos do
   end
 
   defp linkVideoQuestionsStream(video_id, questions, stream_id, type) do
+    video = get_video!(video_id)
     Enum.map(questions, fn question ->
       case VideosQuestionsStreams.create_video_question_stream(%{
              id_video: video_id,
              id_question: question.id,
              id_stream: stream_id,
              type: type,
-             ada_search: getAdaSearch()
+             ada_search: getAdaSearch(question.question, video.answer)
            }) do
         {:ok, vqs} ->
           {:ok, vqs}
@@ -321,8 +323,14 @@ defmodule Toia.Videos do
   @doc """
   Returns ada_search
   """
-  def getAdaSearch() do
-    "FIX ME"
+  def getAdaSearch(question, answer) do
+    with {:ok, response} <- GenerateEmbeddings.post("", %{question: question, answer: answer}) do
+      Poison.encode!(response.body)
+    else
+      {:error, reason} ->
+        IO.puts(:stderr, "Failed to get ada_search #{inspect(reason)}")
+        ""
+    end
   end
 
   @doc """

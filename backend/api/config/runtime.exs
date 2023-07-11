@@ -20,10 +20,14 @@ if System.get_env("PHX_SERVER") do
   config :toia, ToiaWeb.Endpoint, server: true
 end
 
-if System.get_env("API_URL") == nil do
-  raise """
-  environment variable API_URL is missing.
-  """
+required_env_variables = ~W(API_URL YOUR_ORG_ID OPENAI_API_KEY GUARDIAN_SECRET_KEY DB_CONNECTION DB_USERNAME DB_PASSWORD DB_HOST DB_DATABASE)
+
+for var <- required_env_variables do
+  if System.get_env(var) == nil do
+    raise """
+    environment variable #{var} is missing.
+    """
+  end
 end
 
 if config_env() == :prod do
