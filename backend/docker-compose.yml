@@ -7,6 +7,7 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
     ports:
       - 3306:3306
+    tty: true
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
 
@@ -46,6 +47,7 @@ services:
     image: bishnudev/toia-stt:gcloud-v1.0
     ports:
       - 3002:3002
+    tty: true
     env_file:
       - ./speech-to-text/gcloud/.env
 
@@ -66,6 +68,7 @@ services:
     image: bishnudev/toia-dm:latest
     ports:
       - "5001:5001"
+    tty: true
     depends_on:
       mysql:
         condition: service_healthy
@@ -75,3 +78,17 @@ services:
       - DM_PORT=5001
     env_file:
       - ./toia-dm/.env # Custom .env file because of host.docker.internal. Can use the default one when in production
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - 8000:8000
+      - 9443:9443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+  portainer_data:
