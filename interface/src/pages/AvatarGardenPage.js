@@ -537,6 +537,8 @@ function AvatarGardenPage() {
 			setCurrentUserFullname(`${user.first_name} ${user.last_name}`);
 			setCurrentUserLanguage(user.language);
 			setCurrentUserEmail(user.email);
+		}).catch(err => {
+			console.log(err);
 		});
 	}
 

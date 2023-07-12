@@ -96,39 +96,17 @@ defmodule ToiaWeb.ToiaUserController do
     end
   end
 
-  def list_stream(user_id) do
-    query = from(s in Stream, where: s.toia_id == ^user_id)
-    streams = Repo.all(query)
-    # Add stream video count to each stream
-    Enum.map(streams, fn stream ->
-      stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream))
-      stream = Map.put(stream, :pic, Streams.get_stream_pic(stream))
-      stream
-    end)
-  end
-
-  def list_public_stream(user_id) do
-    query = from(s in Stream, where: s.toia_id == ^user_id and s.private == false)
-    streams = Repo.all(query)
-    # Add stream video count to each stream
-    Enum.map(streams, fn stream ->
-      stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream, true))
-      stream = Map.put(stream, :pic, Streams.get_stream_pic(stream))
-      stream
-    end)
-  end
-
   def streams(%{assigns: %{current_user: user}} = conn, %{"user_id" => other_user_idStr}) do
     {other_user_id, _} = Integer.parse(other_user_idStr)
 
     if user.id == other_user_id do
-      streams = list_stream(user.id)
+      streams = Streams.list_stream(user.id)
 
       conn
       |> put_view(ToiaWeb.StreamJSON)
       |> render(:index, stream: streams)
     else
-      streams = list_public_stream(other_user_id)
+      streams = Streams.list_public_stream(other_user_id)
 
       conn
       |> put_view(ToiaWeb.StreamJSON)

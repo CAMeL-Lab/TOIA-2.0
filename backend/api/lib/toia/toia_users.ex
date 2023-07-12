@@ -244,15 +244,7 @@ defmodule Toia.ToiaUsers do
   Returns the number of videos uploaded by this user
   """
   def video_count(user_id) do
-    valid_ids = recorded_video_ids(user_id)
-
-    query =
-      from(v in Video,
-        where: v.id_video in ^valid_ids,
-        select: count(v.id_video)
-      )
-
-    Repo.one(query)
+    recorded_video_ids(user_id) |> Enum.count()
   end
 
   @doc """
