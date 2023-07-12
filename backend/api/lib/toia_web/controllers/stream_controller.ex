@@ -3,7 +3,6 @@ defmodule ToiaWeb.StreamController do
 
   alias Toia.Streams
   alias Toia.Streams.Stream
-  alias ToiaWeb.ToiaUserController
 
   action_fallback(ToiaWeb.FallbackController)
 
@@ -19,7 +18,7 @@ defmodule ToiaWeb.StreamController do
     stream_params = Map.put(stream_params, "toia_id", user.id)
 
     with {:ok, %Stream{} = _stream} <- Streams.create_stream(stream_params, user, filePath) do
-      streams = ToiaUserController.list_stream(user.id)
+      streams = Streams.list_stream(user.id)
 
       conn
       |> put_status(:created)

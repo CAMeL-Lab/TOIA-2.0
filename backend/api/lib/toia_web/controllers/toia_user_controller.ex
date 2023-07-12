@@ -2,11 +2,9 @@ defmodule ToiaWeb.ToiaUserController do
   use ToiaWeb, :controller
 
   import Ecto.Query, warn: false
-  alias Toia.Repo
 
   alias Toia.ToiaUsers
   alias Toia.ToiaUsers.ToiaUser
-  alias Toia.Streams.Stream
   alias Toia.Streams
 
   action_fallback(ToiaWeb.FallbackController)

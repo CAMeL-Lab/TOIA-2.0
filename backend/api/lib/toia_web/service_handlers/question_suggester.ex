@@ -1,8 +1,6 @@
 defmodule ServiceHandlers.QuestionSuggester do
   use HTTPoison.Base
 
-  @expected_fields ~w(suggestions)
-
   def process_request_url(_url) do
     "http://localhost:5000/generateNextQ"
   end

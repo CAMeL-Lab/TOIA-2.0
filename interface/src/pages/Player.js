@@ -132,7 +132,7 @@ function Player() {
 			.get(
 				API_URLS.NEXT_VIDEO(
 					history.location.state.streamToTalk,
-					oldQuestion,
+					oldQuestion.question,
 				),
 			)
 			.then(res => {
@@ -312,6 +312,7 @@ function Player() {
 
 		const streamID = history.location.state.streamToTalk;
 		const oldQuestion = question.current;
+		console.log("old question", oldQuestion);
 		if (question.current == null || question.current === "") {
 			setFillerPlaying(true);
 			fetchFiller();
@@ -455,6 +456,7 @@ function Player() {
 
 		if (question.current != "") {
 			const oldQuestion = question.current;
+			console.log("old question", oldQuestion);
 			axios
 				.get(
 					API_URLS.NEXT_VIDEO(

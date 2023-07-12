@@ -285,7 +285,7 @@ defmodule Toia.Streams do
   def get_next_video(user, stream_id, question) do
     with {:no_match} <- getExactMatch(stream_id, question),
          {:ok, response} <- request_dm(question, stream_id) do
-      {:ok, response}
+      {:ok, Map.put(response, :url, Videos.getPlaybackUrl(user.first_name, user.id, response["id_video"]))}
     else
       {:error, reason} ->
         {:error, reason}
