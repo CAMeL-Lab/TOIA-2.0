@@ -22,8 +22,10 @@ function SignUpPage() {
 	const [pass, setPass] = useState("");
 	const [cpass, setCPass] = useState("");
 	const [profilePic, setProfilePic] = useState();
+	const [inputDisabled, setInputDisabled] = useState(false);
 
 	function submitHandler(event) {
+		setInputDisabled(true);
 		event.preventDefault();
 		if (pass === cpass) {
 			let form = new FormData();
@@ -36,12 +38,14 @@ function SignUpPage() {
 			axios
 				.post(API_URLS.SIGN_UP(), form)
 				.then(res => {
-					// Redirect
-					history.push({
-						pathname: "/mytoia",
-					});
+					NotificationManager.success("Account created. Please check your email for confirmation");
+					// Redirect in 6 seconds
+					setTimeout(() => {
+						history.push("/login");
+					}, 6000);
 				})
 				.catch(error => {
+					setInputDisabled(false);
 					if (error.response) {
 						// The request was made and the server responded with a status code
 						// that falls out of the range of 2xx
@@ -59,6 +63,7 @@ function SignUpPage() {
 					}
 				});
 		} else {
+			setInputDisabled(false);
 			NotificationManager.error("Passwords need to match");
 		}
 	}
@@ -231,6 +236,7 @@ function SignUpPage() {
 						type="image"
 						src={submitButton}
 						alt="Submit"
+						disabled={inputDisabled}
 					/>
 				</div>
 			</form>
