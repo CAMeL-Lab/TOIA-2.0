@@ -20,7 +20,7 @@ if System.get_env("PHX_SERVER") do
   config :toia, ToiaWeb.Endpoint, server: true
 end
 
-required_env_variables = ~W(API_URL YOUR_ORG_ID OPENAI_API_KEY GUARDIAN_SECRET_KEY DB_CONNECTION DB_USERNAME DB_PASSWORD DB_HOST DB_DATABASE)
+required_env_variables = ~W(API_URL YOUR_ORG_ID OPENAI_API_KEY GUARDIAN_SECRET_KEY DB_CONNECTION DB_USERNAME DB_PASSWORD DB_HOST DB_DATABASE GMAIL_SMTP_EMAIL GMAIL_SMTP_APP_PASSWORD)
 
 for var <- required_env_variables do
   if System.get_env(var) == nil do

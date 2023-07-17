@@ -6,6 +6,8 @@ defmodule ToiaWeb.ToiaUserController do
   alias Toia.ToiaUsers
   alias Toia.ToiaUsers.ToiaUser
   alias Toia.Streams
+  alias ServiceHandlers.Emails
+  alias Toia.Mailer
 
   action_fallback(ToiaWeb.FallbackController)
 
@@ -16,34 +18,34 @@ defmodule ToiaWeb.ToiaUserController do
 
   def create(conn, toia_user_params) do
     with {:ok, %ToiaUser{} = toia_user, _stream} <-
-           ToiaUsers.create_toia_user_with_stream(toia_user_params) do
-      with {:ok, token, _claims} <-
-             Toia.Guardian.encode_and_sign(toia_user, %{
-               id: toia_user.id,
-               first_name: toia_user.first_name,
-               last_name: toia_user.last_name,
-               langauge: toia_user.language,
-               email: toia_user.email
-             }) do
-        conn
-        |> put_status(:created)
-        |> render(:show, toia_user: toia_user, token: token)
-      else
-        {:error, :secret_not_found} ->
-          IO.warn("Guardian Secret not found in the environment")
-
-          conn
-          |> put_status(:internal_server_error)
-          |> json(%{error: "Internal server error"})
-
-        {:error, :reason} ->
-          IO.inspect(:reason)
-
-          conn
-          |> put_status(:internal_server_error)
-          |> json(%{error: "Internal server error"})
-      end
+           ToiaUsers.create_toia_user_with_stream(toia_user_params),
+         {:ok, token, _claims} <-
+           Toia.Guardian.encode_and_sign(toia_user, %{
+             id: toia_user.id,
+             first_name: toia_user.first_name,
+             last_name: toia_user.last_name,
+             langauge: toia_user.language,
+             email: toia_user.email
+           }),
+           {:ok, _} <- Emails.confirmEmail(toia_user) |> Mailer.deliver() do
+      conn
+      |> put_status(:created)
+      |> render(:show, toia_user: toia_user, token: token)
     else
+      {:error, :secret_not_found} ->
+        IO.warn("Guardian Secret not found in the environment")
+
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
+
+      {:error, :reason} ->
+        IO.inspect(:reason)
+
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
+
       {:error_pic, reason} ->
         IO.warn("Photo couldn't be uploaded")
         IO.warn(reason)
@@ -57,8 +59,9 @@ defmodule ToiaWeb.ToiaUserController do
         |> put_view(json: ToiaWeb.ChangesetJSON)
         |> render(:error, changeset: changeset)
 
-      _ ->
+      x ->
         IO.inspect("Something went wrong")
+        IO.inspect(x)
 
         conn
         |> put_status(:internal_server_error)

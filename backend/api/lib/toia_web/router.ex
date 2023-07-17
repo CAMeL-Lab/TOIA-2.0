@@ -23,6 +23,8 @@ defmodule ToiaWeb.Router do
     post("/login", AuthController, :login)
     # legacy: /api/createTOIA
     resources("/toia_user", ToiaUserController, only: [:create])
+
+    get("/confirm_email", AuthController, :confirm_email)
   end
 
   scope "/api", ToiaWeb do

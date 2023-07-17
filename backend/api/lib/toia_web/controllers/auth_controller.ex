@@ -35,4 +35,21 @@ defmodule ToiaWeb.AuthController do
     |> put_status(400)
     |> json(%{error: "No email or password provided"})
   end
+
+  def confirm_email(conn, %{"token" => token}) do
+    case Toia.Guardian.decode_and_verify(token) do
+      {:ok, claims} ->
+        user = ToiaUsers.get_toia_user_by_email!(claims["email"])
+        ToiaUsers.update_toia_user(user, %{verified: true})
+
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "Email confirmed successfully. Please return back to the app to login."})
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Invalid token"})
+    end
+  end
 end

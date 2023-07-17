@@ -4,6 +4,7 @@ defmodule Toia.Application do
   @moduledoc false
 
   use Application
+  alias EmailHandlers
 
   @impl true
   def start(_type, _args) do
@@ -21,6 +22,13 @@ defmodule Toia.Application do
       # Start a worker by calling: Toia.Worker.start_link(arg)
       # {Toia.Worker, arg}
     ]
+
+    :telemetry.attach_many("email-handlers", [
+      [:swoosh, :deliver, :stop],
+      [:swoosh, :deliver, :exception],
+      [:swoosh, :deliver_many, :stop],
+      [:swoosh, :deliver_many, :exception],
+    ], &EmailHandlers.handle_event/4, nil)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

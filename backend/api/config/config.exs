@@ -27,7 +27,16 @@ config :toia, ToiaWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :toia, Toia.Mailer, adapter: Swoosh.Adapters.Local
+config :toia, Toia.Mailer,
+  adapter: Swoosh.Adapters.SMTP,
+  relay: "smtp.gmail.com",
+  username: System.get_env("GMAIL_SMTP_EMAIL"),
+  password: System.get_env("GMAIL_SMTP_APP_PASSWORD"),
+  port: 465,
+  ssl: true,
+  tls: :if_available,
+  auth: :always
+
 
 # Configures Elixir's Logger
 config :logger, :console,
