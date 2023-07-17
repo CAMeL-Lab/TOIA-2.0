@@ -1,4 +1,6 @@
 defmodule ToiaWeb.Plugs.Auth do
+  alias Toia.ToiaUsers
+
   def init(opts) do
     opts
   end
@@ -17,8 +19,13 @@ defmodule ToiaWeb.Plugs.Auth do
         {:ok, user} ->
           user = Map.delete(user, :password)
 
-          conn
-          |> Plug.Conn.assign(:current_user, user)
+          case ensureVerified(user) do
+            {:ok, user} ->
+              conn
+              |> Plug.Conn.assign(:current_user, user)
+            {:error, _reason} ->
+              unauthorized(conn, "Email not verified")
+          end
 
         {:error, _reason} ->
           unauthorized(conn)
@@ -28,9 +35,18 @@ defmodule ToiaWeb.Plugs.Auth do
     end
   end
 
-  def unauthorized(conn) do
+  def unauthorized(conn, msg \\ "Unauthorized") do
     conn
-    |> Plug.Conn.send_resp(401, "Unauthorized")
+    |> Plug.Conn.send_resp(401, msg)
     |> Plug.Conn.halt()
+  end
+
+  def ensureVerified(user) do
+    user = ToiaUsers.get_toia_user_by_email!(user.email)
+    if user.verified do
+      {:ok, user}
+    else
+      {:error, "Email not verified"}
+    end
   end
 end

@@ -10,18 +10,24 @@ defmodule ToiaWeb.AuthController do
       {:ok, token, _claims} ->
         user = ToiaUsers.get_toia_user_by_email!(email)
 
-        conn
-        |> put_status(:ok)
-        |> json(%{
-          token: token,
-          data: %{
-            id: user.id,
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            language: user.language
-          }
-        })
+        if user.verified == false do
+          conn
+          |> put_status(:unauthorized)
+          |> json(%{error: "Email not verified"})
+        else
+          conn
+          |> put_status(:ok)
+          |> json(%{
+            token: token,
+            data: %{
+              id: user.id,
+              email: user.email,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              language: user.language
+            }
+          })
+        end
 
       {:error, :invalid_credentials} ->
         conn
@@ -44,7 +50,9 @@ defmodule ToiaWeb.AuthController do
 
         conn
         |> put_status(:ok)
-        |> json(%{message: "Email confirmed successfully. Please return back to the app to login."})
+        |> json(%{
+          message: "Email confirmed successfully. Please return back to the app to login."
+        })
 
       {:error, _reason} ->
         conn
