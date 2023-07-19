@@ -1,7 +1,16 @@
 const path = require("path");
 
-if (!process.env.GOOGLE_SPEECH_API_CREDENTIALS_FILE)
-    throw "GOOGLE_SPEECH_API_CREDENTIALS_FILE env variable not set!";
+const requiredEnvVariables = [
+    "GOOGLE_SPEECH_API_CREDENTIALS_FILE",
+    "API_URL",
+    "NODE_ENV",
+];
+
+requiredEnvVariables.forEach((envVariable) => {
+    if (!process.env[envVariable]) {
+        throw new Error(`Environment variable ${envVariable} is missing`);
+    }
+});
 
 process.env["GOOGLE_APPLICATION_CREDENTIALS"] = path.join(
     __dirname,

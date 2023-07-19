@@ -22,6 +22,21 @@ import pandas as pd
 import time
 load_dotenv()
 
+required_env_vars = [
+    "ENVIRONMENT",
+    "API_URL",
+    "DB_CONNECTION",
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "DB_HOST",
+    "DB_DATABASE",
+    "OPENAI_API_KEY"
+]
+
+for env_var in required_env_vars:
+    if not os.environ.get(env_var):
+        raise Exception(f"Missing environment variable {env_var}")
+
 # tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 # model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased', return_dict=True)
 NUM_SHORTLIST = 50 #Shortlisting avatar questions for GPT-3

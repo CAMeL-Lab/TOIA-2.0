@@ -16,6 +16,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 load_dotenv()
 
+required_env_vars = [
+    "ENVIRONMENT",
+    "API_URL",
+    "DB_CONNECTION",
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "DB_HOST",
+    "DB_DATABASE",
+    "DM_PORT",
+    "OPENAI_API_KEY"
+]
+
+for env_var in required_env_vars:
+    if not os.environ.get(env_var):
+        raise Exception(f"Missing environment variable {env_var}")
+
+
 ALLOWED_HOSTS = ["*"]
 if os.environ.get("ENVIRONMENT") == "production":
     ALLOWED_HOSTS = [os.environ.get("API_URL")]
