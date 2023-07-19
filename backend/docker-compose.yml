@@ -45,6 +45,8 @@ services:
     ports:
       - 3002:3002
     tty: true
+    volumes:
+      - ./speech-to-text/gcloud/secrets:/app/secrets:ro
     env_file:
       - ./speech-to-text/gcloud/.env
 
