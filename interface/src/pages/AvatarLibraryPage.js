@@ -38,7 +38,7 @@ function AvatarLibraryPage() {
 			setLanguage(getUser().language);
 			setTOIAid(getUser().id);
 		} else {
-			history.push("/");
+			setLoginState(false);
 		}
 
 		const options = {

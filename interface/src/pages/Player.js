@@ -60,13 +60,14 @@ function Player() {
 	let [micString, setMicString] = React.useState("ASK BY VOICE");
 
 	useEffect(() => {
-		if (!isLoggedIn()) {
-			history.push("/login");
+		if (isLoggedIn()) {
+			setName(getUser().first_name);
+			setLanguage(getUser().language);
+			setTOIAid(getUser().id);
+			setLoginState(true);
+		} else {
+			setLoginState(false);
 		}
-		setName(getUser().first_name);
-		setLanguage(getUser().language);
-		setTOIAid(getUser().id);
-		setLoginState(true);
 
 		setTOIAFirstNameToTalk(history.location.state.toiaFirstNameToTalk);
 		setTOIALastNameToTalk(history.location.state.toiaLastNameToTalk);
