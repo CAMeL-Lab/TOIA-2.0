@@ -12,6 +12,7 @@ defmodule Toia.Videos do
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.Questions.Question
   alias Toia.Questions
+  alias Toia.ToiaUsers
 
   alias ServiceHandlers.QuestionSuggester
   alias ServiceHandlers.GenerateEmbeddings
@@ -125,6 +126,15 @@ defmodule Toia.Videos do
     video.toia_id == user_id || video.private == false
   end
 
+  @doc """
+  Returns playback url for a video
+  """
+  def getPlaybackUrl(video_id) do
+    video = get_video!(video_id)
+    user = ToiaUsers.get_toia_user!(video.toia_id)
+    getPlaybackUrl(user.first_name, user.id, video.id_video)
+  end
+  
   @doc """
   Returns the playback url. Legacy: `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`
   """

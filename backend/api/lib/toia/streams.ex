@@ -180,58 +180,36 @@ defmodule Toia.Streams do
   """
   def get_random_filler_video(user_id, stream_id) do
     stream = get_stream!(stream_id)
-
-    case stream.toia_id == user_id do
-      true ->
-        query =
-          from(q in Question,
-            inner_join: vqs in VideoQuestionStream,
-            on: q.id == vqs.id_question,
-            inner_join: v in Video,
-            on: v.id_video == vqs.id_video,
-            where: vqs.id_stream == ^stream_id and vqs.type == :filler
-          )
-
-        query =
-          from([_q, vqs, _v] in query,
-            select: {vqs.id_video}
-          )
-
-        all_videos = Repo.all(query)
-
-        if length(all_videos) == 0 do
-          IO.warn("No filler video found for stream #{stream_id}")
-          nil
-        else
-          all_videos |> Enum.random()
-        end
-
-      false ->
-        query =
-          from(q in Question,
-            inner_join: vqs in VideoQuestionStream,
-            on: q.id == vqs.id_question,
-            inner_join: v in Video,
-            on: v.id_video == vqs.id_video,
-            where: vqs.id_stream == ^stream_id and v.private == false and vqs.type == :filler
-          )
-
-        query =
-          from([_q, vqs, _v] in query,
-            select: {vqs.id_video}
-          )
-
-        all_videos = Repo.all(query)
-
-        if length(all_videos) == 0 do
-          IO.warn("No filler video found for stream #{stream_id}")
-          nil
-        else
-          all_videos |> Enum.random()
-        end
+    canAccessAll = (stream.toia_id == user_id)
+  
+    query =
+      from(q in Question,
+        inner_join: vqs in VideoQuestionStream,
+        on: q.id == vqs.id_question,
+        inner_join: v in Video,
+        on: v.id_video == vqs.id_video,
+        where: vqs.id_stream == ^stream_id and vqs.type == :filler and (v.private == ^canAccessAll or ^canAccessAll == true)
+      )
+  
+    query =
+      from([_q, vqs, _v] in query,
+        select: {vqs.id_video}
+      )
+  
+    all_videos = Repo.all(query)
+  
+    if length(all_videos) == 0 do
+      IO.warn("No filler video found for stream #{stream_id}")
+      nil
+    else
+      videoID = all_videos |> Enum.random() |> elem(0)
+      video = Videos.get_video!(videoID)
+      user = ToiaUsers.get_toia_user!(video.toia_id)
+      video = Map.put(video, :url, Videos.getPlaybackUrl(user.first_name, user.id, video.id_video))
+      {:ok, video}
     end
   end
-
+  
   @doc """
   Returns the exact match video of a question
   """

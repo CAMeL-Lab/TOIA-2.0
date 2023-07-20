@@ -8,12 +8,13 @@ defmodule ToiaWeb.Plugs.Auth do
   def call(conn, _opts) do
     case Plug.Conn.get_req_header(conn, "authorization") do
       [token] -> ensureLogin(conn, token)
-      _ -> unauthorized(conn)
+      _ -> conn
     end
   end
 
   def ensureLogin(conn, token) do
     token = String.replace(token, "Bearer ", "")
+
     with {:ok, claims} <- Toia.Guardian.decode_and_verify(token) do
       case Toia.Guardian.resource_from_claims(claims) do
         {:ok, user} ->
@@ -23,26 +24,22 @@ defmodule ToiaWeb.Plugs.Auth do
             {:ok, user} ->
               conn
               |> Plug.Conn.assign(:current_user, user)
+
             {:error, _reason} ->
-              unauthorized(conn, "Email not verified")
+              conn
           end
 
         {:error, _reason} ->
-          unauthorized(conn)
+          conn
       end
     else
-      {:error, _reason} -> unauthorized(conn)
+      {:error, _reason} -> conn
     end
-  end
-
-  def unauthorized(conn, msg \\ "Unauthorized") do
-    conn
-    |> Plug.Conn.send_resp(401, msg)
-    |> Plug.Conn.halt()
   end
 
   def ensureVerified(user) do
     user = ToiaUsers.get_toia_user_by_email!(user.email)
+
     if user.verified do
       {:ok, user}
     else

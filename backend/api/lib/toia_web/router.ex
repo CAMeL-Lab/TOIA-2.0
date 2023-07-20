@@ -9,7 +9,7 @@ defmodule ToiaWeb.Router do
     plug(ToiaWeb.Plugs.Auth)
   end
 
-  # Unauthorized routes
+  # public routes
   scope "/api", ToiaWeb do
     pipe_through(:api)
     # legacy: /api/saveSuggestedQuestion/:user_id

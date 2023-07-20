@@ -82,13 +82,21 @@ defmodule ToiaWeb.StreamController do
   end
 
   def filler(%{assigns: %{current_user: user}} = conn, %{"id" => stream_id} = _params) do
-    {filler_video} = Streams.get_random_filler_video(user.id, stream_id)
-    IO.inspect(filler_video)
+    {:ok, video} = Streams.get_random_filler_video(user.id, stream_id)
 
     conn
     |> put_status(:ok)
     |> put_resp_header("content-type", "text/plain")
-    |> text("#{System.get_env("API_URL")}/media/#{user.first_name}_#{user.id}/Videos/#{filler_video}")
+    |> text(video.url)
+  end
+
+  def filler(conn, %{"id" => stream_id} = _params) do
+    {:ok, video} = Streams.get_random_filler_video(-1, stream_id)
+
+    conn
+    |> put_status(:ok)
+    |> put_resp_header("content-type", "text/plain")
+    |> text(video.url)
   end
 
   def next(
