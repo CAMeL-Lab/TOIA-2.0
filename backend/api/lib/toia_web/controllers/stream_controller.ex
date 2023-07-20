@@ -118,6 +118,22 @@ defmodule ToiaWeb.StreamController do
     end
   end
 
+  def next(conn, %{"id" => stream_id, "question" => question} = _params) do
+    case Streams.get_next_video(-1, stream_id, question) do
+      {:ok, x} ->
+        conn
+        |> put_status(:ok)
+        |> json(x)
+
+      {:error, error} ->
+        IO.warn(error)
+
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "error"})
+    end
+  end
+
   def smart_questions(
         %{assigns: %{current_user: _user}} = conn,
         %{

@@ -89,6 +89,14 @@ defmodule Toia.Streams do
   def get_stream!(id), do: Repo.get!(Stream, id)
 
   @doc """
+  Returns the user of a stream.
+  """
+  def get_stream_user(stream_id) do
+    stream = get_stream!(stream_id)
+    ToiaUsers.get_toia_user!(stream.toia_id)
+  end
+
+  @doc """
   Creates a stream.
 
   ## Examples
@@ -180,24 +188,26 @@ defmodule Toia.Streams do
   """
   def get_random_filler_video(user_id, stream_id) do
     stream = get_stream!(stream_id)
-    canAccessAll = (stream.toia_id == user_id)
-  
+    canAccessAll = stream.toia_id == user_id
+
     query =
       from(q in Question,
         inner_join: vqs in VideoQuestionStream,
         on: q.id == vqs.id_question,
         inner_join: v in Video,
         on: v.id_video == vqs.id_video,
-        where: vqs.id_stream == ^stream_id and vqs.type == :filler and (v.private == ^canAccessAll or ^canAccessAll == true)
+        where:
+          vqs.id_stream == ^stream_id and vqs.type == :filler and
+            (v.private == ^canAccessAll or ^canAccessAll == true)
       )
-  
+
     query =
       from([_q, vqs, _v] in query,
         select: {vqs.id_video}
       )
-  
+
     all_videos = Repo.all(query)
-  
+
     if length(all_videos) == 0 do
       IO.warn("No filler video found for stream #{stream_id}")
       nil
@@ -205,11 +215,14 @@ defmodule Toia.Streams do
       videoID = all_videos |> Enum.random() |> elem(0)
       video = Videos.get_video!(videoID)
       user = ToiaUsers.get_toia_user!(video.toia_id)
-      video = Map.put(video, :url, Videos.getPlaybackUrl(user.first_name, user.id, video.id_video))
+
+      video =
+        Map.put(video, :url, Videos.getPlaybackUrl(user.first_name, user.id, video.id_video))
+
       {:ok, video}
     end
   end
-  
+
   @doc """
   Returns the exact match video of a question
   """
@@ -221,6 +234,34 @@ defmodule Toia.Streams do
         inner_join: v in Video,
         on: v.id_video == vqs.id_video,
         where: vqs.id_stream == ^stream_id and q.question == ^question
+      )
+
+    query =
+      from([_q, vqs, v] in query,
+        select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
+      )
+
+    all_videos = Repo.all(query)
+
+    if length(all_videos) == 0 do
+      {:no_match}
+    else
+      rand_video = all_videos |> Enum.random()
+      {:ok, rand_video}
+    end
+  end
+
+  @doc """
+  Returns the exact match video (public) of a question
+  """
+  def getExactMatchPublic(stream_id, question) do
+    query =
+      from(q in Question,
+        inner_join: vqs in VideoQuestionStream,
+        on: q.id == vqs.id_question,
+        inner_join: v in Video,
+        on: v.id_video == vqs.id_video,
+        where: vqs.id_stream == ^stream_id and q.question == ^question and v.private == false
       )
 
     query =
@@ -260,17 +301,55 @@ defmodule Toia.Streams do
   @doc """
   Retrieve next video to play based on the question
   """
-  def get_next_video(user, stream_id, question) do
-    with {:no_match} <- getExactMatch(stream_id, question),
+  def get_next_video(-1, stream_id, question) do
+    streamUser = get_stream_user(stream_id)
+
+    with {:no_match} <- getExactMatchPublic(stream_id, question),
          {:ok, response} <- request_dm(question, stream_id) do
-      {:ok, Map.put(response, :url, Videos.getPlaybackUrl(user.first_name, user.id, response["id_video"]))}
+      {:ok,
+       Map.put(
+         response,
+         :url,
+         Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, response["id_video"])
+       )}
     else
       {:error, reason} ->
         {:error, reason}
 
       # A match was found
       {:ok, x} ->
-        {:ok, Map.put(x, :url, Videos.getPlaybackUrl(user.first_name, user.id, x.id_video))}
+        {:ok,
+         Map.put(x, :url, Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, x.id_video))}
+    end
+  end
+
+  def get_next_video(loggedInUserID, stream_id, question) do
+    streamUser = get_stream_user(stream_id)
+
+    if streamUser.id == loggedInUserID do
+      with {:no_match} <- getExactMatch(stream_id, question),
+           {:ok, response} <- request_dm(question, stream_id) do
+        {:ok,
+         Map.put(
+           response,
+           :url,
+           Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, response["id_video"])
+         )}
+      else
+        {:error, reason} ->
+          {:error, reason}
+
+        # A match was found
+        {:ok, x} ->
+          {:ok,
+           Map.put(
+             x,
+             :url,
+             Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, x.id_video)
+           )}
+      end
+    else
+      get_next_video(-1, stream_id, question)
     end
   end
 
@@ -293,6 +372,7 @@ defmodule Toia.Streams do
         limit: 5,
         select: %{question: q.question}
       )
+
     data = Repo.all(query)
 
     {:ok, data}
