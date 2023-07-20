@@ -21,6 +21,15 @@ defmodule ToiaWeb.PlayerFeedbackController do
     end
   end
 
+  def create(conn, %{"video_id" => _, "question" => _, "rating" => _} = params) do
+    with {:ok, %PlayerFeedback{} = player_feedback} <-
+           PlayerFeedbacks.create_player_feedback(params) do
+      conn
+      |> put_status(:created)
+      |> render(:show, player_feedback: player_feedback)
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     player_feedback = PlayerFeedbacks.get_player_feedback!(id)
     render(conn, :show, player_feedback: player_feedback)
