@@ -11,6 +11,11 @@ defmodule ToiaWeb.StreamController do
     render(conn, :index, stream: stream)
   end
 
+  def index(conn, _params) do
+    stream = Streams.list_accessible_stream(-1)
+    render(conn, :index, stream: stream)
+  end
+
   def create(
         %{assigns: %{current_user: user}} = conn,
         %{"stream_pic" => %Plug.Upload{path: filePath}} = stream_params
@@ -62,6 +67,20 @@ defmodule ToiaWeb.StreamController do
         stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream, true))
         render(conn, :show, stream: stream)
       end
+    end
+  end
+
+  def show(conn, %{"id" => id}) do
+    stream = Streams.get_stream!(id)
+
+    if stream.private do
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Unauthorized"})
+    else
+      stream = Map.put(stream, :pic, Streams.get_stream_pic(stream))
+      stream = Map.put(stream, :videos_count, Streams.get_videos_count(stream.id_stream, true))
+      render(conn, :show, stream: stream)
     end
   end
 
@@ -134,7 +153,8 @@ defmodule ToiaWeb.StreamController do
     end
   end
 
-  def smart_questions(conn,
+  def smart_questions(
+        conn,
         %{
           "id" => stream_id,
           "params" => %{

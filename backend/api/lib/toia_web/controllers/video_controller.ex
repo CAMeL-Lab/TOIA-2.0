@@ -4,6 +4,7 @@ defmodule ToiaWeb.VideoController do
   alias Toia.Videos
   alias Toia.Videos.Video
   alias Toia.Questions
+  alias Toia.ToiaUsers
 
   import ToiaWeb.VideoValidator,
     only: [
@@ -109,6 +110,28 @@ defmodule ToiaWeb.VideoController do
         |> render(:videoWithInfo, video: video)
 
       false ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Unauthorized"})
+    end
+  end
+
+  def show(conn, %{"id" => id} = _video_params) do
+    video = Videos.get_video!(id)
+
+    case video.private do
+      false ->
+        video = videoWithStreams(video, -1)
+        video = videoWithQuestions(video, -1)
+        videoUser = ToiaUsers.get_toia_user!(video.toia_id)
+        playbackUrl = Videos.getPlaybackUrl(videoUser.first_name, videoUser.id, video.id_video)
+        video = Map.put(video, :videoURL, playbackUrl)
+
+        conn
+        |> put_status(:ok)
+        |> render(:videoWithInfo, video: video)
+
+      true ->
         conn
         |> put_status(:unauthorized)
         |> json(%{error: "Unauthorized"})

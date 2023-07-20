@@ -36,6 +36,16 @@ defmodule Toia.Videos do
     Repo.all(query)
   end
 
+  def list_public_video(user_id) do
+    query =
+      from(v in Video,
+        where: v.toia_id == ^user_id and v.private == false,
+        order_by: [desc: v.idx]
+      )
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single video.
 
@@ -134,7 +144,7 @@ defmodule Toia.Videos do
     user = ToiaUsers.get_toia_user!(video.toia_id)
     getPlaybackUrl(user.first_name, user.id, video.id_video)
   end
-  
+
   @doc """
   Returns the playback url. Legacy: `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`
   """
@@ -295,6 +305,7 @@ defmodule Toia.Videos do
 
   defp linkVideoQuestionsStream(video_id, questions, stream_id, type) do
     video = get_video!(video_id)
+
     Enum.map(questions, fn question ->
       case VideosQuestionsStreams.create_video_question_stream(%{
              id_video: video_id,
