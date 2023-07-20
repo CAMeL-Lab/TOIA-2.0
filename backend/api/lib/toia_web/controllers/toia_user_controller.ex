@@ -27,7 +27,7 @@ defmodule ToiaWeb.ToiaUserController do
              langauge: toia_user.language,
              email: toia_user.email
            }),
-           {:ok, _} <- Emails.confirmEmail(toia_user) |> Mailer.deliver() do
+         {:ok, _} <- Emails.confirmEmail(toia_user) |> Mailer.deliver() do
       conn
       |> put_status(:created)
       |> render(:show, toia_user: toia_user, token: token)
@@ -113,6 +113,16 @@ defmodule ToiaWeb.ToiaUserController do
       |> put_view(ToiaWeb.StreamJSON)
       |> render(:index, stream: streams)
     end
+  end
+
+  def streams(conn, %{"user_id" => other_user_idStr}) do
+    {other_user_id, _} = Integer.parse(other_user_idStr)
+
+    streams = Streams.list_public_stream(other_user_id)
+
+    conn
+    |> put_view(ToiaWeb.StreamJSON)
+    |> render(:index, stream: streams)
   end
 
   def onboarding_questions(%{assigns: %{current_user: user}} = conn, _params) do
