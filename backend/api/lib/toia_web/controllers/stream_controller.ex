@@ -134,8 +134,7 @@ defmodule ToiaWeb.StreamController do
     end
   end
 
-  def smart_questions(
-        %{assigns: %{current_user: _user}} = conn,
+  def smart_questions(conn,
         %{
           "id" => stream_id,
           "params" => %{
