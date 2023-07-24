@@ -10,10 +10,10 @@ RUN mix archive.install hex phx_new --force
 
 WORKDIR /api
 
-# COPY mix.exs mix.lock ./
-COPY . ./
+COPY mix.exs mix.lock ./
 RUN mix deps.get
 RUN mix deps.compile
+COPY . ./
 
 COPY run_prod.sh ./
 RUN chmod +x run_prod.sh

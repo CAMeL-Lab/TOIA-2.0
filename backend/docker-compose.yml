@@ -31,7 +31,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:4000/api/health"]
     tty: true
     env_file:
-      - ./api/.env
+      - ./.env
     volumes:
       - ./api/Accounts:/api/Accounts
     ports:
@@ -50,10 +50,13 @@ services:
     ports:
       - 3002:3002
     tty: true
-    volumes:
-      - ./speech-to-text/gcloud/secrets:/app/secrets:ro
     env_file:
-      - ./speech-to-text/gcloud/.env
+      - ./.env
+    environment:
+      - NODE_ENV=development
+      - GOOGLE_SPEECH_API_CREDENTIALS_FILE=/app/secrets/gcloud-credentials.json
+    volumes:
+      - ./secrets:/app/secrets:ro
 
   q_api:
     build: ./q_api
@@ -66,7 +69,7 @@ services:
       api: 
         condition: service_healthy
     env_file:
-      - ./q_api/.env # Custom .env file because of host.docker.internal. Can use the default one when in production
+      - ./.env
     tty: true
 
   toia-dm:
@@ -85,7 +88,7 @@ services:
       - PYTHONUNBUFFERED=1
       - DM_PORT=5001
     env_file:
-      - ./toia-dm/.env # Custom .env file because of host.docker.internal. Can use the default one when in production
+      - ./.env
 
   portainer:
     image: portainer/portainer-ce:latest
