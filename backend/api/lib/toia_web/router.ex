@@ -14,6 +14,8 @@ defmodule ToiaWeb.Router do
     pipe_through(:api)
     # legacy: /api/saveSuggestedQuestion/:user_id
     resources("/question_suggestions", QuestionSuggestionController, only: [:create])
+
+    get("/health", HealthController, :index)
   end
 
   scope "/api/auth", ToiaWeb do

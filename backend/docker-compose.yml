@@ -18,20 +18,25 @@ services:
     environment:
       PMA_ARBITRARY: 1
       UPLOAD_LIMIT: 1024M
-  # api:
-  #   build: .
-  #   environment:
-  #     MYSQL_HOST: mysql
-  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
-  #     MYSQL_USER: ${MYSQL_USER}
-  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  #     MIX_ENV: dev
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #   restart: always
-  #   volumes:
-  #     - ./toia:/app
+  
+  api:
+    build: ./api
+    environment:
+      MIX_ENV: dev
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/api/health"]
+    tty: true
+    env_file:
+      - ./api/.env
+    volumes:
+      - ./api/Accounts:/api/Accounts
+    ports:
+      - 4000:4000
+
   # nginx:
   #   build: ./nginx
   #   ports:
@@ -58,6 +63,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      api: 
+        condition: service_healthy
     env_file:
       - ./q_api/.env # Custom .env file because of host.docker.internal. Can use the default one when in production
     tty: true
@@ -70,6 +77,8 @@ services:
     tty: true
     depends_on:
       mysql:
+        condition: service_healthy
+      api:
         condition: service_healthy
     environment:
       - ENVIRONMENT=production
