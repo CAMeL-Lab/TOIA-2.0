@@ -33,7 +33,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./api/Accounts:/api/Accounts
+      - ./api/Accounts:/app/Accounts
     ports:
       - 4000:4000
 
@@ -54,7 +54,6 @@ services:
       - ./.env
     environment:
       - NODE_ENV=development
-      - GOOGLE_SPEECH_API_CREDENTIALS_FILE=/app/secrets/gcloud-credentials.json
     volumes:
       - ./secrets:/app/secrets:ro
 

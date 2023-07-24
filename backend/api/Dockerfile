@@ -8,7 +8,7 @@ RUN mix local.hex --force
 RUN mix local.rebar --force
 RUN mix archive.install hex phx_new --force
 
-WORKDIR /api
+WORKDIR /app
 
 COPY mix.exs mix.lock ./
 RUN mix deps.get
