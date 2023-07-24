@@ -21,6 +21,7 @@ services:
   
   api:
     build: ./api
+    image: bishnudev/toia-api:latest
     environment:
       MIX_ENV: dev
     depends_on:
