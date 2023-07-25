@@ -7,9 +7,9 @@
 
 `/speech-to-text`: Contains the speech-to-text code for different modules (Currently, we only have gcloud)
 
-`q_api`: Contains the code for question suggestion api
+`/q_api`: Contains the code for question suggestion api
 
-`toia-dm`: Contains the code for dialogue manager
+`/toia-dm`: Contains the code for dialogue manager
 
 #### Running the backend services
 1. Copy the `.env` file to `TOIA-2.0/backend/`
@@ -21,6 +21,9 @@
 #### Running with nginx 
 
 (Coming soon)
+
+#### Loading video files
+If you have a copy of video files in gcloud, you can copy them to the `TOIA-2.0/backend/api/Accounts` folder. The videos will be loaded automatically when the backend services are started.
 
 ## Frontend
 1. CD into the `interface` directory

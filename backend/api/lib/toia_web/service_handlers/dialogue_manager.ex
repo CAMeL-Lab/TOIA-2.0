@@ -6,7 +6,7 @@ defmodule ServiceHandlers.DialogueManager do
   @expected_fields ~w(answer id_video ada_similarity_score)
 
   def process_request_url(_url) do
-    "http://localhost:5001/dialogue_manager"
+    System.get_env("DM_ROUTE")
   end
 
   def process_request_headers(_headers) do

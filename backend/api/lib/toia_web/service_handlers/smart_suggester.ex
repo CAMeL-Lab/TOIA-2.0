@@ -6,7 +6,7 @@ defmodule ServiceHandlers.SmartSuggester do
   @expected_fields ~w(suggestions)
 
   def process_request_url(_url) do
-    "http://localhost:5000/generateSmartQ"
+    System.get_env("SMART_SUGGESTER_ROUTE")
   end
 
   def process_request_headers(_headers) do

@@ -67,15 +67,24 @@ defmodule Toia.ToiaUsers do
 
         case File.mkdir_p(destDir) do
           :ok ->
-            case File.rename(path, destDir <> destFilename) do
+            case File.cp(path, destDir <> destFilename) do
               :ok ->
-                {:ok, toia_user, stream}
+                case File.rm(path) do
+                  :ok ->
+                    {:ok, toia_user, stream}
+
+                  {:error, reason} ->
+                    IO.puts("Error deleting file")
+                    {:error_pic, reason}
+                end
 
               {:error, reason} ->
+                IO.puts("Error copying file")
                 {:error_pic, reason}
             end
 
           {:error, reason} ->
+            IO.puts("Error creating directory")
             {:error_pic, reason}
         end
 
