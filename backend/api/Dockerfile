@@ -11,8 +11,8 @@ RUN mix archive.install hex phx_new --force
 WORKDIR /app
 
 COPY mix.exs mix.lock ./
-RUN mix deps.get
-RUN mix deps.compile
+RUN mix deps.get --only prod
+RUN MIX_ENV=prod mix compile
 COPY . ./
 
 COPY run_prod.sh ./
