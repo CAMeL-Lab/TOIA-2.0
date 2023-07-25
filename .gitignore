@@ -15,3 +15,4 @@ server/q_api/notebooks/.ipynb_checkpoints
 interface/.env
 server/toia-dm/.env
 */*.env
+secrets/

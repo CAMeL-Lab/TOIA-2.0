@@ -20,10 +20,10 @@ services:
       UPLOAD_LIMIT: 1024M
   
   api:
-    build: ./api
+    build: ./backend/api
     image: bishnudev/toia-api:latest
     environment:
-      MIX_ENV: dev
+      MIX_ENV: prod
     depends_on:
       mysql:
         condition: service_healthy
@@ -34,7 +34,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./api/Accounts:/app/Accounts
+      - ./backend/api/Accounts:/app/Accounts
     ports:
       - 4000:4000
 
@@ -46,7 +46,7 @@ services:
   #     - api
 
   speech-to-text-gcloud:
-    build: ./speech-to-text/gcloud
+    build: ./backend/speech-to-text/gcloud
     image: bishnudev/toia-stt:gcloud-v1.0
     ports:
       - 3002:3002
@@ -54,12 +54,12 @@ services:
     env_file:
       - ./.env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     volumes:
       - ./secrets:/app/secrets:ro
 
   q_api:
-    build: ./q_api
+    build: ./backend/q_api
     image: bishnudev/toia-q-api:latest
     ports:
       - "5000:5000"
@@ -73,7 +73,7 @@ services:
     tty: true
 
   toia-dm:
-    build: ./toia-dm
+    build: ./backend/toia-dm
     image: bishnudev/toia-dm:latest
     ports:
       - "5001:5001"

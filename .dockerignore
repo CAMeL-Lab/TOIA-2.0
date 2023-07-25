@@ -12,4 +12,4 @@ interface/.idea
 interface/.gitignore
 interface/.dockerignore
 interface/package-lock.json
-
+secrets/
