@@ -30,11 +30,13 @@ config :toia, ToiaWeb.Endpoint,
 config :toia, Toia.Mailer,
   adapter: Swoosh.Adapters.SMTP,
   relay: "smtp.gmail.com",
+  port: 465,
   username: System.get_env("GMAIL_SMTP_EMAIL"),
   password: System.get_env("GMAIL_SMTP_APP_PASSWORD"),
-  port: 465,
   ssl: true,
-  tls: :if_available,
+  tls: :always,
+  retries: 1,
+  no_mx_lookups: false,
   auth: :always
 
 

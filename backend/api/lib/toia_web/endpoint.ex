@@ -20,8 +20,7 @@ defmodule ToiaWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :toia,
-    gzip: false,
-    only: ToiaWeb.static_paths()
+    gzip: false
 
   plug Plug.Static,
     at: "/media",

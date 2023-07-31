@@ -96,4 +96,7 @@ defmodule ToiaWeb.Router do
       forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
+
+  Serve front-end static files
+  get("/*path", ToiaWeb.IndexController, :index)
 end
