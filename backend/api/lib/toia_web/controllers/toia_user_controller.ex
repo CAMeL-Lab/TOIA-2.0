@@ -26,8 +26,10 @@ defmodule ToiaWeb.ToiaUserController do
              last_name: toia_user.last_name,
              langauge: toia_user.language,
              email: toia_user.email
-           }),
-         {:ok, _} <- Emails.confirmEmail(toia_user) |> Mailer.deliver() do
+           }) do
+      
+      _task = Task.async(fn -> Emails.confirmEmail(toia_user) end)
+
       conn
       |> put_status(:created)
       |> render(:show, toia_user: toia_user, token: token)

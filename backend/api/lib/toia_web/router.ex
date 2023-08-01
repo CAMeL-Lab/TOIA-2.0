@@ -97,6 +97,6 @@ defmodule ToiaWeb.Router do
     end
   end
 
-  Serve front-end static files
+  # Serve front-end static files
   get("/*path", ToiaWeb.IndexController, :index)
 end
