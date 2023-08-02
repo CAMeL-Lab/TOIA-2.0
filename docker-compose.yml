@@ -20,7 +20,9 @@ services:
       UPLOAD_LIMIT: 1024M
   
   api:
-    build: ./backend/api
+    build: 
+      dockerfile: backend/api/Dockerfile
+      context: .
     image: bishnudev/toia-api:latest
     environment:
       MIX_ENV: prod
