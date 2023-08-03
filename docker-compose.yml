@@ -26,6 +26,7 @@ services:
     image: bishnudev/toia-api:latest
     environment:
       MIX_ENV: prod
+      NODE_ENV: production
     depends_on:
       mysql:
         condition: service_healthy
@@ -39,6 +40,12 @@ services:
       - ./backend/api/Accounts:/app/Accounts
     ports:
       - 4000:4000
+  
+  watchtower:
+    image: containrrr/watchtower:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
 
   # nginx:
   #   build: ./nginx
