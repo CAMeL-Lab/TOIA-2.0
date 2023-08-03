@@ -1,7 +1,7 @@
 const BASE_URL =
 	process.env.NODE_ENV === "production"
 		? `/api`
-		: "http://localhost:4000/api";
+		: "http://34.22.211.107:4000/api";
 
 const API_URLS = {
 	SIGN_UP: () => `${BASE_URL}/auth/toia_user`,
@@ -39,8 +39,8 @@ const API_URLS = {
 
 const speech_to_text_host =
 	process.env.NODE_ENV === "production"
-		? `http://${window.location.hostname}`
-		: "http://localhost:3002";
+		? `http://${window.location.hostname}:3002`
+		: "http://34.22.211.107:3002";
 const SPEECH_TO_TEXT = () => speech_to_text_host;
 
 export default API_URLS;
