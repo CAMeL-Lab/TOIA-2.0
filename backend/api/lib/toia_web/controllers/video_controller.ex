@@ -49,7 +49,7 @@ defmodule ToiaWeb.VideoController do
          {:ok, videoID} <- Videos.generateRandomVideoID(user.first_name, user.id, nextIDX),
          {:ok, questions} <-
            Questions.pre_process_new_questions(params.questions, params.videoType),
-         {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
+         :ok <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
          {:ok, _videoEntry} <-
            Videos.create_video(%{
              id_video: videoID,
@@ -153,7 +153,7 @@ defmodule ToiaWeb.VideoController do
          {:ok, _} <- Videos.removeVideoFile(user.first_name, user.id, oldVideoID),
          {:ok, questions} <-
            Questions.pre_process_new_questions(params.questions, params.videoType),
-         {:ok, _} <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
+         :ok <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
          {:ok, _videoEntry} <-
            Videos.create_video(%{
              id_video: videoID,

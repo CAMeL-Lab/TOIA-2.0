@@ -252,18 +252,28 @@ defmodule Toia.Videos do
     "Accounts/#{first_name}_#{user_id}/Videos/#{id_video}"
   end
 
+  def getDestPath(first_name, user_id, id_video) do
+    "Accounts/#{first_name}_#{user_id}/Videos/"
+  end
+
   @doc """
-  Move a file
+  Copy and delete a file
   """
-  def moveFile(oldPath, newPath) do
-    with :ok <- File.mkdir_p(Path.dirname(newPath)),
-         :ok <- File.rename(oldPath, newPath) do
-      {:ok, "File moved"}
-    else
-      {:error, :eacces} -> {:error, "Permission Denied"}
-      {:error, :enoent} -> {:error, "No such file or directory"}
-      {:error, :enospc} -> {:error, "No space left on device"}
-      {:error, :enotdir} -> {:error, "Not a directory"}
+  def copyAndDelete(oldPath, destDir, destFilename) do
+    case File.mkdir_p(destDir) do
+      :ok ->
+        case File.cp(oldPath, destDir <> destFilename) do
+          :ok ->
+            File.rm(oldPath)
+
+          {:error, reason} ->
+            IO.puts("Error copying file")
+            {:error, reason}
+        end
+
+      {:error, reason} ->
+        IO.puts("Error creating directory")
+        {:error, reason}
     end
   end
 
@@ -271,8 +281,7 @@ defmodule Toia.Videos do
   Save the video file
   """
   def saveVideoFile(first_name, user_id, id_video, upload_path) do
-    dest = getVideoPath(first_name, user_id, id_video)
-    moveFile(upload_path, dest)
+    copyAndDelete(upload_path, getDestPath(first_name, user_id, id_video), id_video)
   end
 
   @doc """
