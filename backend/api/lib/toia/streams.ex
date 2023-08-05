@@ -117,15 +117,9 @@ defmodule Toia.Streams do
       destDir = "Accounts/#{user.first_name}_#{user.id}/StreamPic/"
       destFilename = "#{attrs["name"]}_#{stream.id_stream}.jpg"
 
-      case File.mkdir_p(destDir) do
-        :ok ->
-          case File.rename(filePath, destDir <> destFilename) do
-            :ok -> {:ok, stream}
-            {:error, reason} -> {:error, reason}
-          end
-
-        {:error, reason} ->
-          {:error, reason}
+      case Videos.copyAndDelete(filePath, destDir, destFilename) do
+        :ok -> {:ok, stream}
+        {:error, reason} -> {:error, reason}
       end
     end
   end

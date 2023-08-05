@@ -252,7 +252,7 @@ defmodule Toia.Videos do
     "Accounts/#{first_name}_#{user_id}/Videos/#{id_video}"
   end
 
-  def getDestPath(first_name, user_id, id_video) do
+  def getDestPath(first_name, user_id) do
     "Accounts/#{first_name}_#{user_id}/Videos/"
   end
 
@@ -281,7 +281,7 @@ defmodule Toia.Videos do
   Save the video file
   """
   def saveVideoFile(first_name, user_id, id_video, upload_path) do
-    copyAndDelete(upload_path, getDestPath(first_name, user_id, id_video), id_video)
+    copyAndDelete(upload_path, getDestPath(first_name, user_id), id_video)
   end
 
   @doc """
