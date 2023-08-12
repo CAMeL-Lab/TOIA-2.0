@@ -72,18 +72,17 @@ function Player() {
 	const [micMute, setMicStatus] = useState(true);
 	const [micString, setMicString] = useState("ASK BY VOICE");
 
-
 	const [ratingNodes, setRatingNodes] = useState([
 		{
 			text: "How well does this answer fit with your question or the conversation you're having with the avatar?",
 			rating: 5,
-			onSubmitRating: recordUserRating
+			onSubmitRating: recordUserRating,
 		},
 		{
 			text: "How well do the subtitles reflect what is being said?",
 			rating: 5,
-			onSubmitRating: recordSubtitlesRating
-		}
+			onSubmitRating: recordSubtitlesRating,
+		},
 	]);
 
 	useEffect(() => {
@@ -301,7 +300,7 @@ function Player() {
 				video_language: ratingParams.video_language,
 				interactor_language: interactionLanguage,
 				similarity_score: ratingParams.similarity_score,
-				subject: "Dialogue"
+				subject: "Dialogue",
 			},
 		};
 
@@ -315,7 +314,11 @@ function Player() {
 			});
 	}
 
-	function recordSubtitlesRating(ratingValue, ratingParams, interactionLanguage) {
+	function recordSubtitlesRating(
+		ratingValue,
+		ratingParams,
+		interactionLanguage,
+	) {
 		const options = {
 			method: "POST",
 			url: "/api/save_player_feedback",
@@ -331,7 +334,7 @@ function Player() {
 				video_language: ratingParams.video_language,
 				interactor_language: interactionLanguage,
 				similarity_score: ratingParams.similarity_score,
-				subject: "Subtitles"
+				subject: "Subtitles",
 			},
 		};
 
@@ -363,25 +366,27 @@ function Player() {
 	function getVideoData(mode, oldQuestion) {
 		console.log("Getting Video...");
 		axios
-			.post(`/api/player`, {
-				params: {
-					toiaIDToTalk: history.location.state.toiaToTalk,
+			.post(
+				`/api/player`,
+				{
+					params: {
+						toiaIDToTalk: history.location.state.toiaToTalk,
 
-					toiaFirstNameToTalk:
-						history.location.state.toiaFirstNameToTalk,
-					question,
-					streamIdToTalk: history.location.state.streamToTalk,
-					record_log: "true",
-					...(history.location.state.toiaID && {
-						interactor_id: history.location.state.toiaID,
-					}),
-					mode: mode,
-					language: interactionLanguage,
+						toiaFirstNameToTalk:
+							history.location.state.toiaFirstNameToTalk,
+						question,
+						streamIdToTalk: history.location.state.streamToTalk,
+						record_log: "true",
+						...(history.location.state.toiaID && {
+							interactor_id: history.location.state.toiaID,
+						}),
+						mode: mode,
+						language: interactionLanguage,
+					},
 				},
-			},
-			{
-				timeout: 10000,
-			}
+				{
+					timeout: 10000,
+				},
 			)
 			.then(res => {
 				if (res.data === "error") {
@@ -507,7 +512,7 @@ function Player() {
 								// Show paused UI.
 
 								fetchFiller();
-							})
+							});
 					}
 				});
 		}
@@ -550,11 +555,13 @@ function Player() {
 				endTranscription={endTranscription}
 			/>
 			{!hasRated && (
-				<PopModal 
-				ratingNodes={ratingNodes} setRatingNodes={setRatingNodes} 
-				hasRated={hasRated} setHasRated={setHasRated} 
-				ratingParams={ratingParams}
-				interactionLanguage={interactionLanguage}
+				<PopModal
+					ratingNodes={ratingNodes}
+					setRatingNodes={setRatingNodes}
+					hasRated={hasRated}
+					setHasRated={setHasRated}
+					ratingParams={ratingParams}
+					interactionLanguage={interactionLanguage}
 				/>
 			)}
 			<div className="player-group">

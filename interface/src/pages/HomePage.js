@@ -10,12 +10,11 @@ import Tracker from "../utils/tracker";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 
-import NavBar from './NavBar.js';
+import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
-
 	const { t } = useTranslation();
 
 	const [toiaName, setName] = useState(null);
@@ -23,18 +22,17 @@ function HomePage() {
 	const [toiaID, setTOIAid] = useState(null);
 	const [isLoggedIn, setLoginState] = useState(false);
 
-  useEffect(() => {
-    if(history.location.state!==undefined){
-      setLoginState(true);
-      setName(history.location.state.toiaName);
-      setLanguage(history.location.state.toiaLanguage);
-      setTOIAid(history.location.state.toiaID);
-    }
+	useEffect(() => {
+		if (history.location.state !== undefined) {
+			setLoginState(true);
+			setName(history.location.state.toiaName);
+			setLanguage(history.location.state.toiaLanguage);
+			setTOIAid(history.location.state.toiaID);
+		}
 
-    // Tracker
-    new Tracker().startTracking(history.location.state);
-  },[]);
-
+		// Tracker
+		new Tracker().startTracking(history.location.state);
+	}, []);
 
 	// function callDispatch(bool){
 	//   dispatch(bool);
@@ -42,14 +40,13 @@ function HomePage() {
 
 	function signup() {
 		history.push({
-			pathname: '/signup',
+			pathname: "/signup",
 		});
 	}
 	const videoRef = useRef();
 	const setPlayBack = () => {
 		videoRef.current.playbackRate = 1.5;
 	};
-
 
 	return (
 		<div className="home-page">
@@ -62,20 +59,37 @@ function HomePage() {
 				showLoginModal={true}
 			/>
 
-			<video ref={videoRef} onCanPlay={() => setPlayBack()} className="home-sample-videos home-animate-enter" autoPlay muted>
+			<video
+				ref={videoRef}
+				onCanPlay={() => setPlayBack()}
+				className="home-sample-videos home-animate-enter"
+				autoPlay
+				muted>
 				<source src={toia_home_vid} type="video/mp4" />
-
 				Your browser does not support the video tag.
 			</video>
 
 			<div className="home-overlap-group">
-				<div className={`home-des home-montserrat-black ${t("alignment")}`}> {t("tagline")}</div>
+				<div
+					className={`home-des home-montserrat-black ${t(
+						"alignment",
+					)}`}>
+					{" "}
+					{t("tagline")}
+				</div>
 				<h1 className="home-toia home-opensans-normal">TOIA</h1>
-				<div className={`home-welcome-text home-montserrat-black ${t("alignment")}`}> {t("welcome")} </div>
-				<div onClick={signup}><img className="home-signup" src={signupButton} /></div>
+				<div
+					className={`home-welcome-text home-montserrat-black ${t(
+						"alignment",
+					)}`}>
+					{" "}
+					{t("welcome")}{" "}
+				</div>
+				<div onClick={signup}>
+					<img className="home-signup" src={signupButton} />
+				</div>
 			</div>
 			<NotificationContainer />
-
 		</div>
 	);
 }
