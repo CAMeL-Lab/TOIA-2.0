@@ -532,14 +532,17 @@ function AvatarGardenPage() {
 
 	// querying the database for user data
 	function getUserData() {
-		axios.get(API_URLS.USER_INFO()).then(res => {
-			const user = res.data.data;
-			setCurrentUserFullname(`${user.first_name} ${user.last_name}`);
-			setCurrentUserLanguage(user.language);
-			setCurrentUserEmail(user.email);
-		}).catch(err => {
-			console.log(err);
-		});
+		axios
+			.get(API_URLS.USER_INFO())
+			.then(res => {
+				const user = res.data.data;
+				setCurrentUserFullname(`${user.first_name} ${user.last_name}`);
+				setCurrentUserLanguage(user.language);
+				setCurrentUserEmail(user.email);
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	}
 
 	const [anchorEl, setAnchorEl] = useState(null); //for list of streams drop down menu when you click on move icon
