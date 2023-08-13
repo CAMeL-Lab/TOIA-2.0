@@ -1,8 +1,6 @@
 // main recording parameters
 const encoding = "LINEAR16";
 const sampleRateHertz = 16000;
-// const languageCode = "en-US";
-const languageCode = "ar-AE";
 
 // array to store responses
 //let responseChunks = [];
@@ -15,22 +13,11 @@ function constructRequest(inputLanguageCode){
 			languageCode: inputLanguageCode,
 			enableAutomaticPunctuation: true,
 			profanityFilter: true,
+			enableWordTimeOffsets: true,
 		},
 		interimResults: true, // If you want interim results, set this to true
 	};
 }
-
-// the request object
-const request = {
-	config: {
-		encoding: encoding,
-		sampleRateHertz: sampleRateHertz,
-		languageCode: languageCode,
-		enableAutomaticPunctuation: true,
-		profanityFilter: true,
-	},
-	interimResults: true, // If you want interim results, set this to true
-};
 
 // config of the client object
 const clientConfig = {
@@ -49,6 +36,5 @@ const clientConfig = {
 	},
 };
 
-module.exports.request = request;
 module.exports.clientConfig = clientConfig;
 module.exports.constructRequest = constructRequest;

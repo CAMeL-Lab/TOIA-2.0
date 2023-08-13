@@ -16,3 +16,5 @@ interface/.env
 server/toia-dm/.env
 */*.env
 secrets/
+server/translation/.env
+.vscode

@@ -1,12 +1,11 @@
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import history from "../services/history";
-import SuggestionCard from "../suggestiveSearch/suggestionCards";
 import SuggestiveSearch from "../suggestiveSearch/suggestiveSearch";
 import speechToTextUtils from "../transcription_utils";
 import PopModal from "../userRating/popModal";
@@ -16,17 +15,22 @@ import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
 import VideoPlaybackPlayer from "./sub-components/Videoplayback.Player";
-
-import languageFlagsCSS from "../services/languageHelper";
+import i18n from "i18next";
 import { getUser, isLoggedIn } from "../auth/auth";
 import API_URLS from "../configs/backend-urls";
+import {
+	languageCodeTable,
+	languageFlagsCSS,
+} from "../services/languageHelper";
 
 function Player() {
 	const { t } = useTranslation();
 
 	const [toiaName, setName] = React.useState(null);
 	const [toiaLanguage, setLanguage] = React.useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState("en-US");
+	const [interactionLanguage, setInteractionLanguage] = useState(
+		languageCodeTable?.[i18n.language] || "en-US",
+	);
 	const [toiaID, setTOIAid] = React.useState(null);
 	const [loginState, setLoginState] = useState(false);
 
@@ -36,7 +40,7 @@ function Player() {
 	const [fillerPlaying, setFillerPlaying] = useState(true);
 
 	const [answeredQuestions, setAnsweredQuestions] = useState([]);
-	let allSuggestedQuestions = [];
+	const [allSuggestedQuestions, setAllSuggestedQuestions] = useState([]);
 
 	const [videoProperties, setVideoProperties] = useState(null);
 	const [hasRated, setHasRated] = useState(true); // controll the rating field
@@ -47,17 +51,30 @@ function Player() {
 
 	// suggested questions for cards
 
-	const textInput = React.useRef("");
-	const question = React.useRef("");
-	const interacting = React.useRef("false");
-	const isFillerPlaying = React.useRef("true");
-	const allQuestions = React.useRef([]);
-	const shouldRefreshQuestions = React.useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
+	const textInput = useRef("");
+	const question = useRef("");
+	const interacting = useRef("false");
+	const isFillerPlaying = useRef("true");
+	const allQuestions = useRef([]);
+	const shouldRefreshQuestions = useRef(false); // flag to indicate that the SuggestionCard module needs to refresh questions
 
-	const interimTextInput = React.useRef("");
+	const interimTextInput = useRef("");
 
-	let [micMute, setMicStatus] = React.useState(true);
-	let [micString, setMicString] = React.useState("ASK BY VOICE");
+	const [micMute, setMicStatus] = useState(true);
+	const [micString, setMicString] = useState("ASK BY VOICE");
+
+	const [ratingNodes, setRatingNodes] = useState([
+		{
+			text: "How well does this answer fit with your question or the conversation you're having with the avatar?",
+			rating: 5,
+			onSubmitRating: recordUserRating,
+		},
+		{
+			text: "How well do the subtitles reflect what is being said?",
+			rating: 5,
+			onSubmitRating: recordSubtitlesRating,
+		},
+	]);
 
 	useEffect(() => {
 		if (isLoggedIn()) {
@@ -75,7 +92,7 @@ function Player() {
 
 		canAccessStream();
 
-		fetchAnsweredQuestions();
+		// fetchAnsweredQuestions();
 		fetchAllStreamQuestions();
 
 		fetchFiller();
@@ -124,55 +141,19 @@ function Player() {
 	// if user asks one of the suggested questions
 	function askQuestionFromCard(question) {
 		if (!hasRated) {
-			NotificationManager.warning("Please provide a rating", "", 3000);
+			NotificationManager.warning(
+				"Please provide a rating, or skip",
+				"",
+				3000,
+			);
 			return;
 		}
 
+		const mode = "CARD";
+
 		const oldQuestion = question;
-		axios
-			.get(
-				API_URLS.NEXT_VIDEO(
-					history.location.state.streamToTalk,
-					oldQuestion.question,
-				),
-			)
-			.then(res => {
-				if (res.data === "error") {
-					setFillerPlaying(true);
-					console.log("error");
-				} else {
-					res.data["video_id"] = res.data["id_video"];
-					delete res.data["id_video"];
-					setFillerPlaying(true);
-
-					isFillerPlaying.current = "false";
-
-					setVideoProperties({
-						key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-						onEnded: () => {
-							setRatingParams({
-								video_id: res.data.video_id,
-								question: oldQuestion.question,
-							});
-							setHasRated(false);
-							fetchFiller();
-						},
-						source: res.data.url,
-						fetchFiller: fetchFiller,
-						muted: false,
-						filler: false,
-						duration_seconds: res.data.duration_seconds || null,
-						question: oldQuestion.question,
-						video_id: res.data.video_id,
-					});
-
-					fetchAnsweredQuestions(
-						oldQuestion.question,
-						res.data.answer || "",
-					);
-					setTranscribedAudio("");
-				}
-			});
+		console.log(oldQuestion);
+		getVideoData(mode, oldQuestion.question);
 	}
 	// Function ends here
 
@@ -246,11 +227,13 @@ function Player() {
 					) {
 						answeredQuestions.push(q);
 						allSuggestedQuestions.push(q);
+						// setAllSuggestedQuestions([...allSuggestedQuestions, q]);
 					}
 				});
 
 				shouldRefreshQuestions.current = true;
 				setAnsweredQuestions([...answeredQuestions]);
+				setAllSuggestedQuestions([...allSuggestedQuestions]);
 			});
 	}
 
@@ -280,7 +263,8 @@ function Player() {
 		}
 	}, [hasRated]);
 
-	const recordUserRating = function (ratingValue) {
+	// TODO: Refactor recordUserRating and recordSubtitlesRating (difference is the subject)
+	function recordUserRating(ratingValue, ratingParams, interactionLanguage) {
 		const options = {
 			method: "POST",
 			url: API_URLS.SAVE_FEEDBACK(),
@@ -289,21 +273,56 @@ function Player() {
 				video_id: ratingParams.video_id,
 				question: ratingParams.question,
 				rating: ratingValue,
+				video_language: ratingParams.video_language,
+				interactor_language: interactionLanguage,
+				similarity_score: ratingParams.similarity_score,
+				subject: "Dialogue",
 			},
 		};
 
 		axios
 			.request(options)
 			.then(function (response) {
-				console.log(response.data);
+				// console.log(response.data);
 			})
 			.catch(function (error) {
 				console.error(error);
-			})
-			.finally(() => {
-				setHasRated(true);
 			});
-	};
+	}
+
+	function recordSubtitlesRating(
+		ratingValue,
+		ratingParams,
+		interactionLanguage,
+	) {
+		const options = {
+			method: "POST",
+			url: "/api/save_player_feedback",
+			headers: { "Content-Type": "application/json" },
+			data: {
+				...(history.location.state.toiaID && {
+					user_id: history.location.state.toiaID,
+				}),
+				video_id: ratingParams.video_id,
+
+				question: ratingParams.question,
+				rating: ratingValue,
+				video_language: ratingParams.video_language,
+				interactor_language: interactionLanguage,
+				similarity_score: ratingParams.similarity_score,
+				subject: "Subtitles",
+			},
+		};
+
+		axios
+			.request(options)
+			.then(function (response) {
+				// console.log(response.data);
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
+	}
 
 	function fetchData(mode = "UNKNOWN") {
 		if (!hasRated) {
@@ -311,51 +330,77 @@ function Player() {
 			return;
 		}
 
-		const streamID = history.location.state.streamToTalk;
 		const oldQuestion = question.current;
 		console.log("old question", oldQuestion);
-		if (question.current == null || question.current === "") {
+		if (question.current === null || question.current === "") {
 			setFillerPlaying(true);
 			fetchFiller();
 		} else {
-			axios
-				.get(API_URLS.NEXT_VIDEO(streamID, oldQuestion))
-				.then(res => {
-					if (res.data === "error") {
-						setFillerPlaying(true);
-					} else {
-						res.data["video_id"] = res.data["id_video"];
-						delete res.data["id_video"];
-						setFillerPlaying(true);
-
-						isFillerPlaying.current = "false";
-						fetchAnsweredQuestions(oldQuestion, res.data.answer);
-						setVideoProperties({
-							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded: () => {
-								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion,
-								});
-								setHasRated(false);
-								fetchFiller();
-							},
-							source: res.data.url,
-							fetchFiller: fetchFiller,
-							muted: false,
-							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
-							question: question.current,
-							video_id: res.data.video_id,
-						});
-
-						setTranscribedAudio("");
-					}
-				})
-				.catch(e => {
-					console.error(e);
-				});
+			getVideoData(mode, oldQuestion);
 		}
+	}
+
+	function getVideoData(mode, oldQuestion) {
+		console.log("Getting Video...");
+		const streamID = history.location.state.streamToTalk;
+		axios
+			.post(
+				API_URLS.NEXT_VIDEO(streamID, oldQuestion),
+				{
+					params: {
+						mode: mode,
+						language: interactionLanguage,
+					},
+				},
+				{
+					timeout: 10000,
+				},
+			)
+			.then(res => {
+				if (res.data === "error") {
+					console.log("No video found!");
+					setFillerPlaying(true);
+				} else {
+					res.data["video_id"] = res.data["id_video"];
+					delete res.data["id_video"];
+					console.log("Got Video!");
+					setFillerPlaying(true);
+
+					isFillerPlaying.current = "false";
+					console.log("Video id");
+					console.log(res.data.video_id);
+					// fetchAnsweredQuestions(oldQuestion, res.data.answer);
+					setVideoProperties({
+						key: res.data.url + new Date(),
+						onEnded: () => {
+							// Temporarily disabled
+							// setRatingParams({
+							// 	video_id: res.data.video_id,
+							// 	video_language: res.data.language,
+							// 	question: oldQuestion,
+							// 	similarity_score: res.data.similarity_score
+							// });
+							// setHasRated(false);
+							fetchFiller();
+						},
+						source: res.data.url,
+						source_vtt: res.data.vtt_url,
+						fetchFiller: fetchFiller,
+						muted: false,
+						filler: false,
+						duration_seconds: res.data.duration_seconds || null,
+						question: question.current,
+						video_id: res.data.video_id,
+						language: res.data.language,
+					});
+
+					setTranscribedAudio("");
+				}
+			})
+			.catch(e => {
+				setFillerPlaying(true);
+				console.error(e);
+			});
 	}
 
 	function endTranscription() {
@@ -363,7 +408,7 @@ function Player() {
 	}
 
 	function micStatusChange() {
-		if (micMute == true) {
+		if (micMute === true) {
 			setMicStatus(false);
 
 			setMicString("STOP ASK BY VOICE");
@@ -455,49 +500,9 @@ function Player() {
 			? textInput.current
 			: interimTextInput.current;
 
-		if (question.current != "") {
-			const oldQuestion = question.current;
-			console.log("old question", oldQuestion);
-			axios
-				.get(
-					API_URLS.NEXT_VIDEO(
-						history.location.state.streamToTalk,
-						oldQuestion,
-					),
-				)
-				.then(res => {
-					setFillerPlaying(true);
-					if (res.data !== "error") {
-						res.data["video_id"] = res.data["id_video"];
-						delete res.data["id_video"];
-						isFillerPlaying.current = "false";
-
-						setVideoProperties({
-							key: res.data.url + new Date(), // add timestamp to force video transition animation when the key hasn't changed
-							onEnded: () => {
-								setRatingParams({
-									video_id: res.data.video_id,
-									question: oldQuestion,
-								});
-								setHasRated(false);
-								fetchFiller();
-							},
-							source: res.data.url,
-							muted: false,
-							filler: false,
-							duration_seconds: res.data.duration_seconds || null,
-							question: question.current,
-							video_id: res.data.video_id,
-						});
-
-						fetchAnsweredQuestions(oldQuestion, res.data.answer);
-						setTranscribedAudio("");
-						question.current = "";
-					}
-				})
-				.catch(e => {
-					console.error(e);
-				});
+		if (question.current !== "") {
+			// const oldQuestion = question.current;
+			getVideoData(mode, question.current);
 		}
 	}
 
@@ -512,7 +517,16 @@ function Player() {
 				showLoginModal={true}
 				endTranscription={endTranscription}
 			/>
-			{!hasRated && <PopModal userRating={recordUserRating} />}
+			{!hasRated && (
+				<PopModal
+					ratingNodes={ratingNodes}
+					setRatingNodes={setRatingNodes}
+					hasRated={hasRated}
+					setHasRated={setHasRated}
+					ratingParams={ratingParams}
+					interactionLanguage={interactionLanguage}
+				/>
+			)}
 			<div className="player-group">
 				<h1 className="player-name player-font-class-3 ">
 					{toiaFirstNameToTalk} {toiaLastNameToTalk}
@@ -535,10 +549,12 @@ function Player() {
 										: false
 								}
 								source={videoProperties.source}
-								filler={videoProperties.filler}
-								duration_seconds={
-									videoProperties.duration_seconds
-								}
+								source_vtt={videoProperties.source_vtt}
+								// filler={videoProperties.filler}
+								// duration_seconds={
+								// 	videoProperties.duration_seconds
+								// }
+								lang={videoProperties.language}
 							/>
 						</CSSTransition>
 					</TransitionGroup>
@@ -571,6 +587,13 @@ function Player() {
 										<span class="fi fi-ae"></span>
 									</a>
 									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("es-ES")
+										}>
+										<span class="fi fi-es"></span>
+									</a>
 									<a
 										href="#"
 										onClick={() =>
@@ -608,7 +631,7 @@ function Player() {
 					</button>
 				)}
 
-				{isFillerPlaying.current == "false" ? (
+				{isFillerPlaying.current === "false" ? (
 					<button
 						className="ui inverted button skip-end-button"
 						onClick={fetchFiller}>
@@ -632,7 +655,7 @@ function Player() {
 								/>
 							)}
 
-							<SuggestionCard
+							{/* <SuggestionCard
 								questions={answeredQuestions}
 								askQuestion={askQuestionFromCard}
 								shouldRefreshQuestions={shouldRefreshQuestions}
@@ -641,7 +664,7 @@ function Player() {
 								}
 								hasRated={hasRated}
 								notificationManager={NotificationManager}
-							/>
+							/> */}
 
 							<button
 								color="green"

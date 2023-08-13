@@ -26,11 +26,11 @@ def toia_answer(query, data, k=1):
     ada_similarity_score = res.similarities.values[0]
     print("Similarity Score", ada_similarity_score)
     if ada_similarity_score > 0.29:
-        return res['answer'].values[0], res['id_video'].values[0], ada_similarity_score
+        return res['answer'].values[0], res['id_video'].values[0], res['language'].values[0], ada_similarity_score
     else:
         df_noanswers = data[data['type'] == "no-answer"]
         if df_noanswers.shape[0] > 0:
             answers = df_noanswers.sample(n=1)
-            return answers['answer'].values[0], answers['id_video'].values[0], ada_similarity_score
+            return answers['answer'].values[0], answers['id_video'].values[0], answers['language'].values[0], ada_similarity_score
         else:
             return "You haven't recorded no-answers", "204", "No Content"

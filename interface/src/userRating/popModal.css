@@ -14,7 +14,7 @@
 .modalContainer {
 	position: relative;
 	width: 700px;
-	height: 120px;
+	/* height: 120px; */
 	border-radius: 12px;
 	background-color: white;
 	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -25,7 +25,7 @@
 	/* top: 0; */
 }
 
-.modalContainer .title {
+.modalContainer .popup-title {
 	display: inline-block;
 	text-align: center;
 	margin: 0px;
@@ -34,7 +34,7 @@
 	font-size: 0.5rem;
 }
 
-.modalContainer .title h2 {
+.modalContainer .popup-title h2 {
 	margin: 7px 10px 7px 5px;
 	font-weight: normal;
 	font-size: 1.3rem;
@@ -60,17 +60,16 @@
 	white-space: nowrap;
 }
 
-.modalContainer .body {
+.modalContainer .popup-body {
 	flex: 50%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	font-size: 2rem;
 	text-align: center;
-	margin-top: 70px;
 }
 
-.modalContainer .body h3 {
+.modalContainer .popup-body h3 {
 	/* flex: 50%;
   display: flex;
   margin:auto; */
@@ -107,4 +106,35 @@
 	background-color: #21ba45;
 	/* size: 30px; */
 	width: 190px;
+}
+
+
+.modalContainer .pop-modal-skiptext {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.modalContainer .pop-modal-skiptext:hover {
+	cursor: pointer;
+	color: orangered;
+	transition: 0.2s;
+}
+
+.modalContainer .pop-modal-submittext {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.modalContainer .pop-modal-submittext:hover {
+	cursor: pointer;
+	color: green;
+	transition: 0.2s;
+}
+
+.modalContainer hr {
+	width: 95%;
 }

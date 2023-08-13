@@ -63,6 +63,9 @@ let AudioStreamer = {
 		//   });
 		// }
 
+		// Clear the listeners (prevents issue if opening and closing repeatedly)
+		socket.off("transcript");
+
 		socket.on("transcript", response => {
 			onData(response);
 			//console.log("response data: ", response);
@@ -125,9 +128,9 @@ function convertFloat32ToInt16(buffer) {
 /**
  * Stops recording and closes everything down. Runs on error or on stop.
  */
-function closeAll() {
+async function closeAll() {
 	// Clear the listeners (prevents issue if opening and closing repeatedly)
-	socket.off("transcript");
+	// socket.off("transcript");
 	socket.off("googleCloudStreamError");
 	let tracks = globalStream ? globalStream.getTracks() : null;
 	let track = tracks ? tracks[0] : null;

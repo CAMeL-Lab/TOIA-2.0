@@ -1,6 +1,7 @@
-import axios from "axios";
-import React from "react";
 import { Modal } from "semantic-ui-react";
+import React from "react";
+import { NotificationManager } from "react-notifications";
+import axios from "axios";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
 import { logout as LogoutUser } from "../auth/auth";
@@ -10,7 +11,9 @@ import "../../node_modules/flag-icons/css/flag-icons.min.css";
 import API_URLS from "../configs/backend-urls";
 
 //toiaName = null, props.toiaID = null, props.toiaLanguage = null, props.isLoggedIn = false, history = null
-const supportedLanguages = ["en", "fr", "ar"];
+const supportedLanguages = ["en", "fr", "ar", "es"];
+// const rightLanguages = [];
+// const rightLanguages = ["ar"];
 
 function NavBar(props) {
 	const { t } = useTranslation();
@@ -252,9 +255,11 @@ function NavBar(props) {
 						<a href="#" onClick={switch_lang("ar")}>
 							<span className="fi fi-ae"></span>
 						</a>
-						{/* <a href="#"><span className="fi fi-es"></span>SP</a> */}
 						<a href="#" onClick={switch_lang("fr")}>
 							<span className="fi fi-fr"></span>
+						</a>
+						<a href="#" onClick={switch_lang("es")}>
+							<span className="fi fi-es"></span>
 						</a>
 					</div>
 				</div>

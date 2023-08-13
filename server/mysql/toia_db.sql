@@ -35,7 +35,10 @@ CREATE TABLE `conversations_log` (
   `timestamp` bigint NOT NULL,
   `filler` tinyint(1) NOT NULL,
   `question_asked` text,
-  `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+  `video_played` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `ada_similarity_score` float DEFAULT NULL,
+  `video_language` varchar(45) NOT NULL,
+  `interactor_language` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -45,10 +48,15 @@ CREATE TABLE `conversations_log` (
 --
 
 CREATE TABLE `player_feedback` (
+  `timestamp` bigint NOT NULL,
   `video_id` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `user_id` int DEFAULT NULL,
   `question` text NOT NULL,
-  `rating` int NOT NULL
+  `rating` int NOT NULL,
+  `video_language` varchar(45) NOT NULL,
+  `interactor_language` varchar(45) NOT NULL,
+  `similarity_score` float DEFAULT NULL,
+  `subject` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -63,7 +71,8 @@ CREATE TABLE `questions` (
   `suggested_type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
   `onboarding` tinyint NOT NULL DEFAULT '0',
   `priority` int NOT NULL,
-  `trigger_suggester` tinyint NOT NULL DEFAULT '1'
+  `trigger_suggester` tinyint NOT NULL DEFAULT '1',
+  `language` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -164,7 +173,7 @@ CREATE TABLE `videos_questions_streams` (
   `id_question` int NOT NULL,
   `id_stream` int NOT NULL,
   `type` enum('filler','greeting','answer','exit','no-answer','y/n-answer') NOT NULL,
-  `ada_search` text NOT NULL
+  `ada_search` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --

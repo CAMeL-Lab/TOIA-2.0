@@ -24,6 +24,7 @@ function HomePage() {
 			setLanguage(history.location.state.toiaLanguage);
 			setTOIAid(history.location.state.toiaID);
 		}
+
 		// Tracker
 		new Tracker().startTracking(history.location.state);
 	}, []);

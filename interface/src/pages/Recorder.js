@@ -1,26 +1,29 @@
 import axios from "axios";
+import SpeechRecognition, {
+	useSpeechRecognition,
+} from "react-speech-recognition";
+import history from "../services/history";
+import { Button, Image, Modal, Popup, TextArea, Icon } from "semantic-ui-react";
+import { Multiselect } from "multiselect-react-dropdown";
 import { default as EditCreateMultiSelect } from "editable-creatable-multiselect";
 import getBlobDuration from "get-blob-duration";
-import { Multiselect } from "multiselect-react-dropdown";
 import React, { useEffect, useRef, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
-import { useSpeechRecognition } from "react-speech-recognition";
 import Switch from "react-switch";
 import Webcam from "react-webcam";
-import { Button, Icon, Image, Modal, Popup, TextArea } from "semantic-ui-react";
 import videoTypesJSON from "../configs/VideoTypes.json";
+import {
+	RecordAVideoCard,
+	OnBoardingQCard,
+	SuggestedQCard,
+	SuggestedQCardNoAction,
+} from "./AvatarGardenPage";
 import CheckMarkIcon from "../icons/check-mark-success1.webp";
 import RecordButton from "../icons/record1.png";
 import RecordingGif from "../icons/recording51.gif";
-import history from "../services/history";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
-import {
-	OnBoardingQCard,
-	RecordAVideoCard,
-	SuggestedQCardNoAction,
-} from "./AvatarGardenPage";
 
 import NavBar from "./NavBar.js";
 
@@ -29,6 +32,7 @@ import { useTranslation } from "react-i18next";
 import { getUser, isLoggedIn } from "../auth/auth";
 import API_URLS from "../configs/backend-urls";
 import languageFlagsCSS from "../services/languageHelper";
+import { languageCodeTable } from "../services/languageHelper";
 
 const videoConstraints = {
 	width: 720,
@@ -150,6 +154,7 @@ function Recorder() {
 	const [allStreams, setAllStreams] = useState([]);
 	const [listStreams, setListStreams] = useState([]);
 	const [mainStreamVal, setMainStreamVal] = useState([]);
+	const [videoPlayback, setVideoComponent] = useState(null);
 	const [videoThumbnail, setVideoThumbnail] = useState("");
 	const [suggestedQsListCopy, setSuggestedQsListCopy] = useState([]);
 	const [suggestedQsListOrig, setSuggestedQsListOrig] = useState([]);
@@ -173,12 +178,28 @@ function Recorder() {
 	// This is for tracking purpose. These timestamps do not reflect the video start and end timestamps
 	const [recordStartTimestamp, setRecordStartTimestamp] = useState(null);
 	const [recordEndTimestamp, setRecordEndTimestamp] = useState(null);
-	const [interactionLanguage, setInteractionLanguage] = useState("en-US");
+	const [interactionLanguage, setInteractionLanguage] = useState(
+		languageCodeTable?.[i18n.language] || "en-US",
+	);
 
 	const [transcribedAudio, setTranscribedAudio] = useState("");
+	const [results, setResults] = useState([]);
+	// const [lastSpeech, setLastSpeech] = useState([]);
+
+	//const [socket, setSocket] = useState(null);
+	const client = useRef();
 
 	const backgroundActiveColor = "#B1F7B0";
 	const backgroundDefaultColor = "#e5e5e5";
+
+	// config
+	//let audioContext = new AudioContext();
+	const bufferSize = 2048;
+
+	const context = React.useRef(null);
+	//const [processor, setProcessor] = useState(null);
+
+	const processor = React.useRef(null);
 
 	const [isRecording, setIsRecording] = useState(false);
 
@@ -264,7 +285,6 @@ function Recorder() {
 			method: "GET",
 			url: API_URLS.USER_STATS(),
 		};
-
 		axios
 			.request(options)
 			.then(function (response) {
@@ -392,20 +412,27 @@ function Recorder() {
 	function handleDataReceived(data) {
 		//setTranscribedAudio(oldData => [...oldData, data])
 		//setTranscribedAudio(input.current + " " + data);
-
 		setTranscribedAudio(
 			input.current + " " + data.alternatives[0].transcript,
 		);
 
 		let isFinal = undefined || data.isFinal;
 
+		// setLastSpeech(data?.alternatives?.[0]?.words ?? []);
+
+		// console.log("Transcription received");
+		// console.log(lastSpeech);
+		// console.log(data.isFinal);
+		// console.log(data?.alternatives?.[0]?.words);
+
 		if (data && isFinal) {
+			// console.log(lastSpeech);
 			setTranscribedAudio(
 				input.current + " " + data.alternatives[0].transcript,
 			);
 
 			input.current += " " + data.alternatives[0].transcript;
-			//setTranscribedAudio(input.current);
+			setResults(results => [...results, data.alternatives[0].words]);
 		}
 	}
 
@@ -415,6 +442,7 @@ function Recorder() {
 			resetTranscript();
 			setRecordedChunks([]);
 			setTranscribedAudio("");
+			setResults([]);
 			input.current = "";
 			setIsRecording(true);
 
@@ -723,9 +751,47 @@ function Recorder() {
 		}
 	}
 
+	function navigateToHome() {
+		history.push({
+			pathname: "/",
+			state: {
+				toiaName,
+				toiaLanguage,
+				toiaID,
+			},
+		});
+	}
+
+	function navigateToAbout() {
+		history.push({
+			pathname: "/about",
+			state: {
+				toiaName,
+				toiaLanguage,
+				toiaID,
+			},
+		});
+	}
+
+	function navigateToLibrary() {
+		history.push({
+			pathname: "/library",
+			state: {
+				toiaName,
+				toiaLanguage,
+				toiaID,
+			},
+		});
+	}
+
 	function navigateToMyTOIA() {
 		history.push({
 			pathname: "/mytoia",
+			state: {
+				toiaName: history.location.state.toiaName,
+				toiaLanguage: history.location.state.toiaLanguage,
+				toiaID: history.location.state.toiaID,
+			},
 		});
 	}
 
@@ -740,7 +806,6 @@ function Recorder() {
 			}
 		}
 	}
-
 	const reset = () => {
 		history.push({
 			pathname: "/recorder",
@@ -1017,12 +1082,24 @@ function Recorder() {
 									className="icon tooltip videoControlButtons"
 									onClick={handleStopCaptureClick}
 									data-tooltip={t("stop_recording_tooltip")}>
+									{/* <i className="fa fa-stop"/> */}
+									{/* <i class="huge icons"> */}
+									{/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
+									{/* <i aria-hidden="true" class="red stop icon"></i> */}
+									{/* </i> */}
+
+									{/* stop */}
+									{/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
+
 									<img
 										src={RecordingGif}
 										width={38.5}
 										height={38.5}
 										alt="record button"
 									/>
+
+									{/* <i className="fa-solid fa-circle-stop"></i> */}
+									{/* <div ><i aria-hidden="true" className="primary stop circle outline"/></div> */}
 								</button>
 							) : (
 								<button
@@ -1190,6 +1267,13 @@ function Recorder() {
 										<span class="fi fi-ae"></span>
 									</a>
 									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
+									<a
+										href="#"
+										onClick={() =>
+											setInteractionLanguage("es-ES")
+										}>
+										<span class="fi fi-es"></span>
+									</a>
 									<a
 										href="#"
 										onClick={() =>

@@ -205,8 +205,142 @@ export const RecordedQCard = ({ data, onClick, onEdit, onDelete }) => {
 	);
 };
 
+// export const renderSuggestedQsCard = (card, index, onClickFunc) => {
+//     return (
+//         <div className="row" id={card.id_question}>
+//             <div onClick={(e) => {
+//                 onClickFunc(e, card)
+//             }} className="column round-styling-first" style={{
+//                 backgroundImage: `url(${card.pic})`,
+//                 cursor: `pointer`,
+//                 backgroundSize: "132px 138.6px"
+//             }} //video thumbnail
+//             />
+//             <div className="column garden-question round-styling-second">
+//                 <h1 className="garden-name garden-font-class-5" //question
+//                     style={{marginTop: "10px"}}>{card.question}</h1>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const RecordAVideoCard = ({onClick, isDisabled}) => {
+//     return (
+//         <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined}
+//              data-inverted=""
+//              onClick={(e) => {
+//                  if (!isDisabled) onClick(e);
+//              }}>
+//             <div className={"ui card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
+//                 <div className="image">
+//                     <img alt=""
+//                          src={addButton}/>
+
+//                     <button className="ui bottom attached button fluid"
+//                             disabled={isDisabled}
+//                             onClick={(e) => {
+//                                 if (!isDisabled) onClick(e);
+//                             }}>
+//                         Add new video
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const OnBoardingQCard = ({data, onClick}) => {
+//     return (
+//         <div>
+//             <div className="ui red card cursor-pointer" onClick={onClick}>
+//                 <div className="content">
+//                     <div className="description three-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="ui bottom attached button">
+//                     <i className="add icon"/>
+//                     Record
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const SuggestedQCard = ({data, onClick, onEdit, onDelete, isDisabled}) => {
+//     return (
+//         <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+//             <div className={"ui grey card " + ((isDisabled) ? "cursor-disabled" : "cursor-pointer")}>
+//                 <div className="content" onClick={onClick}>
+//                     <div className="description two-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="extra content">
+//                     <div className="ui two">
+//                         <button className="ui labeled icon button tiny" disabled={isDisabled} onClick={onEdit}>
+//                             <i className="edit icon"/>
+//                             Edit
+//                         </button>
+//                         <button className="ui labeled icon button basic brown tiny" disabled={isDisabled}
+//                                 onClick={onDelete}>
+//                             Delete
+//                             <i className="trash arrow icon"/>
+//                         </button>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const SuggestedQCardNoAction = ({data, onClick, isDisabled}) => {
+//     return (
+//         <div data-tooltip={(isDisabled) ? "Please record the required ones first" : undefined} data-inverted="">
+//             <div className="ui grey card cursor-pointer" onClick={onClick}>
+//                 <div className="content">
+//                     <div className="description three-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="ui bottom attached button">
+//                     <i className="add icon"/>
+//                     Record
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+// export const RecordedQCard = ({data, onClick, onEdit, onDelete}) => {
+//     return (
+//         <div>
+//             <div className="ui card bg-toia-theme cursor-pointer">
+//                 <div className="content" onClick={onClick}>
+
+//                     <div className="description text-white two-line-ellipsis">
+//                         {data.question}
+//                     </div>
+//                 </div>
+//                 <div className="extra content">
+//                     <div className="ui two">
+//                         <button className="ui labeled icon button tiny" onClick={onEdit}>
+//                             <i className="edit icon"/>
+//                             Edit
+//                         </button>
+//                         <button className="ui labeled icon button tiny" onClick={onDelete}>
+//                             Delete
+//                             <i className="trash arrow icon red"/>
+//                         </button>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
 function AvatarGardenPage() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const [toiaName, setName] = useState(null);
 	const [toiaLanguage, setLanguage] = useState(null);
@@ -278,6 +412,10 @@ function AvatarGardenPage() {
 		getUserData();
 	}, []);
 
+	React.useEffect(() => {
+		fetchOnBoardingQuestions();
+	}, [i18n.language]);
+
 	function fetchStreamList() {
 		return new Promise(resolve => {
 			axios.get(API_URLS.GET_USER_STREAMS(getUser().id)).then(res => {
@@ -291,6 +429,9 @@ function AvatarGardenPage() {
 		const options = {
 			method: "GET",
 			url: API_URLS.ONBOARDING_QUESTIONS_LIST(),
+			params: {
+				language: t("language") ?? "en-US",
+			},
 		};
 
 		axios
@@ -577,6 +718,7 @@ function AvatarGardenPage() {
 			.request(options)
 			.then(function (response) {
 				setShowVideoDeletePopup(false);
+				NotificationManager.info("Deleting video...");
 				if (response.status === 200) {
 					if (currentStream) {
 						fetchRecordedQuestions(currentStream.id);

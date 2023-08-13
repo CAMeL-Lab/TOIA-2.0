@@ -54,10 +54,11 @@ async function addQuestionIfNew(
 	onboarding = 0,
 	priority = 100,
 	trigger_suggester = 1,
+	language = "en-US"
 ) {
 	return new Promise(resolve => {
-		let query = `SELECT * FROM questions WHERE question = ? AND onboarding = 0 LIMIT 1`;
-		connection.query(query, [question], (err, result) => {
+		let query = `SELECT * FROM questions WHERE question = ? AND language = ? AND onboarding = 0 LIMIT 1`;
+		connection.query(query, [question, language], (err, result) => {
 			if (err) throw err;
 			if (result.length === 0) {
 				addQuestion(
@@ -66,6 +67,7 @@ async function addQuestionIfNew(
 					onboarding,
 					priority,
 					trigger_suggester,
+					language
 				).then(insertedID => {
 					resolve(insertedID);
 				});
@@ -82,12 +84,13 @@ async function addQuestion(
 	onboarding = 0,
 	priority = 100,
 	trigger_suggester = 1,
+	language = "en-US"
 ) {
 	return new Promise((resolve, reject) => {
 		if (!QuestionTypes.find(t => t === suggested_type)) {
 			reject("Invalid Type!");
 		} else {
-			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester) VALUES(?, ?, ?, ?, ?);`;
+			let query = `INSERT INTO questions(question, suggested_type, onboarding, priority, trigger_suggester, language) VALUES(?, ?, ?, ?, ?, ?);`;
 			connection.query(
 				query,
 				[
@@ -96,6 +99,7 @@ async function addQuestion(
 					onboarding,
 					priority,
 					trigger_suggester,
+					language
 				],
 				(err, result) => {
 					if (err) throw err;
@@ -242,7 +246,7 @@ const isRecorded = (id_question, user_id) => {
 
 const getQuestionInfo = id => {
 	return new Promise(resolve => {
-		let query = `SELECT id as id_question, question, suggested_type, onboarding, priority, trigger_suggester FROM questions WHERE id=?`;
+		let query = `SELECT id as id_question, question, suggested_type, onboarding, priority, trigger_suggester, language FROM questions WHERE id=?`;
 		connection.query(query, [id], (err, entry) => {
 			if (err) throw err;
 			if (entry.length === 0) {
@@ -449,11 +453,17 @@ const getUserTotalVideoDuration = user_id => {
 	});
 };
 
-const savePlayerFeedback = (video_id, question, rating, user_id = null) => {
-	return new Promise(resolve => {
-		let query = `INSERT INTO player_feedback(video_id, user_id, question, rating) VALUES(?, ?, ?, ?)`;
-		connection.query(query, [video_id, user_id, question, rating], err => {
-			if (err) throw err;
+const savePlayerFeedback = (video_id, question, rating, video_language, interactor_language, similarity_score = null, subject="UNKNOWN", user_id = null) => {
+	return new Promise((resolve, reject) => {
+		let current_timestamp = +new Date();
+
+		let query = `INSERT INTO player_feedback(timestamp, video_id, user_id, question, rating, video_language, interactor_language, similarity_score, subject) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+		connection.query(query, [current_timestamp, video_id, user_id, question, rating, video_language, interactor_language, similarity_score, subject], err => {
+			if (err){ 
+				console.error(err);
+				reject(err);
+				return;
+			}
 			resolve();
 		});
 	});
@@ -468,29 +478,31 @@ const saveConversationLog = (
 	ada_similarity_score = null,
 	mode = "UNKNOWN",
 ) => {
-	return new Promise(resolve => {
-		resolve();
-		// let currentTimestamp = +new Date();
-		// const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+	return;
+	// return new Promise(resolve => {
+	// 	// resolve();
+	// 	let currentTimestamp = +new Date();
+	// 	const query = `INSERT INTO conversations_log(interactor_id, toia_id, timestamp, filler, question_asked, video_played, ada_similarity_score, video_language, interactor_language) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-		// connection.query(
-		// 	query,
-		// 	[
-		// 		interactor_id,
-		// 		toia_id,
-		// 		currentTimestamp,
-		// 		filler,
-		// 		question_asked,
-		// 		video_played,
-		// 		ada_similarity_score,
-		// 		mode,
-		// 	],
-		// 	(err, res) => {
-		// 		if (err) throw err;
-		// 		resolve();
-		// 	},
-		// );
-	});
+	// 	connection.query(
+	// 		query,
+	// 		[
+	// 			interactor_id,
+	// 			toia_id,
+	// 			currentTimestamp,
+	// 			filler,
+	// 			question_asked,
+	// 			video_played,
+	// 			ada_similarity_score,
+	// 	     video_language,
+	// 	     interactor_language
+	// 		],
+	// 		(err, res) => {
+	// 			if (err) throw err;
+	// 			resolve();
+	// 		},
+	// 	);
+	// });
 };
 
 const canAccessStream = (user_id, stream_id) => {
@@ -570,7 +582,7 @@ const getVideoDetails = id_video => {
 };
 
 const getExactMatchVideo = (stream_id, question) => {
-	let query = `SELECT videos_questions_streams.*, video.answer FROM videos_questions_streams
+	let query = `SELECT videos_questions_streams.*, video.answer, video.language FROM videos_questions_streams
                 LEFT JOIN questions ON questions.id = videos_questions_streams.id_question
                 INNER JOIN video ON video.id_video = videos_questions_streams.id_video
                 WHERE videos_questions_streams.id_stream = ? AND
@@ -629,6 +641,118 @@ const addVideoEntry = async (id_video, toia_id, answer, duration_seconds) => {
 	});
 };
 
+
+const addTimeForTranscript = (time1, delaySeconds, delayNanos) =>{
+  let seconds = parseInt(time1.seconds) + delaySeconds;
+  let nanos = parseInt(time1.nanos) + delayNanos;
+  
+  if (nanos >= 1000000000) {
+    seconds += 1;
+    nanos -= 1000000000;
+  }
+  
+  return {
+    "seconds": seconds.toString(),
+    "nanos": nanos
+  };
+};
+
+const matchTranscription = (data, transcript) => {
+	let manualTranscript = transcript.trim().split(" ");
+	console.log(manualTranscript);
+	if (manualTranscript.length == 0 || transcript.trim() == '') {
+	  return [];
+	}
+  
+	let newSpeechTranscript = [];
+	let prevEndTimeSeconds = 0;
+	let prevEndTimeNanos = 0;
+  
+	let subData = JSON.parse(data[0]);
+	let subSpeechTranscript = []; // For maintaining the dimensions
+  
+	let speechTranscript = [];
+	for (let j = 0; j < subData.length; j++) {
+  
+	  let miniSpeechTranscript = subData[j];
+	  let sTLength = miniSpeechTranscript.length;
+  
+	  for (let k = 0; k < sTLength; k++) {
+		miniSpeechTranscript[k].startTime = addTimeForTranscript(
+		  miniSpeechTranscript[k].startTime,
+		  prevEndTimeSeconds,
+		  prevEndTimeNanos
+		);
+		miniSpeechTranscript[k].endTime = addTimeForTranscript(
+		  miniSpeechTranscript[k].endTime,
+		  prevEndTimeSeconds,
+		  prevEndTimeNanos
+		);
+		speechTranscript.push(miniSpeechTranscript[k]);
+	  }
+	  prevEndTimeSeconds += parseInt(
+		miniSpeechTranscript[miniSpeechTranscript.length - 1].endTime.seconds
+	  );
+	  prevEndTimeNanos +=
+		miniSpeechTranscript[miniSpeechTranscript.length - 1].endTime.nanos;
+	}
+	// Start of actual alignment code
+  
+	// Look at length of each array (manualTranscript and speechTranscript) and perform calculations
+  
+	let mTLength = manualTranscript.length;
+	let sTLength = speechTranscript.length;
+  
+	if (sTLength <= mTLength) {
+	  let wordsPerBucket = Math.floor(mTLength / sTLength);
+	  let remainder = mTLength % sTLength;
+  
+	  let mTPosition = 0;
+	  // Put extra in the buckets in the beginning because of remainder (unequal division/distribution)
+	  for (let k = 0; k < sTLength; k++) {
+		let tempWordsPerBucket = wordsPerBucket + (k < remainder ? 1 : 0);
+  
+		//   speechTranscript[k].word = joined_words;
+		let joined_words = manualTranscript
+				.slice(mTPosition, mTPosition + tempWordsPerBucket)
+				.join(" ");
+  
+		subSpeechTranscript.push({
+		  ...speechTranscript[k],
+		  word: joined_words,
+		});
+		mTPosition += tempWordsPerBucket;
+	  }
+	  newSpeechTranscript.push(subSpeechTranscript);
+	} else {
+	  let wordsPerBucket = Math.floor(sTLength / mTLength);
+	  let remainder = sTLength % mTLength;
+  
+	  let sTPosition = 0;
+  
+	  for (let k = 0; k < mTLength; k++) {
+		let tempWordsPerBucket = wordsPerBucket + (k < remainder ? 1 : 0);
+  
+		let startTime = speechTranscript[sTPosition].startTime;
+		let endTime =
+		  speechTranscript[sTPosition + tempWordsPerBucket - 1].endTime;
+  
+		// create obj that represents a time frame for speech
+		subSpeechTranscript.push({
+		  startTime: startTime,
+		  endTime: endTime,
+		  confidence: 0,
+		  speakerTag: 0,
+		  word: manualTranscript[k],
+		});
+		sTPosition += tempWordsPerBucket;
+	  }
+	  newSpeechTranscript.push(subSpeechTranscript);
+	}
+	return JSON.stringify(newSpeechTranscript);
+  };
+
+  
 module.exports.addQuestion = addQuestion;
 module.exports.addQuestionIfNew = addQuestionIfNew;
 module.exports.isSuggestedQuestion = isSuggestedQuestion;
@@ -665,3 +789,4 @@ module.exports.getVideoLatestIDX = getVideoLatestIDX;
 module.exports.addVideoEntry = addVideoEntry;
 module.exports.QuestionTypes = QuestionTypes;
 module.exports.getEmbeddings = getEmbeddings;
+module.exports.matchTranscription = matchTranscription;
