@@ -1,8 +1,6 @@
 defmodule ToiaWeb.HealthController do
     use ToiaWeb, :controller
-  
-    alias Toia.ToiaUsers
-  
+    
     action_fallback(ToiaWeb.FallbackController)
   
     def index(conn, _params) do

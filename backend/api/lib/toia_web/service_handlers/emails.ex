@@ -1,6 +1,4 @@
 defmodule ServiceHandlers.Emails do
-  import Swoosh.Email
-
   def confirmEmail(user) do
     {:ok, token, _claims} =
       Toia.Guardian.encode_and_sign(user, %{

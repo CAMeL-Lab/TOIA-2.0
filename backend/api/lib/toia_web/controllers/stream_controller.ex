@@ -120,10 +120,11 @@ defmodule ToiaWeb.StreamController do
 
   def next(
         %{assigns: %{current_user: user}} = conn,
-        %{"id" => stream_id, "question" => question} = _params
+        %{"id" => stream_id, "question" => question, "params" => %{"language" => language}} = _params
       ) do
     case Streams.get_next_video(user, stream_id, question) do
       {:ok, x} ->
+        x = Map.put(x, :vtt_url, Streams.get_vtt_url(x.id_video, language))
         conn
         |> put_status(:ok)
         |> json(x)

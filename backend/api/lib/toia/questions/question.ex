@@ -6,7 +6,7 @@ defmodule Toia.Questions.Question do
     field :onboarding, :boolean, default: false
     field :priority, :integer, default: 100
     field :question, :string
-    field :language, :string, default: "en"
+    field :language, :string, default: "en-US"
 
     field :suggested_type, Ecto.Enum,
       values: [:filler, :greeting, :answer, :exit, :"no-answer", :"y/n-answer"],

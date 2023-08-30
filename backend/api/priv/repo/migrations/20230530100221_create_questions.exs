@@ -14,7 +14,7 @@ defmodule Toia.Repo.Migrations.CreateQuestions do
       add :priority, :integer, null: false
       add :trigger_suggester, :boolean, default: true, null: false
 
-      add :language, :string, default: "en", null: false
+      add :language, :string, default: "en-US", null: false
     end
   end
 end

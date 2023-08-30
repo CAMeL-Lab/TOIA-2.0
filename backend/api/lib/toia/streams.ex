@@ -348,6 +348,17 @@ defmodule Toia.Streams do
   end
 
   @doc """
+  Return the vtt url for a video
+  """
+  def get_vtt_url(video_id, language) do
+    video_name = String.split(video_id, ".")
+            |> List.delete_at(-1)
+            |> Enum.join("")
+
+    "#{System.get_env("API_URL")}/static/Transcripts/vtts/#{video_name}-#{language}.vtt"
+  end
+
+  @doc """
   Retrieve suggestion from q_api
   """
   def get_smart_questions(stream_id, "", _) do

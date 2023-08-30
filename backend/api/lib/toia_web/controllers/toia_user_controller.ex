@@ -7,7 +7,6 @@ defmodule ToiaWeb.ToiaUserController do
   alias Toia.ToiaUsers.ToiaUser
   alias Toia.Streams
   alias ServiceHandlers.Emails
-  alias Toia.Mailer
 
   action_fallback(ToiaWeb.FallbackController)
 

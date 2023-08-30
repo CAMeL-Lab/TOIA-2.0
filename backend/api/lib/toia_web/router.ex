@@ -36,7 +36,7 @@ defmodule ToiaWeb.Router do
     # legacy: /api/fillerVideo
     get("/stream/:id/filler", StreamController, :filler)
     # legacy: /api/player
-    get("/stream/:id/next", StreamController, :next)
+    post("/stream/:id/next", StreamController, :next)
     # legacy: /api/getSmartQuestions
     post("/stream/:id/smart_questions", StreamController, :smart_questions)
     # legacy: /api/getAllStreams, /api/getStreamVideosCount
