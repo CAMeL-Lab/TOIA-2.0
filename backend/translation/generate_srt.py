@@ -9,6 +9,21 @@ from translate_txt import copy_to_local
 from txt2srt import txt2srt
 from translate_txt import batch_translate_text
 
+required_env_vars = [
+    'INPUT_BUCKET',
+    'OUTPUT_BUCKET',
+    'INPUT_URI',
+    'OUTPUT_URI',
+    'PROJECT_ID',
+    'SUBTITLE_BUCKET',
+    'ENVIRONMENT',
+    'USER',
+    'PASSWORD'
+]
+
+for var in required_env_vars:
+    if var not in os.environ:
+        raise Exception(f"Missing required environment variable {var}")
 
 def generate_srt(data, target_langs, video_name, output_file="en", input_language="en-US", max_chars=40):
 
@@ -54,6 +69,8 @@ def generate_srt(data, target_langs, video_name, output_file="en", input_languag
     # in development, store the vtt files locally
     elif env == "DEVELOPMENT":
         upload_to_folders("files", video_name)
+    else:
+        raise Exception("Invalid environment variable")
     
     # clear the intermediate folders
     clear_folders()

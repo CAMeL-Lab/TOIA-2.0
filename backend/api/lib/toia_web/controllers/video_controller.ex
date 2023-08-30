@@ -5,6 +5,7 @@ defmodule ToiaWeb.VideoController do
   alias Toia.Videos.Video
   alias Toia.Questions
   alias Toia.ToiaUsers
+  alias ServiceHandlers.Translation
 
   import ToiaWeb.VideoValidator,
     only: [
@@ -12,7 +13,8 @@ defmodule ToiaWeb.VideoController do
       validateQuestionsParam: 1,
       validateVideoTypeParam: 1,
       validateStreamsList: 2,
-      validateVideoDuration: 1
+      validateVideoDuration: 1,
+      validateResultsParam: 1
     ]
 
   action_fallback(ToiaWeb.FallbackController)
@@ -37,7 +39,8 @@ defmodule ToiaWeb.VideoController do
       type: :string,
       required: true,
       into: &validateVideoTypeParam/1
-    ]
+    ],
+    results: [type: :string, required: true, into: &validateResultsParam/1]
   }
   def create(
         %{assigns: %{current_user: user}} = conn,
@@ -48,7 +51,11 @@ defmodule ToiaWeb.VideoController do
          {:ok, nextIDX} <- Videos.getNextIdx(),
          {:ok, videoID} <- Videos.generateRandomVideoID(user.first_name, user.id, nextIDX),
          {:ok, questions} <-
-           Questions.pre_process_new_questions(params.questions, params.videoType),
+           Questions.pre_process_new_questions(
+             params.questions,
+             params.videoType,
+             params.language
+           ),
          :ok <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
          {:ok, _videoEntry} <-
            Videos.create_video(%{
@@ -62,6 +69,7 @@ defmodule ToiaWeb.VideoController do
            }),
          {:ok, _} <-
            Videos.linkVideoQuestionsStreams(videoID, questions, streams, params.videoType),
+         :ok <- Translation.enqueue_job(params.answer, params.results, params.language, videoID),
          {:ok, _} <- Questions.post_process_new_questions(questions, user.id) do
       # Generate Suggestion in the background
       _task =
@@ -152,7 +160,11 @@ defmodule ToiaWeb.VideoController do
          {:ok, _} <- Videos.delete_video(oldVideo),
          {:ok, _} <- Videos.removeVideoFile(user.first_name, user.id, oldVideoID),
          {:ok, questions} <-
-           Questions.pre_process_new_questions(params.questions, params.videoType),
+           Questions.pre_process_new_questions(
+             params.questions,
+             params.videoType,
+             params.language
+           ),
          :ok <- Videos.saveVideoFile(user.first_name, user.id, videoID, path),
          {:ok, _videoEntry} <-
            Videos.create_video(%{

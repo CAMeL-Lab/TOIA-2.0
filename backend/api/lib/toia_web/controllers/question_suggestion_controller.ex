@@ -35,10 +35,20 @@ defmodule ToiaWeb.QuestionSuggestionController do
   def create(conn, %{"q" => question, "toia_id" => toia_id} = _params) do
     suggestion = %{question: question, toia_id: toia_id}
 
-    with {:ok, question_suggestion} <- QuestionSuggestions.create_question_suggestion(suggestion) do
+    # Remove trailing spaces
+    suggestion = Map.update!(suggestion, :question, &String.trim/1)
+
+    # If the question is empty, fail silently
+    if suggestion.question == "" do
       conn
-      |> put_status(:created)
-      |> render(:show, question_suggestion: question_suggestion)
+      |> put_status(:ok)
+      |> json(%{})
+    else
+      with {:ok, question_suggestion} <- QuestionSuggestions.create_question_suggestion(suggestion) do
+        conn
+        |> put_status(:created)
+        |> render(:show, question_suggestion: question_suggestion)
+      end
     end
   end
 

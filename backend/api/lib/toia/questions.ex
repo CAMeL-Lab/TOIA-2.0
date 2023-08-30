@@ -219,14 +219,15 @@ defmodule Toia.Questions do
   If the id is -1, add new.
   If the id is valid but the question is different, add new. Don't touch the old one.
   """
-  def pre_process_new_questions(questions, type) do
+  def pre_process_new_questions(questions, type, language) do
+    IO.inspect(questions)
     {:ok,
      Enum.map(questions, fn question ->
-       process_new_question_individual(question, type)
+       process_new_question_individual(question, type, language)
      end)}
   end
 
-  defp process_new_question_individual(%{question: q, id_question: id}, type) do
+  defp process_new_question_individual(%{question: q, id_question: id}, type, language) do
     case get_question(id) do
       nil ->
         {:ok, question} =
@@ -235,7 +236,8 @@ defmodule Toia.Questions do
             suggested_type: type,
             onboarding: false,
             priority: 100,
-            trigger_suggester: true
+            trigger_suggester: true,
+            language: language
           })
 
         question
@@ -250,21 +252,23 @@ defmodule Toia.Questions do
             suggested_type: type,
             onboarding: false,
             priority: 100,
-            trigger_suggester: true
+            trigger_suggester: true,
+            language: language
           })
 
         question
     end
   end
 
-  defp process_new_question_individual(%{question: q}, type) do
+  defp process_new_question_individual(%{question: q}, type, language) do
     {:ok, question} =
       create_question(%{
         question: q,
         suggested_type: type,
         onboarding: false,
         priority: 100,
-        trigger_suggester: true
+        trigger_suggester: true,
+        language: language
       })
 
     question

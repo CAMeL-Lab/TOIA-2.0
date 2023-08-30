@@ -39,6 +39,13 @@ config :toia, Toia.Mailer,
   no_mx_lookups: false,
   auth: :always
 
+config :amqp,
+  connections: [
+    translationConn: [url: "amqp://#{System.get_env("RMQ_USERNAME")}:#{System.get_env("RMQ_PASSWORD")}@localhost:5672"],
+  ],
+  channels: [
+    translationChannel: [connection: :translationConn]
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,

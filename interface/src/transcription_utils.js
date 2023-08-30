@@ -31,7 +31,7 @@ let AudioStreamer = {
 	 */
 	initRecording: function (params, onData, onError) {
 		// socket.emit("transcribeAudio", "");
-		const language = params?.language ?? 'en-US';
+		const language = params?.language ?? "en-US";
 		console.log("Language Code:", language);
 		socket.emit("transcribeAudio", language);
 		AudioContext = window.AudioContext || window.webkitAudioContext;

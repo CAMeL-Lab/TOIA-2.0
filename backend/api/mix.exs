@@ -49,7 +49,8 @@ defmodule Toia.MixProject do
       {:poison, "~> 5.0"},
       {:cors_plug, "~> 3.0"},
       {:tarams, "~> 1.7.1"},
-      {:gen_smtp, "~> 1.1"}
+      {:gen_smtp, "~> 1.1"},
+      {:amqp, "~> 3.3"}
     ]
   end
 

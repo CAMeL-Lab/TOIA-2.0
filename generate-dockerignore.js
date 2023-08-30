@@ -36,8 +36,13 @@ for (const dockerIgnoreFile of dockerIgnoreFiles) {
     const dirName = path.dirname(dockerIgnoreFile);
     const contents = fs.readFileSync(dockerIgnoreFile, "utf8");
     const lines = contents.split("\n");
+    const added = {};
     for (const line of lines) {
         if (line.trim() !== "" && Array.from(line)[0] !== "#") {
+            if (added[`${dirName}/${line}\n`]) {
+                continue;
+            }
+            added[`${dirName}/${line}\n`] = true;
             fs.appendFileSync(rootDockerIgnorePath, `${dirName}/${line}\n`);
         }
     }

@@ -25,8 +25,8 @@ services:
       context: .
     image: bishnudev/toia-api:latest
     environment:
-      MIX_ENV: prod
-      NODE_ENV: production
+      MIX_ENV: dev
+      NODE_ENV: development
     depends_on:
       mysql:
         condition: service_healthy
@@ -39,15 +39,15 @@ services:
     volumes:
       - ./backend/api/Accounts:/app/Accounts
       - ./backend/api/lib:/app/lib
-      - /backend/api/lib/toia_web/services/node_modules
+      - /app/lib/toia_web/services/node_modules
     ports:
       - 4000:4000
   
-  watchtower:
-    image: containrrr/watchtower:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 30
+  # watchtower:
+  #   image: containrrr/watchtower:latest
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: --interval 30
 
   # nginx:
   #   build: ./nginx
@@ -100,17 +100,45 @@ services:
       - DM_PORT=5001
     env_file:
       - ./.env
-
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: always
+  
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RMQ_PASSWORD}
     ports:
-      - 8000:8000
-      - 9443:9443
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+
+  translation:
+    depends_on:
+      - rabbitmq3
+    restart: on-failure
+    container_name: "translation_py"
+    build: backend/translation
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=secrets/toia-translation.json
+      - ENVIRONMENT=DEVELOPMENT
+      - PYTHONUNBUFFERED=1
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+      - ./backend/translation/Transcripts:/app/files
+      - ./secrets/translation:/app/secrets:ro
+    env_file:
+      - ./secrets/translation/.env
+
+  # portainer:
+  #   image: portainer/portainer-ce:latest
+  #   container_name: portainer
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+  #     - 9443:9443
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - portainer_data:/data
 
 volumes:
   portainer_data:

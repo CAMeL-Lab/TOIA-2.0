@@ -16,6 +16,23 @@
 import srt
 from datetime import timedelta
 import webvtt
+import os
+
+txt_directory = 'txts'
+if not os.path.exists(txt_directory):
+    os.makedirs(txt_directory)
+
+srt_directory = 'srts'
+if not os.path.exists(srt_directory):
+    os.makedirs(srt_directory)
+
+vtt_directory = 'vtts'
+if not os.path.exists(vtt_directory):
+    os.makedirs(vtt_directory)
+
+files_vtt_directory = 'files/vtts'
+if not os.path.exists(files_vtt_directory):
+    os.makedirs(files_vtt_directory)
 
 def break_sentences(max_chars, subs, words, prev_end_time):
     firstword = True

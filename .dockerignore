@@ -6,13 +6,6 @@ server/.gitignore
 server/package-lock.json
 server/interface
 
-interface/node_modules
-interface/Dockerfile
-interface/.idea
-interface/.gitignore
-interface/.dockerignore
-interface/package-lock.json
-secrets/
 backend/api/_build/
 backend/api/cover/
 backend/api/deps/
@@ -47,6 +40,9 @@ backend/toia-dm/.env
 backend/toia-dm/test/
 backend/toia-dm/old_toia-dm_files/
 backend/toia-dm/notebooks/
+backend/translation/Transcripts/
+backend/translation/secrets/
+backend/translation/.env
 interface/build
 interface/node_modules
 interface/.gitignore

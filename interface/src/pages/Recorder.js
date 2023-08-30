@@ -1,38 +1,37 @@
 import axios from "axios";
-import SpeechRecognition, {
-	useSpeechRecognition,
-} from "react-speech-recognition";
-import history from "../services/history";
-import { Button, Image, Modal, Popup, TextArea, Icon } from "semantic-ui-react";
-import { Multiselect } from "multiselect-react-dropdown";
 import { default as EditCreateMultiSelect } from "editable-creatable-multiselect";
 import getBlobDuration from "get-blob-duration";
+import i18n from "i18next";
+import { Multiselect } from "multiselect-react-dropdown";
 import React, { useEffect, useRef, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import NotificationContainer from "react-notifications/lib/NotificationContainer";
+import { useSpeechRecognition } from "react-speech-recognition";
 import Switch from "react-switch";
 import Webcam from "react-webcam";
+import { Button, Icon, Image, Modal, Popup, TextArea } from "semantic-ui-react";
 import videoTypesJSON from "../configs/VideoTypes.json";
-import {
-	RecordAVideoCard,
-	OnBoardingQCard,
-	SuggestedQCard,
-	SuggestedQCardNoAction,
-} from "./AvatarGardenPage";
 import CheckMarkIcon from "../icons/check-mark-success1.webp";
 import RecordButton from "../icons/record1.png";
 import RecordingGif from "../icons/recording51.gif";
+import history from "../services/history";
 import speechToTextUtils from "../transcription_utils";
 import Tracker from "../utils/tracker";
-
+import {
+	OnBoardingQCard,
+	RecordAVideoCard,
+	SuggestedQCardNoAction,
+} from "./AvatarGardenPage";
 import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
 
 import { getUser, isLoggedIn } from "../auth/auth";
 import API_URLS from "../configs/backend-urls";
-import languageFlagsCSS from "../services/languageHelper";
-import { languageCodeTable } from "../services/languageHelper";
+import {
+	languageCodeTable,
+	languageFlagsCSS,
+} from "../services/languageHelper";
 
 const videoConstraints = {
 	width: 720,
@@ -410,6 +409,7 @@ function Recorder() {
 	};
 
 	function handleDataReceived(data) {
+		console.log(data)
 		//setTranscribedAudio(oldData => [...oldData, data])
 		//setTranscribedAudio(input.current + " " + data);
 		setTranscribedAudio(
@@ -569,18 +569,18 @@ function Recorder() {
 
 			let form = new FormData();
 			form.append("video", recordedVideo);
-			form.append("language", toiaLanguage);
+			form.append("language", interactionLanguage);
 			form.append("questions", JSON.stringify(questionsSelected));
 			form.append("answer", answerProvided);
 			form.append("videoType", videoType);
 			form.append("private", isPrivate.toString());
 			form.append("streams", JSON.stringify(listOfStreams));
 			form.append("video_duration", videoDuration);
-
+			form.append("results", JSON.stringify(results));
 			form.append("start_time", recordStartTimestamp);
 			form.append("end_time", endTimestamp);
 			setRecordEndTimestamp(endTimestamp);
-
+			console.log(results)
 			let options = null;
 			if (is_editing && !save_as_new) {
 				options = {
