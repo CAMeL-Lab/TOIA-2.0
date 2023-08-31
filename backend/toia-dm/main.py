@@ -92,9 +92,9 @@ def dialogue_manager(payload: DMpayload):
                                     'type',
                                     'ada_search',
                                     'question',
-                                    'language',
                                     'id_video',
                                     'toia_id',
+                                    'language',
                                     'idx',
                                     'private',
                                     'answer',
@@ -111,6 +111,8 @@ def dialogue_manager(payload: DMpayload):
         # return 'Please enter a query', 400
 
     response = toia_answer(query, df_avatar)
+
+    print(response)
 
     answer = response[0]
     id_video = response[1]

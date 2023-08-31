@@ -40,6 +40,7 @@ services:
       - ./backend/api/Accounts:/app/Accounts
       - ./backend/api/lib:/app/lib
       - /app/lib/toia_web/services/node_modules
+      - ./backend/translation/Transcripts:/app/priv/static/static/Transcripts:ro
     ports:
       - 4000:4000
   
@@ -116,9 +117,11 @@ services:
   translation:
     depends_on:
       - rabbitmq3
+      - mysql
     restart: on-failure
     container_name: "translation_py"
     build: backend/translation
+    image: bishnudev/toia-translation:latest
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=secrets/toia-translation.json
       - ENVIRONMENT=DEVELOPMENT
