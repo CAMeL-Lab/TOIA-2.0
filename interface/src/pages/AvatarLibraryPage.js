@@ -1,31 +1,20 @@
-import React, { useState, useEffect } from "react";
-import Fuse from "fuse.js";
-import sampleVideo from "../icons/sample-video.svg";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Modal } from "semantic-ui-react";
 import submitButton from "../icons/submit-button.svg";
 import history from "../services/history";
-import { Modal } from "semantic-ui-react";
-import axios from "axios";
 import Tracker from "../utils/tracker";
 
-import NavBar from './NavBar.js'
+import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
-
+import { getUser, isLoggedIn } from "../auth/auth";
+import API_URLS from "../configs/backend-urls";
 
 function AvatarLibraryPage() {
-
-
 	const { t } = useTranslation();
 
-	/*functions in charge of opening and closing the various pop up menus*/
-
 	const [open2, dispatch2] = useState(false); // this is to open the view pop up
-
-	function openModal2(e) {
-		dispatch2(true);
-		e.preventDefault();
-	}
-
 	const [open3, dispatch3] = useState(false); // this is to open the view pop up
 
 	function openModal3(e) {
@@ -36,35 +25,46 @@ function AvatarLibraryPage() {
 	const [toiaName, setName] = useState(null);
 	const [toiaLanguage, setLanguage] = useState(null);
 	const [toiaID, setTOIAid] = useState(null);
-	const [isLoggedIn, setLoginState] = useState(false);
+	const [loginState, setLoginState] = useState(false);
 	const [allData, setAllData] = useState([]);
 	const [searchData, setSearchData] = useState([]);
 
 	const [interactionLanguage, setInteractionLanguage] = useState(null);
 
 	useEffect(() => {
-		if (history.location.state != undefined) {
+		if (isLoggedIn()) {
 			setLoginState(true);
-			setName(history.location.state.toiaName);
-			setLanguage(history.location.state.toiaLanguage);
-			setTOIAid(history.location.state.toiaID);
+			setName(getUser().first_name);
+			setLanguage(getUser().language);
+			setTOIAid(getUser().id);
+		} else {
+			setLoginState(false);
 		}
 
-		console.log("Trying my best here!", history.location.state?.toiaID);
+		const options = {
+			method: "GET",
+			url: API_URLS.STREAMS(),
+		};
 
-		axios.get(`/api/getAllStreams`).then(res => {
-			let user_id = history.location.state?.toiaID;
-			axios
-				.get(`/api/permission/streams?user_id=${user_id}`)
-				.then(permission_res => {
-					let filtered_streams = res.data.filter(item => {
-						return permission_res.data.includes(item.id_stream);
-					});
-					// console.log(permission_res);
-					// console.log(filtered_streams);
-					setAllData(filtered_streams);
-					setSearchData(filtered_streams);
-				});
+		axios.request(options).then(async res => {
+			let streams = res.data.map(item => {
+				item.id = item.toia_id;
+				delete item.toia_id;
+				return item;
+			});
+
+			for (const stream of streams) {
+				const options = {
+					method: "GET",
+					url: API_URLS.OTHER_USER_INFO(stream.id),
+				};
+				let user_data = await axios.request(options);
+				stream.first_name = user_data.data.data.first_name;
+				stream.last_name = user_data.data.data.last_name;
+			}
+
+			setAllData(streams);
+			setSearchData(streams);
 		});
 
 		// Track
@@ -72,7 +72,7 @@ function AvatarLibraryPage() {
 	}, []);
 
 	function goToPlayer(element) {
-		if (isLoggedIn) {
+		if (loginState) {
 			history.push({
 				pathname: "/player",
 				state: {
@@ -111,6 +111,7 @@ function AvatarLibraryPage() {
 					}}
 					src={card.pic}
 					className="library-stream-image-sizing" //stream thumbnail
+					alt="stream thumbnail"
 				/>
 				<div>
 					<h1
@@ -127,9 +128,8 @@ function AvatarLibraryPage() {
 								backgroundColor: "transparent",
 								border: "transparent",
 								cursor: "pointer",
-							}}
-						>
-							<i class="fa fa-info-circle"></i>
+							}}>
+							<i className="fa fa-info-circle"></i>
 						</button>
 						{" " + card.name + " stream"}
 					</p>
@@ -137,10 +137,7 @@ function AvatarLibraryPage() {
 				<br></br>
 				<div
 					className="garden-carousel-menu" //stats that appear under stream
-				>
-					{/* <p style={{marginRight: 30}}>{card.views}&nbsp;<i class="fa fa-users"></i></p>
-                  <p style={{marginLeft: 15}}>{card.likes}&nbsp;<i class="fa fa-thumbs-up"></i></p> */}
-				</div>
+				></div>
 			</div>
 		);
 	};
@@ -170,20 +167,16 @@ function AvatarLibraryPage() {
 
 	const inlineStyle = {
 		modal: {
-			height: '560px',
-			width: '600px',
-		}
+			height: "560px",
+			width: "600px",
+		},
 	};
-	function placeholderSpan() {
-		return (
-			<h1>Search for a stream to talk to</h1>
-		)
-	}
+
 	const inlineStyleSetting = {
 		modal: {
-			height: '70vh',
-			width: '50vw',
-		}
+			height: "70vh",
+			width: "50vw",
+		},
 	};
 
 	return (
@@ -191,32 +184,23 @@ function AvatarLibraryPage() {
 			<NavBar
 				toiaName={toiaName}
 				toiaID={toiaID}
-				isLoggedIn={isLoggedIn}
+				isLoggedIn={loginState}
 				toiaLanguage={toiaLanguage}
 				history={history}
 				showLoginModal={true}
 			/>
 			<Modal //this is the view pop up menu
-				size='large'
+				size="large"
 				style={inlineStyle.modal}
 				open={open2}
-				onClose={() => dispatch2(false)}
-			>
+				onClose={() => dispatch2(false)}>
 				<Modal.Content>
-					{/* <img className="library-view-img" src={allData[viewIndex].still}/> */}
-					<div className="library-view-menu" //the stats that appear under the image
-					>
-						{/* <p style={{marginRight: 52}}>{allData[viewIndex].views}&nbsp;<i class="fa fa-users"></i></p>
-                      <p style={{marginLeft: 26}}>{allData[viewIndex].likes}&nbsp;<i class="fa fa-thumbs-up"></i></p> */}
-					</div>
-					{/* <h1 className="library-view-text" style={{top: '6%'}}>{allData[viewIndex].maker}</h1>
-                  <h2 className="library-view-text text" style={{top: '16%'}}>{allData[viewIndex].streamName}</h2>
-                  <p className="library-view-text text" style={{top: '31%'}}>{allData[viewIndex].language}</p>
-                  <p className="library-view-text text" style={{top: '42%'}}>{allData[viewIndex].bio}</p> */}
+					<div
+						className="library-view-menu" //the stats that appear under the image
+					></div>
 					<select
 						className="library-lang-box"
-						onChange={e => setInteractionLanguage(e.target.value)}
-					>
+						onChange={e => setInteractionLanguage(e.target.value)}>
 						<option value="" disabled selected hidden>
 							What language would you like to speak in..
 						</option>
@@ -294,7 +278,7 @@ function AvatarLibraryPage() {
 						<option value="XH">Xhosa</option>
 					</select>
 					<div className="library-view-button">
-						<img src={submitButton} />
+						<img src={submitButton} alt="submit" />
 					</div>
 				</Modal.Content>
 			</Modal>
@@ -303,8 +287,7 @@ function AvatarLibraryPage() {
 				closeIcon={true}
 				style={inlineStyleSetting.modal}
 				open={open3}
-				onClose={() => dispatch3({ type: "close" })}
-			>
+				onClose={() => dispatch3({ type: "close" })}>
 				<Modal.Header className="login_header">
 					<h1 className="login_welcome login-opensans-normal">
 						All Stream{" "}
@@ -342,12 +325,19 @@ function AvatarLibraryPage() {
 					</p>
 				</Modal.Content>
 			</Modal>
-	
 
 			<div className="library-page-setup">
-				<h1 className={`library-heading ${t("alignment")}`}>{t("page_title")}</h1>
-				<input className="library-search" type="text" placeholder='&#xF002;  ' onChange={(event) => searchStreams(event.target.value)} />
-				<div className="library-grid" //videos
+				<h1 className={`library-heading ${t("alignment")}`}>
+					{t("page_title")}
+				</h1>
+				<input
+					className="library-search"
+					type="text"
+					placeholder="&#xF002;  "
+					onChange={event => searchStreams(event.target.value)}
+				/>
+				<div
+					className="library-grid" //videos
 				>
 					{searchData.map(renderStream)}
 				</div>

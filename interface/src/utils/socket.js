@@ -1,6 +1,7 @@
 import io from "socket.io-client";
+import { SPEECH_TO_TEXT } from "../configs/backend-urls";
 
-const socket = new io.connect("http://localhost:3001", {
+const socket = new io.connect(SPEECH_TO_TEXT(), {
 	transports: ["websocket"],
 });
 

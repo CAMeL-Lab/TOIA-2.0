@@ -1,0 +1,476 @@
+[
+	{
+		"question": "Attentive filler video: Record yourself touching your hair/head/face staring at the camera (think making eye contact with a user interacting with your avatar)",
+		"type": "filler",
+		"priority": 0,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Nod/shake head to show you are listening, and keep staring at the camere (make eye contact)",
+		"type": "filler",
+		"priority": 1,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Smile and blink eyes while looking towards the camera (make eye contact) for about 10 seconds",
+		"type": "filler",
+		"priority": 2,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Lean slightly forward with your elbows on the table and your hands together on your chin as if you were attentive to the camera",
+		"type": "filler",
+		"priority": 3,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Attentive filler: Cross hands while looking forward into the camera",
+		"type": "filler",
+		"priority": 4,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler video: Now record again yourself touching your hair/head/face, but don't look at the camera. Look elsewhere (don't make eye contact)",
+		"type": "filler",
+		"priority": 5,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Do not nod/shake head and look elsewhere from the camera. Show you are engageing with somebody else in the room, do not stare at the camera (avoid eye contact)",
+		"type": "filler",
+		"priority": 6,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Look downward, do not stare at the camera (avoid eye contact) for about 10 seconds",
+		"type": "filler",
+		"priority": 7,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Lean slightly backwards, like trying to relax, gaze around and never look at the camera (avoid eye contact)",
+		"type": "filler",
+		"priority": 8,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Inattentive filler: Cross hands while looking upward or elsewere, looking bored, avoiding eye contact with the camera",
+		"type": "filler",
+		"priority": 9,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Say: I don't have an answer to that right now.",
+		"type": "no-answer",
+		"priority": 10,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Say: Sorry, I didn't record answers to that question.",
+		"type": "no-answer",
+		"priority": 11,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Say: Can you try rephrasing the question?",
+		"type": "no-answer",
+		"priority": 12,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record a greeting (e.g., hello, hi)",
+		"type": "greeting",
+		"priority": 13,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record a goodbye (or end of conversation sentence)",
+		"type": "exit",
+		"priority": 14,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record yourself saying Yes. You cann add questions for this answer later.",
+		"type": "y/n-answer",
+		"priority": 15,
+		"trigger_suggester": false
+	},
+	{
+		"question": "Record yourself saying No. You can add questions for this answer later.",
+		"type": "y/n-answer",
+		"priority": 16,
+		"trigger_suggester": false
+	},
+	{
+        "question": "Cómo te llamas?",
+        "type": "answer",
+        "priority": 17,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Dónde y cuándo naciste?",
+        "type": "answer",
+        "priority": 18,
+        "trigger_suggester": true
+    },
+    {
+        "question": "A qué te dedicas?",
+        "type": "answer",
+        "priority": 19,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál es tu especialidad y por qué la elegiste?",
+        "type": "answer",
+        "priority": 20,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo ha sido tu experiencia académica hasta el momento?",
+        "type": "answer",
+        "priority": 21,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Ha participado en algún proyecto de investigación o pasantía?",
+        "type": "answer",
+        "priority": 22,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál ha sido tu clase más desafiante y cómo la superaste?",
+        "type": "answer",
+        "priority": 23,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál ha sido tu clase favorita y por qué?",
+        "type": "answer",
+        "priority": 24,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Ha participado en actividades extracurriculares o clubes?",
+        "type": "answer",
+        "priority": 25,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué posiciones de liderazgo ha ocupado en la universidad?",
+        "type": "answer",
+        "priority": 26,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Has estudiado en el extranjero? Si es así, ¿dónde y qué aprendiste de la experiencia?",
+        "type": "answer",
+        "priority": 27,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo te ha cambiado la universidad como persona?",
+        "type": "answer",
+        "priority": 28,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál es tu plan para después de la graduación?",
+        "type": "answer",
+        "priority": 29,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo te sientes acerca de ingresar a la fuerza laboral o a la escuela de posgrado?",
+        "type": "answer",
+        "priority": 30,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles son sus fortalezas y debilidades?",
+        "type": "answer",
+        "priority": 31,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Alguna vez has experimentado un fracaso o un contratiempo? ¿Cómo lo manejaste?",
+        "type": "answer",
+        "priority": 32,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué te motiva a tener éxito?",
+        "type": "answer",
+        "priority": 33,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál crees que es tu mayor logro en la universidad?",
+        "type": "answer",
+        "priority": 34,
+        "trigger_suggester": true
+    },
+    {
+        "question": "De qué se siente más orgulloso en su carrera universitaria?",
+        "type": "answer",
+        "priority": 35,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Has hecho conexiones duraderas o amistades en la universidad?",
+        "type": "answer",
+        "priority": 36,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué es algo que desearías haber sabido antes de comenzar la universidad?",
+        "type": "answer",
+        "priority": 37,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué consejo le daría a los estudiantes de primer año que ingresan a la universidad?",
+        "type": "answer",
+        "priority": 38,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál fue el mayor obstáculo que enfrentó durante su carrera universitaria?",
+        "type": "answer",
+        "priority": 39,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo gestionaste tu tiempo durante la universidad?",
+        "type": "answer",
+        "priority": 40,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué hábitos de estudio te funcionaron mejor?",
+        "type": "answer",
+        "priority": 41,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Alguna vez has cambiado de especialidad o de carrera? Si es así, ¿por qué?",
+        "type": "answer",
+        "priority": 42,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles cree que son los mayores problemas que enfrentan los estudiantes universitarios hoy en día?",
+        "type": "answer",
+        "priority": 43,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo te mantienes motivado y enfocado en tus metas?",
+        "type": "answer",
+        "priority": 44,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo equilibras las responsabilidades académicas con la vida personal y las relaciones?",
+        "type": "answer",
+        "priority": 45,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo se ha adaptado a los cambios y desafíos que trajo la pandemia de COVID-19?",
+        "type": "answer",
+        "priority": 46,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles son algunas habilidades valiosas que has adquirido en la universidad?",
+        "type": "answer",
+        "priority": 47,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué es algo que desearías haber hecho diferente en la universidad?",
+        "type": "answer",
+        "priority": 48,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo han cambiado tus valores y creencias desde que comenzaste la universidad?",
+        "type": "answer",
+        "priority": 49,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué impacto ha tenido tu experiencia universitaria en tu visión del mundo?",
+        "type": "answer",
+        "priority": 50,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál es tu recuerdo favorito de la universidad?",
+        "type": "answer",
+        "priority": 51,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál fue la lección más importante que aprendiste en la universidad?",
+        "type": "answer",
+        "priority": 52,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Como manejas el estrés y la presión?",
+        "type": "answer",
+        "priority": 53,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles son sus planes para retribuir a su comunidad o sociedad?",
+        "type": "answer",
+        "priority": 54,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué pasatiempos o intereses tienes fuera de lo académico?",
+        "type": "answer",
+        "priority": 55,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo has desarrollado tus habilidades de liderazgo en la universidad?",
+        "type": "answer",
+        "priority": 56,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Ha participado en algún servicio comunitario o trabajo voluntario?",
+        "type": "answer",
+        "priority": 57,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál ha sido tu mayor reto personal en la universidad?",
+        "type": "answer",
+        "priority": 58,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles crees que son las cualidades más importantes para el éxito en tu futura carrera?",
+        "type": "answer",
+        "priority": 59,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué es algo que le gustaría lograr en los próximos cinco años?",
+        "type": "answer",
+        "priority": 60,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué te motiva a tener éxito?",
+        "type": "answer",
+        "priority": 61,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles son sus objetivos profesionales a largo plazo?",
+        "type": "answer",
+        "priority": 62,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo planea alcanzar sus objetivos a largo plazo?",
+        "type": "answer",
+        "priority": 63,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo has desarrollado tus habilidades de pensamiento crítico en la universidad?",
+        "type": "answer",
+        "priority": 64,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles han sido algunas de las experiencias más significativas que has tenido en la universidad?",
+        "type": "answer",
+        "priority": 65,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo has impactado en tu comunidad universitaria?",
+        "type": "answer",
+        "priority": 66,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo has desarrollado tus habilidades comunicativas en la universidad?",
+        "type": "answer",
+        "priority": 67,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Ha tenido alguna experiencia de tutoría en la universidad? Si es así, ¿cómo te han impactado?",
+        "type": "answer",
+        "priority": 68,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué has aprendido sobre ti mismo mientras estabas en la universidad?",
+        "type": "answer",
+        "priority": 69,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuál ha sido tu proyecto o tarea favorita en la universidad y por qué?",
+        "type": "answer",
+        "priority": 70,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Qué papel ha jugado la tecnología en tu experiencia universitaria?",
+        "type": "answer",
+        "priority": 71,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo ha tratado con profesores o compañeros de clase difíciles o desafiantes?",
+        "type": "answer",
+        "priority": 72,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo te mantienes al día con los eventos y noticias actuales en tu campo de estudio?",
+        "type": "answer",
+        "priority": 73,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles han sido algunos de los mayores riesgos que ha tomado en la universidad y cómo han valido la pena?",
+        "type": "answer",
+        "priority": 74,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo has desarrollado tus habilidades de trabajo en equipo y colaboración en la universidad?",
+        "type": "answer",
+        "priority": 75,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Ha tenido alguna experiencia con iniciativas de diversidad e inclusión en el campus? Si es así, ¿cómo han influido en su visión del mundo?",
+        "type": "answer",
+        "priority": 76,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cómo has desarrollado tus habilidades para resolver problemas en la universidad?",
+        "type": "answer",
+        "priority": 77,
+        "trigger_suggester": true
+    },
+    {
+        "question": "Cuáles han sido algunos de los mayores sacrificios que ha hecho en pos de su educación universitaria?",
+        "type": "answer",
+        "priority": 78,
+        "trigger_suggester": true
+    }
+]

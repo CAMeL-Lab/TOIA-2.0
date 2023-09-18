@@ -1,0 +1,8 @@
+.idea
+Dockerfile
+.gitignore
+.dockerignore
+.env
+test/
+old_toia-dm_files/
+notebooks/

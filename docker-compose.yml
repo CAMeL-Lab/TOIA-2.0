@@ -1,0 +1,147 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - 3306:3306
+    tty: true
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
+
+  phpMyAdmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 1024M
+  
+  api:
+    build: 
+      dockerfile: backend/api/Dockerfile
+      context: .
+    image: bishnudev/toia-api:latest
+    environment:
+      MIX_ENV: dev
+      NODE_ENV: development
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/api/health"]
+    tty: true
+    env_file:
+      - ./.env
+    volumes:
+      - ./backend/api/Accounts:/app/Accounts
+      - ./backend/api/lib:/app/lib
+      - /app/lib/toia_web/services/node_modules
+      - ./backend/translation/Transcripts:/app/priv/static/static/Transcripts:ro
+    ports:
+      - 4000:4000
+  
+  # watchtower:
+  #   image: containrrr/watchtower:latest
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: --interval 30
+
+  # nginx:
+  #   build: ./nginx
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - api
+
+  speech-to-text-gcloud:
+    build: ./backend/speech-to-text/gcloud
+    image: bishnudev/toia-stt:gcloud-v1.0
+    ports:
+      - 3002:3002
+    tty: true
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./secrets:/app/secrets:ro
+
+  q_api:
+    build: ./backend/q_api
+    image: bishnudev/toia-q-api:latest
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api: 
+        condition: service_healthy
+    env_file:
+      - ./.env
+    tty: true
+
+  toia-dm:
+    build: ./backend/toia-dm
+    image: bishnudev/toia-dm:latest
+    ports:
+      - "5001:5001"
+    tty: true
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    environment:
+      - ENVIRONMENT=production
+      - PYTHONUNBUFFERED=1
+      - DM_PORT=5001
+    env_file:
+      - ./.env
+  
+  rabbitmq3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RMQ_PASSWORD}
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+
+  translation:
+    depends_on:
+      - rabbitmq3
+      - mysql
+    restart: on-failure
+    container_name: "translation_py"
+    build: backend/translation
+    image: bishnudev/toia-translation:latest
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=secrets/toia-translation.json
+      - ENVIRONMENT=DEVELOPMENT
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend/translation/Transcripts:/app/files
+      - ./secrets/translation:/app/secrets:ro
+    env_file:
+      - ./secrets/translation/.env
+
+  # portainer:
+  #   image: portainer/portainer-ce:latest
+  #   container_name: portainer
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+  #     - 9443:9443
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - portainer_data:/data
+
+volumes:
+  portainer_data:
