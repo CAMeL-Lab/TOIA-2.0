@@ -232,7 +232,7 @@ defmodule Toia.Streams do
 
     query =
       from([_q, vqs, v] in query,
-        select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
+        select: %{"id_video" => vqs.id_video, "answer" => v.answer, "duration_seconds" => v.duration_seconds}
       )
 
     all_videos = Repo.all(query)
@@ -260,7 +260,7 @@ defmodule Toia.Streams do
 
     query =
       from([_q, vqs, v] in query,
-        select: %{id_video: vqs.id_video, answer: v.answer, duration_seconds: v.duration_seconds}
+        select: %{"id_video" => vqs.id_video, "answer" => v.answer, "duration_seconds" => v.duration_seconds}
       )
 
     all_videos = Repo.all(query)
@@ -313,7 +313,7 @@ defmodule Toia.Streams do
       # A match was found
       {:ok, x} ->
         {:ok,
-         Map.put(x, :url, Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, x.id_video))}
+         Map.put(x, :url, Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, Map.get(x, "id_video")))}
     end
   end
 
@@ -339,7 +339,7 @@ defmodule Toia.Streams do
            Map.put(
              x,
              :url,
-             Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, x.id_video)
+             Videos.getPlaybackUrl(streamUser.first_name, streamUser.id, Map.get(x, "id_video"))
            )}
       end
     else
