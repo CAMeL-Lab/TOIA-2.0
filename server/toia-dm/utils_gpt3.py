@@ -23,7 +23,7 @@ print("toia_answer")
 def toia_answer(query, data, engine, interactor_id=41, memory=10, minutes=15):
     print("toia_answer")
     print(query)
-    embedding = get_embedding(query, engine='text-search-ada-query-001')
+    embedding = get_embedding(query, engine='text-embedding-ada-002')
     print("API worked")
     data['similarities'] = data.ada_search.apply(
         lambda x: cosine_similarity(x, embedding))
@@ -32,7 +32,7 @@ def toia_answer(query, data, engine, interactor_id=41, memory=10, minutes=15):
     ada_similarity_scores = res.similarities.values
 
     # (removed thresholding. Keep every answer)
-    if ada_similarity_scores[0] > 0.29:
+    if ada_similarity_scores[0] > 0.79:
         # take first 10 answers from the chatlog"
         # connect to the db
         connection = engine.connect()

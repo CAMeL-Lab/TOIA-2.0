@@ -412,7 +412,7 @@ function ShhhPlayer() {
                         });
 
                         setTranscribedAudio("");
-                    } dataisfinal
+                    }
                 })
                 .catch(e => {
                     console.error(e);

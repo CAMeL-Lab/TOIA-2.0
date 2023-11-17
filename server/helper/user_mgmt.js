@@ -591,7 +591,7 @@ const getExactMatchVideo = (stream_id, question) => {
 const getEmbeddings = async (question, answer) => {
 	try {
 		const embeddings = await openai.createEmbedding({
-			model: "text-search-ada-doc-001",
+			model: "text-embedding-ada-002", // 
 			input: "Question: " + question + "; Answer: " + answer,
 		});
 

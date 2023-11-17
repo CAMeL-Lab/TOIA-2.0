@@ -46,6 +46,7 @@ services:
       - ${DM_PORT}:${DM_PORT}
     volumes:
       - ./server/toia-dm:/app
+    tty: true
     depends_on:
       mysql:
         condition: service_healthy
