@@ -1,16 +1,8 @@
-import argparse
-from ast import Num
-import os
-import time
-from tokenize import Number
-
 import numpy as np
-import openai
 import pandas as pd
 import sqlalchemy as db
 from sqlalchemy import Table
 from dotenv import dotenv_values
-from openai.embeddings_utils import get_embedding
 from sqlalchemy.sql import text
 import friendlywords as fw
 import json
@@ -160,5 +152,5 @@ def createVariants():
     with open('result.json', 'w') as fp:
         json.dump(info, fp)
 
-# populateAllAdaSearch()
-createVariants()
+populateAllAdaSearch()
+# createVariants()
