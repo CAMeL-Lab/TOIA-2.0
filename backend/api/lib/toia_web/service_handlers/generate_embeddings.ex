@@ -19,7 +19,7 @@ defmodule ServiceHandlers.GenerateEmbeddings do
     query = "Question: #{question}; Answer: #{answer}"
 
     payload = %{
-      model: "text-search-ada-doc-001",
+      model: "text-embedding-ada-002",
       input: query
     }
 
