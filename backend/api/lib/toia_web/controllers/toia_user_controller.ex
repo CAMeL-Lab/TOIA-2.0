@@ -96,7 +96,8 @@ defmodule ToiaWeb.ToiaUserController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(%{assigns: %{current_user: user}} = conn, _) do
+    id = user.id
     toia_user = ToiaUsers.get_toia_user!(id)
 
     with {:ok, %ToiaUser{}} <- ToiaUsers.delete_toia_user(toia_user) do

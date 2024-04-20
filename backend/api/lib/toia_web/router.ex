@@ -75,6 +75,9 @@ defmodule ToiaWeb.Router do
     # legacy: /api/questions/answered/:user_id, api/questions/answered/:user_id/:stream_id, api/questions/answered_filtered/:user_id/:stream_id
     get("/question/answered", QuestionController, :index_answered)
 
+    # Delete users route
+    delete("/toia_user/", ToiaUserController, :delete)
+
     # Player feedback routes
     # legacy: api/save_player_feedback
     resources("/player_feedback", PlayerFeedbackController, only: [:create])
