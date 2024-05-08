@@ -39,6 +39,7 @@ defmodule ToiaWeb.Router do
     post("/stream/:id/next", StreamController, :next)
     # legacy: /api/getSmartQuestions
     post("/stream/:id/smart_questions", StreamController, :smart_questions)
+    delete("/stream/:id", StreamController, :delete)
     # legacy: /api/getAllStreams, /api/getStreamVideosCount
     resources("/stream", StreamController, only: [:index, :create, :show])
 
