@@ -1,14 +1,47 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import { Input } from 'semantic-ui-react'
+import { useState } from "react";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const filter = createFilterOptions({
 	matchFrom: "start",
 });
 
+const theme = createTheme({
+	components: {
+	  MuiTextField: {
+		styleOverrides: {
+		  root: {
+			'& .MuiInputBase-input': {
+			  color: 'black', // Text color
+			},
+			'& .MuiInputLabel-root': {
+			  color: 'black', // Label color
+			},
+			'& .MuiOutlinedInput-root': {
+			  '& fieldset': {
+				borderColor: 'black', // Border color
+			  },
+			  '&:hover fieldset': {
+				borderColor: 'black', // Hover border color
+			  },
+			  '&.Mui-focused fieldset': {
+				borderColor: 'black', // Focused border color
+			  },
+			},
+		  },
+		},
+	  },
+	},
+  });
+
+
 export default function FreeSoloCreateOption(props) {
 	const [value, setValue] = React.useState(null);
 	const disableTyping = React.useRef(true);
+	const [searchTerm, setSearchTerm] = useState('');
 
 	return (
 		<Autocomplete
@@ -71,47 +104,28 @@ export default function FreeSoloCreateOption(props) {
 			renderOption={(props, option) => (
 				<li {...props}>{option.question}</li>
 			)}
-			sx={{ width: 200 }}
+			// sx={{ width: 200 }}
 			freeSolo
 			renderInput={params => (
-				<TextField
-					sx={{
-						// width: 100,
-						height: 70,
-						// backgroundColor: "rgba(126, 124, 124, 0.1)",
-						border: 0,
-						/* left: 39%; */
-						left: "0%",
-						padding: "0px",
-						position: "absolute",
-						resize: "none",
-						textAlign: "left",
-						/* top: 75%; */
-						top: "90%",
-						width: "55.25%",
-						left: "1%",
-						height: "7.5%",
-						// height: "80.25%",
-						color: "#707070",
-						fontSize: "1.5rem",
-						paddingTop: "25px",
-						paddingBottom: "25px",
-						"& label": {
-							marginLeft: "35%",
-							paddingTop: "3.55%",
-							fontSize: "1.2rem",
-							"&.Mui-focused": {
-								marginLeft: 0,
-							},
-						},
-					}}
-					{...params}
-					label="Type a question to ask"
-					onChange={value => {
-						disableTyping.current = Boolean(!value.target.value); // if string is empty, return true. Otherwise, false
-						props.handleTextChange(value);
-					}}
-				/>
+				<div className="search-bar">
+
+					<ThemeProvider theme={theme}>
+						<TextField
+							{...params}
+							className="searching"
+							id="filled-hidden-label-small"
+							size="small"
+							placeholder="Type a question to ask"
+							onChange={value => {
+								disableTyping.current = Boolean(
+									!value.target.value,
+								); // if string is empty, return true. Otherwise, false
+								props.handleTextChange(value);
+							}}
+						/>
+					</ThemeProvider>
+
+				</div>
 			)}
 		/>
 	);

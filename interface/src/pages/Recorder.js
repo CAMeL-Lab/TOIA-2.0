@@ -14,24 +14,31 @@ import videoTypesJSON from "../configs/VideoTypes.json";
 import CheckMarkIcon from "../icons/check-mark-success1.webp";
 import RecordButton from "../icons/record1.png";
 import RecordingGif from "../icons/recording51.gif";
-import history from "../services/history";
-import speechToTextUtils from "../transcription_utils";
-import Tracker from "../utils/tracker";
+import history from "../services/history.js";
+import speechToTextUtils from "../transcription_utils.js";
+import Tracker from "../utils/tracker.js";
 import {
 	OnBoardingQCard,
 	RecordAVideoCard,
 	SuggestedQCardNoAction,
-} from "./AvatarGardenPage";
+} from "./AvatarGardenPage.js";
 import NavBar from "./NavBar.js";
 
 import { useTranslation } from "react-i18next";
 
-import { getUser, isLoggedIn } from "../auth/auth";
-import API_URLS from "../configs/backend-urls";
+import { getUser, isLoggedIn } from "../auth/auth.js";
+import API_URLS from "../configs/backend-urls.js";
 import {
 	languageCodeTable,
 	languageFlagsCSS,
-} from "../services/languageHelper";
+} from "../services/languageHelper.js";
+
+const inlineStyle = {
+	modal: {
+		height: "100px",
+		width: "450px",
+	},
+};
 
 const videoConstraints = {
 	width: 720,
@@ -62,20 +69,21 @@ function ModalQSuggestion(props) {
 	};
 	return (
 		<Modal
+			size="tiny"
 			open={props.active}
 			onClose={ModalOnClose}
 			onOpen={ModalOnOpen}
 			trigger={<Button>Question Suggestion Modal</Button>}>
-			<Modal.Header>Successful! Your TOIA has been saved.</Modal.Header>
+			<Modal.Header className="heading-big">Successful! Your TOIA has been saved.</Modal.Header>
 			<Modal.Content image scrolling>
-				<Image size="medium" src={CheckMarkIcon} wrapped />
+				<Image size="tiny" src={CheckMarkIcon} wrapped />
 
 				<Modal.Description>
-					<p>
+					{/* <p className="text-normal">
 						{suggestedQs.length !== 0
 							? t("show_suggestions")
 							: t("no_suggestions")}
-					</p>
+					</p> */}
 					<div className={"questionSuggestionsWrapper"}>
 						<div className="cards-wrapper ui">
 							<div className="ui cards">
@@ -117,7 +125,7 @@ function ModalQSuggestion(props) {
 				</Modal.Description>
 			</Modal.Content>
 			<Modal.Actions>
-				<Button onClick={OnShowRecording} primary>
+				<Button className="show-recordings" onClick={OnShowRecording} primary>
 					Show My Recordings
 				</Button>
 			</Modal.Actions>
@@ -865,11 +873,12 @@ function Recorder() {
 				trigger={
 					<div
 						className={
-							"side-button tooltip b" +
+							"text-normal-bold tag-button tooltip c" +
 							(props.index + 1) +
 							" " +
 							(isDisabled ? "cursor-disabled" : "")
 						}
+						
 						style={{
 							backgroundColor:
 								props.type === videoType
@@ -936,238 +945,54 @@ function Recorder() {
 			/>
 
 			<div>
-				<div className="side-bar">
-					<h1 className="title font-class-3 ">Recorder</h1>
+				
+					<h1 className="heading-big title">Recorder</h1>
 
-					{VideoTypeButtonsAll()}
-
-					<hr className="divider1" />
-					<div
-						className="font-class-1 public tooltip"
-						style={{
-							backgroundColor: isPrivate
-								? backgroundDefaultColor
-								: backgroundActiveColor,
-						}}>
-						<span>Public</span>
-						<Switch
-							onChange={handlePrivacySwitch}
-							checked={!isPrivate}
-							handleDiameter={28}
-							onColor="#00587A"
-							onHandleColor="#FFFFFF"
-							uncheckedIcon={false}
-							checkedIcon={false}
-							boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-							activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-							height={20}
-							width={54}
-							className="switch"
-						/>
-
-						<span className="public_tooltip">
-							{t("privacy_tooltip")}
-						</span>
-					</div>
-					<div className="select">
-						<Popup
-							trigger={
-								<Multiselect
-									options={allStreams} // Options to display in the dropdown
-									onSelect={(list, item) => {
-										setListStreams(list);
-									}} // Function will trigger on select event
-									onRemove={(list, item) => {
-										setListStreams(list);
-									}} // Function will trigger on remove event
-									displayValue="name" // Property name to display in the dropdown options
-									selectedValues={mainStreamVal}
-									disablePreSelectedValues={false}
-									placeholder={t("add_stream")}
-								/>
-							}
-							content={t("alert_select_default_stream")}
-							on="click"
-							open={defaultStreamAlertActive}
-							onClose={() => setDefaultStreamAlertActive(false)}
-							onOpen={() => {
-								setDefaultStreamAlertActive(true);
-							}}
-							position="top center"
-							className={"StreamNotSelectedAlert"}
-						/>
-					</div>
-				</div>
-				<div className="Video-Layout">
-					<div className="stats-container stats-container-recorder">
-						<div className="stats-wrapper">
-							<div className="stats-number">{videosCount}</div>
-							<div className="stats-label">Total Videos</div>
-						</div>
-
-						<div className="stats-wrapper">
-							<div className="stats-number">
-								{videosTotalDuration
-									? (videosTotalDuration / 60).toFixed(1)
-									: 0}
-								Min
-							</div>
-							<div className="stats-label">
-								Total Videos Length
-							</div>
-						</div>
-					</div>
-
+					{/* record again button after video is recorded */}
+					
 					{!viewingRecordedView ? (
-						<div className="video-layout-recorder-box">
-							<div className="video-layout-player-top">
-								<Popup
-									disabled={
-										recordedChunks.length > 0 &&
-										!isRecording
-									}
-									content={t("alert_record_video")}
-									trigger={
-										<div
-											style={{ display: "inline-block" }}
-											className="right floated recorder-next-btn-wrapper">
-											<Button
-												icon
-												labelPosition="right"
-												className="right floated"
-												onClick={() => {
-													togglePreviewBox();
-												}}
-												disabled={
-													!(
-														recordedChunks.length >
-														0
-													) || isRecording
-												}>
-												Next
-												<Icon name="right arrow" />
-											</Button>
-										</div>
-									}
-								/>
-
-								{recordedChunks.length > 0 && !isRecording && (
-									<Button
-										icon
-										labelPosition="left"
-										className="right floated"
-										onClick={handleStartCaptureClick}>
-										{t("record_again_button")}
-										<Icon name="repeat" />
-									</Button>
-								)}
-							</div>
-
-							<Webcam
-								className="layout"
-								audio={true}
-								ref={webcamRef}
-								mirrored={true}
-								videoConstraints={videoConstraints}
-							/>
-
-							<div className="timer-wrapper">
-								<div className="timer-view">
-									{getTimeDiffString(videoLengthSeconds)}
-								</div>
-							</div>
-
-							{capturing ? (
-								<button
-									className="icon tooltip videoControlButtons"
-									onClick={handleStopCaptureClick}
-									data-tooltip={t("stop_recording_tooltip")}>
-									{/* <i className="fa fa-stop"/> */}
-									{/* <i class="huge icons"> */}
-									{/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
-									{/* <i aria-hidden="true" class="red stop icon"></i> */}
-									{/* </i> */}
-
-									{/* stop */}
-									{/* <i aria-hidden="true" class="stop circle outline icon"></i> */}
-
-									<img
-										src={RecordingGif}
-										width={38.5}
-										height={38.5}
-										alt="record button"
-									/>
-
-									{/* <i className="fa-solid fa-circle-stop"></i> */}
-									{/* <div ><i aria-hidden="true" className="primary stop circle outline"/></div> */}
-								</button>
-							) : (
-								<button
-									className="icon tooltip videoControlButtons cursor-pointer"
-									onClick={handleStartCaptureClick}
-									data-tooltip={t("start_recording_tooltip")}>
-									{/* <i className="fa fa-video-camera"/> */}
-									<img
-										src={RecordButton}
-										width={38.5}
-										height={38.5}
-										alt="record button"
-									/>
-								</button>
-							)}
-
+						<div className="top">
 							{recordedChunks.length > 0 && !isRecording && (
-								<button
-									className="recorder-check-btn check tooltip cursor-pointer"
+								<Button
+									icon
+									labelPosition="left"
+									className="right floated heading-small"
 									onClick={() => {
-										togglePreviewBox();
+										setViewingRecordedVideo(false);
+										setVideoLengthSeconds(0);
+										setIsRecording(true);
+										setTranscribedAudio("");
 									}}
-									data-tooltip={t("save_video_tooltip")}>
-									<i className="fa fa-check" />
-								</button>
+									>
+									{t("record_again_button")}
+									<Icon name="repeat" />
+								</Button>
 							)}
-
-							<p className="recorder-speech">
-								{transcribedAudio}
-							</p>
 						</div>
-					) : (
-						<div className="video-layout-player-box">
-							<div className="video-layout-player-top">
-								{isEditing ? (
-									<Button.Group>
-										<Popup
-											content={t("editing_alert")}
-											inverted
-											trigger={
-												<Button
-													onClick={handleSaveAsNew}
-													loading={
-														waitingServerResponse
-													}
-													disabled={
-														waitingServerResponse ||
-														!videoDuration
-													}>
-													{t("save_as_new_button")}
-												</Button>
-											}
-										/>
-										<Button.Or />
-										<Button
-											onClick={handleUpdateVideo}
-											loading={waitingServerResponse}
-											disabled={
-												waitingServerResponse ||
-												!videoDuration
-											}
-											positive>
-											{t("update_button")}
-										</Button>
-									</Button.Group>
-								) : (
-									<Button
-										className="right floated"
+					) : null}
+
+
+					{viewingRecordedView ? (
+
+						<div className="top">
+
+								<Button
+									icon
+									labelPosition="left"
+									className="right floated heading-small"
+									onClick={() => {
+										setViewingRecordedVideo(false);
+										setVideoLengthSeconds(0);
+										setIsRecording(true);
+										setTranscribedAudio("");
+									}}
+									disabled={waitingServerResponse}>
+									{t("record_again_button")}
+									<Icon name="repeat" />
+								</Button>	
+
+								<Button
+										className="right floated heading-small"
 										positive
 										loading={waitingServerResponse}
 										disabled={
@@ -1176,24 +1001,117 @@ function Recorder() {
 										}
 										onClick={handleDownload}>
 										{t("save_video_button")}
-									</Button>
+								</Button>
+
+						</div>
+					) : null}
+					
+				
+				
+				
+				<div className="halves">
+
+					<div class="first-half">
+
+						{!viewingRecordedView ? (
+							<div className="video-layout-recorder-box">
+
+								{/* actual webcam which records video */}
+								<Webcam
+									className="layout"
+									audio={true}
+									ref={webcamRef}
+									mirrored={true}
+									videoConstraints={videoConstraints}
+								/>
+
+								{/* timer for the length of the video */}
+								<div className="timer-wrapper">
+									<div className="timer-view">
+										{getTimeDiffString(videoLengthSeconds)}
+									</div>
+								</div>
+
+								{/* if capturing the video already */}
+								{/* display stop button */}
+								{capturing ? (
+									<button
+										className="icon tooltip videoControlButtons"
+										onClick={handleStopCaptureClick}
+										data-tooltip={t("stop_recording_tooltip")}>
+
+										<img
+											src={RecordingGif}
+											width={38.5}
+											height={38.5}
+											alt="record button"
+										/>
+
+									</button>
+								
+								// else, display start button
+								) : (
+									<button
+										className="icon tooltip videoControlButtons cursor-pointer"
+										onClick={handleStartCaptureClick}
+										data-tooltip={t("start_recording_tooltip")}>
+
+										<img
+											src={RecordButton}
+											width={38.5}
+											height={38.5}
+											alt="record button"
+										/>
+									</button>
 								)}
 
-								<Button
-									icon
-									labelPosition="left"
-									className="right floated"
-									onClick={() =>
-										setViewingRecordedVideo(false)
-									}
-									disabled={waitingServerResponse}>
-									{t("record_again_button")}
-									<Icon name="repeat" />
-								</Button>
+								{/* tick button which appears after video is recorded to save the video */}
+								{recordedChunks.length > 0 && !isRecording && (
+									<button
+										id="recorder-check-btn"
+										className="check tooltip cursor-pointer"
+										onClick={() => {
+											togglePreviewBox();
+										}}
+										data-tooltip={t("save_video_tooltip")}>
+										<i className="fa fa-check" />
+									</button>
+								)}
+
+								{/* transcription */}
+								<p className="recorder-speech">
+									{transcribedAudio}
+								</p>
 							</div>
 
-							<div className="layout video-layout-player-middle">
+						) : (
+
+							// after tick is clicked
+							<div className="video-layout-player-box">
+
+								{/* <div className="video-layout-player-top"> */}
+
+									{/* save video button */}
+									
+
+									{/* record again button */}
+									{/* <Button
+										icon
+										labelPosition="left"
+										className="right floated"
+										onClick={() =>
+											setViewingRecordedVideo(false)
+										}
+										disabled={waitingServerResponse}>
+										{t("record_again_button")}
+										<Icon name="repeat" />
+									</Button> */}
+								{/* </div> */}
+
+								{/* video displayed */}
+
 								<video
+									className="video-layout-player-middle"
 									autoPlay
 									controls
 									onLoadedMetadata={() => {
@@ -1219,107 +1137,182 @@ function Recorder() {
 											recordedVideo
 												? window.URL.createObjectURL(
 														recordedVideo,
-												  )
+													)
 												: ""
 										}
 										type="video/mp4"
 									/>
 								</video>
-							</div>
 
-							<div className="video-layout-player-bottom">
-								<TextArea
-									//placeholder={"Type video transcript here!"}
-									placeholder={answerProvided}
-									value={transcribedAudio}
-									onChange={e => {
-										setTranscribedAudio(e.target.value);
-										setAnswerProvided(e.target.value);
+
+								{/* transcription from the video, displayed after video has been recorded */}
+								{/* <div className="video-layout-player-bottom">
+									<TextArea
+										//placeholder={"Type video transcript here!"}
+										placeholder={answerProvided}
+										value={transcribedAudio}
+										onChange={e => {
+											setTranscribedAudio(e.target.value);
+											setAnswerProvided(e.target.value);
+										}}
+									/>
+								</div> */}
+							</div>
+						)}
+
+						{/* for language selection, which decides transcription when video is being recorded */}
+						{/* {!viewingRecordedView && !capturing ? (
+							<div class="lang-recorder-container">
+								<div class="lang-dropdown">
+									<div class="lang-dropbtn">
+										<span
+											className={
+												languageFlagsCSS[
+													interactionLanguage
+												]
+											}></span>
+									</div>
+									<div class="lang-dropdown-content">
+										<a
+											href="#"
+											onClick={() =>
+												setInteractionLanguage("en-US")
+											}>
+											<span class="fi fi-us"></span>
+										</a>
+										<a
+											href="#"
+											onClick={() =>
+												setInteractionLanguage("ar-AE")
+											}>
+											<span class="fi fi-ae"></span>
+										</a>
+
+										<a
+											href="#"
+											onClick={() =>
+												setInteractionLanguage("es-ES")
+											}>
+											<span class="fi fi-es"></span>
+										</a>
+										<a
+											href="#"
+											onClick={() =>
+												setInteractionLanguage("fr-FR")
+											}>
+											<span class="fi fi-fr"></span>
+										</a>
+									</div>
+								</div>
+							</div>
+						) : (
+							""
+						)} */}
+
+					</div>
+
+					<div class="second-half">
+
+						<h3 className="heading-small tag-title">Video Type</h3>
+						<div className="tag-buttons">
+							{VideoTypeButtonsAll()}
+						</div>
+
+						{
+							(videoTypeFormal === "Yes/No Answer" || videoTypeFormal === "Plain Answer") ? (
+								<div>
+									{/* <h5 className={`ui header question-selection-box-label ${t("alignment")}`}>
+										<div className="content">{t("questions")}</div>
+									</h5> */}
+
+									
+									<div className="font-class-1 question-selection-box question-recorder-page-input">
+										<EditCreateMultiSelect
+											suggestions={suggestedQsListCopy}
+											selectedItems={questionsSelected}
+											updateSuggestions={response => {
+												setSuggestedQsListCopy(response.list);
+											}}
+											updateSelectedItems={response => {
+												setQuestionsSelected(response.list);
+												if (response.removedItem) {
+													setSuggestedQsListCopy([
+														...suggestedQsListCopy,
+														response.removedItem,
+													]);
+												}
+											}}
+											placeholder={t("type_custom_question_input")}
+											maxDisplayedItems={5}
+											displayField={"question"}
+											closeIcon={'cancel'}
+											autoAddOnBlur={true}
+											disabled={pendingOnBoardingQs.length !== 0}
+										/>
+									</div>
+								</div>
+								
+							) : (
+								// Render something else or null if nothing should be rendered
+								null
+							)
+						}
+
+						<div className="bottom">
+
+							<div className="stream-select">
+								<Popup
+									trigger={
+										<Multiselect
+											options={allStreams} // Options to display in the dropdown
+											onSelect={(list, item) => {
+												setListStreams(list);
+											}} // Function will trigger on select event
+											onRemove={(list, item) => {
+												setListStreams(list);
+											}} // Function will trigger on remove event
+											displayValue="name" // Property name to display in the dropdown options
+											selectedValues={mainStreamVal}
+											disablePreSelectedValues={false}
+											placeholder={t("add_stream")}
+											closeIcon={'cancel'}
+										/>
+									}
+									content={t("alert_select_default_stream")}
+									on="click"
+									open={defaultStreamAlertActive}
+									onClose={() => setDefaultStreamAlertActive(false)}
+									onOpen={() => {
+										setDefaultStreamAlertActive(true);
 									}}
+									position="top center"
+									className={"StreamNotSelectedAlert"}
 								/>
 							</div>
-						</div>
-					)}
-					{!viewingRecordedView && !capturing ? (
-						<div class="lang-recorder-container">
-							<div class="lang-dropdown">
-								<div class="lang-dropbtn">
-									<span
-										className={
-											languageFlagsCSS[
-												interactionLanguage
-											]
-										}></span>
-								</div>
-								<div class="lang-dropdown-content">
-									<a
-										href="#"
-										onClick={() =>
-											setInteractionLanguage("en-US")
-										}>
-										<span class="fi fi-us"></span>
-									</a>
-									<a
-										href="#"
-										onClick={() =>
-											setInteractionLanguage("ar-AE")
-										}>
-										<span class="fi fi-ae"></span>
-									</a>
-									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
-									<a
-										href="#"
-										onClick={() =>
-											setInteractionLanguage("es-ES")
-										}>
-										<span class="fi fi-es"></span>
-									</a>
-									<a
-										href="#"
-										onClick={() =>
-											setInteractionLanguage("fr-FR")
-										}>
-										<span class="fi fi-fr"></span>
-									</a>
-								</div>
-							</div>
-						</div>
-					) : (
-						""
-					)}
 
-					<h5
-						className={`ui header question-selection-box-label ${t(
-							"alignment",
-						)}`}>
-						<div className="content">{t("questions")}</div>
-					</h5>
+							{/* <div
+								className="font-class-1 privacy tooltip"
+								onClick={handlePrivacySwitch}
+								>
+								{isPrivate ? (
+									<i className="fa fa-eye-slash"></i> // Icon for private (eye with a line)
+								) : (
+									<i className="fa fa-eye"></i> // Icon for public (open eye)
+								)}
+							</div> */}
 
-					<div className="font-class-1 question-selection-box question-recorder-page-input">
-						<EditCreateMultiSelect
-							suggestions={suggestedQsListCopy}
-							selectedItems={questionsSelected}
-							updateSuggestions={response => {
-								setSuggestedQsListCopy(response.list);
-							}}
-							updateSelectedItems={response => {
-								setQuestionsSelected(response.list);
-								if (response.removedItem) {
-									setSuggestedQsListCopy([
-										...suggestedQsListCopy,
-										response.removedItem,
-									]);
-								}
-							}}
-							placeholder={t("type_custom_question_input")}
-							maxDisplayedItems={5}
-							displayField={"question"}
-							autoAddOnBlur={true}
-							disabled={pendingOnBoardingQs.length !== 0}
-						/>
+						</div>
+
 					</div>
+
 				</div>
+
+				
+				
+
+
 			</div>
+
 			<NotificationContainer />
 		</div>
 	);

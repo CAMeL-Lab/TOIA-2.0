@@ -1,0 +1,48 @@
+.nav-heading-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; /* Adjust the space between nav items */
+    align-items: center;
+    padding: 9px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: var(--nv-color);
+    z-index: 100;
+    height: 40px;
+  }
+  
+  .nav-toia_icon, .nav-about_icon, .nav-talk_icon, .nav-my_icon, .nav-login_icon {
+    font-size: 20px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    cursor: pointer;
+    color: red;
+    opacity: 0.8;
+    text-align: center;
+    padding: 0 10px; /* Add padding to space items */
+  }
+  
+  .nav-dropdown {
+    display: flex;
+    align-items: center;
+    color: white;
+  }
+  
+  /* Responsive breakpoint */
+  @media (max-width: 768px) { /* Adjust 768px to the breakpoint you desire */
+    .nav-heading-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      height: auto; /* Adjust height to auto to accommodate the changed layout */
+    }
+  
+    .nav-toia_icon, .nav-about_icon, .nav-talk_icon, .nav-my_icon, .nav-login_icon {
+      width: 100%; /* Make nav items take up the full width */
+      justify-content: flex-start; /* Align text to the start */
+    }
+  }
+  

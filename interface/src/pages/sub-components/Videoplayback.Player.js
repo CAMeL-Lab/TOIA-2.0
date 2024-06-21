@@ -20,26 +20,24 @@ export default function VideoPlaybackPlayer({
 	const videoRef = useRef(null);
 
 	return (
-		<div>
-			<video
+		<video
 			crossOrigin="anonymous"
-				muted={muted}
-				className="player-vid"
-				id="vidmain"
-				key={key}
-				onEnded={onEnded}
-				// onTimeUpdate={onTimeUpdate}
-				ref={videoRef}
-				autoPlay>
-				<source src={source} type="video/mp4"></source>
-				<track
-					label="Captions"
-					kind="subtitles"
-					srcLang={lang?.split("-")[0] ?? ""}
-					src={source_vtt}
-					default
-				/>
-			</video>
-		</div>
+			muted={muted}
+			className="player-vid"
+			id="vidmain"
+			key={key}
+			onEnded={onEnded}
+			// onTimeUpdate={onTimeUpdate}
+			ref={videoRef}
+			autoPlay>
+			<source src={source} type="video/mp4"></source>
+			<track
+				label="Captions"
+				kind="subtitles"
+				srcLang={lang?.split("-")[0] ?? ""}
+				src={source_vtt}
+				default
+			/>
+		</video>
 	);
 }

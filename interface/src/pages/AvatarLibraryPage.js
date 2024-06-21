@@ -113,16 +113,17 @@ function AvatarLibraryPage() {
 					className="library-stream-image-sizing" //stream thumbnail
 					alt="stream thumbnail"
 				/>
+
 				<div>
-					<h1
-						className="t1 garden-font-class-2" //name of user
+					<h3
+						className="heading-small garden-font-class-2" //name of user
 					>
 						{card.first_name + " " + card.last_name}
-					</h1>
+					</h3>
 					<p
-						className="t2 garden-font-class-2" //individual stream name
+						className="text-normal garden-font-class-2" //individual stream name
 					>
-						<button
+						{/* <button
 							onClick={openModal3}
 							style={{
 								backgroundColor: "transparent",
@@ -130,14 +131,14 @@ function AvatarLibraryPage() {
 								cursor: "pointer",
 							}}>
 							<i className="fa fa-info-circle"></i>
-						</button>
-						{" " + card.name + " stream"}
+						</button> */}
+						{"" + card.name + " stream"}
 					</p>
 				</div>
-				<br></br>
+				{/* <br></br>
 				<div
 					className="garden-carousel-menu" //stats that appear under stream
-				></div>
+				></div> */}
 			</div>
 		);
 	};
@@ -327,15 +328,20 @@ function AvatarLibraryPage() {
 			</Modal>
 
 			<div className="library-page-setup">
-				<h1 className={`library-heading ${t("alignment")}`}>
+				<h1 className={`heading-big library-heading ${t("alignment")}`}>
 					{t("page_title")}
 				</h1>
-				<input
-					className="library-search"
-					type="text"
-					placeholder="&#xF002;  "
-					onChange={event => searchStreams(event.target.value)}
-				/>
+
+				<div className="text-normal ui fluid icon input search-box-library">
+					<input
+						type="text"
+						placeholder="Search..."
+						onChange={event => searchStreams(event.target.value)}
+					/>
+						
+					<i aria-hidden="true" className="search icon" />
+				</div>
+
 				<div
 					className="library-grid" //videos
 				>

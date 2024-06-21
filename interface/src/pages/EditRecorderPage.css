@@ -18,7 +18,7 @@ video {
 	width: 100%;
 }
 .edit-font-class-1 {
-	font-family: "Montserrat", Helvetica, Arial, serif;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 	font-style: normal;
 	font-size: 14px;
 	font-weight: 500;
@@ -237,7 +237,7 @@ video {
 /*modal elements*/
 .edit-modal-header {
 	color: black;
-	font-family: "Montserrat", Helvetica, Arial, serif;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 	font-style: normal;
 	font-size: 25px;
 	font-weight: 700;
@@ -246,7 +246,7 @@ video {
 }
 .edit-modal-text {
 	color: black;
-	font-family: "Montserrat", Helvetica, Arial, serif;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 	font-style: normal;
 	font-size: 14px;
 	font-weight: 500;

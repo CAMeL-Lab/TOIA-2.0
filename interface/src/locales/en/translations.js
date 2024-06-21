@@ -6,7 +6,7 @@ export default {
 	// NavBar.js
 	nav_welcome_back: "Welcome Back",
 	nav_login_request:
-		"Enter the following information to login to your TOIA account",
+		"Sign in to your account",
 	nav_signup_request: "Don't have an Account? Sign Up",
 	nav_toia: "TOIA",
 	nav_about_us: "About Us",
@@ -16,14 +16,14 @@ export default {
 	nav_login: "Login",
 
 	// HomePage.js
-	welcome: "Welcome to",
-	tagline: " communication reimagined.",
+	welcome: "Connect across time.",
+	tagline: " Join now.",
 
 	// AboutUsPage.js
 	meet_the_team: "Meet The Team",
 	publications: "Publications",
 	github_repo: "Github Repo",
-	product_tagline: "TOIA ... Communication Reimagined",
+	product_tagline: "TOIA ... Connect across time",
 	product_hook1:
 		"Imagine being able to share your story with your great grandchildren.",
 	product_hook2:
@@ -34,7 +34,7 @@ export default {
 		"With TOIA, you can create an online stream from the comfort of your home and connect with millions of people, anywhere in the world, anytime in the future.",
 	product_summary:
 		"TOIA is a project created at \
-    <0> New York Univeristy Abu Dhabi's </0> \
+    <0> New York University Abu Dhabi's </0> \
     <1> Camel Lab. </1>",
 	toia_team: "The TOIA Team",
 	publication_links: "Publication Links",
@@ -52,16 +52,16 @@ export default {
 	account_settings: "Account Settings",
 	edit_account: "Edit the following information about your account",
 	// name_input: "Name: ",
-	password_input: "Password: ",
+	password_input: "Password",
 	// language_input: "Language: ",
-	email_input: "Email: ",
-	total_videos_in_stream: "Total Videos In Stream:",
+	email_input: "Email",
+	total_videos_in_stream: "Total Videos in Stream:",
 	// streamSetting?
 	save: "Save",
 	edit_stream: "Edit Stream",
 	edit_stream_text: "Edit the following information about your stream",
 	add_stream_text: "Add the following information about your stream",
-	select_img: "Select image:",
+	select_img: "Select image",
 	enter_steam_name: "Enter a new stream name",
 	enter_stream_purpose: "Enter what your new stream will be about",
 	video_type: "Video Type: {playbackVideoType}",
@@ -72,18 +72,18 @@ export default {
 	confirm_delete: "Confirm Deletion",
 	video_entry: "Video entry",
 
-	greet_user: "Hi {{toiaName}}",
+	greet_user: "Hi There, {{toiaName}}",
 	my_toia_streams: "My TOIA Streams",
 
 	// AvatarLibraryPage.js
 	page_title: "TOIA Stream Library",
 
 	// AvatarStream.js
-	name_input: "Name: ",
+	name_input: "Name",
 	privacy_input: "Privacy: ",
 	privacy_option_public: "Public",
 	privacy_option_private: "Private",
-	language_input: "Language: ",
+	language_input: "Language",
 	bio_input: "Bio: ",
 	add_video: "Add Video",
 
@@ -117,7 +117,7 @@ export default {
 
 	// Recorder.js Recorder
 	privacy_tooltip: "Set the privacy of the specific video",
-	add_stream: "Add Stream",
+	add_stream: "Add to Stream",
 	alert_select_default_stream: "Default stream must be selected!",
 	total_videos: "Total Videos",
 	total_videos_length: "Total Videos Length",
@@ -143,5 +143,5 @@ export default {
 	signup_language: "Language:",
 	signup_create_password: "Create Password",
 	signup_confirm_password: "Confirm Password",
-	signup_upload_picture: "Upload profile picture",
+	signup_upload_picture: "Upload Profile Picture",
 };

@@ -1,8 +1,10 @@
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
+import TextField from "@mui/material/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import React, { useState } from "react";
 import Carousel from "react-elastic-carousel";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
 	NotificationContainer,
 	NotificationManager,
@@ -17,6 +19,8 @@ import "@brainhubeu/react-carousel/lib/style.css";
 import axios from "axios";
 import Tracker from "../utils/tracker";
 import "./AvatarGardenPage.css";
+
+import { logout } from "../auth/auth.js";
 
 import NavBar from "./NavBar.js";
 
@@ -77,7 +81,9 @@ export const RecordAVideoCard = ({ onClick, isDisabled }) => {
 						onClick={e => {
 							if (!isDisabled) onClick(e);
 						}}>
-						{t("add_new_video")}
+
+						<a className="text-normal add-text">{t("add_new_video")}</a>
+						
 					</button>
 				</div>
 			</div>
@@ -91,7 +97,7 @@ export const OnBoardingQCard = ({ data, onClick }) => {
 	return (
 		<div>
 			<div className="ui red card cursor-pointer" onClick={onClick}>
-				<div className="content">
+				<div className="text-normal content">
 					<div className="description three-line-ellipsis">
 						{data.question}
 					</div>
@@ -123,7 +129,7 @@ export const SuggestedQCard = ({
 					"ui grey card " +
 					(isDisabled ? "cursor-disabled" : "cursor-pointer")
 				}>
-				<div className="content" onClick={onClick}>
+				<div className="text-normal content" onClick={onClick}>
 					<div className="description two-line-ellipsis">
 						{data.question}
 					</div>
@@ -159,7 +165,7 @@ export const SuggestedQCardNoAction = ({ data, onClick, isDisabled }) => {
 			data-tooltip={isDisabled ? t("record_request") : undefined}
 			data-inverted="">
 			<div className="ui grey card cursor-pointer" onClick={onClick}>
-				<div className="content">
+				<div className="text-normal content">
 					<div className="description three-line-ellipsis">
 						{data.question}
 					</div>
@@ -179,7 +185,7 @@ export const RecordedQCard = ({ data, onClick, onEdit, onDelete }) => {
 	return (
 		<div>
 			<div className="ui card bg-toia-theme cursor-pointer">
-				<div className="content" onClick={onClick}>
+				<div className="text-normal content" onClick={onClick}>
 					<div className="description text-white two-line-ellipsis">
 						{data.question}
 					</div>
@@ -339,6 +345,34 @@ export const RecordedQCard = ({ data, onClick, onEdit, onDelete }) => {
 //     )
 // }
 
+const theme = createTheme({
+	components: {
+	  MuiTextField: {
+		styleOverrides: {
+		  root: {
+			'& .MuiInputBase-input': {
+			  color: 'black', // Text color
+			},
+			'& .MuiInputLabel-root': {
+			  color: 'black', // Label color
+			},
+			'& .MuiOutlinedInput-root': {
+			  '& fieldset': {
+				borderColor: 'black', // Border color
+			  },
+			  '&:hover fieldset': {
+				borderColor: 'black', // Hover border color
+			  },
+			  '&.Mui-focused fieldset': {
+				borderColor: 'black', // Focused border color
+			  },
+			},
+		  },
+		},
+	  },
+	},
+  });
+
 function AvatarGardenPage() {
 	const { t, i18n } = useTranslation();
 
@@ -381,7 +415,13 @@ function AvatarGardenPage() {
 
 	const [searchTerm, setSearchTerm] = useState("");
 
-	const [numberOfVideosDisplayed, setNumberOfVideosDisplayed] = useState(10);
+	const [firstSectionVisible, setFirstSectionVisible] = useState(false);
+
+	const toggleVisibility = () => {
+		setFirstSectionVisible(!firstSectionVisible);
+	};
+
+	const [numberOfVideosDisplayed, setNumberOfVideosDisplayed] = useState(30);
 
 	const [loadingVideos, setLoadingVideos] = useState(false);
 
@@ -447,6 +487,7 @@ function AvatarGardenPage() {
 							return item;
 						});
 					setPendingOnBoardingQs(data);
+					console.log(data)
 
 					if (cb_success) cb_success();
 				} else {
@@ -922,34 +963,42 @@ function AvatarGardenPage() {
 
 		return (
 			<div
-				className="garden-carousel-card"
-				id={card.id_stream}
-				key={index}>
-				<img
-					className="stream-image-sizing"
-					src={card.pic}
-					width="170" //stream thumbnail
-					alt="stream thumbnail"
-				/>
-				{streamSetting}
+					className="garden-carousel-card"
+					id={card.id_stream}
+					key={index}>
+
+					<div className="image-eye">
+						<div className="user-img">
+							<img
+								className="stream-image-sizing"
+								src={card.pic}
+								width="170" //stream thumbnail
+								alt="stream thumbnail"
+							/>
+						</div>
+
+						<div className="privacy-eye">
+							{streamSetting}
+						</div>
+					</div>
 
 				<div onClick={album_page}>
-					<h1
+					{/* <h1
 						className="t1 garden-font-class-2" //name of user
 					>
 						{toiaName}
-					</h1>
-					<p
-						className="t2 garden-font-class-2 margin-bottom-2px" //individual stream name
+					</h1> */}
+					<h3
+						className="heading-small margin-bottom-2px" //individual stream name
 					>
-						{card.name}
-					</p>
+						{card.name} Stream
+					</h3>
 
-					<div className="ui gray label medium">
+					{/* <div className="ui gray label medium">
 						<i aria-hidden="true" className="video icon" />
 						{t("total_videos_in_stream")}
 						<div className="detail">{card.videos_count}</div>
-					</div>
+					</div> */}
 				</div>
 				<br />
 				<div
@@ -973,7 +1022,7 @@ function AvatarGardenPage() {
 	};
 
 	let videoPlayback = (
-		<video id="playbackVideo" width="496" height="324" autoPlay controls>
+		<video id="playbackVideo" autoPlay controls>
 			<source src={playbackVideo} type="video/mp4" />
 		</video>
 	);
@@ -1024,6 +1073,21 @@ function AvatarGardenPage() {
 		dispatch({ type: "close" });
 	}
 
+	const deleteUser = (e) => {
+		const options = {
+			method: "DELETE",
+			url: API_URLS.DELETE_USER(),
+		};
+	  
+		axios.request(options).then(function (response) {
+		  console.log("deleted");
+		  logout();
+		  history.push("/");
+		}).catch(function (error) {
+		  console.error(error);
+		});  
+	}
+
 	function setImg(e) {
 		setNewStreamPic(e.target.files[0]);
 		e.preventDefault();
@@ -1055,8 +1119,22 @@ function AvatarGardenPage() {
 
 	const inlineStyleSetting = {
 		modal: {
-			height: "70vh",
-			width: "50vw",
+			height: "560px",
+			width: "600px",
+		},
+	};
+
+	const inlineStyleSetting2 = {
+		modal: {
+			height: "650px",
+			width: "600px",
+		},
+	};
+
+	const inlineStyleSettingMobile = {
+		modal: {
+			height: "690px",
+			width: "380px",
 		},
 	};
 
@@ -1112,63 +1190,75 @@ function AvatarGardenPage() {
 					</Button>
 				</Modal.Actions>
 			</Modal>
+			
 			<Modal //This is the settings pop menu, that shows whenever you delete or move videos
 				size="large"
 				closeIcon={true}
-				style={inlineStyleSetting.modal}
+				style={window.innerWidth < 440 ? inlineStyleSettingMobile.modal : inlineStyleSetting2.modal}
 				open={open2}
 				onClose={() => dispatch2({ type: "close" })}>
 				<Modal.Header className="login_header">
-					<h1 className="login_welcome login-opensans-normal">
+					<h1 className="heading-big">
 						Account Settings
 					</h1>
-					<p className="login_blurb login-montserrat-black">
+					<p className="text-big">
 						{t("edit_account")}
 					</p>
 				</Modal.Header>
 				<Modal.Content>
+				<form className="login_popup">
+
 					<div
-						className="garden-settings-name garden-font-class-2" //the name input field
+						className="popup-field-heading heading-small" //the name input field
 					>
 						{t("name_input")}
 					</div>
+
 					<input
-						className="garden-settings-name_box garden-font-class-2"
+						className="signup-password text-big"
 						defaultValue={settingData[0].name}
 						type={"text"}
 						onChange={e => (settingData[0].name = e.target.value)}
 					/>
+
 					<div
-						className="garden-settings-email garden-font-class-2" //the email input field
+						className="popup-field-heading heading-small" //the email input field
 					>
 						{t("email_input")}
 					</div>
+
 					<input
-						className="garden-settings-email_box garden-font-class-2"
+						className="signup-password text-big"
 						defaultValue={settingData[0].email}
 						type={"email"}
 						onChange={e => (settingData[0].email = e.target.value)}
 					/>
+
+
 					<div
-						className="garden-settings-pass garden-font-class-2" //the password input field
+						className="popup-field-heading heading-small" //the password input field
 					>
-						t("password_input")
+						{t("password_input")}
 					</div>
+
+
 					<input
-						className="garden-settings-pass_box garden-font-class-2"
+						className="signup-password text-big"
 						defaultValue={settingData[0].password}
 						type={"password"}
 						onChange={e =>
 							(settingData[0].password = e.target.value)
 						}
 					/>
+
 					<div
-						className="garden-settings-lang garden-font-class-2" //the language input field
+						className="popup-field-heading heading-small" //the language input field
 					>
 						{t("language_input")}
 					</div>
+
 					<select
-						className="garden-settings-lang_box garden-font-class-2"
+						className="signup-language-select text-big"
 						onChange={e =>
 							(settingData[0].language = e.target.value)
 						} /*required={true}*/
@@ -1249,23 +1339,23 @@ function AvatarGardenPage() {
 						<option value="CY">Welsh</option>
 						<option value="XH">Xhosa</option>
 					</select>
+
 					<div
-						className="garden-settings-delete" //delete button, function TBD
+						className="center-delete heading-small delete-btn" //delete button, function TBD
+						onClick={deleteUser}
 					>
-						<h1 className="garden-font-class-2 garden-settings-text">
 							{t("delete")}
-						</h1>
 					</div>
-					<div
-						onClick={save}
-						className="garden-settings-save" //saves changes made inaccount settings, function TBD
-					>
-						<h1 className="garden-font-class-2 garden-settings-text">
-							{t("save")}
-						</h1>
-					</div>
+					
+					{/* <button className="heading-small delete-btn" onClick={deleteUser}>Delete User
+						<div onClick={deleteUser}></div>
+					</button> */}
+					<button className="heading-small signup-submit" onClick={save} alt="Submit">Save</button>
+
+				</form>
 				</Modal.Content>
 			</Modal>
+
 
 			<Modal //This is the stream settings pop menu
 				size="large"
@@ -1347,93 +1437,80 @@ function AvatarGardenPage() {
 					</div>
 				</Modal.Content>
 			</Modal>
+
+			
 			<Modal //This is the stream settings pop menu
 				size="large"
 				closeIcon={true}
-				style={inlineStyleSetting.modal}
+				style={window.innerWidth < 440 ? inlineStyleSettingMobile.modal : inlineStyleSetting.modal}
 				open={open4}
 				onClose={() => dispatch4({ type: "close" })}>
 				<Modal.Header className="login_header">
-					<h1 className="login_welcome login-opensans-normal">
+					<h1 className="heading-big">
 						{t("add_stream")}
 					</h1>
-					<p className="login_blurb login-montserrat-black">
+					<p className="text-big">
 						{t("add_stream_text")}
 					</p>
 				</Modal.Header>
+
 				<Modal.Content>
-					<div
-						className="stream-settings-name garden-font-class-2" //the name input field
-					>
-						{t("name_input")}
-					</div>
+				<form className="login_popup" onSubmit={saveNewStream}>
+
 					<input
-						className="stream-settings-name_box garden-font-class-2"
-						placeholder="Enter a new stream name"
+						className="text-big signup-password"
+						placeholder="Stream Name"
 						type={"text"}
-						onChange={e => setNewStreamName(e.target.value)}
 						required={true}
+						onChange={e => setNewStreamName(e.target.value)}
 					/>
-					<div
-						className="stream-settings-email garden-font-class-2" //the email input field
-					>
-						{t("privacy_input")}
-					</div>
+
 					<select
-						className="stream-settings-email_box garden-font-class-2"
+						className="signup-language-select text-big"
 						onChange={e => setNewStreamPrivacy(e.target.value)}
 						required={true}>
 						<option value="" disabled selected hidden>
-							Public
+							Privacy
 						</option>
-						<option value="public">{t("public")}</option>
-						<option value="private">{t("private")}</option>
+						<option value="public">Public</option>
+						<option value="private">Private</option>
 					</select>
 
-					<div
-						className="stream-settings-lang garden-font-class-2" //the language input field
-					>
-						{t("bio_input")}
-					</div>
-
 					<textarea
-						className="stream-settings-lang_box garden-font-class-2"
-						placeholder="Enter what your new stream will be about"
+						className="text-big add-stream-bio"
+						placeholder="Bio"
 						type={"text"}
 						onChange={e => setNewStreamBio(e.target.value)}
-						rows="4"
-						cols="50"
 						required={true}
 					/>
-					<div
-						className="stream-photo-upload garden-font-class-2" //delete button, function TBD
-					>
-						<form>
-							<label htmlFor="img">{t("select_img")}</label>
-							<input
-								className="stream-photo-upload-choose garden-font-class-2"
-								type="file"
-								id="img"
-								name="img"
-								accept="image/*"
-								onChange={setImg}
-							/>
-							<input
-								className="stream-settings-save garden-font-class-2 stream-settings-text"
-								onClick={saveNewStream}
-								type="submit"
-							/>
-						</form>
-					</div>
+
+					<form>
+						<input
+							type="file"
+							id="img"
+							name="img"
+							accept="image/*"
+							onChange={setImg}
+							hidden
+						/>
+					</form>
+
+					<label for="img" class="text-big image-upload-label">{t("select_img")}</label>
+					<span id="file-chosen" class="text-small">No file chosen</span>
+
+					<button className="heading-small signup-submit" alt="Submit">Submit</button>
+				
+				</form>
 				</Modal.Content>
 			</Modal>
+
+
 			<Modal //this is the new pop up menu
 				size="large"
 				style={{
 					position: "absolute",
-					height: "80%",
-					width: "70%",
-					top: "2%",
+					height: "75%",
+					width: "420px",
 					alignContent: "center",
 				}}
 				open={isPlaybackActive}
@@ -1441,29 +1518,37 @@ function AvatarGardenPage() {
 					setPlaybackActive(false);
 				}}>
 				<Modal.Header className="modal-header">
-					<div>{t("video_entry")}</div>
+					<div className="heading-medium">{t("video_entry")}</div>
 				</Modal.Header>
 				<Modal.Content>
-					<div id="typeOfVideo">Video Type: {playbackVideoType}</div>
-					<div id="questionOfVideo">
-						Question being answered: "{playbackVideoQuestion}"
+					<div id="typeOfVideo" className="heading-small">Video Type: <a className="text-less-normal">{playbackVideoType}</a></div>
+					<div id="questionOfVideo" className="heading-small">
+						Question being answered: <a className="text-less-normal">"{playbackVideoQuestion}"</a>
 					</div>
-					<div id="privacyOfVideo">
-						Privacy Settings: {playbackVideoPrivacy}
+					<div id="privacyOfVideo" className="heading-small">
+						Privacy Settings: <a className="text-less-normal">{playbackVideoPrivacy}</a>
 					</div>
 					<div id="divider" />
-					<div className={"ui row centered grid"}>
+					<div className={"ui centered vid-container"}>
 						{videoPlayback}
 					</div>
-					<div id="answerCorrection">The answer provided:</div>
-					<input
+					<div id="answerCorrection" className="heading-small">The answer provided:</div>
+					{/* <input
 						className="modal-ans font-class-1"
 						value={playbackVideoAnswer}
 						type={"text"}
 						onChange={() => {}}
+					/> */}
+					<TextField
+						hiddenLabel
+						className="searching"
+						id="filled-hidden-label-small"
+						size="small"
+						onChange={() => {}}
+						value={playbackVideoAnswer}
 					/>
 				</Modal.Content>
-				<Modal.Actions>
+				{/* <Modal.Actions>
 					<Button
 						color="green"
 						onClick={() => {
@@ -1471,215 +1556,274 @@ function AvatarGardenPage() {
 						}}>
 						<i className="fa fa-check" />
 					</Button>
-				</Modal.Actions>
+				</Modal.Actions> */}
 			</Modal>
 
-			<div className="section3">
-				<h1
-					className="garden-title garden-font-class-1 " //welcome message
-				>
-					{t("greet_user", { toiaName: toiaName })}
-				</h1>
 
-				<div className="stats-container">
-					<div className="stats-wrapper">
-						<div className="stats-number">{videosCount}</div>
-						<div className="stats-label">{t("total_videos")}</div>
-					</div>
+			<div className="full-page">
 
-					<div className="stats-wrapper">
-						<div className="stats-number">
-							{videosTotalDuration
-								? (videosTotalDuration / 60).toFixed(1)
-								: 0}
-							Min
+				{/* left side */}
+				<div className="section1">
+					<i onClick={toggleVisibility} className={`fa ${firstSectionVisible ? 'fa-caret-down' : 'fa-caret-right'}`} aria-hidden="true"></i>
+					<h1 className="heading-medium">
+						{t("greet_user", { toiaName: toiaName })}
+					</h1>
+
+					<div className={firstSectionVisible ? '' : 'hidden'}>
+
+						<div className="settings-title-icon">
+							<a className="heading-small acc-settings-text">Account Settings</a>
+							<button
+								onClick={event => {
+									openModal2(event);
+								}}
+								className="garden-settings">
+								<i className="fa fa-cog" />
+							</button>
 						</div>
-						<div className="stats-label">
-							{t("total_videos_length")}
+
+						<div className="stats-container">
+							<div className="stats-wrapper">
+								<div className="text-big stats-number">{videosCount} Videos, {videosTotalDuration
+										? (videosTotalDuration / 60).toFixed(1)
+										: 0} Mins
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-				<button
-					onClick={event => {
-						openModal2(event);
-					}}
-					className="garden-settings">
-					<i className="fa fa-cog" />
-				</button>
-			</div>
-			<div className="section1">
-				<h1 className="stream-heading garden-font-class-3 ">
-					{t("my_toia_streams")}
-				</h1>
 
-				<Carousel
-					itemsToShow={1}
-					showArrows={false}
-					onChange={handleSelectCurrentStream}>
-					{streamList.map(renderStream)}
-				</Carousel>
+						<Carousel
+							itemsToShow={1}
+							showArrows={false}
+							onChange={handleSelectCurrentStream}>
+							{streamList.map(renderStream)}
+						</Carousel>
 
-				<div
-					onClick={event => {
-						openModal4(event);
-					}}>
-					<img
-						className="garden-stream"
-						src={addButton} // add stream button
-						alt={""}
-					/>
-				</div>
-				<h1 className="stream-add-text garden-font-class-3">
-					Add Stream
-				</h1>
-			</div>
-
-			<div className="section2">
-				{/*<input className="garden-search garden-search-text" type="text" placeholder="&#xF002;" onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/>*/}
-
-				<div className="ui fluid icon input search-box-mytoia">
-					<input
-						type="text"
-						placeholder="Search..."
-						onChange={e => {
-							setSearchTerm(e.target.value);
-						}}
-						value={searchTerm}
-					/>
-					<i aria-hidden="true" className="search icon" />
-				</div>
-
-				<div className="garden-grid" ref={scrollRef}>
-					<div className="cards-wrapper ui">
-						<div className="ui cards">
-							<RecordAVideoCard
-								onClick={add}
-								isDisabled={pendingOnBoardingQs.length !== 0}
+						{/* add stream button */}
+						<div
+							onClick={event => {
+								openModal4(event);
+							}}>
+							<img
+								className="garden-stream"
+								src={addButton} // add stream button
+								alt={""}
 							/>
+						</div>
 
-							{pendingOnBoardingQs.map((q, index) => {
-								return (
-									<OnBoardingQCard
-										data={q}
-										onClick={e => {
-											openSuggestion(e, q);
-										}}
-										key={index}
-									/>
-								);
-							})}
+						<p className="heading-small stream-add-text">
+							Add Stream
+						</p>
+					</div>
+				</div>
 
-							{getFilteredSuggestionsList()
-								.slice(0, 5)
-								.map((q, index) => {
+				<div className="section1wider">
+					<i onClick={toggleVisibility} class="fa fa-caret-right" aria-hidden="true"></i>
+					<h1 className="heading-medium">
+						{t("greet_user", { toiaName: toiaName })}
+					</h1>
+					
+					<div className="settings-title-icon">
+						<a className="heading-small acc-settings-text">Account Settings</a>
+						<button
+							onClick={event => {
+								openModal2(event);
+							}}
+							className="garden-settings">
+							<i className="fa fa-cog" />
+						</button>
+					</div>
+
+					<div className="stats-container">
+						<div className="stats-wrapper">
+							<div className="text-big stats-number">{videosCount} Videos, {videosTotalDuration
+									? (videosTotalDuration / 60).toFixed(1)
+									: 0} Mins
+							</div>
+						</div>
+					</div>
+
+					<Carousel
+						itemsToShow={1}
+						showArrows={false}
+						onChange={handleSelectCurrentStream}>
+						{streamList.map(renderStream)}
+					</Carousel>
+
+					{/* add stream button */}
+					<div
+						onClick={event => {
+							openModal4(event);
+						}}>
+						<img
+							className="garden-stream"
+							src={addButton} // add stream button
+							alt={""}
+						/>
+					</div>
+
+					<p className="stream-add-text heading-small">
+						Add Stream
+					</p>
+				</div>
+
+
+				<div className="section2">
+
+					{/* <input className="garden-search garden-search-text" type="text" placeholder="&#xF002;" onChange={(e) => {setSearchTerm(e.target.value)}} value={searchTerm}/> */}
+
+					<div className="text-normal ui fluid icon input search-box-mytoia">
+
+						<ThemeProvider theme={theme}>
+							<TextField
+								hiddenLabel
+								placeholder="Search..."
+								className="searching"
+								id="filled-hidden-label-small"
+								size="small"
+								onChange={e => {
+									setSearchTerm(e.target.value);
+								}}
+								value={searchTerm}
+							/>
+							<i aria-hidden="true" className="search icon" />
+						</ThemeProvider>
+
+						
+					</div>
+
+					<div className="garden-grid" ref={scrollRef}>
+						<div className="cards-wrapper ui">
+							<div className="ui cards">
+								<RecordAVideoCard
+									onClick={add}
+									isDisabled={pendingOnBoardingQs.length !== 0}
+								/>
+
+								{pendingOnBoardingQs.map((q, index) => {
 									return (
-										<SuggestedQCard
+										<OnBoardingQCard
 											data={q}
 											onClick={e => {
 												openSuggestion(e, q);
 											}}
-											isDisabled={
-												pendingOnBoardingQs.length !== 0
-											}
-											onEdit={() => {
-												setSuggestionNewValue(
-													q.question,
-												);
-												setCurrentlyEditingSuggestion(
-													q,
-												);
-												setIsEditSuggestionModalActive(
-													true,
-												);
-											}}
-											onDelete={() => {
-												handleDeleteSuggestion(q);
-											}}
 											key={index}
 										/>
 									);
 								})}
 
-							{getFilteredRecordedQsList()
-								.slice(0, numberOfVideosDisplayed)
-								.map((q, index) => {
-									return (
-										<RecordedQCard
-											data={q}
-											onClick={e => {
-												openPlayback(e, q);
-											}}
-											key={index}
-											onEdit={() => {
-												handleEditRecordedVideoClick(q);
-											}}
-											onDelete={() => {
-												setQuestionBeingDeleted(q);
-												setShowVideoDeletePopup(true);
-											}}
-										/>
-									);
-								})}
+								{getFilteredSuggestionsList()
+									.slice(0, 5)
+									.map((q, index) => {
+										return (
+											<SuggestedQCard
+												data={q}
+												onClick={e => {
+													openSuggestion(e, q);
+												}}
+												isDisabled={
+													pendingOnBoardingQs.length !== 0
+												}
+												onEdit={() => {
+													setSuggestionNewValue(
+														q.question,
+													);
+													setCurrentlyEditingSuggestion(
+														q,
+													);
+													setIsEditSuggestionModalActive(
+														true,
+													);
+												}}
+												onDelete={() => {
+													handleDeleteSuggestion(q);
+												}}
+												key={index}
+											/>
+										);
+									})}
+
+								{getFilteredRecordedQsList()
+									.slice(0, numberOfVideosDisplayed)
+									.map((q, index) => {
+										return (
+											<RecordedQCard
+												data={q}
+												onClick={e => {
+													openPlayback(e, q);
+												}}
+												key={index}
+												onEdit={() => {
+													handleEditRecordedVideoClick(q);
+												}}
+												onDelete={() => {
+													setQuestionBeingDeleted(q);
+													setShowVideoDeletePopup(true);
+												}}
+											/>
+										);
+									})}
+							</div>
 						</div>
+						{loadingVideos && (
+							<div className="ui active centered inline loader" />
+						)}
 					</div>
-					{loadingVideos && (
-						<div className="ui active centered inline loader" />
-					)}
-				</div>
 
-				{EditSuggestionModal()}
+					{EditSuggestionModal()}
 
-				<Confirm
-					open={showVideoDeletePopup}
-					header={"Confirm Deletion"}
-					content={t("notify_as_irreversible")}
-					confirmButton={"Delete"}
-					onCancel={() => {
-						setShowVideoDeletePopup(false);
-					}}
-					onConfirm={handleDeleteVideo}
-				/>
+					<Confirm
+						open={showVideoDeletePopup}
+						header={"Confirm Deletion"}
+						content={t("notify_as_irreversible")}
+						confirmButton={"Delete"}
+						onCancel={() => {
+							setShowVideoDeletePopup(false);
+						}}
+						onConfirm={handleDeleteVideo}
+					/>
 
-				<div
-					className="garden-hidden"
-					style={{ display: displayItem }} // hidden menu that appears when video is selected
-				>
-					<div onClick={openModal}>
-						<img className="garden-trash" src={trashIcon} />
-					</div>
-					<div>
-						<IconButton // icon buttonm menu I got from material-ui, its a react framework that I used a lot to create things
-							aria-label="more"
-							aria-controls="long-menu"
-							aria-haspopup="true"
-							onClick={handleMenuClick}>
-							<img className="garden-move_icon" src={moveIcon} />
-						</IconButton>
-						<Menu
-							id="simple-menu"
-							anchorEl={anchorEl}
-							keepMounted
-							open={Boolean(anchorEl)}
-							onClose={handleClose}>
-							{streamList.map(
-								(
-									option,
-									index, // this is the menu, its a list of the stream names I took form the streams variable
-								) => (
-									<MenuItem
-										selected={index === selectedIndex}
-										onClick={event =>
-											handleMenuClose(event, index)
-										}
-										key={index}>
-										{option.streamName}
-									</MenuItem>
-								),
-							)}
-						</Menu>
+					<div
+						className="garden-hidden"
+						style={{ display: displayItem }} // hidden menu that appears when video is selected
+					>
+						<div onClick={openModal}>
+							<img className="garden-trash" src={trashIcon} />
+						</div>
+						<div>
+							<IconButton // icon buttonm menu I got from material-ui, its a react framework that I used a lot to create things
+								aria-label="more"
+								aria-controls="long-menu"
+								aria-haspopup="true"
+								onClick={handleMenuClick}>
+								<img className="garden-move_icon" src={moveIcon} />
+							</IconButton>
+							<Menu
+								id="simple-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={handleClose}>
+								{streamList.map(
+									(
+										option,
+										index, // this is the menu, its a list of the stream names I took form the streams variable
+									) => (
+										<MenuItem
+											selected={index === selectedIndex}
+											onClick={event =>
+												handleMenuClose(event, index)
+											}
+											key={index}>
+											{option.streamName}
+										</MenuItem>
+									),
+								)}
+							</Menu>
+						</div>
 					</div>
 				</div>
 			</div>
+			
 			<NotificationContainer />
 		</div>
 	);

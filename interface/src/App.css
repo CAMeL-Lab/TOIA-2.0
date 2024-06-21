@@ -21,9 +21,90 @@
   height: 12px;
 }*/
 
-body{
+body {
 	unicode-bidi: plaintext;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 }
+
+.ui.modal > .header {
+	font-weight: 700 !important;
+	font-size: 1.4rem !important;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+}
+
+.ui.modal > .content {
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+	font-size: 1rem !important;
+	font-weight: normal !important;
+}
+
+.actions .ui.button {
+	font-weight: 700 !important;
+	font-size: 1rem !important;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+}
+
+.actions .ui.primary.button {
+	background-color: orangered;
+}
+
+.actions .ui.primary.button:hover {
+	background-color: red;
+}
+
+.actions .ui.primary.button.show-recordings {
+	background-color: #3cb043;
+}
+
+.actions .ui.primary.button.show-recordings:hover {
+	background-color: green;
+}
+
+.heading-big {
+	font-weight: bold !important;
+	font-weight: 700 !important;
+    font-size: 34px !important;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+}
+
+.heading-medium {
+	font-weight: 700 !important;
+	font-size: 2rem !important;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+}
+
+.heading-small {
+	font-weight: 700 !important;
+	font-size: 1.2rem !important;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+}
+
+.text-big {
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+	font-size: 1.3rem !important;
+	font-weight: normal !important;
+}
+
+.text-normal {
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+	font-size: 1rem !important;
+	font-weight: normal !important;
+}
+
+.text-less-normal {
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+	font-size: 1.2rem !important;
+	font-weight: normal !important;
+	color: black;
+}
+
+.text-normal-bold {
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+	font-size: 1rem !important;
+	font-weight: bold !important;
+}
+
+
 
 /*navbar*/
 ::-webkit-scrollbar-corner {
@@ -36,108 +117,143 @@ body{
 	--hd-color: #008891;
 	--t-color: #0f3057;
 }
+
 .nav-heading-bar {
-	align-items: flex-start;
-	/* background-color:  #7e7c7c; */
+	align-items: center;
 	background-color: var(--nv-color);
-	display: inline-flex;
-	flex-direction: row;
+	display: flex;
 	height: 40px;
-	justify-content: flex-start;
-	left: 0px;
+	left: 0;
+	justify-content: space-between;
 	padding: 9px;
 	position: fixed;
 	top: 0px;
-	width: 1280px;
+	width: 100%;
 	z-index: 100;
 }
+
+.nav-hamburger-icon {
+	font-size: 30px;
+	cursor: pointer;
+	display: none; /* Hide it initially */
+}
+
+.nav-toia-hamburger {
+    font-size: 28px;
+    line-height: 26px;
+    align-items: center;
+    justify-content: center;
+	letter-spacing: -0.015em;
+    cursor: pointer;
+    opacity: 1;
+    text-align: center;
+	padding-left: 71vw;
+}
+
+.nav-dropdown-hamburger {
+	padding-top: 3px;
+	padding-right: 2px;
+	left: 73%;
+	position: relative;
+	display: inline-block;
+}
+
+@media (max-width: 450px) {
+	.nav-dropdown-hamburger {
+		left: 70%;
+	}
+
+	.nav-toia-hamburger {
+		padding-left: 67vw;
+	}
+}
+
+@media (max-width: 400px) {
+	.nav-dropdown-hamburger {
+		left: 65%;
+	}
+
+	.nav-toia-hamburger {
+		padding-left: 62vw;
+	}
+}
+
+@media (max-width: 370px) {
+	.nav-dropdown-hamburger {
+		left: 63%;
+	}
+
+	.nav-toia-hamburger {
+		padding-left: 60vw;
+	}
+}
+
+@media (max-width: 345px) {
+	.nav-dropdown-hamburger {
+		left: 59%;
+	}
+
+	.nav-toia-hamburger {
+		padding-left: 57vw;
+	}
+}
+
+@media (max-width: 300px) {
+	.nav-dropdown-hamburger {
+		left: 57%;
+	}
+
+	.nav-toia-hamburger {
+		padding-left: 63vw;
+	}
+}
+
 .nav-toia_icon {
-	top: 0%;
-	/* left: 2.85%; */
-	left: 60px;
-	position: absolute;
-	font-size: 28.4444px;
-	line-height: 39px;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
+	left: 0px;
+    font-size: 28px;
+    line-height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	letter-spacing: -0.015em;
+    height: 40px;
+    cursor: pointer;
+    color: white;
+    opacity: 0.8;
+    text-align: center;
+    padding: 0 20px; /* Add padding to space items */
+  }
+
+.nav-left-group, .nav-right-group {
 	display: flex;
 	align-items: center;
-	text-align: center;
-	letter-spacing: -0.015em;
-	height: 40px;
-	cursor: pointer;
-	color: white;
 }
-.nav-about_icon {
-	top: 0%;
-	left: 60%;
-	position: absolute;
-	font-weight: 800;
+
+.nav-left-group {
+	padding: 30px;
+}
+
+.nav-right-group {
+	padding: 10px;
+}
+
+.nav-about_icon, .nav-talk_icon, .nav-my_icon, .nav-login_icon {
 	font-size: 20px;
-	line-height: 22px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	letter-spacing: -0.015em;
-	height: 40px;
-	width: 120px;
-	border-radius: 3px;
-	cursor: pointer;
-	color: white;
-	opacity: 0.8;
-}
-.nav-talk_icon {
-	top: 0%;
-	left: 70%;
-	position: absolute;
+    line-height: 22px;
 	font-weight: 800;
-	font-size: 20px;
-	line-height: 22px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 	letter-spacing: -0.015em;
-	height: 40px;
-	width: 130px;
-	border-radius: 3px;
-	cursor: pointer;
-	color: white;
-	opacity: 0.8;
+    height: 40px;
+    cursor: pointer;
+    color: white;
+    opacity: 0.8;
+    text-align: center;
+    padding: 0 25px; /* Add padding to space items */
 }
-.nav-my_icon {
-	top: 0%;
-	left: 80%;
-	position: absolute;
-	font-weight: 800;
-	font-size: 20px;
-	line-height: 22px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	letter-spacing: -0.015em;
-	height: 40px;
-	width: 145px;
-	border-radius: 3px;
-	cursor: pointer;
-	color: white;
-	opacity: 0.8;
-}
-.nav-login_icon {
-	top: 0%;
-	left: 90%;
-	position: absolute;
-	font-weight: 800;
-	font-size: 20px;
-	line-height: 22px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	letter-spacing: -0.015em;
-	height: 40px;
-	width: 120px;
-	border-radius: 3px;
-	cursor: pointer;
-	color: var(--desert-storm);
-	opacity: 0.8;
-}
+
 .nav-selected {
 	opacity: 1;
 }
@@ -168,6 +284,15 @@ body{
   border: none;
 }
 
+.nav-dropbtn-hamburger {
+	background-color: transparent;
+	color: white;
+	width: 30px;
+	text-align: center;
+	font-size: 16px;
+	border: none;
+}
+
 /* The container <div> - needed to position the dropdown content */
 .nav-dropdown {
   top: 0%;
@@ -185,6 +310,15 @@ body{
   z-index: 1;
 }
 
+.nav-dropdown-hamburger-content {
+	font-size: 1.25rem;
+	display: none;
+	position: absolute;
+	background-color: #f1f1f1;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+}
+
 /* Links inside the dropdown */
 .nav-dropdown-content a {
   color: black;
@@ -194,6 +328,71 @@ body{
   text-decoration: none;
   display: block;
 }
+
+.nav-dropdown-hamburger-content a {
+	color: black;
+	width: 30px;
+	height: 20px;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+  }
+
+@media (max-width: 800px) { /* Adjust 768px to the breakpoint you desire */
+    .nav-heading-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      height: auto; /* Adjust height to auto to accommodate the changed layout */
+	  background-color: white;
+    }
+  
+    .nav-toia_icon, .nav-about_icon, .nav-talk_icon, .nav-my_icon, .nav-login_icon {
+	padding-top: 10px;
+	  width: 100%; /* Make nav items take up the full width */
+      justify-content: flex-start; /* Align text to the start */
+    }
+
+	.nav-right-group, .nav-left-group {
+		flex-direction: column;
+		display: none; /* Hide it initially */
+		padding: 0px;
+	}
+
+	.nav-left-group {
+		padding-left: 6px;
+	}
+	
+	.nav-hamburger-icon {
+		display: flex; /* Show the hamburger icon */
+	}
+
+	.nav-toia_icon{
+		display: none;
+	}
+
+	.nav-dropdown {
+		display: none;
+	}
+}
+
+.nav-active {
+	display: flex;
+	flex-direction: column;
+}
+
+.header-active {
+	background-color:var(--nv-color);
+}
+
+.nav-dropdown-hamburger-content div.header:hover::after {
+	background-color: transparent;
+}
+
+.nav-dropdown-hamburger-content option:hover {background-color: #ddd;}
+
+.nav-dropdown-hamburger:hover .nav-dropdown-hamburger-content {display: block;}
+
+
 
 .nav-dropdown-content div.header:hover::after {
   background-color: transparent;
@@ -208,90 +407,167 @@ body{
 /* .nav-dropdown:hover .nav-dropbtn {background-color: #3e8e41;} */
 
 /*login popup*/
+
 .login_popup {
 	height: 40vh;
+	display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
 .login_header {
 	text-align: center;
 	color: var(--nv-color);
+	background-color: black;
 }
-.login_welcome {
-	font-weight: bold;
-	font-size: 2.5rem;
-	letter-spacing: -0.015em;
+
+
+.login-email {
+	border-radius: 1rem;
+	width: 70%;
+	margin-top: 50px;
+	margin-bottom: 10px;
+	padding: 10px 15px;
+	border: 2px solid black;
+	outline: none;
 }
-.login_blurb {
-	font-weight: 500;
-	font-size: 1.25rem;
-	letter-spacing: -0.015em;
-	color: rgba(0, 0, 0, 0.75);
+
+.signup-firstname, .signup-lastname {
+	border-radius: 1rem;
+	width: calc(50% - 5px);
+	margin-top: 20px;
+	margin-bottom: 10px;
+	padding: 10px 15px;
+	border: 2px solid black;
+	outline: none;
 }
-.login_email {
-	background-color: rgba(126, 124, 124, 0.1);
-	border-radius: 3px;
+
+.signup-language-select {
+	border-radius: 1rem;
+	width: 70%;
+	margin: 10px auto;
+	padding: 10px 11px;
+	border: 2px solid black;
+	outline: none;
+}
+
+.login-pass, .signup-email-add, .signup-password, .signup-password-confirm {
+	border-radius: 1rem;
+	width: 70%;
+	margin: 10px auto;
+	padding: 10px 15px;
+	border: 2px solid black;
+	outline: none;
+}
+
+.add-stream-bio {
+	border-radius: 1rem;
+	width: 70%;
+	margin: 10px auto;
+	padding: 10px 10px 60px 15px;
+	border: 2px solid black;
+	outline: none;
+}
+
+.signup-name-container {
+	width: 70%;
+	display: flex;
+	justify-content: center; /* This centers the children (inputs) horizontally */
+	gap: 10px; /* Adjust the space between the inputs */
+}
+
+.image-upload-label {
+	background-color: lightgray;
+	margin: 10px auto;
+	padding: 10px 15px;
+	border: 2px solid black;
+	outline: none;
+  	color: black;
+  	border-radius: 1rem;
+  	cursor: pointer;
+}
+
+#file-chosen {
+	margin-left: 0.3rem;
+}
+
+.login-submit, .signup-submit, .delete-btn {
+	width: 70%;
+	margin-top: 20px;
+	padding: 10px 15px;
+	border-radius: 25px;
 	border: none;
-	height: 31px;
-	left: 9%;
-	top: 15%;
-	position: relative;
-	padding: 5px;
-	resize: none;
-	text-align: left;
-	width: 455px;
+	background-color: black;
+	color: #ffffff;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
 }
-.login_pass {
-	background-color: rgba(126, 124, 124, 0.1);
-	border-radius: 3px;
-	border: none;
-	height: 31px;
-	left: 9%;
-	top: 23%;
-	position: relative;
-	padding: 5px;
-	resize: none;
-	text-align: left;
-	width: 455px;
+
+.css-1q60rmi-MuiAutocomplete-endAdornment {
+	top: calc(50% - 13px) !important;
 }
-.login_button {
-	background-color: transparent;
-	position: absolute;
-	height: 70px;
-	width: 270px;
-	top: 60%;
-	left: 27%;
-	transition: all 0.2s ease;
+
+.login-submit:hover, .signup-submit:hover {
+	background-color: green;
+}
+
+.delete-btn:hover {
+	background-color: red;
+}
+
+.login-text {
+	text-align: center;
+	color: #666666;
+	margin-top: 30px;
+}
+
+.signup-link {
+	color: #00587a;
 	cursor: pointer;
 }
-.login_text {
-	position: absolute;
-	top: 73%;
-	left: 37%;
-	font-weight: 500;
-	font-size: 12px;
-	letter-spacing: -0.015em;
-	opacity: 0.45;
-	cursor: pointer;
+
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .login-modal {
+        width: 100%; /* Full width on mobile */
+        padding: 20px; /* Adjust padding as required */
+    }
+
+    .login-email, .login-pass, .login-submit, .signup-submit, .signup-firstname, .signup-lastname, .signup-language-select, .signup-password, .signup-password-confirm,
+	.signup-email-add, .signup-name-container, .add-stream-bio, .delete-btn {
+        width: 50%; /* A little less than full width to provide some padding */
+    }
+
+    .login_popup {
+        align-items: center; /* This will center the child items horizontally */
+        padding: 20px 0; /* Add padding on top and bottom for spacing */
+    }
+
+    /* Other adjustments for mobile can be added here */
 }
-.login-font-class-1 {
-	color: rgba(0, 0, 0, 0.75);
-	font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-	font-size: 1.25rem;
-	font-style: normal;
-	font-weight: 500;
-	letter-spacing: -0.21px;
+
+
+
+@media (max-width: 450px) {
+
+	.login-email, .login-pass, .login-submit, .signup-submit, .delete-btn, .signup-firstname, .signup-lastname, .signup-language-select, .signup-password, .signup-password-confirm,
+	.signup-email-add, .signup-name-container, .add-stream-bio {
+        width: 80%; /* A little less than full width to provide some padding */
+    }
+
 }
-.login_button:hover {
-	transform: scale(1.1);
-}
+
+select:invalid { color: gray; }
 
 /*universal text*/
 .app-monsterrat-black {
 	/* color: black; */
-	font-family: "Montserrat", Helvetica, Arial, serif;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 	font-style: normal;
 }
 .app-opensans-normal {
-	font-family: "Open Sans", Helvetica, Arial, serif;
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 	font-style: normal;
 	font-weight: bold;
 }

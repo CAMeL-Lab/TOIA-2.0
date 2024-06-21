@@ -13,6 +13,7 @@ const API_URLS = {
 		`${BASE_URL}/toia_user/questions/onboarding`,
 	QUESTION_SUGGESTIONS: () => `${BASE_URL}/question_suggestions`,
 	ANSWERED_QUESTIONS: () => `${BASE_URL}/question/answered`,
+	DELETE_USER: () => `${BASE_URL}/toia_user`,
 	STREAM_ANSWERED_QUESTIONS: stream_id =>
 		`${BASE_URL}/question/answered?stream_id=${stream_id}`,
 	USER_STATS: () => `${BASE_URL}/toia_user/stats`,

@@ -1,5 +1,12 @@
 import RecordVoiceOverRoundedIcon from "@mui/icons-material/RecordVoiceOverRounded";
 import VoiceOverOffRoundedIcon from "@mui/icons-material/VoiceOverOffRounded";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import SearchIcon from "@mui/icons-material/Search";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { NotificationManager } from "react-notifications";
@@ -22,6 +29,38 @@ import {
 	languageCodeTable,
 	languageFlagsCSS,
 } from "../services/languageHelper";
+
+import SuggestionCard from "../suggestiveSearch/suggestionCards.js";
+
+// import { Center, Square, Circle } from '@chakra-ui/react';
+
+const theme = createTheme({
+	components: {
+	  MuiTextField: {
+		styleOverrides: {
+		  root: {
+			'& .MuiInputBase-input': {
+			  color: 'black', // Text color
+			},
+			'& .MuiInputLabel-root': {
+			  color: 'black', // Label color
+			},
+			'& .MuiOutlinedInput-root': {
+			  '& fieldset': {
+				borderColor: 'black', // Border color
+			  },
+			  '&:hover fieldset': {
+				borderColor: 'black', // Hover border color
+			  },
+			  '&.Mui-focused fieldset': {
+				borderColor: 'black', // Focused border color
+			  },
+			},
+		  },
+		},
+	  },
+	},
+  });
 
 function Player() {
 	const { t } = useTranslation();
@@ -61,7 +100,7 @@ function Player() {
 	const interimTextInput = useRef("");
 
 	const [micMute, setMicStatus] = useState(true);
-	const [micString, setMicString] = useState("ASK BY VOICE");
+	const [micString, setMicString] = useState("");
 
 	const [ratingNodes, setRatingNodes] = useState([
 		{
@@ -92,7 +131,7 @@ function Player() {
 
 		canAccessStream();
 
-		// fetchAnsweredQuestions();
+		fetchAnsweredQuestions();
 		fetchAllStreamQuestions();
 
 		fetchFiller();
@@ -166,7 +205,7 @@ function Player() {
 				question.current = data.alternatives[0].transcript;
 
 				speechToTextUtils.stopRecording();
-				fetchData("VOICE");
+				fetchData("");
 			}
 		} else {
 			console.log("no data received from server");
@@ -232,6 +271,7 @@ function Player() {
 				});
 
 				shouldRefreshQuestions.current = true;
+				console.log(answeredQuestions);
 				setAnsweredQuestions([...answeredQuestions]);
 				setAllSuggestedQuestions([...allSuggestedQuestions]);
 			});
@@ -411,7 +451,7 @@ function Player() {
 		if (micMute === true) {
 			setMicStatus(false);
 
-			setMicString("STOP ASK BY VOICE");
+			setMicString("");
 			interacting.current = "true";
 
 			if (hasRated) {
@@ -438,7 +478,7 @@ function Player() {
 			speechToTextUtils.stopRecording();
 			setMicStatus(true);
 
-			setMicString("ASK BY VOICE");
+			setMicString("");
 			interacting.current = "false";
 		}
 	}
@@ -507,63 +547,78 @@ function Player() {
 	}
 
 	return (
-		<div className="player">
-			<NavBar
-				toiaName={toiaName}
-				toiaID={toiaID}
-				isLoggedIn={loginState}
-				toiaLanguage={toiaLanguage}
-				history={history}
-				showLoginModal={true}
-				endTranscription={endTranscription}
-			/>
-			{!hasRated && (
-				<PopModal
-					ratingNodes={ratingNodes}
-					setRatingNodes={setRatingNodes}
-					hasRated={hasRated}
-					setHasRated={setHasRated}
-					ratingParams={ratingParams}
-					interactionLanguage={interactionLanguage}
+		<>
+			<div className="parent">
+				<NavBar
+					toiaName={toiaName}
+					toiaID={toiaID}
+					isLoggedIn={loginState}
+					toiaLanguage={toiaLanguage}
+					history={history}
+					showLoginModal={true}
+					endTranscription={endTranscription}
 				/>
-			)}
-			<div className="player-group">
-				<h1 className="player-name player-font-class-3 ">
-					{toiaFirstNameToTalk} {toiaLastNameToTalk}
-				</h1>
-				<p className="player-lang player-font-class-2 ">
-					{streamNameToTalk}
-				</p>
-				{videoProperties && (
-					<TransitionGroup>
-						<CSSTransition
-							key={videoProperties.key}
-							timeout={500}
-							classNames="fade">
-							<VideoPlaybackPlayer
-								onEnded={videoProperties.onEnded}
-								key={videoProperties.key}
-								muted={
-									videoProperties.muted
-										? videoProperties.muted
-										: false
-								}
-								source={videoProperties.source}
-								source_vtt={videoProperties.source_vtt}
-								// filler={videoProperties.filler}
-								// duration_seconds={
-								// 	videoProperties.duration_seconds
-								// }
-								lang={videoProperties.language}
-							/>
-						</CSSTransition>
-					</TransitionGroup>
+				{!hasRated && (
+					<PopModal
+						ratingNodes={ratingNodes}
+						setRatingNodes={setRatingNodes}
+						hasRated={hasRated}
+						setHasRated={setHasRated}
+						ratingParams={ratingParams}
+						interactionLanguage={interactionLanguage}
+					/>
 				)}
-				{micMute ? (
-					<div>
-						<div class="lang-container">
-							<div class="lang-dropdown">
-								<div class="lang-dropbtn">
+				{/* Name on top of the stream. */}
+				<div>
+					<h1 className="player-name player-font-class-3 ">
+						{toiaFirstNameToTalk} {toiaLastNameToTalk}
+					</h1>
+				</div>
+				<div className="video_row">
+					<div className="video_container">
+						<div className="player-lang player-font-class-2">
+							{streamNameToTalk}
+						</div>
+
+						{videoProperties && (
+							<TransitionGroup>
+								<CSSTransition
+									key={videoProperties.key}
+									timeout={500}
+									classNames="fade">
+									<VideoPlaybackPlayer
+										onEnded={videoProperties.onEnded}
+										key={videoProperties.key}
+										muted={
+											videoProperties.muted
+												? videoProperties.muted
+												: false
+										}
+										source={videoProperties.source}
+										source_vtt={videoProperties.source_vtt}
+										lang={videoProperties.language}
+									/>
+								</CSSTransition>
+							</TransitionGroup>
+						)}
+
+						{isFillerPlaying.current === "false" ? (
+							<Button
+								className="ui inverted button skip-end-button"
+								onClick={fetchFiller}>
+								{" "}
+								Skip{" "}
+								<i
+									aria-hidden="true"
+									class="angle double right icon"></i>
+								{/* <SkipNextIcon /> */}
+							</Button>
+						) : null}
+
+						{/* Keep lang-container here */}
+						<div className="lang-container">
+							<div className="lang-dropdown">
+								<div className="lang-dropbtn">
 									<span
 										className={
 											languageFlagsCSS[
@@ -571,7 +626,7 @@ function Player() {
 											]
 										}></span>
 								</div>
-								<div class="lang-dropdown-content">
+								<div className="lang-dropdown-content">
 									<a
 										href="#"
 										onClick={() =>
@@ -586,7 +641,6 @@ function Player() {
 										}>
 										<span class="fi fi-ae"></span>
 									</a>
-									{/* <a href="#"><span class="fi fi-es"></span>SP</a> */}
 									<a
 										href="#"
 										onClick={() =>
@@ -604,91 +658,86 @@ function Player() {
 								</div>
 							</div>
 						</div>
+					</div>
+					<SuggestionCard
+						questions={answeredQuestions}
+						askQuestion={askQuestionFromCard}
+						shouldRefreshQuestions={shouldRefreshQuestions}
+						setRefreshQuestionsFalse={setRefreshQuestionsFalse}
+						hasRated={hasRated}
+						notificationManager={NotificationManager}
+					/>
+				</div>
+
+				<div className="text-container">
+					{/* Keep mute-button here */}
+					{micMute ? (
 						<button
 							color="green"
-							className="ui linkedin microphone button mute-button"
+							className="ui button mute-button"
 							onClick={micStatusChange}>
 							<i aria-hidden="true" class="">
-								<RecordVoiceOverRoundedIcon
-									sx={{
-										paddingTop: "0px",
-										paddingRight: "0px",
-										fontSize: "1.7rem",
-									}}
-								/>
+								<MicIcon />
 							</i>
 							{micString}
 						</button>
-					</div>
-				) : (
-					<button
-						className="ui secondary button mute-button"
-						onClick={micStatusChange}>
-						<i aria-hidden="true" class="">
-							<VoiceOverOffRoundedIcon />
-						</i>
-						{micString}
-					</button>
-				)}
-
-				{isFillerPlaying.current === "false" ? (
-					<button
-						className="ui inverted button skip-end-button"
-						onClick={fetchFiller}>
-						{" "}
-						Skip to End{" "}
-						<i
-							aria-hidden="true"
-							class="angle double right icon"></i>
-					</button>
-				) : null}
-
-				<div>
-					{micMute ? (
+					) : (
 						<>
-							{micMute && (
-								<SuggestiveSearch
-									handleTextChange={textChange}
-									handleTextInputChange={textInputChange}
-									// questions={latestSuggestedQuestions}
-									questions={allQuestions.current}
-								/>
-							)}
-
-							{/* <SuggestionCard
-								questions={answeredQuestions}
-								askQuestion={askQuestionFromCard}
-								shouldRefreshQuestions={shouldRefreshQuestions}
-								setRefreshQuestionsFalse={
-									setRefreshQuestionsFalse
-								}
-								hasRated={hasRated}
-								notificationManager={NotificationManager}
+							{/* <input
+								className="transcript font-class-1"
+								placeholder={"Transcript"}
+								value={transcribedAudio || ""}
+								id="video-text-box"
+								type={"text"}
+								readOnly
 							/> */}
 
+							<ThemeProvider theme={theme}>
+								<TextField
+									className="transcript"
+									id="filled-hidden-label-small"
+									size="small"
+									placeholder={"Transcript"}
+									value={transcribedAudio || ""}
+									readOnly
+								/>
+							</ThemeProvider>
+
+
+							<button
+								className="ui button mute-button"
+								onClick={micStatusChange}>
+								<i aria-hidden="true" class="playericons">
+									<MicOffIcon />
+								</i>
+								{micString}
+							</button>
+						</>
+					)}
+
+					{/* Suggestive search and search button */}
+					{micMute && (
+						<>
+							<SuggestiveSearch
+								handleTextChange={textChange}
+								handleTextInputChange={textInputChange}
+								questions={allQuestions.current}
+							/>
 							<button
 								color="green"
-								className="ui linkedin button submit-button"
+								className="ui button what-button"
 								onClick={e => {
 									submitResponse(e, "SEARCH");
 								}}>
-								<i aria-hidden="true" class="send icon"></i>
-								ASK
+								<i aria-hidden="true" class="playericons"></i>
+								<SearchIcon />
 							</button>
 						</>
-					) : (
-						<input
-							className="transcript font-class-1"
-							placeholder={"Transcript"}
-							value={transcribedAudio || ""}
-							id="video-text-box"
-							type={"text"}
-						/>
 					)}
 				</div>
+				<NotificationContainer />
 			</div>
-			<NotificationContainer />
-		</div>
+		</>
 	);
 }
 

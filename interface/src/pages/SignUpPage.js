@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Modal } from "semantic-ui-react";
 import React, { useState } from "react";
 import {
 	NotificationContainer,
@@ -78,6 +79,10 @@ function SignUpPage() {
 	}
 
 	return (
+
+		
+
+
 		<div>
 			<NavBar
 				toiaName={null}
@@ -217,7 +222,7 @@ function SignUpPage() {
 					<div
 						className="signup-photo-upload signup-font-class-1" //delete button, function TBD
 					>
-						<form onSubmit={submitPic}>
+						<form onSubmit={submitPic} required={true}>
 							<label htmlFor="img">
 								{t("signup_upload_picture")}:
 							</label>
@@ -231,6 +236,7 @@ function SignUpPage() {
 							/>
 						</form>
 					</div>
+					
 					<input
 						className="signup-button smart-layers-pointers "
 						type="image"

@@ -1,19 +1,5 @@
-.library-page {
-	background-color: white;
-	height: 100vh;
-	margin: 0px;
-	min-height: 700px;
-	min-width: 1440px;
-	position: relative;
-	width: 100%;
-}
-
 .library-page-setup {
-	position: absolute;
-	top: 80px;
-	width: 1200px;
-	height: 700px;
-	left: 40px;
+	padding-top: 65px;
 }
 
 .library-box:hover {
@@ -30,17 +16,7 @@
 
 /*elements*/
 .library-heading {
-	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 3rem;
-	text-align: left;
-	letter-spacing: -0.015em;
-	position: relative;
-	/* left: 50%; */
-	top: 0%;
-	color: black;
-	margin: 0 auto;
+	padding-left: 43px;
 }
 
 .library-highlights {
@@ -96,22 +72,25 @@
 }
 
 .library-grid {
-	padding: 5px;
 	overflow-y: auto;
-	/* height: 75%; */
-	height: 100%;
-	width: 117.5%;
-	left: -2.5%;
-	top: 20%;
-	position: absolute;
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-	padding-left: 0px;
+	gap: 20px;
+	padding-left: 43px;
+	padding-right: 43px;
 }
 
-.library-grid > div {
-	flex-basis: calc(18%);
+/* .library-grid > div {
+	flex: calc(10%);
+} */
+
+/* .garden-carousel-card{
+	padding: 10px;
+} */
+
+.garden-font-class-2 {
+	margin: 0px !important;
 }
 
 .library-name {
@@ -133,6 +112,16 @@
 	text-align: center;
 	object-fit: cover;
 	height: 157px;
+}
+
+.search-box-library {
+	width: 85%;
+	padding-bottom: 20px;
+	padding-left: 43px;
+}
+
+.ui.icon.input.search-box-library > i.icon {
+	height: 80%;
 }
 
 /*searchbar*/
@@ -264,6 +253,7 @@
 }
 
 input[type="text"]::placeholder {
+	padding: 0px;
 	/* color: rgb(229,229,229);
     font-family: "Montserrat-Medium", Helvetica, Arial, serif;
     font-style: normal;
@@ -272,8 +262,6 @@ input[type="text"]::placeholder {
 }
 
 .library-stream-image-sizing {
-	/* max-width:150px;
-    max-height:150px; */
 	width: 180px;
 	height: 230px;
 	border-radius: 5px;
@@ -356,3 +344,21 @@ input[type="text"]::placeholder {
 	/* resize: none; */
 	resize: both;
 }
+
+@media (max-width: 768px) { /* Adjust 768px to the breakpoint you desire */
+    .library-grid {
+		justify-content: center;
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+
+	.search-box-library {
+		width: 92%;
+	}
+
+  
+    .nav-toia_icon, .nav-about_icon, .nav-talk_icon, .nav-my_icon, .nav-login_icon {
+      width: 100%; /* Make nav items take up the full width */
+      justify-content: flex-start; /* Align text to the start */
+    }
+  }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import alberto from "../images/alberto.jpeg";
+import alberto from "../images/alberto.jpg";
 import wahib from "../images/wahib.jpg";
 import kertu from "../images/kertu.jpg";
 import erin from "../images/erin.jpeg";
@@ -7,6 +7,17 @@ import nizar from "../images/nizar.jpg";
 import goffredo from "../images/goffredo.jpeg";
 import tyeece from "../images/Tyeece.jpg";
 import armaan from "../images/armaan.jpg";
+import muaz from "../images/muaz.png";
+import paula from "../images/paula.jpg";
+import ming from "../images/ming.jpg";
+import soojin from "../images/soojin.jpeg";
+import ali from "../images/ali.jpeg";
+import gautam from "../images/gautam.jpeg";
+import bishnu from "../images/bishnu.jpg";
+import sanjaya from "../images/sanjaya.jpeg";
+import maaz from "../images/maaz.jpg";
+import giorgi from "../images/giorgi.jpg";
+import abdul from "../images/abdul.jpg";
 import nyuad from "../images/nyuad-rb.png";
 import camel from "../images/camel.png";
 import history from '../services/history';
@@ -54,6 +65,17 @@ function AvatarViewPage() {
 		{ still: erin, member: "Erin Collins" },
 		{ still: goffredo, member: "Goffredo Puccetti" },
 		{ still: nizar, member: "Nizar Habash" },
+		{ still: muaz, member: "Muaz Ahmad" },
+		{ still: paula, member: "Paula Dozsa" },
+		{ still: ming, member: "Ming Hu" },
+		{ still: soojin, member: "Soojin Lee" },
+		{ still: ali, member: "Muhammad Ali" },
+		{ still: gautam, member: "Gautam Dinesh" },
+		{ still: bishnu, member: "Bishnu Dev" },
+		{ still: sanjaya, member: "Sanjaya Bhatta" },
+		{ still: maaz, member: "Maaz Ahmed" },
+		{ still: giorgi, member: "Giorgi Kituashvili" },
+		{ still: abdul, member: "Abdul Samad Gomda" },
 	];
 
 	const renderTeam = (card, index) => {
@@ -66,7 +88,7 @@ function AvatarViewPage() {
 				/>
 				<div>
 					<h1
-						className="about-name" //name of person
+						className="text-big about-name" //name of person
 					>
 						{card.member}
 					</h1>
@@ -87,9 +109,10 @@ function AvatarViewPage() {
 			/>
 
 			<div className="about-team">
-				<h1 className={`about-heading ${t("alignment")}`}>{t("meet_the_team")}</h1>
-				<h1 className={`about-heading ${t("alignment")}`}>{t("product_tagline")}</h1>
-				<p className={`about-text ${t("alignment")}`}>{t("product_hook1")}<br />
+				<h1 className={`heading-big about-heading ${t("alignment")}`}>{t("product_tagline")}</h1>
+				<div className="container-1">
+				<p className={`about-text ${t("alignment")}`}>
+					{t("product_hook1")}<br />
 					{t("product_hook2")}
 					<br />
 					<br />
@@ -100,24 +123,28 @@ function AvatarViewPage() {
 					<br />
 					<Trans i18nKey="product_summary" components={[<a href="https://nyuad.nyu.edu/en/" />, <a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html" />]} />
 				</p>
-				<img src={toia_logo} className="toiaImage" />
-				<div className="reference-links">
-					<a href="#grid" className="reference-item">{t("meet_the_team")}</a>
-					<a href="#scholarly" className="reference-item">{t("publications")}</a>
-					<a href="https://github.com/wahibkamran/TOIA-2.0" className="reference-item">{t("github_repo")}</a>
+
+				{/* <img src={toia_logo} className="toiaImage" /> */}
+
 				</div>
+
+				<div className="reference-links">
+					<a href="#grid" className="heading-medium reference-item">{t("meet_the_team")}</a>
+					<a href="#scholarly" className="heading-medium reference-item">{t("publications")}</a>
+					<a href="https://github.com/wahibkamran/TOIA-2.0" className="heading-medium reference-item">{t("github_repo")}</a>
+				</div>
+
 			</div>
 
 			<div id="grid">
-				<h1 className={`grid-heading ${t("alignment")}`}>{t("toia_team")}</h1>
-				<div className="about-grid" //videos
-				>
+				<h1 className={`heading-big grid-heading ${t("alignment")}`}>{t("toia_team")}</h1>
+				<div className="about-grid">
 					{team.map(renderTeam)}
 				</div>
 			</div>
 
 			<div id="scholarly">
-				<p className={`publication-links ${t("alignment")}`}>{t("publication_links")}</p>
+				<h1 className={`heading-big publication-links ${t("alignment")}`}>{t("publication_links")}</h1>
 				<ul className="publications">
 					<li>
 						Alberto Chierici, Tyeece Hensley, Wahib Kamran, Kertu Koss, Armaan Agrawal, Erin Collins, Goffredo Puccetti and Nizar Habash, A Cloud-based User-Centered Time-Offset Interaction Application,
@@ -147,9 +174,9 @@ function AvatarViewPage() {
 
 
 			<div className="logos">
-				<a href="https://nyuad.nyu.edu/en/"><img src={nyuad} className="nyuadImage" /></a>
+				<a className="logoImage" href="https://nyuad.nyu.edu/en/"><img src={nyuad} /></a>
 
-				<a href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel} className="camelImage" /></a>
+				<a className="logoImage" href="https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/computational-approaches-to-modeling-language-lab.html"><img src={camel}  /></a>
 			</div>
 
 

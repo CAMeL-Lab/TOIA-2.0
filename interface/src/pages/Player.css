@@ -1,219 +1,140 @@
-.player {
-	background-color: white;
-	height: 100%;
-	margin: 0px;
-	min-height: 700px;
-	min-width: 1440px;
-	position: relative;
-	width: 100%;
+* {
+	box-sizing: border-box;
 }
 
-/*elements and icons*/
-.player-back_icon {
-	background-color: transparent;
-	height: 30px;
-	left: 2%;
-	top: 2%;
-	width: 30px;
-	position: absolute;
-	pointer-events: auto;
-	cursor: pointer;
-}
-.player-group {
-	/* background-color: transparent;
-  height: 700px;
-  left: 50px;
-  position: absolute;
-  top: 80px;
-  width: 1180px; */
-	background-color: transparent;
-	height: 700px;
-	left: 40px;
-	position: absolute;
-	top: 80px;
-	width: 1200px;
-}
-.player-vid {
-	background-color: transparent;
-	left: 1%;
-	position: absolute;
-	top: 5.5%;
-	width: 70%;
-	height: 69%;
-	border-radius: 5px;
+body {
+	margin: 0;
 }
 
-/*text*/
+.parent {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100vh;
+	padding-top: 60px;
+}
+
 .player-name {
 	background-color: transparent;
-	height: 50px;
-	/* left: 21.5%; */
-	position: absolute;
-	text-align: center;
-	top: 0px;
-	/* left: 0.5%; */
-	width: 70%;
-	/* width: 100%; */
-}
-.player-lang {
-	background-color: transparent;
-	display: block;
-	height: 29px;
-	/* left: 36.5%; */
-	position: absolute;
-	text-align: center;
-	/* left: 2%; */
-	top: 7%;
-	width: 10%;
-	/* width: 100%; */
+	padding-left: 44px;
+	padding-top: 8px;
 }
 
-/*fonts*/
-.player-font-class-2 {
-	color: black;
-	font-family: "Montserrat-Medium", Helvetica, Arial, serif;
-	font-size: 17px;
-	font-style: normal;
-	font-weight: 500;
-	top: 8%;
-	left: 1%;
-	letter-spacing: -0.18px;
-	z-index: 9;
-}
 .player-font-class-3 {
 	color: black;
 	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
 	font-size: 34px;
 	font-style: normal;
 	font-weight: 700;
-	top: -3%;
-	letter-spacing: -0.54px;
+	top: -60%;
 }
 
-.player-font-class-4 {
+.video_row {
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	padding-top: 30px;
+	/* background-color: red; */
+
+}
+
+.video_container {
+	/* background-color: aqua; */
+	flex: 1;
+	position: relative;
+	aspect-ratio: 19/9;
+	/* overflow: hidden; */
+}
+
+.player-lang {
+	position: absolute;
+	top: 10px;
+	left: 60px;
+	background-color: transparent;
+	/* z-index: 9; */
+}
+
+.player-font-class-2 {
 	color: black;
 	font-family: "Open Sans-Bold", Helvetica, Arial, serif;
-	font-size: 32px;
+	font-size: 17px;
 	font-style: normal;
-	font-weight: 600;
-	letter-spacing: -0.54px;
-}
-
-.mute-button {
-	position: absolute;
-	top: 80.4%;
-	left: 1%;
-	width: 70%;
-	height: 7%;
-	font-size: 1.5rem;
-	/* background-color: var(--check-green); */
-}
-
-.recording-button {
-	position: absolute;
-	top: 4%;
-	left: 15%;
-	width: 15%;
-	height: 7%;
-	font-size: 1.5rem;
-}
-
-.skip-end-button {
-	position: absolute;
-	top: 65%;
-	left: 57%;
-	width: 15%;
-	height: 7%;
-	font-size: 1.8rem;
+	font-weight: 500;
+	letter-spacing: -0.18px;
 	z-index: 9;
 }
 
-.submit-button {
+.player-vid {
 	position: absolute;
-	top: 93.7%;
-	left: 57.5%;
-	width: 13.5%;
-	height: 7.5%;
-	font-size: 1.5rem;
-	color: #49769c;
+	width: 80.5%;
+	height: auto;
+	border-radius: 25px;
+	left: 43px;
 }
 
-.cards-suggestion-header {
-	position: absolute;
-	left: 75.5%;
+.suggestions_card {
+	position: relative;
+	top:10%;
+	width: 30%;
+	gap: 10px;
+	/* background-color: chartreuse; */
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
 }
 
-.card-1 {
-	position: absolute;
-	left: 75.5%;
-	top: 3%;
+.text-container{
+	/* background-color: yellow; */
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
 }
 
-.card-2 {
-	position: absolute;
-	left: 75.5%;
-	top: 20%;
+.mute-button {
+	height: 38px !important;
+	border: 1.2px solid black !important;
 }
 
-.card-3 {
-	position: absolute;
-	left: 75.5%;
-	top: 42%;
+.what-button {
+	height: 38px !important;
+	border: 1.2px solid black !important;
 }
 
-.card-4 {
-	position: absolute;
-	left: 75.5%;
-	top: 64%;
+.css-i4bv87-MuiSvgIcon-root {
+	font-size: 2rem !important;
+	height: 1.2rem !important;
 }
 
-.card-5 {
-	position: absolute;
-	left: 75.5%;
-	top: 86%;
+.othercard {
+	font-family: "Open Sans-Bold", Helvetica, Arial, serif !important;
+	height: 75px;
+	width: 300px;
+	border-radius: 10px;
+	border-radius: 20px !important;
+	border: 0px !important;
+	color: black !important;
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+	line-height: 20px !important;
 }
 
-.card-overview {
-	transition: background 1s !important;
-}
-
-.card-waiting-true {
-	background: #d7f5ff !important;
-	box-shadow: 0px 4px 4px rgba(46, 122, 210, 0.25) !important;
+.css-wb57ya-MuiFormControl-root-MuiTextField-root {
+	border-top: 1px solid black !important;
+	border-left: 1px solid black !important;
+	border-right: 1px solid black !important;
+	border-bottom: 0.5px solid black !important;
 	border-radius: 5px !important;
+	background-color: white !important;
+	color: black !important;
 }
 
-.card-width-control {
-	max-height: 30%;
-	min-height: 24%;
-}
-.cursor-disabled {
-	cursor: not-allowed !important;
-}
 
-.redo-icon {
-	color: #006a94;
-}
-
-.transcript {
-	background-color: rgba(126, 124, 124, 0.1);
-	border: 0;
-	border-radius: 3px;
-	height: 41px;
-	/* left: 39%; */
-	left: 1%;
-	padding: 5px;
-	position: absolute;
-	resize: none;
-	text-align: left;
-	/* top: 75%; */
-	top: 89.75%;
-	width: 70%;
-	color: #707070;
-	font-size: 1.5rem;
-	padding-top: 25px;
-	padding-bottom: 25px;
-}
 
 /* Selecting Language for Player */
 
@@ -225,48 +146,286 @@
 	text-align: center;
 	font-size: 16px;
 	border: none;
-  }
-  
-  /* The container <div> - needed to position the dropdown content */
-  .lang-container {
+}
+
+/* The container <div> - needed to position the dropdown content */
+.lang-container {
 	position: absolute;
-	top: 75.4%;
-	left: 65%;
+	left: 80%;
+	top: 10px;
 	height: 7%;
 	font-size: 1.5rem;
-  }
-  .lang-dropdown {
+}
+
+.lang-dropdown {
 	position: relative;
 	display: inline-block;
 	z-index: 10;
-  }
-  
-  /* Dropdown Content (Hidden by Default) */
-  .lang-dropdown-content {
+}
+
+/* Dropdown Content (Hidden by Default) */
+.lang-dropdown-content {
 	display: none;
 	position: absolute;
-	background-color: #dad3d3;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	/* background-color: #dad3d3; */
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 	z-index: 1;
-  }
-  
-  /* Links inside the dropdown */
-  .lang-dropdown-content a {
+}
+
+/* Links inside the dropdown */
+.lang-dropdown-content a {
 	color: black;
 	width: 30px;
 	height: 20px;
-	font-size:15px;
+	font-size: 15px;
 	text-align: center;
 	text-decoration: none;
 	display: block;
-  }
-  
-  .lang-dropdown-content div.header:hover::after {
+}
+
+.lang-dropdown-content div.header:hover::after {
 	background-color: transparent;
-  }
-  /* Change color of dropdown links on hover */
-  .lang-dropdown-content option:hover {background-color: #ddd;}
-  
-  /* Show the dropdown menu on hover */
-  .lang-dropdown:hover .lang-dropdown-content {display: block;}
-  
+}
+/* Change color of dropdown links on hover */
+.lang-dropdown-content option:hover {
+	background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.lang-dropdown:hover .lang-dropdown-content {
+	display: block;
+}
+
+.mute-button {
+	position: absolute;
+	left: 54%;
+	width: 5%;
+	height: 5.75%;
+	border-radius: 50%;
+	border: 3px solid #0d1601;
+	font-size: 1.5rem;
+}
+
+.what-button {
+	position: absolute;
+	left: 48.5%;
+	border: 3px solid #0d1601;
+	width: 5%;
+	height: 5.75%;
+	font-size: 1.5rem;
+}
+
+.skip-end-button {
+	position: absolute;
+	top: 84%;
+	left: 74.5%;
+	z-index: 9;
+	max-width: max-content;
+}
+
+.search-bar {
+	position: absolute;
+	border: 0;
+	left: 43px;
+	text-align: left;
+	font-size: 1.5rem;
+	width: 45%;
+	height: 5.5%;
+}
+
+@media (max-width: 1292px) {
+	.skip-end-button{
+		top: 81.5%;
+		left: 73%;
+	}
+
+	.mute-button {
+		left: 54.75%;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	
+	.what-button {
+		left: 49%;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.search-bar{
+		width: 44.5%;
+	}
+}
+
+@media (max-width: 1024px) {
+	.player-name{
+		padding-left: 32px ;
+	}
+
+	.video_row {
+		flex-direction: column;
+	}
+	
+	.video_container {
+		width: 100%;
+		flex: none;
+		aspect-ratio: 1.9;
+	}
+	.player-vid {
+		width: 93.5%;
+		left: 32px;
+	}
+
+	.mute-button {
+		left: 86.5%;
+		width: 10%;
+	}
+
+	.what-button {
+		left: 75.5%;
+		width: 10%;
+	}
+
+	.transcript {
+		left: 32px;
+		width: 81.5%;
+	}
+
+	.lang-container {
+		left: 92%;
+	}
+
+	.search-bar {
+		left: 32px;
+		width: 71%;
+	}
+
+	.suggestions_card {
+		width: 100%;
+		height: auto;
+		overflow-y: auto;
+		justify-content: center;
+		padding-top: 10px;
+		padding-bottom: 20px;
+		top:0%;
+	}
+
+	.skip-end-button{
+		top: 88%;
+		left: 86%;
+	}
+
+	.text-container{
+		max-height: 80px;
+	}
+	
+}
+
+@media (max-width: 840px) {
+	.player-name{
+		padding-left: 25px ;
+	}
+	.player-vid{
+		left: 25px;
+	}
+	.player-lang{
+		left: 30px;
+	}
+	.search-bar {
+		left: 25px;
+		width: 71%;
+	}
+	.transcript {
+		left: 25px;
+	}
+	.skip-end-button{
+		top: 86%;
+		left: 84%;
+	}
+
+}
+
+
+@media (max-width: 720px) {
+	.player-name{
+		padding-left: 23px ;
+	}
+	.player-vid{
+		left: 23px;
+	}
+
+	.lang-container{
+		left: 91%;
+	}
+
+	.skip-end-button{
+		top:85%;
+		left: 82%;
+	}
+
+	.search-bar {
+		width: 69%;
+	}
+	.transcript {
+		left: 69%;
+	}
+}
+
+@media (max-width: 645px) {
+	.player-vid{
+		width: 90%;
+		left: 25px;
+		right: 30px;
+	}
+
+	.player-name {
+		padding-left: 25px;
+	}
+
+	.player-lang {
+		left: 40px;
+	}
+
+	.lang-container{
+		left: 87%;
+	}
+
+	.skip-end-button{
+		top: 79%;
+		left: 78%;
+	}
+}
+
+@media (max-width: 580px) {
+	.player-name{
+		padding-left: 25px;
+	}
+
+	.search-bar{
+		left: 25px;
+		width:67%;
+	}
+
+	.mute-button {
+		left: 85%;
+		width: 11%;
+	}
+
+	.transcript{
+		left: 25px;
+		width: 77.5%;
+	}
+
+	.what-button {
+		left: 73%;
+		width: 11%;
+	}
+
+	.suggestions_card{
+		height: auto;
+	}
+
+	.skip-end-button{
+		top: 78%;
+		left: 76%;
+	}
+}
