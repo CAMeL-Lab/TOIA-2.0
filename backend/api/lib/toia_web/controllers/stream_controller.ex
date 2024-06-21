@@ -3,6 +3,7 @@ defmodule ToiaWeb.StreamController do
 
   alias Toia.Streams
   alias Toia.Streams.Stream
+  alias Toia.ToiaUsers.owns_stream
 
   action_fallback(ToiaWeb.FallbackController)
 
@@ -92,11 +93,18 @@ defmodule ToiaWeb.StreamController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(%{assigns: %{current_user: user}} = conn, %{"id" => id}) do
     stream = Streams.get_stream!(id)
 
-    with {:ok, %Stream{}} <- Streams.delete_stream(stream) do
-      send_resp(conn, :no_content, "")
+    # Check if the user owns the stream
+    if owns_stream(user.id, stream.id_stream) do
+      with {:ok, %Stream{}} <- Streams.delete_stream(stream) do
+        send_resp(conn, :no_content, "")
+      end
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Unauthorized"})
     end
   end
 
