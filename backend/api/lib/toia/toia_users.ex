@@ -11,6 +11,7 @@ defmodule Toia.ToiaUsers do
   alias Toia.Questions.Question
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.Videos.Video
+  alias Toia.StreamPhoto
 
   @doc """
   Returns the list of toia_user.
@@ -55,44 +56,27 @@ defmodule Toia.ToiaUsers do
 
   """
   # `Accounts/${fields.firstName[0]}_${entry.insertId}/StreamPic/All_${stream_entry.insertId}.jpg`;
-  def create_toia_user_with_stream(
-        %{"profile_pic" => %Plug.Upload{path: path}} = toia_user_params
-      ) do
+  def create_toia_user_with_stream(%{"profile_pic" => %Plug.Upload{path: path}} = toia_user_params) do
     toia_user_params = Map.delete(toia_user_params, "profile_pic")
-
+  
     case create_toia_user_with_stream(toia_user_params) do
       {:ok, toia_user, stream} ->
-        destDir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"
-        destFilename = "All_#{stream.id_stream}.jpg"
-
-        case File.mkdir_p(destDir) do
-          :ok ->
-            case File.cp(path, destDir <> destFilename) do
-              :ok ->
-                case File.rm(path) do
-                  :ok ->
-                    {:ok, toia_user, stream}
-
-                  {:error, reason} ->
-                    IO.puts("Error deleting file")
-                    {:error_pic, reason}
-                end
-
-              {:error, reason} ->
-                IO.puts("Error copying file")
-                {:error_pic, reason}
-            end
-
-          {:error, reason} ->
-            IO.puts("Error creating directory")
-            {:error_pic, reason}
+        environ = System.get_env("ENVIRONMENT", "development")
+  
+        case environ do
+          "production" ->
+            upload_to_google_cloud(path, toia_user, stream)
+          "development" ->
+            upload_locally(path, toia_user, stream)
+          _ ->
+            {:error, "Invalid environment when uploading file"}
         end
-
+  
       {:error, changeset} ->
         {:error, changeset}
     end
   end
-
+  
   def create_toia_user_with_stream(attrs) do
     case create_toia_user(attrs) do
       {:ok, %ToiaUser{} = toia_user} ->
@@ -114,6 +98,60 @@ defmodule Toia.ToiaUsers do
 
       _ ->
         {:error, "Failed to create user"}
+    end
+  end
+
+  defp upload_locally(path, toia_user, stream) do
+    dest_dir = "Accounts/#{toia_user.first_name}_#{toia_user.id}/StreamPic/"
+    dest_filename = "All_#{stream.id_stream}.jpg"
+  
+    case File.mkdir_p(dest_dir) do
+      :ok ->
+        case File.cp(path, dest_dir <> dest_filename) do
+          :ok ->
+            case File.rm(path) do
+              :ok ->
+                {:ok, toia_user, stream}
+  
+              {:error, reason} ->
+                IO.puts("Error deleting file")
+                {:error_pic, reason}
+            end
+  
+          {:error, reason} ->
+            IO.puts("Error copying file")
+            {:error_pic, reason}
+        end
+  
+      {:error, reason} ->
+        IO.puts("Error creating directory")
+        {:error_pic, reason}
+    end
+  end
+  
+  defp upload_to_google_cloud(path, toia_user, stream) do
+    scope = %{
+      first_name: toia_user.first_name,
+      toia_id: toia_user.id,
+      file_name: "All_#{stream.id_stream}.jpg",
+      stream_id: stream.id_stream,
+      stream_name: stream.name
+    }
+    case StreamPhoto.store({path, scope}) do
+      {:ok, _} ->
+        case File.rm(path) do
+          :ok ->
+            {:ok, toia_user, stream}
+  
+          {:error, reason} ->
+            IO.puts("Error deleting file")
+            {:error_pic, reason}
+        end
+  
+      {:error, reason} ->
+        IO.puts("Error uploading file")
+        IO.inspect(reason)
+        {:error_pic, reason}
     end
   end
 

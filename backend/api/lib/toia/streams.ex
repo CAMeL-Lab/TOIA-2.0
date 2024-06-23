@@ -12,6 +12,8 @@ defmodule Toia.Streams do
   alias Toia.Videos
   alias Toia.VideosQuestionsStreams.VideoQuestionStream
   alias Toia.ToiaUsers
+  alias Toia.StreamPhoto
+
   alias ServiceHandlers.DialogueManager
   alias ServiceHandlers.SmartSuggester
 
@@ -117,9 +119,26 @@ defmodule Toia.Streams do
       destDir = "Accounts/#{user.first_name}_#{user.id}/StreamPic/"
       destFilename = "#{attrs["name"]}_#{stream.id_stream}.jpg"
 
-      case Videos.copyAndDelete(filePath, destDir, destFilename) do
-        :ok -> {:ok, stream}
-        {:error, reason} -> {:error, reason}
+      scope = %{
+        first_name: user.first_name,
+        toia_id: user.id,
+        file_name: destFilename,
+        stream_id: stream.id_stream,
+        stream_name: attrs["name"]
+      }
+
+      case System.get_env("ENVIRONMENT") do
+        "production" -> 
+          case StreamPhoto.store({filePath, scope}) do
+            {:ok, _} -> {:ok, stream}
+            {:error, reason} -> {:error, reason}
+          end
+        "development" ->
+          case Videos.copyAndDelete(filePath, destDir, destFilename) do
+            :ok -> {:ok, stream}
+            {:error, reason} -> {:error, reason}
+          end
+        _ -> raise "Unknown environment"
       end
     end
   end
@@ -428,6 +447,18 @@ defmodule Toia.Streams do
     user_id = stream.toia_id
     user = ToiaUsers.get_toia_user!(user_id)
 
-    "#{System.get_env("API_URL")}/media/#{user.first_name}_#{user.id}/StreamPic/#{stream.name}_#{stream.id_stream}.jpg"
+    scope = %{
+      first_name: user.first_name,
+      toia_id: user.id,
+      file_name: "#{stream.name}_#{stream.id_stream}.jpg",
+      stream_id: stream.id_stream,
+      stream_name: stream.name
+    }
+
+    case System.get_env("ENVIRONMENT") do
+      "production" -> StreamPhoto.url({scope.file_name, scope}, signed: true)
+      "development" -> "#{System.get_env("API_URL")}/media/#{user.first_name}_#{user.id}/StreamPic/#{stream.name}_#{stream.id_stream}.jpg"
+      _ -> ""
+    end
   end
 end

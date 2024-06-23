@@ -13,6 +13,7 @@ defmodule Toia.Videos do
   alias Toia.Questions.Question
   alias Toia.Questions
   alias Toia.ToiaUsers
+  alias Toia.VideoFiles
 
   alias ServiceHandlers.QuestionSuggester
   alias ServiceHandlers.GenerateEmbeddings
@@ -149,7 +150,14 @@ defmodule Toia.Videos do
   Returns the playback url. Legacy: `/${entries[0].first_name}_${entries[0].id}/Videos/${req.body.params.playbackVideoID}`
   """
   def getPlaybackUrl(first_name, toia_id, video_id) do
-    "#{System.get_env("API_URL")}/media/#{first_name}_#{toia_id}/Videos/#{video_id}"
+    case System.get_env("ENVIRONMENT") do
+      "development" ->
+        "#{System.get_env("API_URL")}/media/#{first_name}_#{toia_id}/Videos/#{video_id}"
+      "production" ->
+        VideoFiles.url({video_id, %{first_name: first_name, toia_id: toia_id, id_video: video_id}}, signed: true)
+      _ -> raise "Unknown environment"
+    end
+    
   end
 
   @doc """
@@ -249,7 +257,13 @@ defmodule Toia.Videos do
   Returns the video path given a video id
   """
   def getVideoPath(first_name, user_id, id_video) do
-    "Accounts/#{first_name}_#{user_id}/Videos/#{id_video}"
+    case System.get_env("ENVIRONMENT") do
+      "development" ->
+        "Accounts/#{first_name}_#{user_id}/Videos/#{id_video}"
+      "production" ->
+        VideoFiles.url({id_video, %{first_name: first_name, toia_id: user_id, id_video: id_video}})
+      _ -> raise "Unknown environment"
+    end
   end
 
   def getDestPath(first_name, user_id) do
@@ -281,7 +295,25 @@ defmodule Toia.Videos do
   Save the video file
   """
   def saveVideoFile(first_name, user_id, id_video, upload_path) do
-    copyAndDelete(upload_path, getDestPath(first_name, user_id), id_video)
+    case System.get_env("ENVIRONMENT") do
+      "development" ->
+        copyAndDelete(upload_path, getDestPath(first_name, user_id), id_video)
+      "production" ->
+        scope = %{
+          first_name: first_name,
+          toia_id: user_id,
+          id_video: id_video
+        }
+        case VideoFiles.store({upload_path, scope}) do
+          {:ok, _} ->
+            File.rm(upload_path)
+
+          {:error, reason} ->
+            IO.puts("Error uploading file")
+            {:error, reason}
+        end
+      _ -> raise "Unknown environment"
+    end
   end
 
   @doc """

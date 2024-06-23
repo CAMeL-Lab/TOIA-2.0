@@ -61,6 +61,12 @@ config :toia, Toia.Guardian,
   issuer: "toia",
   secret_key: System.get_env("GUARDIAN_SECRET_KEY")
 
+config :waffle,
+  storage: Waffle.Storage.Google.CloudStorage,
+  bucket: "toia-phoenix",
+  storage_dir: "/",
+  token_fetcher: Toia.WaffleTokenFetcher
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

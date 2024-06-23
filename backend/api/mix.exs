@@ -46,11 +46,13 @@ defmodule Toia.MixProject do
       {:guardian, "~> 2.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:httpoison, "~> 2.0"},
-      {:poison, "~> 5.0"},
+      {:poison, "~> 4.0.1"},
       {:cors_plug, "~> 3.0"},
       {:tarams, "~> 1.7.1"},
       {:gen_smtp, "~> 1.1"},
-      {:amqp, "~> 3.3"}
+      {:amqp, "~> 3.3"},
+      {:goth, "~> 1.3"},
+      {:waffle_gcs, "~> 0.2"}
     ]
   end
 
