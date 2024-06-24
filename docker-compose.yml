@@ -41,6 +41,7 @@ services:
       - ./backend/api/lib:/app/lib
       - /app/lib/toia_web/services/node_modules
       - ./backend/translation/Transcripts:/app/priv/static/static/Transcripts:ro
+      - ./secrets:/app/secrets:ro
     ports:
       - 4000:4000
   
@@ -78,11 +79,13 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      api: 
-        condition: service_healthy
+      # api: 
+      #   condition: service_healthy
     env_file:
       - ./.env
     tty: true
+    volumes:
+      - ./secrets:/app/secrets:ro
 
   toia-dm:
     build: ./backend/toia-dm
@@ -93,14 +96,16 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      api:
-        condition: service_healthy
+      # api:
+      #   condition: service_healthy
     environment:
       - ENVIRONMENT=production
       - PYTHONUNBUFFERED=1
       - DM_PORT=5001
     env_file:
       - ./.env
+    volumes:
+      - ./secrets:/app/secrets:ro
   
   rabbitmq3:
     container_name: "rabbitmq"
@@ -123,8 +128,6 @@ services:
     build: backend/translation
     image: bishnudev/toia-translation:latest
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=secrets/toia-translation.json
-      - ENVIRONMENT=DEVELOPMENT
       - PYTHONUNBUFFERED=1
     volumes:
       - ./backend/translation/Transcripts:/app/files
