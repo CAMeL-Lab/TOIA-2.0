@@ -2,6 +2,10 @@ FROM node:14-alpine AS REACT_BUILD
 
 WORKDIR /app
 COPY interface/package.json .
+
+# This is a workaround for a known issue with the react app
+ENV SKIP_PREFLIGHT_CHECK=true
+
 RUN npm install
 COPY interface/ .
 
