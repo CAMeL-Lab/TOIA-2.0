@@ -245,7 +245,7 @@ def generateNextQ(api=API):
         
     # elif api == "GPT-3":      
     response = openai.Completion.create(
-        engine="text-davinci-001",
+        engine="gpt-3.5-turbo-instruct",
         prompt=prompt,
         temperature=0.7,
         max_tokens=250
@@ -389,7 +389,7 @@ def generateSmartQ(api=API):
     # elif api == "GPT-3":      
     # print("Checkpoint 3: Sending request to AI...")
     response = openai.Completion.create(
-        engine="text-davinci-002",
+        engine="gpt-3.5-turbo-instruct",
         prompt=prompt,
         temperature=0,
         max_tokens=250,

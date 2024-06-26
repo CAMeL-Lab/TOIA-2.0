@@ -16,7 +16,7 @@ except:
 
 def toia_answer(query, data, k=1):
     print("Query", query)
-    embedding = get_embedding(query, engine='text-search-ada-query-001')
+    embedding = get_embedding(query, engine='text-embedding-ada-002')
     print("B")
     data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
     print("C")

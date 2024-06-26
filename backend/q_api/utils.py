@@ -43,7 +43,7 @@ def getFirstNSimilar(df_avatar, query, NUM_SHORTLIST):
 
 def getFreqByCosineSimilarity(query, data):
     # Creating embedding for query
-    embedding = get_embedding(query, engine='text-search-ada-query-001')
+    embedding = get_embedding(query, engine='text-embedding-ada-002')
 
     # Searching query embedding through avatar's questions' embeddings using cosine similarity
     data['similarities'] = data.ada_search.apply(lambda x: cosine_similarity(x, embedding))
