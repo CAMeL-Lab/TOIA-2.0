@@ -10,6 +10,8 @@ services:
     tty: true
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
+    volumes:
+      - mysql-vol:/var/lib/mysql
 
   phpMyAdmin:
     image: phpmyadmin/phpmyadmin
@@ -148,3 +150,4 @@ services:
 
 volumes:
   portainer_data:
+  mysql-vol:
