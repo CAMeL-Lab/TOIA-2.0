@@ -429,6 +429,7 @@ def generateSmartQ(api=API):
                 requests.post(callback_url, json={"q": suggestion})
             except:
                 logging.error("Error when sending suggestions to server. Is the server running?")
+                logging.error(callback_url)
     else:
         logging.warning("No callback_url provided!")
 

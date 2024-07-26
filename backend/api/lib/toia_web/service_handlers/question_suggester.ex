@@ -19,7 +19,7 @@ defmodule ServiceHandlers.QuestionSuggester do
       new_a: body["latest_answer"],
       n_suggestions: 3,
       avatar_id: body["toia_id"],
-      callback_url: "#{System.get_env("API_URL")}/api/question_suggestions?toia_id=#{body["toia_id"]}"
+      callback_url: "http://api:4000/api/question_suggestions?toia_id=#{body["toia_id"]}"
     }
 
     Poison.encode!(payload)
