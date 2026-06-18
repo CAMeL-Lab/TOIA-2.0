@@ -1,0 +1,54 @@
+# Dependabot configuration.
+#
+# Purpose: tame the update/PR firehose on this multi-service monorepo by grouping
+# all updates into a few weekly PRs (one per ecosystem for version updates, one per
+# ecosystem for security updates) instead of one PR per dependency.
+#
+# NOTE: this file governs Dependabot *update PRs*. It does NOT control the
+# vulnerability-*alert emails* — those are set per-account at
+# github.com/settings/notifications (uncheck Email under "Dependabot alerts")
+# or per-repo via Watch -> Custom -> "Security alerts".
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directories:
+      - "/server"
+      - "/interface"
+      - "/backend/api/lib/toia_web/services"
+      - "/backend/speech-to-text/gcloud"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      npm-version-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      npm-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "pip"
+    directories:
+      - "/backend/toia-dm"
+      - "/backend/q_api"
+      - "/backend/translation"
+      - "/server/multilingual-dm"
+      - "/metabase"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      pip-version-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      pip-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
