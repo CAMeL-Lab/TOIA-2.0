@@ -1,5 +1,4 @@
 import json
-from pydantic.errors import DictError
 import sqlalchemy as db
 from sqlalchemy.sql import text
 from google.cloud.sql.connector import connector
